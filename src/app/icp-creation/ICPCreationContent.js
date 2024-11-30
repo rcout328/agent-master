@@ -5,179 +5,132 @@ import { useStoredInput } from '@/hooks/useStoredInput';
 import { callGroqApi } from '@/utils/groqApi';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
-import { useRouter } from 'next/navigation';
+import Link from 'next/link'; // Changed from useRouter to Link
 
 export default function ICPCreationContent() {
   const [userInput, setUserInput] = useStoredInput();
-  const [icpAnalysis, setIcpAnalysis] = useState('');
+  const [icpAnalysis, setIcpAnalysis] = useState({
+    demographics: [],
+    psychographics: [],
+    professional: [],
+    pain_points: [],
+    additional_insights: [],
+    sources: []
+  });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [mounted, setMounted] = useState(false);
-  const [lastAnalyzedInput, setLastAnalyzedInput] = useState('');
-  const router = useRouter();
-
-  // Add ref for PDF content
+  const [currentPhase, setCurrentPhase] = useState(0);
   const analysisRef = useRef(null);
-
-  // Load stored analysis on mount and when userInput changes
-  useEffect(() => {
-    setMounted(true);
-    const storedAnalysis = localStorage.getItem(`icpAnalysis_${userInput}`);
-    
-    if (storedAnalysis) {
-      setIcpAnalysis(storedAnalysis);
-      setLastAnalyzedInput(userInput);
-    } else {
-      setIcpAnalysis('');
-      // Auto-submit only if input is different from last analyzed
-      if (mounted && userInput && !isLoading && userInput !== lastAnalyzedInput) {
-        handleSubmit(new Event('submit'));
-        setLastAnalyzedInput(userInput);
-      }
-    }
-  }, [userInput, mounted]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!userInput.trim() || isLoading) return;
 
-    // Check if analysis already exists for this exact input
-    const storedAnalysis = localStorage.getItem(`icpAnalysis_${userInput}`);
-    if (storedAnalysis && userInput === lastAnalyzedInput) {
-      setIcpAnalysis(storedAnalysis);
-      return;
-    }
-
     setIsLoading(true);
     setError(null);
+    setCurrentPhase(1);
 
     try {
-      const response = await callGroqApi([
-        {
-          role: "system",
-          content: `You are an expert at creating Ideal Customer Profiles (ICP). Create a detailed ICP analysis that covers all key aspects of the target customer. Focus on providing specific, actionable insights. Format your response using clear headings and bullet points with dashes (-). Do not use any asterisks or other special characters for emphasis - use clear headings and proper formatting instead.`
+      const response = await fetch('http://127.0.0.1:5002/api/icp-analysis', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-        {
-          role: "user",
-          content: `Create a detailed Ideal Customer Profile (ICP) for this business: ${userInput}. 
-          Please analyze and provide:
-          1. Demographics
-             - Age range
-             - Income level
-             - Location
-             - Education
-          2. Psychographics
-             - Values and beliefs
-             - Lifestyle
-             - Interests
-             - Behaviors
-          3. Professional Characteristics
-             - Industry
-             - Company size
-             - Role/Position
-             - Decision-making authority
-          4. Pain Points & Needs
-             - Key challenges
-             - Motivations
-             - Goals
-             - Purchase triggers
-          
-          Format the response in a clear, structured manner with specific details and insights. Use headings and bullet points with dashes (-) for organization. Do not use any asterisks or special characters for emphasis.`
-        }
-      ]);
+        body: JSON.stringify({ query: userInput }),
+      });
 
-      setIcpAnalysis(response);
-      localStorage.setItem(`icpAnalysis_${userInput}`, response);
-      setLastAnalyzedInput(userInput);
+      if (!response.ok) {
+        throw new Error('Failed to fetch data');
+      }
+
+      const data = await response.json();
+      console.log('ICP API Response:', data);
+      
+      // Update data progressively
+      if (data.demographics?.length) {
+        setCurrentPhase(2);
+        setIcpAnalysis(prev => ({ ...prev, demographics: data.demographics }));
+      }
+      if (data.psychographics?.length) {
+        setCurrentPhase(3);
+        setIcpAnalysis(prev => ({ ...prev, psychographics: data.psychographics }));
+      }
+      if (data.professional?.length) {
+        setCurrentPhase(4);
+        setIcpAnalysis(prev => ({ ...prev, professional: data.professional }));
+      }
+      if (data.pain_points?.length) {
+        setCurrentPhase(5);
+        setIcpAnalysis(prev => ({ ...prev, pain_points: data.pain_points }));
+      }
+      
+      localStorage.setItem(`icpAnalysis_${userInput}`, JSON.stringify(data));
+
     } catch (error) {
       console.error('Error:', error);
-      setError('Failed to get analysis. Please try again.');
+      setError('Failed to get ICP analysis. Please try again.');
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Add export function
-  const exportToPDF = async () => {
-    try {
-      const pdf = new jsPDF();
-      const pageWidth = pdf.internal.pageSize.getWidth();
-      const pageHeight = pdf.internal.pageSize.getHeight();
-      const margin = 15;
-      let currentY = margin;
-
-      // Add title
-      pdf.setFontSize(20);
-      pdf.setTextColor(0, 102, 204);
-      pdf.text('Ideal Customer Profile (ICP) Report', pageWidth / 2, currentY, { align: 'center' });
-      currentY += 15;
-
-      // Add business name
-      pdf.setFontSize(12);
-      pdf.setTextColor(0, 0, 0);
-      const businessName = userInput.substring(0, 50);
-      pdf.text(`Business: ${businessName}${userInput.length > 50 ? '...' : ''}`, margin, currentY);
-      currentY += 20;
-
-      // Add executive summary
-      pdf.setFontSize(14);
-      pdf.setFont(undefined, 'bold');
-      pdf.text('1. Executive Summary', margin, currentY);
-      pdf.setFont(undefined, 'normal');
-      currentY += 10;
-
-      pdf.setFontSize(11);
-      const summaryText = "This report provides a comprehensive analysis of your ideal customer profile, including demographics, psychographics, behaviors, and key characteristics.";
-      const summaryLines = pdf.splitTextToSize(summaryText, pageWidth - (2 * margin));
-      pdf.text(summaryLines, margin, currentY);
-      currentY += (summaryLines.length * 7) + 10;
-
-      // Add ICP Analysis
-      pdf.setFontSize(14);
-      pdf.setFont(undefined, 'bold');
-      pdf.text('2. Detailed ICP Analysis', margin, currentY);
-      pdf.setFont(undefined, 'normal');
-      currentY += 10;
-
-      if (icpAnalysis) {
-        pdf.setFontSize(10);
-        const analysisLines = pdf.splitTextToSize(icpAnalysis, pageWidth - (2 * margin));
-        
-        for (const line of analysisLines) {
-          if (currentY + 10 > pageHeight - margin) {
-            pdf.addPage();
-            currentY = margin;
-          }
-          pdf.text(line, margin, currentY);
-          currentY += 10;
-        }
-      }
-
-      // Add footer to all pages
-      const totalPages = pdf.internal.getNumberOfPages();
-      for (let i = 1; i <= totalPages; i++) {
-        pdf.setPage(i);
-        pdf.setFontSize(8);
-        pdf.setTextColor(128, 128, 128);
-        pdf.text(`Page ${i} of ${totalPages}`, pageWidth - margin, pageHeight - 10, { align: 'right' });
-        pdf.text('Confidential - ICP Analysis Report', pageWidth / 2, pageHeight - 10, { align: 'center' });
-      }
-
-      // Save the PDF
-      pdf.save('icp-analysis-report.pdf');
-    } catch (error) {
-      console.error('Error generating PDF:', error);
-      setError('Failed to generate PDF. Please try again.');
-    }
+  const renderIcpSection = (title, data) => {
+    return (
+      <div className="mb-6">
+        <h3 className="text-lg font-semibold text-purple-400 mb-2">{title}</h3>
+        <div className="bg-[#2D2D2F] p-4 rounded-xl">
+          {data.length > 0 ? (
+            <ul className="space-y-2">
+              {data.map((item, index) => (
+                <li key={index} className="text-gray-300">
+                  {item}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-gray-400">No {title.toLowerCase()} data available.</p>
+          )}
+        </div>
+      </div>
+    );
   };
 
-  // Add navigation handlers
-  const handleJourneyMapping = () => {
-    router.push('/journey-mapping');
+  // Add this new function to render the analysis phases
+  const renderPhaseStatus = () => {
+    const phases = [
+      'Starting Analysis',
+      'Demographics',
+      'Psychographics',
+      'Professional Profile',
+      'Pain Points'
+    ];
+
+    return (
+      <div className="mb-6">
+        <div className="flex items-center space-x-2">
+          {phases.map((phase, index) => (
+            <div key={index} className="flex items-center">
+              <div className={`h-2 w-2 rounded-full ${
+                currentPhase > index ? 'bg-purple-500' : 'bg-gray-600'
+              }`} />
+              <span className={`text-sm ml-1 ${
+                currentPhase > index ? 'text-purple-400' : 'text-gray-500'
+              }`}>
+                {phase}
+              </span>
+              {index < phases.length - 1 && (
+                <div className={`h-0.5 w-4 mx-2 ${
+                  currentPhase > index ? 'bg-purple-500' : 'bg-gray-600'
+                }`} />
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    );
   };
 
-  if (!mounted) return null;
-
+  // Modify the render section of your component
   return (
     <div className="min-h-screen bg-[#131314] text-white p-4 sm:p-6">
       <div className="max-w-7xl mx-auto">
@@ -192,7 +145,6 @@ export default function ICPCreationContent() {
           <div className="flex items-center space-x-4">
             {icpAnalysis && (
               <button
-                onClick={exportToPDF}
                 className="bg-[#1D1D1F] hover:bg-[#2D2D2F] text-white px-4 py-2 rounded-xl flex items-center space-x-2 transition-all text-sm sm:text-base"
               >
                 <span>📥</span>
@@ -209,13 +161,16 @@ export default function ICPCreationContent() {
           >
             ICP Creation
           </button>
-          <button 
-            onClick={handleJourneyMapping}
+          <Link 
+            href="/journey-mapping"
             className="flex-1 sm:flex-none px-3 sm:px-4 py-2 rounded-lg text-gray-400 hover:text-white hover:bg-purple-600/50 transition-all duration-200 text-sm sm:text-base whitespace-nowrap"
           >
             Journey Mapping
-          </button>
+          </Link>
         </div>
+
+        {/* Add phase status indicator */}
+        {isLoading && renderPhaseStatus()}
 
         {/* Main Content */}
         <div className="bg-[#1D1D1F] rounded-2xl border border-purple-500/10 p-4 sm:p-6">
@@ -253,23 +208,30 @@ export default function ICPCreationContent() {
           </form>
 
           {/* Analysis Results */}
-          <div ref={analysisRef} className="mt-4 sm:mt-6">
+          <div ref={analysisRef} className="mt-6">
             {error ? (
-              <div className="text-red-500 text-sm sm:text-base">
-                {error}
-                <p className="text-xs sm:text-sm mt-2">Please try refreshing the page or contact support if the problem persists.</p>
-              </div>
-            ) : isLoading ? (
-              <div className="flex justify-center items-center h-full">
-                <div className="animate-spin rounded-full h-8 w-8 sm:h-12 sm:w-12 border-b-2 border-gray-900"></div>
-              </div>
-            ) : icpAnalysis ? (
-              <div className="prose text-gray-300 max-w-none text-sm sm:text-base">
-                <div className="whitespace-pre-wrap">{icpAnalysis}</div>
-              </div>
+              <div className="text-red-500">{error}</div>
             ) : (
-              <div className="text-gray-500 italic text-sm sm:text-base">
-                ICP analysis results will appear here...
+              <div className="space-y-6">
+                {renderIcpSection("Demographics", icpAnalysis.demographics)}
+                {renderIcpSection("Psychographics", icpAnalysis.psychographics)}
+                {renderIcpSection("Professional Characteristics", icpAnalysis.professional)}
+                {renderIcpSection("Pain Points & Needs", icpAnalysis.pain_points)}
+                {icpAnalysis.additional_insights.length > 0 && (
+                  renderIcpSection("Additional Insights", icpAnalysis.additional_insights)
+                )}
+                
+                {/* Sources */}
+                {icpAnalysis.sources.length > 0 && (
+                  <div className="mt-4 text-sm text-gray-400">
+                    <h4 className="font-semibold mb-2">Sources:</h4>
+                    <ul className="space-y-1">
+                      {icpAnalysis.sources.map((source, index) => (
+                        <li key={index}>{source.url}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
             )}
           </div>

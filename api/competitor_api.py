@@ -20,10 +20,10 @@ logging.info("Firecrawl initialized")
 GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY', '')
 if GOOGLE_API_KEY:
     genai.configure(api_key=GOOGLE_API_KEY)
-    model = genai.GenerativeModel('gemini-pro')
+    model = genai.GenerativeModel('gemini-1.5-flash')
     logging.info("Gemini initialized")
 
-def get_competitor_data(query):
+def get_competitor_data(query)
     """
     Get and analyze competitor data with fallback URLs
     """

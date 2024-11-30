@@ -128,6 +128,22 @@ export default function CompetitorTrackingContent() {
   return (
     <div className="min-h-screen bg-[#131314] text-white p-3 sm:p-4 lg:p-6">
       <div className="max-w-7xl mx-auto">
+        {/* Navigation Section */}
+        <div className="mb-6">
+          <h2 className="text-lg font-semibold text-purple-400 mb-4">Navigation</h2>
+          <div className="flex space-x-4">
+            <Link href="/">
+              <button className="px-4 py-2 rounded-lg bg-purple-600 text-white">Home</button>
+            </Link>
+            <Link href="/market-trends">
+              <button className="px-4 py-2 rounded-lg bg-purple-600 text-white">Market Trends</button>
+            </Link>
+            <Link href="/competitor-tracking">
+              <button className="px-4 py-2 rounded-lg bg-purple-600 text-white">Competitor Tracking</button>
+            </Link>
+          </div>
+        </div>
+
         {/* Search Form */}
         <div className="mb-6">
           <form onSubmit={handleSubmit} className="w-full">
