@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from 'react';
+import Link from 'next/link'; // Import Link from next/link
 import { Line, Bar } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -202,6 +203,24 @@ For each section, include specific numbers, percentages, and actionable insights
 
     return (
       <div className="space-y-6">
+        {/* Navigation Tabs */}
+        <div className="overflow-x-auto -mx-3 sm:mx-0 mb-6 sm:mb-8">
+          <div className="bg-[#1D1D1F] p-1 rounded-xl inline-flex min-w-max mx-3 sm:mx-0">
+            <button 
+              className="px-3 sm:px-4 py-2 rounded-lg bg-purple-600 text-white text-sm sm:text-base whitespace-nowrap"
+            >
+              Market Trends
+            </button>
+            <Link href="/competitor-tracking">
+              <button 
+                className="px-3 sm:px-4 py-2 rounded-lg text-gray-400 hover:text-white hover:bg-purple-600/50 transition-all duration-200 text-sm sm:text-base whitespace-nowrap"
+              >
+                Competitor Tracking
+              </button>
+            </Link>
+          </div>
+        </div>
+
         {/* AI Analysis Button */}
         <div className="flex justify-end">
           <button
@@ -323,6 +342,22 @@ For each section, include specific numbers, percentages, and actionable insights
   return (
     <div className="min-h-screen bg-[#131314] text-white p-3 sm:p-4 lg:p-6">
       <div className="max-w-7xl mx-auto">
+        {/* Navigation Section */}
+        <div className="mb-6">
+          <h2 className="text-lg font-semibold text-purple-400 mb-4">Navigation</h2>
+          <div className="flex space-x-4">
+            <Link href="/">
+              <button className="px-4 py-2 rounded-lg bg-purple-600 text-white">Home</button>
+            </Link>
+            <Link href="/market-trends">
+              <button className="px-4 py-2 rounded-lg bg-purple-600 text-white">Market Trends</button>
+            </Link>
+            <Link href="/competitor-tracking">
+              <button className="px-4 py-2 rounded-lg bg-purple-600 text-white">Competitor Tracking</button>
+            </Link>
+          </div>
+        </div>
+
         {/* Search Form */}
         <div className="mb-6">
           <form onSubmit={handleSubmit} className="w-full">
