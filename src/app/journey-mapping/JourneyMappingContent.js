@@ -2,140 +2,129 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useStoredInput } from '@/hooks/useStoredInput';
-import { callGroqApi } from '@/utils/groqApi';
-import ChatDialog from '@/components/ChatDialog';
 import jsPDF from 'jspdf';
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 export default function JourneyMappingContent() {
   const [userInput, setUserInput] = useStoredInput();
-  const [journeyMapping, setJourneyMapping] = useState('');
+  const [journeyAnalysis, setJourneyAnalysis] = useState({
+    pre_purchase: [],
+    purchase: [],
+    post_purchase: [],
+    optimization: [],
+    sources: []
+  });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [mounted, setMounted] = useState(false);
-  const [lastAnalyzedInput, setLastAnalyzedInput] = useState('');
-
+  const [currentPhase, setCurrentPhase] = useState(0);
   const analysisRef = useRef(null);
-  const router = useRouter();
-
-  const exportToPDF = async () => {
-    try {
-      const pdf = new jsPDF('p', 'mm', 'a4');
-      const pageWidth = pdf.internal.pageSize.getWidth();
-      const pageHeight = pdf.internal.pageSize.getHeight();
-      const margin = 15;
-      let currentY = margin;
-
-      pdf.setFontSize(20);
-      pdf.setTextColor(0, 102, 204);
-      pdf.text('Customer Journey Mapping Report', pageWidth / 2, currentY, { align: 'center' });
-      currentY += 15;
-
-      pdf.setFontSize(12);
-      pdf.setTextColor(0, 0, 0);
-      const businessName = userInput.substring(0, 50);
-      pdf.text(`Business: ${businessName}${userInput.length > 50 ? '...' : ''}`, margin, currentY);
-      currentY += 20;
-
-      pdf.setFontSize(11);
-      const fullContent = journeyMapping || 'No analysis available.';
-      const contentLines = pdf.splitTextToSize(fullContent, pageWidth - (2 * margin));
-
-      for (const line of contentLines) {
-        if (currentY + 10 > pageHeight - margin) {
-          pdf.addPage();
-          currentY = margin;
-        }
-        pdf.text(line, margin, currentY);
-        currentY += 10;
-      }
-
-      const totalPages = pdf.internal.getNumberOfPages();
-      for (let i = 1; i <= totalPages; i++) {
-        pdf.setPage(i);
-        pdf.setFontSize(8);
-        pdf.setTextColor(128, 128, 128);
-        pdf.text(`Page ${i} of ${totalPages}`, pageWidth - margin, pageHeight - 10, { align: 'right' });
-        pdf.text('Confidential - Customer Journey Analysis', pageWidth / 2, pageHeight - 10, { align: 'center' });
-      }
-
-      pdf.save('customer-journey-analysis.pdf');
-    } catch (error) {
-      console.error('Error generating PDF:', error);
-      setError('Failed to generate PDF. Please try again.');
-    }
-  };
-
-  // Load stored analysis on mount and when userInput changes
-  useEffect(() => {
-    setMounted(true);
-    const storedAnalysis = localStorage.getItem(`journeyMapping_${userInput}`);
-    
-    if (storedAnalysis) {
-      setJourneyMapping(storedAnalysis);
-      setLastAnalyzedInput(userInput);
-    } else {
-      setJourneyMapping('');
-      // Auto-submit only if input is different from last analyzed
-      if (mounted && userInput && !isLoading && userInput !== lastAnalyzedInput) {
-        handleSubmit(new Event('submit'));
-        setLastAnalyzedInput(userInput);
-      }
-    }
-  }, [userInput, mounted]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!userInput.trim() || isLoading) return;
 
-    // Check if analysis already exists for this exact input
-    const storedAnalysis = localStorage.getItem(`journeyMapping_${userInput}`);
-    if (storedAnalysis && userInput === lastAnalyzedInput) {
-      setJourneyMapping(storedAnalysis);
-      return;
-    }
-
     setIsLoading(true);
     setError(null);
+    setCurrentPhase(1);
 
     try {
-      const response = await callGroqApi([
-        {
-          role: "system",
-          content: `You are a customer journey mapping expert. Create a detailed journey map analysis that covers all key touchpoints and interactions. Focus on providing specific, actionable insights about the customer journey. Format your response in plain text without any special formatting or markdown symbols.`
+      const response = await fetch('http://127.0.0.1:5003/api/journey-analysis', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-        {
-          role: "user",
-          content: `Create a detailed customer journey map for this business: ${userInput}. 
-          Please analyze and provide:
-          1. Pre-Purchase Journey
-          2. Purchase Experience
-          3. Post-Purchase Journey
-          4. Journey Optimization
-          
-          Format the response in a clear, structured manner with specific details for each stage of the journey. Do not use any markdown formatting or special characters.`
-        }
-      ]);
+        body: JSON.stringify({ query: userInput }),
+      });
 
-      // Remove any markdown formatting from the response
-      const cleanResponse = response.replace(/[*_~`]/g, '');
-      setJourneyMapping(cleanResponse);
-      localStorage.setItem(`journeyMapping_${userInput}`, cleanResponse);
-      setLastAnalyzedInput(userInput);
+      if (!response.ok) {
+        throw new Error('Failed to fetch data');
+      }
+
+      const data = await response.json();
+      console.log('Journey API Response:', data);
+      
+      // Update data progressively
+      if (data.pre_purchase?.length) {
+        setCurrentPhase(2);
+        setJourneyAnalysis(prev => ({ ...prev, pre_purchase: data.pre_purchase }));
+      }
+      if (data.purchase?.length) {
+        setCurrentPhase(3);
+        setJourneyAnalysis(prev => ({ ...prev, purchase: data.purchase }));
+      }
+      if (data.post_purchase?.length) {
+        setCurrentPhase(4);
+        setJourneyAnalysis(prev => ({ ...prev, post_purchase: data.post_purchase }));
+      }
+      if (data.optimization?.length) {
+        setCurrentPhase(5);
+        setJourneyAnalysis(prev => ({ ...prev, optimization: data.optimization }));
+      }
+      
+      localStorage.setItem(`journeyMapping_${userInput}`, JSON.stringify(data));
+
     } catch (error) {
       console.error('Error:', error);
-      setError('Failed to get analysis. Please try again.');
+      setError('Failed to get journey analysis. Please try again.');
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Add navigation handlers
-  const handleIcpCreation = () => {
-    router.push('/icp-creation');
+  const renderJourneySection = (title, data) => {
+    return (
+      <div className="mb-6">
+        <h3 className="text-lg font-semibold text-purple-400 mb-2">{title}</h3>
+        <div className="bg-[#2D2D2F] p-4 rounded-xl">
+          {data.length > 0 ? (
+            <ul className="space-y-2">
+              {data.map((item, index) => (
+                <li key={index} className="text-gray-300">
+                  {item}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-gray-400">No {title.toLowerCase()} data available.</p>
+          )}
+        </div>
+      </div>
+    );
   };
 
-  if (!mounted) return null;
+  const renderPhaseStatus = () => {
+    const phases = [
+      'Starting Analysis',
+      'Pre-Purchase Journey',
+      'Purchase Experience',
+      'Post-Purchase Journey',
+      'Optimization'
+    ];
+
+    return (
+      <div className="mb-6">
+        <div className="flex items-center space-x-2">
+          {phases.map((phase, index) => (
+            <div key={index} className="flex items-center">
+              <div className={`h-2 w-2 rounded-full ${
+                currentPhase > index ? 'bg-purple-500' : 'bg-gray-600'
+              }`} />
+              <span className={`text-sm ml-1 ${
+                currentPhase > index ? 'text-purple-400' : 'text-gray-500'
+              }`}>
+                {phase}
+              </span>
+              {index < phases.length - 1 && (
+                <div className={`h-0.5 w-4 mx-2 ${
+                  currentPhase > index ? 'bg-purple-500' : 'bg-gray-600'
+                }`} />
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className="min-h-screen bg-[#131314] text-white p-4 sm:p-6">
@@ -148,46 +137,35 @@ export default function JourneyMappingContent() {
             </h1>
             <p className="text-gray-400 mt-2">Map and analyze customer touchpoints</p>
           </div>
-          <div className="flex items-center space-x-4">
-            {journeyMapping && (
-              <button
-                onClick={exportToPDF}
-                className="bg-[#1D1D1F] hover:bg-[#2D2D2F] text-white px-3 sm:px-4 py-2 rounded-xl flex items-center space-x-2 transition-all text-sm sm:text-base"
-              >
-                <span>📥</span>
-                <span>Export PDF</span>
-              </button>
-            )}
-          </div>
         </div>
 
         {/* Navigation Tabs */}
         <div className="bg-[#1D1D1F] p-1 rounded-xl mb-6 sm:mb-8 inline-flex w-full sm:w-auto overflow-x-auto">
-          <button 
-            onClick={handleIcpCreation}
-            className="px-3 sm:px-4 py-2 rounded-lg text-gray-400 hover:text-white hover:bg-purple-600/50 transition-all duration-200 whitespace-nowrap text-sm sm:text-base"
+          <Link 
+            href="/icp-creation"
+            className="flex-1 sm:flex-none px-3 sm:px-4 py-2 rounded-lg text-gray-400 hover:text-white hover:bg-purple-600/50 transition-all duration-200 text-sm sm:text-base whitespace-nowrap"
           >
             ICP Creation
-          </button>
+          </Link>
           <button 
-            className="px-3 sm:px-4 py-2 rounded-lg bg-purple-600 text-white whitespace-nowrap text-sm sm:text-base"
+            className="flex-1 sm:flex-none px-3 sm:px-4 py-2 rounded-lg bg-purple-600 text-white text-sm sm:text-base whitespace-nowrap"
           >
             Journey Mapping
           </button>
         </div>
 
+        {/* Add phase status indicator */}
+        {isLoading && renderPhaseStatus()}
+
         {/* Main Content */}
         <div className="bg-[#1D1D1F] rounded-2xl border border-purple-500/10 p-4 sm:p-6">
-          <h2 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-purple-600">
-            Journey Analysis
-          </h2>
           <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
             <div>
               <textarea
                 value={userInput}
                 onChange={(e) => setUserInput(e.target.value)}
                 placeholder="Enter your business details for journey mapping..."
-                className="w-full h-24 sm:h-32 px-3 sm:px-4 py-2 sm:py-3 bg-[#131314] text-gray-200 rounded-xl border border-purple-500/20 
+                className="w-full h-32 sm:h-40 px-3 sm:px-4 py-2 sm:py-3 bg-[#131314] text-gray-200 rounded-xl border border-purple-500/20 
                          placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50 resize-none text-sm sm:text-base"
                 disabled={isLoading}
               />
@@ -212,23 +190,27 @@ export default function JourneyMappingContent() {
           </form>
 
           {/* Analysis Results */}
-          <div ref={analysisRef} className="mt-4 sm:mt-6">
+          <div ref={analysisRef} className="mt-6">
             {error ? (
-              <div className="text-red-500 text-sm sm:text-base">
-                {error}
-                <p className="text-xs sm:text-sm mt-2">Please try refreshing the page or contact support if the problem persists.</p>
-              </div>
-            ) : isLoading ? (
-              <div className="flex justify-center items-center h-full">
-                <div className="animate-spin rounded-full h-8 w-8 sm:h-12 sm:w-12 border-b-2 border-gray-900"></div>
-              </div>
-            ) : journeyMapping ? (
-              <div className="prose text-gray-300 max-w-none text-sm sm:text-base">
-                <div className="whitespace-pre-wrap">{journeyMapping}</div>
-              </div>
+              <div className="text-red-500">{error}</div>
             ) : (
-              <div className="text-gray-500 italic text-sm sm:text-base">
-                Journey mapping results will appear here...
+              <div className="space-y-6">
+                {renderJourneySection("Pre-Purchase Journey", journeyAnalysis.pre_purchase)}
+                {renderJourneySection("Purchase Experience", journeyAnalysis.purchase)}
+                {renderJourneySection("Post-Purchase Journey", journeyAnalysis.post_purchase)}
+                {renderJourneySection("Optimization Opportunities", journeyAnalysis.optimization)}
+                
+                {/* Sources */}
+                {journeyAnalysis.sources.length > 0 && (
+                  <div className="mt-4 text-sm text-gray-400">
+                    <h4 className="font-semibold mb-2">Sources:</h4>
+                    <ul className="space-y-1">
+                      {journeyAnalysis.sources.map((source, index) => (
+                        <li key={index}>{source.url}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
             )}
           </div>
