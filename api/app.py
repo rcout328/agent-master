@@ -77,14 +77,56 @@ def extract_market_info(search_data, query):
                 'date': result.get('date', '')
             })
 
-    # Get additional data through web scraping
+    # Get additional data through web scraping from the top links
     try:
-        additional_data = scrape_additional_data(query)
+        additional_data = scrape_additional_data_from_top_links(search_data)
         market_info.update(additional_data)
     except Exception as e:
         logging.error(f"Error scraping additional data: {e}")
 
     return market_info
+
+def scrape_additional_data_from_top_links(search_data):
+    """
+    Scrape additional market data from the top links provided by SerpAPI
+    """
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+    }
+    
+    additional_data = {
+        "market_trends": [],
+        "industry_insights": []
+    }
+    
+    if 'organic_results' in search_data:
+        for result in search_data['organic_results']:
+            url = result.get('link')
+            if url:
+                try:
+                    response = requests.get(url, headers=headers, timeout=10)
+                    if response.ok:
+                        soup = BeautifulSoup(response.text, 'html.parser')
+                        
+                        # Extract relevant information based on the website structure
+                        paragraphs = soup.find_all('p')
+                        for p in paragraphs:
+                            text = p.get_text().strip()
+                            if len(text) > 100:  # Filter out short paragraphs
+                                additional_data["industry_insights"].append(text)
+                        
+                        # Look for trend information
+                        trend_elements = soup.find_all(['h2', 'h3', 'h4'])
+                        for element in trend_elements:
+                            text = element.get_text().strip()
+                            if any(keyword in text.lower() for keyword in ['trend', 'growth', 'forecast', 'outlook']):
+                                additional_data["market_trends"].append(text)
+                        
+                except Exception as e:
+                    logging.error(f"Error scraping {url}: {e}")
+                    continue
+    
+    return additional_data
 
 def extract_market_size(text):
     """
@@ -125,51 +167,6 @@ def extract_competitors(text):
                 if words[i][0].isupper():
                     competitors.append(words[i])
     return list(set(competitors))
-
-def scrape_additional_data(query):
-    """
-    Scrape additional market data from relevant websites
-    """
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-    }
-    
-    # List of websites to scrape
-    urls = [
-        f"https://www.marketsandmarkets.com/search.asp?search={query}",
-        f"https://www.grandviewresearch.com/search/{query}"
-    ]
-    
-    additional_data = {
-        "market_trends": [],
-        "industry_insights": []
-    }
-    
-    for url in urls:
-        try:
-            response = requests.get(url, headers=headers, timeout=10)
-            if response.ok:
-                soup = BeautifulSoup(response.text, 'html.parser')
-                
-                # Extract relevant information based on the website structure
-                paragraphs = soup.find_all('p')
-                for p in paragraphs:
-                    text = p.get_text().strip()
-                    if len(text) > 100:  # Filter out short paragraphs
-                        additional_data["industry_insights"].append(text)
-                
-                # Look for trend information
-                trend_elements = soup.find_all(['h2', 'h3', 'h4'])
-                for element in trend_elements:
-                    text = element.get_text().strip()
-                    if any(keyword in text.lower() for keyword in ['trend', 'growth', 'forecast', 'outlook']):
-                        additional_data["market_trends"].append(text)
-                
-        except Exception as e:
-            logging.error(f"Error scraping {url}: {e}")
-            continue
-    
-    return additional_data
 
 def generate_market_analysis(market_info):
     """

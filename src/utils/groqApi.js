@@ -1,7 +1,7 @@
 import Groq from "groq-sdk";
 
 const groq = new Groq({
-  apiKey: "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",
+  apiKey: process.env.NEXT_PUBLIC_GROQ_API_KEY || "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",
   dangerouslyAllowBrowser: true
 });
 
@@ -19,9 +19,19 @@ export const callGroqApi = async (messages) => {
     });
 
     console.log("GROQ API Response:", completion);
-    console.log("GROQ Content:", completion.choices[0]?.message?.content);
+    
+    if (!completion.choices || completion.choices.length === 0) {
+      throw new Error('No response from GROQ API');
+    }
 
-    return completion.choices[0]?.message?.content || '';
+    const content = completion.choices[0]?.message?.content;
+    console.log("GROQ Content:", content);
+
+    if (!content) {
+      throw new Error('Empty response from GROQ API');
+    }
+
+    return content;
   } catch (error) {
     console.error('Error calling GROQ API:', error);
     console.error('Error details:', {
