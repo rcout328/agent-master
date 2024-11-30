@@ -6,12 +6,15 @@ import { callGeminiApi } from '@/utils/geminiApi';
 
 export default function CompetitorTrackingContent() {
   const [searchQuery, setSearchQuery] = useState('');
-  const [apiResponse, setApiResponse] = useState(null);
+  const [apiResponse, setApiResponse] = useState({
+    main_competitors: [],
+    market_share_data: [],
+    competitor_strengths: [],
+    key_findings: []
+  });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [showAiAnalysis, setShowAiAnalysis] = useState(false);
-  const [aiAnalysis, setAiAnalysis] = useState(null);
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [currentPhase, setCurrentPhase] = useState(0);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -19,6 +22,7 @@ export default function CompetitorTrackingContent() {
 
     setIsLoading(true);
     setError(null);
+    setCurrentPhase(1);
 
     try {
       const response = await fetch('http://127.0.0.1:5001/api/competitor-analysis', {
@@ -35,13 +39,64 @@ export default function CompetitorTrackingContent() {
 
       const data = await response.json();
       console.log('API Response:', data);
-      setApiResponse(data);
+      
+      // Update data progressively
+      if (data.main_competitors?.length) {
+        setCurrentPhase(2);
+        setApiResponse(prev => ({ ...prev, main_competitors: data.main_competitors }));
+      }
+      if (data.market_share_data?.length) {
+        setCurrentPhase(3);
+        setApiResponse(prev => ({ ...prev, market_share_data: data.market_share_data }));
+      }
+      if (data.competitor_strengths?.length) {
+        setCurrentPhase(4);
+        setApiResponse(prev => ({ ...prev, competitor_strengths: data.competitor_strengths }));
+      }
+      if (data.key_findings?.length) {
+        setCurrentPhase(5);
+        setApiResponse(prev => ({ ...prev, key_findings: data.key_findings }));
+      }
     } catch (error) {
       console.error('Error:', error);
       setError('Failed to get data. Please try again.');
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const renderPhaseStatus = () => {
+    const phases = [
+      'Starting Analysis',
+      'Finding Competitors',
+      'Analyzing Market Share',
+      'Identifying Strengths',
+      'Gathering Insights'
+    ];
+
+    return (
+      <div className="mb-4">
+        <div className="flex items-center space-x-2">
+          {phases.map((phase, index) => (
+            <div key={index} className="flex items-center">
+              <div className={`h-2 w-2 rounded-full ${
+                currentPhase > index ? 'bg-purple-500' : 'bg-gray-600'
+              }`} />
+              <span className={`text-sm ml-1 ${
+                currentPhase > index ? 'text-purple-400' : 'text-gray-500'
+              }`}>
+                {phase}
+              </span>
+              {index < phases.length - 1 && (
+                <div className={`h-0.5 w-4 mx-2 ${
+                  currentPhase > index ? 'bg-purple-500' : 'bg-gray-600'
+                }`} />
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    );
   };
 
   const renderApiResponse = (data) => {

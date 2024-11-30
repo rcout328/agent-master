@@ -23,163 +23,110 @@ if GOOGLE_API_KEY:
     model = genai.GenerativeModel('gemini-')
     logging.info("Gemini initialized")
 
-def get_competitor_data(query)
+def get_competitor_data(query):
     """
-    Get and analyze competitor data with fallback URLs
+    Get competitor data in phases and send updates
     """
     logging.info(f"\n{'='*50}\nAnalyzing competitors for: {query}\n{'='*50}")
     
-    # Get multiple URLs as fallbacks
-    search_query = f"top competitors for {query}"
-    urls = []
-    
+    result = {
+        "main_competitors": [],
+        "market_share_data": [],
+        "competitor_strengths": [],
+        "key_findings": []
+    }
+
+    # Phase 1: Get Top Competitors
+    logging.info("\nPhase 1: Getting Top Competitors")
+    search_query = f"top competitors of {query} list"
     try:
-        # Get top 3 URLs as fallbacks
         from googlesearch import search
-        for url in search(search_query, num_results=3):
-            if not any(x in url.lower() for x in ['linkedin', 'facebook', 'twitter', 'instagram']):
-                urls.append(url)
-                if len(urls) == 3:  # Get 3 URLs for fallback
-                    break
-        
-        logging.info("\nFound URLs for analysis:")
-        for url in urls:
-            logging.info(f"- {url}")
-    
+        competitor_url = next(search(search_query, num_results=1))
+        response = firecrawl_app.scrape_url(
+            url=competitor_url,
+            params={'formats': ['markdown']}
+        )
+        if response and response.get('markdown'):
+            prompt = f"""
+            Analyze this content and list the top 5 competitors of {query}.
+            Format each competitor as: [Name] - [Brief description]
+            Content: {response.get('markdown')}
+            """
+            competitors = model.generate_content(prompt).text
+            result["main_competitors"] = extract_section(competitors, "")
+            logging.info(f"Found competitors: {result['main_competitors']}")
     except Exception as e:
-        logging.error(f"Error in Google search: {str(e)}")
-        return create_empty_response()
-    
-    # Try each URL until we get content
-    scraped_content = []
-    logging.info("\nStarting web scraping:")
-    
-    for url in urls:
-        try:
-            logging.info(f"\nTrying to scrape: {url}")
-            response = firecrawl_app.scrape_url(
-                url=url,
-                params={
-                    'formats': ['markdown'],
-                    'timeout': 30000  # Increased timeout
-                }
-            )
-            
-            if response and response.get('markdown'):
-                content = response.get('markdown')
-                if len(content) > 200:  # Check if content is substantial
-                    logging.info(f"Successfully scraped content from {url}")
-                    logging.info(f"Content preview:\n{content[:200]}...\n")
-                    scraped_content.append({
-                        'url': url,
-                        'content': content
-                    })
-                    break  # Stop if we got good content
-                else:
-                    logging.warning(f"Content too short from {url}, trying next URL")
-            else:
-                logging.warning(f"No content from {url}, trying next URL")
-        
-        except Exception as e:
-            logging.error(f"Error scraping {url}: {str(e)}")
-            logging.info("Trying next URL...")
-            continue
-    
-    if not scraped_content:
-        logging.warning("All URLs failed, trying alternative search...")
-        # Try alternative search query
-        try:
-            alt_query = f"{query} competitor analysis market share"
-            for url in search(alt_query, num_results=2):
-                if not any(x in url.lower() for x in ['linkedin', 'facebook', 'twitter', 'instagram']):
-                    try:
-                        response = firecrawl_app.scrape_url(
-                            url=url,
-                            params={'formats': ['markdown']}
-                        )
-                        
-                        if response and response.get('markdown'):
-                            content = response.get('markdown')
-                            if len(content) > 200:
-                                scraped_content.append({
-                                    'url': url,
-                                    'content': content
-                                })
-                                logging.info(f"Successfully scraped alternative URL: {url}")
-                                break
-                    except Exception as e:
-                        logging.error(f"Error scraping alternative URL: {str(e)}")
-                        continue
-        except Exception as e:
-            logging.error(f"Error in alternative search: {str(e)}")
-    
-    if scraped_content:
-        logging.info("\nPreparing content for Gemini analysis")
-        
-        # Prepare prompt for Gemini
-        prompt = f"""
-        Analyze this article about {query}'s competitors and provide a structured response.
+        logging.error(f"Error in Phase 1: {str(e)}")
 
-        Sources and content:
-        {json.dumps(scraped_content, indent=2)}
+    # Phase 2: Get Market Share Data
+    logging.info("\nPhase 2: Getting Market Share Data")
+    search_query = f"{query} competitor market share analysis"
+    try:
+        market_url = next(search(search_query, num_results=1))
+        response = firecrawl_app.scrape_url(
+            url=market_url,
+            params={'formats': ['markdown']}
+        )
+        if response and response.get('markdown'):
+            prompt = f"""
+            Extract market share data for {query} and its competitors.
+            Format as: [Company]: [X]%
+            Content: {response.get('markdown')}
+            """
+            market_data = model.generate_content(prompt).text
+            result["market_share_data"] = extract_market_data(market_data)
+            logging.info(f"Found market share data: {result['market_share_data']}")
+    except Exception as e:
+        logging.error(f"Error in Phase 2: {str(e)}")
 
-        Provide ONLY these sections with this exact formatting:
+    # Phase 3: Get Competitor Strengths
+    logging.info("\nPhase 3: Getting Competitor Strengths")
+    search_query = f"{query} competitors strengths advantages comparison"
+    try:
+        strengths_url = next(search(search_query, num_results=1))
+        response = firecrawl_app.scrape_url(
+            url=strengths_url,
+            params={'formats': ['markdown']}
+        )
+        if response and response.get('markdown'):
+            prompt = f"""
+            List the key strengths of {query}'s main competitors.
+            Format as: [Competitor Name]: [Key strength]
+            Content: {response.get('markdown')}
+            """
+            strengths = model.generate_content(prompt).text
+            result["competitor_strengths"] = extract_section(strengths, "")
+            logging.info(f"Found strengths: {result['competitor_strengths']}")
+    except Exception as e:
+        logging.error(f"Error in Phase 3: {str(e)}")
 
-        TOP COMPETITORS:
-        1. [Competitor Name] - [Brief description of what they do and their market position]
-        2. [Next Competitor] - [Description]
-        (List top 5 most significant competitors only)
+    # Phase 4: Get Key Findings
+    logging.info("\nPhase 4: Getting Key Findings")
+    search_query = f"{query} competitive landscape analysis insights"
+    try:
+        insights_url = next(search(search_query, num_results=1))
+        response = firecrawl_app.scrape_url(
+            url=insights_url,
+            params={'formats': ['markdown']}
+        )
+        if response and response.get('markdown'):
+            prompt = f"""
+            Provide 2-3 key insights about {query}'s competitive landscape.
+            Format as numbered points.
+            Content: {response.get('markdown')}
+            """
+            findings = model.generate_content(prompt).text
+            result["key_findings"] = [{
+                'title': f"Competitive Analysis for {query}",
+                'snippet': findings,
+                'source': "Multiple Sources",
+                'date': datetime.now().strftime("%Y-%m-%d")
+            }]
+            logging.info(f"Found key findings: {findings}")
+    except Exception as e:
+        logging.error(f"Error in Phase 4: {str(e)}")
 
-        MARKET SHARE DATA:
-        • [Company Name]: [X]%
-        (List if available in the content)
-
-        COMPETITOR STRENGTHS:
-        [Competitor Name]:
-        • [Key strength]
-        • [Another strength]
-        (List main strengths for each top competitor)
-
-        KEY FINDINGS:
-        1. [Key insight about the competitive landscape]
-        2. [Another key insight]
-        (2-3 main findings)
-
-        Use only factual information from the provided content.
-        """
-        
-        try:
-            logging.info("Sending to Gemini for analysis...")
-            response = model.generate_content(prompt)
-            analysis = response.text
-            
-            logging.info("\nGemini Analysis Received:")
-            logging.info(f"\n{analysis}\n")
-            
-            # Structure the response
-            structured_response = {
-                "main_competitors": extract_section(analysis, "TOP COMPETITORS"),
-                "market_share_data": extract_market_data(analysis),
-                "competitor_strengths": extract_section(analysis, "COMPETITOR STRENGTHS"),
-                "key_findings": [{
-                    'title': f"Competitive Analysis for {query}",
-                    'snippet': extract_section(analysis, "KEY FINDINGS"),
-                    'source': "Multiple Sources",
-                    'date': datetime.now().strftime("%Y-%m-%d")
-                }]
-            }
-            
-            logging.info("\nFinal Structured Response:")
-            logging.info(json.dumps(structured_response, indent=2))
-            
-            return structured_response
-            
-        except Exception as e:
-            logging.error(f"Gemini analysis error: {str(e)}")
-            return create_empty_response()
-    
-    logging.warning("No content collected for analysis")
-    return create_empty_response()
+    return result
 
 def extract_section(text, section_name):
     """Extract content from a specific section"""
