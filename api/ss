@@ -1,0 +1,219 @@
+import requests
+import logging
+from datetime import datetime
+from bs4 import BeautifulSoup
+import json
+
+logging.basicConfig(level=logging.DEBUG)
+
+SERP_API_KEY = "ab5994a0325d006f6567d50536425e38ed348e96bb7db92be50c07adb92e7dd3"
+
+def get_serp_data(query):
+    """
+    Get data from SerpAPI for both trends and search results
+    """
+    # Get Google Search results
+    search_params = {
+        "engine": "google",
+        "q": f"{query} market analysis",
+        "num": 10,
+        "api_key": SERP_API_KEY
+    }
+    
+    search_response = requests.get("https://serpapi.com/search", params=search_params)
+    search_data = search_response.json()
+    
+    # Extract relevant information from search results
+    market_info = extract_market_info(search_data, query)
+    
+    return market_info
+
+def extract_market_info(search_data, query):
+    """
+    Extract and process market information from search results
+    """
+    market_info = {
+        "market_size": None,
+        "growth_rate": None,
+        "competitors": [],
+        "trends": [],
+        "key_findings": []
+    }
+    
+    if 'organic_results' in search_data:
+        for result in search_data['organic_results']:
+            # Extract market size and growth information from snippets
+            snippet = result.get('snippet', '').lower()
+            title = result.get('title', '').lower()
+            
+            # Look for market size information
+            if 'market size' in snippet or 'market value' in snippet:
+                market_info['market_size'] = extract_market_size(snippet)
+            
+            # Look for growth rate information
+            if 'cagr' in snippet or 'growth rate' in snippet:
+                market_info['growth_rate'] = extract_growth_rate(snippet)
+            
+            # Extract competitor information
+            if 'competitor' in title or 'player' in title:
+                competitors = extract_competitors(snippet)
+                market_info['competitors'].extend(competitors)
+            
+            # Extract key findings
+            market_info['key_findings'].append({
+                'title': result.get('title', ''),
+                'snippet': result.get('snippet', ''),
+                'source': result.get('source', ''),
+                'date': result.get('date', '')
+            })
+
+    # Get additional data through web scraping
+    try:
+        additional_data = scrape_additional_data(query)
+        market_info.update(additional_data)
+    except Exception as e:
+        print(f"Error scraping additional data: {e}")
+
+    return market_info
+
+def extract_market_size(text):
+    """
+    Extract market size information from text
+    """
+    import re
+    # Look for currency amounts
+    currency_pattern = r'\$?\d+(?:\.\d+)?\s*(?:billion|million|trillion|B|M|T)'
+    matches = re.findall(currency_pattern, text)
+    if matches:
+        return matches[0]
+    return None
+
+def extract_growth_rate(text):
+    """
+    Extract growth rate information from text
+    """
+    import re
+    # Look for percentage values
+    percentage_pattern = r'\d+(?:\.\d+)?%'
+    matches = re.findall(percentage_pattern, text)
+    if matches:
+        return matches[0]
+    return None
+
+def extract_competitors(text):
+    """
+    Extract competitor information from text
+    """
+    competitors = []
+    # Split text into sentences
+    sentences = text.split('.')
+    for sentence in sentences:
+        if any(keyword in sentence.lower() for keyword in ['competitor', 'player', 'company', 'vendor']):
+            # Extract company names (simple approach)
+            words = sentence.split()
+            for i in range(len(words)-1):
+                if words[i][0].isupper():
+                    competitors.append(words[i])
+    return list(set(competitors))
+
+def scrape_additional_data(query):
+    """
+    Scrape additional market data from relevant websites
+    """
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+    }
+    
+    # List of websites to scrape
+    urls = [
+        f"https://www.marketsandmarkets.com/search.asp?search={query}",
+        f"https://www.grandviewresearch.com/search/{query}"
+    ]
+    
+    additional_data = {
+        "market_trends": [],
+        "industry_insights": []
+    }
+    
+    for url in urls:
+        try:
+            response = requests.get(url, headers=headers, timeout=10)
+            if response.ok:
+                soup = BeautifulSoup(response.text, 'html.parser')
+                
+                # Extract relevant information based on the website structure
+                paragraphs = soup.find_all('p')
+                for p in paragraphs:
+                    text = p.get_text().strip()
+                    if len(text) > 100:  # Filter out short paragraphs
+                        additional_data["industry_insights"].append(text)
+                
+                # Look for trend information
+                trend_elements = soup.find_all(['h2', 'h3', 'h4'])
+                for element in trend_elements:
+                    text = element.get_text().strip()
+                    if any(keyword in text.lower() for keyword in ['trend', 'growth', 'forecast', 'outlook']):
+                        additional_data["market_trends"].append(text)
+                
+        except Exception as e:
+            print(f"Error scraping {url}: {e}")
+            continue
+    
+    return additional_data
+
+def generate_market_analysis(market_info):
+    """
+    Generate comprehensive market analysis from collected data
+    """
+    analysis = f"""
+Market Analysis Report
+
+1. Market Overview:
+{'- Market Size: ' + str(market_info['market_size']) if market_info['market_size'] else '- Market Size: Not available'}
+{'- Growth Rate: ' + str(market_info['growth_rate']) if market_info['growth_rate'] else '- Growth Rate: Not available'}
+
+2. Key Competitors:
+{chr(10).join(['- ' + comp for comp in market_info['competitors'][:5]]) if market_info['competitors'] else '- No specific competitors identified'}
+
+3. Market Trends:
+{chr(10).join(['- ' + trend for trend in market_info['market_trends'][:3]]) if market_info['market_trends'] else '- No specific trends identified'}
+
+4. Key Findings:
+{chr(10).join(['- ' + finding['snippet'][:200] + '...' for finding in market_info['key_findings'][:3]])}
+
+5. Industry Insights:
+{chr(10).join(['- ' + insight[:200] + '...' for insight in market_info['industry_insights'][:2]]) if market_info['industry_insights'] else '- No additional insights available'}
+"""
+    return analysis
+
+def main():
+    while True:
+        query = input("\nEnter a market or industry to analyze (or 'quit' to exit): ").strip()
+        if query.lower() == 'quit':
+            break
+        
+        print(f"\nAnalyzing market for: {query}")
+        print("Fetching data...")
+        
+        try:
+            # Get market data
+            market_info = get_serp_data(query)
+            
+            # Generate and print analysis
+            analysis = generate_market_analysis(market_info)
+            print("\n" + "="*50)
+            print(analysis)
+            print("="*50)
+            
+            # Save results to file
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            filename = f"market_analysis_{query}_{timestamp}.json"
+            with open(filename, 'w') as f:
+                json.dump(market_info, f, indent=2)
+            print(f"\nDetailed results saved to {filename}")
+            
+        except Exception as e:
+            print(f"Error during analysis: {e}")
+
+if __name__ == "__main__":
+    main()
