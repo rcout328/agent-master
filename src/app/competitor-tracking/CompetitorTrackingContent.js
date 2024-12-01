@@ -10,7 +10,8 @@ export default function CompetitorTrackingContent() {
     main_competitors: [],
     market_share_data: [],
     competitor_strengths: [],
-    key_findings: []
+    key_findings: [],
+    sources: []
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -57,6 +58,10 @@ export default function CompetitorTrackingContent() {
         setCurrentPhase(5);
         setApiResponse(prev => ({ ...prev, key_findings: data.key_findings }));
       }
+      if (data.sources?.length) {
+        setCurrentPhase(6);
+        setApiResponse(prev => ({ ...prev, sources: data.sources }));
+      }
     } catch (error) {
       console.error('Error:', error);
       setError('Failed to get data. Please try again.');
@@ -71,7 +76,9 @@ export default function CompetitorTrackingContent() {
       'Finding Competitors',
       'Analyzing Market Share',
       'Identifying Strengths',
-      'Gathering Insights'
+      'Gathering Insights',
+      'Data Sources',
+      'Citation Note'
     ];
 
     return (
@@ -102,17 +109,15 @@ export default function CompetitorTrackingContent() {
   const renderApiResponse = (data) => {
     if (!data) return null;
 
-    const { main_competitors, market_share_data, competitor_strengths, key_findings } = data;
-
     return (
       <div className="space-y-6">
         {/* Main Competitors */}
         <div>
           <h3 className="text-lg font-semibold text-purple-400 mb-2">Top Competitors</h3>
           <div className="bg-[#2D2D2F] p-4 rounded-xl">
-            {main_competitors.length > 0 ? (
+            {data.main_competitors.length > 0 ? (
               <ul className="space-y-2">
-                {main_competitors.slice(0, 5).map((competitor, index) => (
+                {data.main_competitors.slice(0, 5).map((competitor, index) => (
                   <li key={index} className="text-gray-300">{competitor}</li>
                 ))}
               </ul>
@@ -126,9 +131,9 @@ export default function CompetitorTrackingContent() {
         <div>
           <h3 className="text-lg font-semibold text-purple-400 mb-2">Market Share Data</h3>
           <div className="bg-[#2D2D2F] p-4 rounded-xl">
-            {market_share_data.length > 0 ? (
+            {data.market_share_data.length > 0 ? (
               <ul className="space-y-2">
-                {market_share_data.map((item, index) => (
+                {data.market_share_data.map((item, index) => (
                   <li key={index} className="text-gray-300">
                     {item.competitor}: {item.share}%
                   </li>
@@ -144,9 +149,9 @@ export default function CompetitorTrackingContent() {
         <div>
           <h3 className="text-lg font-semibold text-purple-400 mb-2">Competitor Strengths</h3>
           <div className="bg-[#2D2D2F] p-4 rounded-xl">
-            {competitor_strengths.length > 0 ? (
+            {data.competitor_strengths.length > 0 ? (
               <ul className="space-y-2">
-                {competitor_strengths.map((strength, index) => (
+                {data.competitor_strengths.map((strength, index) => (
                   <li key={index} className="text-gray-300">{strength}</li>
                 ))}
               </ul>
@@ -160,8 +165,8 @@ export default function CompetitorTrackingContent() {
         <div>
           <h3 className="text-lg font-semibold text-purple-400 mb-2">Key Findings</h3>
           <div className="space-y-3">
-            {key_findings.length > 0 ? (
-              key_findings.map((finding, index) => (
+            {data.key_findings.length > 0 ? (
+              data.key_findings.map((finding, index) => (
                 <div key={index} className="bg-[#2D2D2F] p-4 rounded-xl">
                   <h4 className="font-medium text-white">{finding.title}</h4>
                   <p className="text-gray-400 mt-1">{finding.snippet}</p>
@@ -176,6 +181,49 @@ export default function CompetitorTrackingContent() {
             )}
           </div>
         </div>
+
+        {/* Sources Section */}
+        {data.sources && data.sources.length > 0 && (
+          <div>
+            <h3 className="text-lg font-semibold text-purple-400 mb-2">Data Sources</h3>
+            <div className="bg-[#2D2D2F] p-4 rounded-xl">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {data.sources.map((source, index) => (
+                  <div key={index} className="flex items-start space-x-3">
+                    <div className="flex-shrink-0 w-8 h-8 bg-purple-500/10 rounded-full flex items-center justify-center">
+                      <span className="text-purple-400 text-sm">{index + 1}</span>
+                    </div>
+                    <div className="flex-grow">
+                      <div className="flex justify-between items-start">
+                        <a 
+                          href={source.url} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="text-purple-400 hover:text-purple-300 transition-colors"
+                        >
+                          {source.domain}
+                        </a>
+                        <span className="text-xs text-gray-500 ml-2">
+                          {source.section}
+                        </span>
+                      </div>
+                      <p className="text-gray-400 text-sm mt-1">
+                        Accessed: {source.date}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Citation Note */}
+        {data.sources && data.sources.length > 0 && (
+          <div className="text-sm text-gray-400 mt-4">
+            <p>* Data compiled from {data.sources.length} trusted sources</p>
+          </div>
+        )}
       </div>
     );
   };

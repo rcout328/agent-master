@@ -29,7 +29,7 @@ CORS(app)
 logging.basicConfig(level=logging.DEBUG)
 
 # Initialize Firecrawl
-FIRECRAWL_API_KEY = "fc-b936b2eb6a3f4d2aaba86486180d41f1"
+FIRECRAWL_API_KEY = "fc-c8fb95d8db884bd38ce266a30b0d11b4"
 firecrawl_app = FirecrawlApp(api_key=FIRECRAWL_API_KEY)
 logging.info("Firecrawl initialized")
 
@@ -38,7 +38,7 @@ if GEMINI_AVAILABLE:
     GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY', '')
     if GOOGLE_API_KEY:
         genai.configure(api_key=GOOGLE_API_KEY)
-        model = genai.GenerativeModel('gemini-1.5-pro')
+        model = genai.GenerativeModel('gemini-1.5-flash')
         logging.info("Gemini initialized")
     else:
         logging.warning("No Gemini API key found")
@@ -47,7 +47,15 @@ def get_feature_data(business_query):
     """
     Get feature priority data using search and Firecrawl
     """
-    logging.info(f"\n{'='*50}\nGathering feature priority data for: {business_query}\n{'='*50}")
+    logging.info(f"\n{'='*50}\nGathering feature data for: {business_query}\n{'='*50}")
+    
+    result = {
+        "social_impact": [],
+        "economic_impact": [],
+        "environmental_impact": [],
+        "implementation_priority": [],
+        "sources": []
+    }
     
     search_queries = [
         f"{business_query} product features analysis",
@@ -58,33 +66,51 @@ def get_feature_data(business_query):
     ]
     
     scraped_content = []
+    max_attempts = 2  # Limit number of attempts per query
     
     for query in search_queries:
         try:
             logging.info(f"\nSearching for: {query}")
-            for url in search(query, num=2, stop=2, pause=2.0):
+            search_results = list(search(query, lang="en", num_results=2))
+            attempts = 0
+            
+            for url in search_results:
+                if attempts >= max_attempts:
+                    break
+                    
                 if not any(x in url.lower() for x in ['linkedin', 'facebook', 'twitter']):
                     try:
                         logging.info(f"Scraping: {url}")
                         response = firecrawl_app.scrape_url(
                             url=url,
-                            params={
-                                'formats': ['markdown']
-                            }
+                            params={'formats': ['markdown']}
                         )
                         
                         if response and 'markdown' in response:
                             content = response['markdown']
                             if len(content) > 200:
                                 logging.info("Successfully scraped content")
-                                logging.info(f"Content preview:\n{content[:200]}...\n")
                                 scraped_content.append({
                                     'url': url,
-                                    'content': content
+                                    'domain': extract_domain(url),
+                                    'section': 'Feature Analysis',
+                                    'date': datetime.now().strftime("%Y-%m-%d"),
+                                    'content': content[:1000]  # Limit content size
                                 })
                                 break
                     except Exception as e:
-                        logging.error(f"Error scraping {url}: {str(e)}")
+                        if "402" in str(e):  # Credit limit error
+                            logging.warning(f"Firecrawl credit limit reached for {url}")
+                            scraped_content.append({
+                                'url': url,
+                                'domain': extract_domain(url),
+                                'section': 'Feature Analysis (Limited)',
+                                'date': datetime.now().strftime("%Y-%m-%d"),
+                                'content': f"Content from {extract_domain(url)} about {business_query}'s features"
+                            })
+                        else:
+                            logging.error(f"Error scraping {url}: {str(e)}")
+                        attempts += 1
                         continue
             
             time.sleep(2)
@@ -93,81 +119,86 @@ def get_feature_data(business_query):
             logging.error(f"Error in search: {str(e)}")
             continue
     
+    # Add sources to result
+    result["sources"] = [{
+        'url': item['url'],
+        'domain': item['domain'],
+        'section': item['section'],
+        'date': item['date']
+    } for item in scraped_content]
+    
+    # Generate feature analysis using scraped content
     if scraped_content:
-        logging.info("\nPreparing Gemini analysis")
-        
-        prompt = f"""
-        Analyze this content about {business_query} and create a detailed feature priority analysis.
-        
-        Content to analyze:
-        {json.dumps(scraped_content, indent=2)}
-        
-        Provide a structured analysis with these exact sections:
-
-        SOCIAL IMPACT:
-        1. Community Benefits:
-           - List positive community impacts
-        2. Employment Impact:
-           - List job creation effects
-        3. Social Value:
-           - List societal benefits
-        4. Stakeholder Benefits:
-           - List key stakeholder advantages
-
-        ECONOMIC IMPACT:
-        1. Revenue Potential:
-           - List revenue generation opportunities
-        2. Market Growth:
-           - List market expansion possibilities
-        3. Cost Efficiency:
-           - List cost saving opportunities
-        4. ROI Metrics:
-           - List key performance indicators
-
-        ENVIRONMENTAL IMPACT:
-        1. Sustainability:
-           - List environmental benefits
-        2. Resource Usage:
-           - List resource optimization
-        3. Green Initiatives:
-           - List eco-friendly features
-        4. Carbon Footprint:
-           - List emission reduction potential
-
-        IMPLEMENTATION PRIORITY:
-        1. Timeline:
-           - List implementation phases
-        2. Resource Needs:
-           - List required resources
-        3. Risk Factors:
-           - List potential challenges
-        4. Success Metrics:
-           - List measurement criteria
-
-        Use only factual information from the content. If making logical inferences, mark them with (Inferred).
-        Format each point as a clear, actionable item.
-        """
-        
         try:
+            prompt = f"""
+            Analyze this content about {business_query}'s features and create a detailed priority analysis.
+            
+            Content to analyze:
+            {[item['content'] for item in scraped_content]}
+            
+            Provide a structured analysis with these exact sections:
+
+            SOCIAL IMPACT:
+            • Community Benefits:
+              - List positive community impacts
+            • Employment Impact:
+              - List job creation effects
+            • Social Value:
+              - List societal benefits
+
+            ECONOMIC IMPACT:
+            • Revenue Potential:
+              - List revenue opportunities
+            • Market Growth:
+              - List expansion possibilities
+            • Cost Benefits:
+              - List efficiency gains
+
+            ENVIRONMENTAL IMPACT:
+            • Sustainability:
+              - List green initiatives
+            • Resource Usage:
+              - List optimization measures
+            • Environmental Benefits:
+              - List positive impacts
+
+            IMPLEMENTATION PRIORITY:
+            • Timeline:
+              - List implementation phases
+            • Resources:
+              - List required resources
+            • Success Metrics:
+              - List key indicators
+
+            Use factual information where available, mark inferences with (Inferred).
+            Format each point as a clear, actionable item.
+            """
+            
             response = model.generate_content(prompt)
             analysis = response.text
             
-            logging.info("\nGemini Analysis Received:")
-            logging.info(f"\n{analysis}\n")
+            # Extract sections
+            result["social_impact"] = extract_section(analysis, "SOCIAL IMPACT")
+            result["economic_impact"] = extract_section(analysis, "ECONOMIC IMPACT")
+            result["environmental_impact"] = extract_section(analysis, "ENVIRONMENTAL IMPACT")
+            result["implementation_priority"] = extract_section(analysis, "IMPLEMENTATION PRIORITY")
             
-            return {
-                "social_impact": extract_section(analysis, "SOCIAL IMPACT"),
-                "economic_impact": extract_section(analysis, "ECONOMIC IMPACT"),
-                "environmental_impact": extract_section(analysis, "ENVIRONMENTAL IMPACT"),
-                "implementation_priority": extract_section(analysis, "IMPLEMENTATION PRIORITY"),
-                "sources": [{'url': item['url']} for item in scraped_content]
-            }
+            return result
             
         except Exception as e:
-            logging.error(f"Error in Gemini analysis: {str(e)}")
+            logging.error(f"Error generating analysis: {str(e)}")
             return generate_fallback_response(business_query)
     
     return generate_fallback_response(business_query)
+
+def extract_domain(url):
+    """Extract domain name from URL"""
+    try:
+        from urllib.parse import urlparse
+        domain = urlparse(url).netloc
+        return domain.replace('www.', '')
+    except:
+        return url
 
 def extract_section(text, section_name):
     """Extract content from a specific section"""

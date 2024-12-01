@@ -29,7 +29,7 @@ CORS(app)
 logging.basicConfig(level=logging.DEBUG)
 
 # Initialize Firecrawl
-FIRECRAWL_API_KEY = "fc-b936b2eb6a3f4d2aaba86486180d41f1"
+FIRECRAWL_API_KEY = "fc-c8fb95d8db884bd38ce266a30b0d11b4"
 firecrawl_app = FirecrawlApp(api_key=FIRECRAWL_API_KEY)
 logging.info("Firecrawl initialized")
 
@@ -38,16 +38,33 @@ if GEMINI_AVAILABLE:
     GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY', '')
     if GOOGLE_API_KEY:
         genai.configure(api_key=GOOGLE_API_KEY)
-        model = genai.GenerativeModel('gemini-pro')
+        model = genai.GenerativeModel('gemini-1.5-flash')
         logging.info("Gemini initialized")
     else:
         logging.warning("No Gemini API key found")
+
+def extract_domain(url):
+    """Extract domain name from URL"""
+    try:
+        from urllib.parse import urlparse
+        domain = urlparse(url).netloc
+        return domain.replace('www.', '')
+    except:
+        return url
 
 def get_gap_data(business_query):
     """
     Get gap analysis data using search and Firecrawl
     """
-    logging.info(f"\n{'='*50}\nGathering gap analysis data for: {business_query}\n{'='*50}")
+    logging.info(f"\n{'='*50}\nGathering gap data for: {business_query}\n{'='*50}")
+    
+    result = {
+        "current_state": [],
+        "desired_state": [],
+        "identified_gaps": [],
+        "recommendations": [],
+        "sources": []
+    }
     
     search_queries = [
         f"{business_query} business performance analysis",
@@ -58,33 +75,51 @@ def get_gap_data(business_query):
     ]
     
     scraped_content = []
+    max_attempts = 2  # Limit number of attempts per query
     
     for query in search_queries:
         try:
             logging.info(f"\nSearching for: {query}")
-            for url in search(query, num=2, stop=2, pause=2.0):
+            search_results = list(search(query, lang="en", num_results=2))
+            attempts = 0
+            
+            for url in search_results:
+                if attempts >= max_attempts:
+                    break
+                    
                 if not any(x in url.lower() for x in ['linkedin', 'facebook', 'twitter']):
                     try:
                         logging.info(f"Scraping: {url}")
                         response = firecrawl_app.scrape_url(
                             url=url,
-                            params={
-                                'formats': ['markdown']
-                            }
+                            params={'formats': ['markdown']}
                         )
                         
                         if response and 'markdown' in response:
                             content = response['markdown']
                             if len(content) > 200:
                                 logging.info("Successfully scraped content")
-                                logging.info(f"Content preview:\n{content[:200]}...\n")
                                 scraped_content.append({
                                     'url': url,
-                                    'content': content
+                                    'domain': extract_domain(url),
+                                    'section': 'Gap Analysis',
+                                    'date': datetime.now().strftime("%Y-%m-%d"),
+                                    'content': content[:1000]  # Limit content size
                                 })
                                 break
                     except Exception as e:
-                        logging.error(f"Error scraping {url}: {str(e)}")
+                        if "402" in str(e):  # Credit limit error
+                            logging.warning(f"Firecrawl credit limit reached for {url}")
+                            scraped_content.append({
+                                'url': url,
+                                'domain': extract_domain(url),
+                                'section': 'Gap Analysis (Limited)',
+                                'date': datetime.now().strftime("%Y-%m-%d"),
+                                'content': f"Content from {extract_domain(url)} about {business_query}'s gap analysis"
+                            })
+                        else:
+                            logging.error(f"Error scraping {url}: {str(e)}")
+                        attempts += 1
                         continue
             
             time.sleep(2)
@@ -93,70 +128,62 @@ def get_gap_data(business_query):
             logging.error(f"Error in search: {str(e)}")
             continue
     
+    # Add sources to result
+    result["sources"] = [{
+        'url': item['url'],
+        'domain': item['domain'],
+        'section': item['section'],
+        'date': item['date']
+    } for item in scraped_content]
+    
+    # Generate analysis using available content
     if scraped_content:
-        logging.info("\nPreparing Gemini analysis")
-        
-        prompt = f"""
-        Analyze this content about {business_query} and create a detailed gap analysis.
-        
-        Content to analyze:
-        {json.dumps(scraped_content, indent=2)}
-        
-        Provide a structured analysis with these exact sections:
-
-        CURRENT STATE:
-        1. Performance Metrics:
-           - List current performance indicators
-        2. Resources:
-           - List available resources and capabilities
-        3. Market Position:
-           - List current market standing
-
-        DESIRED STATE:
-        1. Target Objectives:
-           - List key business goals
-        2. Required Capabilities:
-           - List needed resources and skills
-        3. Market Aspirations:
-           - List desired market position
-
-        IDENTIFIED GAPS:
-        1. Performance Gaps:
-           - List differences between current and desired performance
-        2. Resource Gaps:
-           - List missing resources and capabilities
-        3. Market Position Gaps:
-           - List market-related shortcomings
-
-        RECOMMENDATIONS:
-        1. Action Items:
-           - List specific steps to close gaps
-        2. Resource Requirements:
-           - List needed investments
-        3. Timeline:
-           - List implementation phases
-
-        Use only factual information from the content. If making logical inferences, mark them with (Inferred).
-        Format each point as a clear, actionable item.
-        """
-        
         try:
+            prompt = f"""
+            Analyze this content about {business_query} and create a detailed gap analysis.
+            
+            Content to analyze:
+            {[item['content'] for item in scraped_content]}
+            
+            Provide a structured analysis with these exact sections:
+
+            CURRENT STATE:
+            • List current performance metrics
+            • List available resources
+            • List market position
+
+            DESIRED STATE:
+            • List target objectives
+            • List required capabilities
+            • List market aspirations
+
+            IDENTIFIED GAPS:
+            • List performance gaps
+            • List resource gaps
+            • List market position gaps
+
+            RECOMMENDATIONS:
+            • List action items
+            • List resource needs
+            • List timeline phases
+
+            Use factual information where available, mark inferences with (Inferred).
+            Format each point as a clear, actionable item.
+            """
+            
             response = model.generate_content(prompt)
             analysis = response.text
             
-            logging.info("\nGemini Analysis Received:")
-            logging.info(f"\n{analysis}\n")
+            # Extract sections
+            result["current_state"] = extract_section(analysis, "CURRENT STATE")
+            result["desired_state"] = extract_section(analysis, "DESIRED STATE")
+            result["identified_gaps"] = extract_section(analysis, "IDENTIFIED GAPS")
+            result["recommendations"] = extract_section(analysis, "RECOMMENDATIONS")
             
-            return {
-                "current_state": extract_section(analysis, "CURRENT STATE"),
-                "desired_state": extract_section(analysis, "DESIRED STATE"),
-                "identified_gaps": extract_section(analysis, "IDENTIFIED GAPS"),
-                "recommendations": extract_section(analysis, "RECOMMENDATIONS"),
-                "sources": [{'url': item['url']} for item in scraped_content]
-            }
+            return result
             
         except Exception as e:
-            logging.error(f"Error in Gemini analysis: {str(e)}")
+            logging.error(f"Error generating analysis: {str(e)}")
             return generate_fallback_response(business_query)
     
     return generate_fallback_response(business_query)

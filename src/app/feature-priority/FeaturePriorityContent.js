@@ -60,6 +60,10 @@ export default function FeaturePriorityContent() {
         setCurrentPhase(5);
         setFeatureAnalysis(prev => ({ ...prev, implementation_priority: data.implementation_priority }));
       }
+      if (data.sources?.length) {
+        setCurrentPhase(6);
+        setFeatureAnalysis(prev => ({ ...prev, sources: data.sources }));
+      }
       
       localStorage.setItem(`featureAnalysis_${userInput}`, JSON.stringify(data));
 
@@ -92,13 +96,56 @@ export default function FeaturePriorityContent() {
     );
   };
 
+  const renderSourcesSection = (sources) => {
+    if (!sources || sources.length === 0) return null;
+
+    return (
+      <div className="mb-6">
+        <h3 className="text-lg font-semibold text-purple-400 mb-2">Data Sources</h3>
+        <div className="bg-[#2D2D2F] p-4 rounded-xl">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {sources.map((source, index) => (
+              <div key={index} className="flex items-start space-x-3">
+                <div className="flex-shrink-0 w-8 h-8 bg-purple-500/10 rounded-full flex items-center justify-center">
+                  <span className="text-purple-400 text-sm">{index + 1}</span>
+                </div>
+                <div className="flex-grow">
+                  <div className="flex justify-between items-start">
+                    <a 
+                      href={source.url} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-purple-400 hover:text-purple-300 transition-colors"
+                    >
+                      {source.domain || new URL(source.url).hostname.replace('www.', '')}
+                    </a>
+                    <span className="text-xs text-gray-500 ml-2">
+                      {source.section || 'Feature Analysis'}
+                    </span>
+                  </div>
+                  <p className="text-gray-400 text-sm mt-1">
+                    Accessed: {source.date || new Date().toLocaleDateString()}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="text-sm text-gray-400 mt-2">
+          * Data compiled from {sources.length} trusted sources
+        </div>
+      </div>
+    );
+  };
+
   const renderPhaseStatus = () => {
     const phases = [
       'Starting Analysis',
       'Social Impact',
       'Economic Impact',
       'Environmental Impact',
-      'Implementation Priority'
+      'Implementation Priority',
+      'Data Sources'
     ];
 
     return (
@@ -200,15 +247,42 @@ export default function FeaturePriorityContent() {
                 {renderFeatureSection("Environmental Impact", featureAnalysis.environmental_impact)}
                 {renderFeatureSection("Implementation Priority", featureAnalysis.implementation_priority)}
                 
-                {/* Sources */}
-                {featureAnalysis.sources.length > 0 && (
-                  <div className="mt-4 text-sm text-gray-400">
-                    <h4 className="font-semibold mb-2">Sources:</h4>
-                    <ul className="space-y-1">
-                      {featureAnalysis.sources.map((source, index) => (
-                        <li key={index}>{source.url}</li>
-                      ))}
-                    </ul>
+                {/* Sources Section */}
+                {featureAnalysis.sources && featureAnalysis.sources.length > 0 && (
+                  <div className="mb-6">
+                    <h3 className="text-lg font-semibold text-purple-400 mb-2">Data Sources</h3>
+                    <div className="bg-[#2D2D2F] p-4 rounded-xl">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {featureAnalysis.sources.map((source, index) => (
+                          <div key={index} className="flex items-start space-x-3">
+                            <div className="flex-shrink-0 w-8 h-8 bg-purple-500/10 rounded-full flex items-center justify-center">
+                              <span className="text-purple-400 text-sm">{index + 1}</span>
+                            </div>
+                            <div className="flex-grow">
+                              <div className="flex justify-between items-start">
+                                <a 
+                                  href={source.url} 
+                                  target="_blank" 
+                                  rel="noopener noreferrer"
+                                  className="text-purple-400 hover:text-purple-300 transition-colors"
+                                >
+                                  {source.domain || new URL(source.url).hostname.replace('www.', '')}
+                                </a>
+                                <span className="text-xs text-gray-500 ml-2">
+                                  {source.section || 'Feature Analysis'}
+                                </span>
+                              </div>
+                              <p className="text-gray-400 text-sm mt-1">
+                                Accessed: {source.date || new Date().toLocaleDateString()}
+                              </p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="text-sm text-gray-400 mt-2">
+                      * Data compiled from {featureAnalysis.sources.length} trusted sources
+                    </div>
                   </div>
                 )}
               </div>

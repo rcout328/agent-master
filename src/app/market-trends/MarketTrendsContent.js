@@ -333,6 +333,44 @@ For each section, include specific numbers, percentages, and actionable insights
                 </ul>
               </div>
             </div>
+
+            {/* Sources Section */}
+            {data.sources && data.sources.length > 0 && (
+              <div>
+                <h3 className="text-lg font-semibold text-purple-400 mb-2">Data Sources</h3>
+                <div className="bg-[#2D2D2F] p-4 rounded-xl">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {data.sources.map((source, index) => (
+                      <div key={index} className="flex items-start space-x-3">
+                        <div className="flex-shrink-0 w-8 h-8 bg-purple-500/10 rounded-full flex items-center justify-center">
+                          <span className="text-purple-400 text-sm">{index + 1}</span>
+                        </div>
+                        <div className="flex-grow">
+                          <a 
+                            href={source.url} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="text-purple-400 hover:text-purple-300 transition-colors"
+                          >
+                            {source.domain}
+                          </a>
+                          <p className="text-gray-400 text-sm mt-1">
+                            Accessed: {source.date}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Citation Note */}
+            {data.sources && data.sources.length > 0 && (
+              <div className="text-sm text-gray-400 mt-4">
+                <p>* Data compiled from {data.sources.length} trusted sources</p>
+              </div>
+            )}
           </>
         )}
       </div>

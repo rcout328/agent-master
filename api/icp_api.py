@@ -29,7 +29,7 @@ CORS(app)
 logging.basicConfig(level=logging.DEBUG)
 
 # Initialize Firecrawl
-FIRECRAWL_API_KEY = "fc-b936b2eb6a3f4d2aaba86486180d41f1"
+FIRECRAWL_API_KEY = "fc-c8fb95d8db884bd38ce266a30b0d11b4"
 firecrawl_app = FirecrawlApp(api_key=FIRECRAWL_API_KEY)
 logging.info("Firecrawl initialized")
 
@@ -43,13 +43,30 @@ if GEMINI_AVAILABLE:
     else:
         logging.warning("No Gemini API key found")
 
+def extract_domain(url):
+    """Extract domain name from URL"""
+    try:
+        from urllib.parse import urlparse
+        domain = urlparse(url).netloc
+        return domain.replace('www.', '')
+    except:
+        return url
+
 def get_icp_data(business_query):
     """
     Get ICP data using search and Firecrawl
     """
     logging.info(f"\n{'='*50}\nGathering ICP data for: {business_query}\n{'='*50}")
     
-    # More specific search queries
+    result = {
+        "demographics": [],
+        "psychographics": [],
+        "professional": [],
+        "pain_points": [],
+        "additional_insights": [],
+        "sources": []
+    }
+    
     search_queries = [
         f"{business_query} customer profile demographics",
         f"{business_query} target market analysis",
@@ -63,26 +80,29 @@ def get_icp_data(business_query):
     for query in search_queries:
         try:
             logging.info(f"\nSearching for: {query}")
-            for url in search(query, num=2, stop=2, pause=2.0):
+            search_results = list(search(query, lang="en", num_results=2))
+            
+            for url in search_results:
                 if not any(x in url.lower() for x in ['linkedin', 'facebook', 'twitter']):
                     try:
                         logging.info(f"Scraping: {url}")
-                        # Fixed Firecrawl request format
                         response = firecrawl_app.scrape_url(
                             url=url,
                             params={
-                                'formats': ['markdown']  # Only use supported parameters
+                                'formats': ['markdown']
                             }
                         )
                         
-                        if response and 'markdown' in response:  # Changed to check for 'markdown' key
-                            content = response['markdown']  # Direct access to markdown content
+                        if response and 'markdown' in response:
+                            content = response['markdown']
                             if len(content) > 200:
                                 logging.info("Successfully scraped content")
                                 logging.info(f"Content preview:\n{content[:200]}...\n")
                                 scraped_content.append({
                                     'url': url,
-                                    'content': content
+                                    'domain': extract_domain(url),
+                                    'section': 'ICP Analysis',
+                                    'date': datetime.now().strftime("%Y-%m-%d")
                                 })
                                 break
                     except Exception as e:

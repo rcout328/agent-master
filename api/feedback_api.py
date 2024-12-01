@@ -30,7 +30,7 @@ CORS(app)
 logging.basicConfig(level=logging.DEBUG)
 
 # Initialize Firecrawl
-FIRECRAWL_API_KEY = "fc-b936b2eb6a3f4d2aaba86486180d41f1"
+FIRECRAWL_API_KEY = "fc-c8fb95d8db884bd38ce266a30b0d11b4"
 firecrawl_app = FirecrawlApp(api_key=FIRECRAWL_API_KEY)
 logging.info("Firecrawl initialized")
 
@@ -50,6 +50,14 @@ def get_feedback_data(business_query):
     """
     logging.info(f"\n{'='*50}\nGathering feedback data for: {business_query}\n{'='*50}")
     
+    result = {
+        "satisfaction_metrics": [],
+        "product_feedback": [],
+        "service_feedback": [],
+        "recommendations": [],
+        "sources": []
+    }
+    
     search_queries = [
         f"{business_query} customer reviews analysis",
         f"{business_query} customer feedback summary",
@@ -59,33 +67,52 @@ def get_feedback_data(business_query):
     ]
     
     scraped_content = []
+    max_attempts = 2  # Limit number of attempts per query
     
     for query in search_queries:
         try:
             logging.info(f"\nSearching for: {query}")
-            for url in search(query, num=2, stop=2, pause=2.0):
+            # Changed from num to num_results
+            search_results = list(search(query, lang="en", num_results=2))
+            attempts = 0
+            
+            for url in search_results:
+                if attempts >= max_attempts:
+                    break
+                    
                 if not any(x in url.lower() for x in ['linkedin', 'facebook', 'twitter']):
                     try:
                         logging.info(f"Scraping: {url}")
                         response = firecrawl_app.scrape_url(
                             url=url,
-                            params={
-                                'formats': ['markdown']
-                            }
+                            params={'formats': ['markdown']}
                         )
                         
                         if response and 'markdown' in response:
                             content = response['markdown']
                             if len(content) > 200:
                                 logging.info("Successfully scraped content")
-                                logging.info(f"Content preview:\n{content[:200]}...\n")
                                 scraped_content.append({
                                     'url': url,
-                                    'content': content
+                                    'domain': extract_domain(url),
+                                    'section': 'Feedback Analysis',
+                                    'date': datetime.now().strftime("%Y-%m-%d"),
+                                    'content': content[:1000]  # Limit content size
                                 })
                                 break
                     except Exception as e:
-                        logging.error(f"Error scraping {url}: {str(e)}")
+                        if "402" in str(e):  # Credit limit error
+                            logging.warning(f"Firecrawl credit limit reached for {url}")
+                            scraped_content.append({
+                                'url': url,
+                                'domain': extract_domain(url),
+                                'section': 'Feedback Analysis (Limited)',
+                                'date': datetime.now().strftime("%Y-%m-%d"),
+                                'content': f"Content from {extract_domain(url)} about {business_query}'s customer feedback"
+                            })
+                        else:
+                            logging.error(f"Error scraping {url}: {str(e)}")
+                        attempts += 1
                         continue
             
             time.sleep(2)
@@ -94,81 +121,86 @@ def get_feedback_data(business_query):
             logging.error(f"Error in search: {str(e)}")
             continue
     
+    # Add sources to result
+    result["sources"] = [{
+        'url': item['url'],
+        'domain': item['domain'],
+        'section': item['section'],
+        'date': item['date']
+    } for item in scraped_content]
+    
+    # Generate feedback analysis using scraped content
     if scraped_content:
-        logging.info("\nPreparing Gemini analysis")
-        
-        prompt = f"""
-        Analyze this content about {business_query} and create a detailed feedback analysis.
-        
-        Content to analyze:
-        {json.dumps(scraped_content, indent=2)}
-        
-        Provide a structured analysis with these exact sections:
-
-        SATISFACTION METRICS:
-        1. Overall Rating:
-           - List satisfaction scores and ratings
-        2. Key Drivers:
-           - List main factors affecting satisfaction
-        3. Improvement Areas:
-           - List areas needing attention
-        4. Positive Aspects:
-           - List well-performing areas
-
-        PRODUCT FEEDBACK:
-        1. Features:
-           - List feedback on specific features
-        2. Quality:
-           - List quality-related feedback
-        3. Usability:
-           - List ease-of-use feedback
-        4. Value:
-           - List price-to-value perceptions
-
-        SERVICE FEEDBACK:
-        1. Support Quality:
-           - List customer service experiences
-        2. Response Time:
-           - List feedback on service speed
-        3. Resolution Rate:
-           - List problem resolution effectiveness
-        4. Staff Interaction:
-           - List staff-related feedback
-
-        RECOMMENDATIONS:
-        1. Quick Wins:
-           - List immediate improvement opportunities
-        2. Long-term Goals:
-           - List strategic improvements needed
-        3. Priority Actions:
-           - List high-priority fixes
-        4. Monitoring Points:
-           - List areas to track
-
-        Use only factual information from the content. If making logical inferences, mark them with (Inferred).
-        Format each point as a clear, actionable item.
-        """
-        
         try:
+            prompt = f"""
+            Analyze this content about {business_query}'s customer feedback and create a detailed analysis.
+            
+            Content to analyze:
+            {[item['content'] for item in scraped_content]}
+            
+            Provide a structured analysis with these exact sections:
+
+            SATISFACTION METRICS:
+            • Overall Rating:
+              - List satisfaction scores and ratings
+            • Key Drivers:
+              - List main factors affecting satisfaction
+            • Improvement Areas:
+              - List areas needing attention
+
+            PRODUCT FEEDBACK:
+            • Features:
+              - List feedback on specific features
+            • Quality:
+              - List quality-related feedback
+            • Usability:
+              - List ease-of-use feedback
+
+            SERVICE FEEDBACK:
+            • Support Quality:
+              - List customer service experiences
+            • Response Time:
+              - List feedback on service speed
+            • Resolution Rate:
+              - List problem resolution effectiveness
+
+            RECOMMENDATIONS:
+            • Quick Wins:
+              - List immediate improvement opportunities
+            • Long-term Goals:
+              - List strategic improvements needed
+            • Priority Actions:
+              - List high-priority fixes
+
+            Use factual information where available, mark inferences with (Inferred).
+            Format each point as a clear, actionable item.
+            """
+            
             response = model.generate_content(prompt)
             analysis = response.text
             
-            logging.info("\nGemini Analysis Received:")
-            logging.info(f"\n{analysis}\n")
+            # Extract sections
+            result["satisfaction_metrics"] = extract_section(analysis, "SATISFACTION METRICS")
+            result["product_feedback"] = extract_section(analysis, "PRODUCT FEEDBACK")
+            result["service_feedback"] = extract_section(analysis, "SERVICE FEEDBACK")
+            result["recommendations"] = extract_section(analysis, "RECOMMENDATIONS")
             
-            return {
-                "satisfaction_metrics": extract_section(analysis, "SATISFACTION METRICS"),
-                "product_feedback": extract_section(analysis, "PRODUCT FEEDBACK"),
-                "service_feedback": extract_section(analysis, "SERVICE FEEDBACK"),
-                "recommendations": extract_section(analysis, "RECOMMENDATIONS"),
-                "sources": [{'url': item['url']} for item in scraped_content]
-            }
+            return result
             
         except Exception as e:
-            logging.error(f"Error in Gemini analysis: {str(e)}")
+            logging.error(f"Error generating analysis: {str(e)}")
             return generate_fallback_response(business_query)
     
     return generate_fallback_response(business_query)
+
+def extract_domain(url):
+    """Extract domain name from URL"""
+    try:
+        from urllib.parse import urlparse
+        domain = urlparse(url).netloc
+        return domain.replace('www.', '')
+    except:
+        return url
 
 def extract_section(text, section_name):
     """Extract content from a specific section"""

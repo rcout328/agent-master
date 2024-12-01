@@ -13,15 +13,17 @@ CORS(app)
 logging.basicConfig(level=logging.DEBUG)
 
 # Initialize Firecrawl and Gemini
-FIRECRAWL_API_KEY = "fc-b936b2eb6a3f4d2aaba86486180d41f1"
+FIRECRAWL_API_KEY = "fc-c8fb95d8db884bd38ce266a30b0d11b4"
 firecrawl_app = FirecrawlApp(api_key=FIRECRAWL_API_KEY)
 logging.info("Firecrawl initialized")
 
 GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY', '')
 if GOOGLE_API_KEY:
     genai.configure(api_key=GOOGLE_API_KEY)
-    model = genai.GenerativeModel('gemini-')
+    model = genai.GenerativeModel('gemini-1.5-flash')
     logging.info("Gemini initialized")
+else:
+    logging.warning("No Gemini API key found")
 
 def get_competitor_data(query):
     """

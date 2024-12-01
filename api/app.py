@@ -14,7 +14,7 @@ CORS(app)
 logging.basicConfig(level=logging.DEBUG)
 
 # Initialize Firecrawl
-FIRECRAWL_API_KEY = "fc-b936b2eb6a3f4d2aaba86486180d41f1"
+FIRECRAWL_API_KEY = "fc-c8fb95d8db884bd38ce266a30b0d11b4"
 firecrawl_app = FirecrawlApp(api_key=FIRECRAWL_API_KEY)
 logging.info("Firecrawl initialized")
 
@@ -25,6 +25,8 @@ def get_google_data(query):
     logging.info(f"\n{'='*50}\nFetching data for query: {query}\n{'='*50}")
     
     search_results = []
+    sources = []
+    
     try:
         # Perform Google search
         logging.info("\nSearching Google for relevant URLs...")
@@ -44,6 +46,12 @@ def get_google_data(query):
                         logging.info("Successfully scraped content")
                         logging.info(f"Content preview:\n{content[:200]}...\n")
                         
+                        sources.append({
+                            'url': url,
+                            'domain': extract_source(url),
+                            'date': datetime.now().strftime("%Y-%m-%d")
+                        })
+                        
                         search_results.append({
                             'title': extract_title(content),
                             'snippet': content[:500],
@@ -52,7 +60,7 @@ def get_google_data(query):
                             'date': datetime.now().strftime("%Y-%m-%d")
                         })
                         
-                        time.sleep(2)  # Be nice to servers
+                        time.sleep(2)
                         
                 except Exception as e:
                     logging.error(f"Error scraping {url}: {str(e)}")
@@ -63,6 +71,7 @@ def get_google_data(query):
     
     # Extract market information from search results
     market_info = extract_market_info(search_results, query)
+    market_info['sources'] = sources
     
     logging.info("\nData fetching completed")
     logging.info(f"Found {len(search_results)} valid results")

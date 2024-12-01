@@ -63,6 +63,10 @@ export default function ICPCreationContent() {
         setCurrentPhase(5);
         setIcpAnalysis(prev => ({ ...prev, pain_points: data.pain_points }));
       }
+      if (data.sources?.length) {
+        setCurrentPhase(7);
+        setIcpAnalysis(prev => ({ ...prev, sources: data.sources }));
+      }
       
       localStorage.setItem(`icpAnalysis_${userInput}`, JSON.stringify(data));
 
@@ -102,7 +106,9 @@ export default function ICPCreationContent() {
       'Demographics',
       'Psychographics',
       'Professional Profile',
-      'Pain Points'
+      'Pain Points',
+      'Additional Insights',
+      'Data Sources'
     ];
 
     return (
@@ -125,6 +131,49 @@ export default function ICPCreationContent() {
               )}
             </div>
           ))}
+        </div>
+      </div>
+    );
+  };
+
+  // Add to the renderIcpSection function after the existing sections
+  const renderSourcesSection = (sources) => {
+    if (!sources || sources.length === 0) return null;
+
+    return (
+      <div className="mb-6">
+        <h3 className="text-lg font-semibold text-purple-400 mb-2">Data Sources</h3>
+        <div className="bg-[#2D2D2F] p-4 rounded-xl">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {sources.map((source, index) => (
+              <div key={index} className="flex items-start space-x-3">
+                <div className="flex-shrink-0 w-8 h-8 bg-purple-500/10 rounded-full flex items-center justify-center">
+                  <span className="text-purple-400 text-sm">{index + 1}</span>
+                </div>
+                <div className="flex-grow">
+                  <div className="flex justify-between items-start">
+                    <a 
+                      href={source.url} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-purple-400 hover:text-purple-300 transition-colors"
+                    >
+                      {source.domain || new URL(source.url).hostname.replace('www.', '')}
+                    </a>
+                    <span className="text-xs text-gray-500 ml-2">
+                      {source.section || 'ICP Analysis'}
+                    </span>
+                  </div>
+                  <p className="text-gray-400 text-sm mt-1">
+                    Accessed: {source.date || new Date().toLocaleDateString()}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="text-sm text-gray-400 mt-2">
+          * Data compiled from {sources.length} trusted sources
         </div>
       </div>
     );
@@ -217,21 +266,12 @@ export default function ICPCreationContent() {
                 {renderIcpSection("Psychographics", icpAnalysis.psychographics)}
                 {renderIcpSection("Professional Characteristics", icpAnalysis.professional)}
                 {renderIcpSection("Pain Points & Needs", icpAnalysis.pain_points)}
-                {icpAnalysis.additional_insights.length > 0 && (
+                {icpAnalysis.additional_insights?.length > 0 && (
                   renderIcpSection("Additional Insights", icpAnalysis.additional_insights)
                 )}
                 
-                {/* Sources */}
-                {icpAnalysis.sources.length > 0 && (
-                  <div className="mt-4 text-sm text-gray-400">
-                    <h4 className="font-semibold mb-2">Sources:</h4>
-                    <ul className="space-y-1">
-                      {icpAnalysis.sources.map((source, index) => (
-                        <li key={index}>{source.url}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
+                {/* Add Sources Section */}
+                {renderSourcesSection(icpAnalysis.sources)}
               </div>
             )}
           </div>
