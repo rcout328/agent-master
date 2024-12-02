@@ -1,0 +1,723 @@
+URL: https://sell.amazon.in/beginners-guide
+Content:
+[iframe](javascript:void(0))Beginner's Guide: How to Start Selling on Amazon?
+
+![](//fls-eu.amazon.com/1/batch/1/OP/AZ6T3ZSV3UFPM:261-6930706-6080630:FF28R9GQAES0G6F4NK60$uedata=s:%2Frd%2Fuedata%3Fstaticb%26id%3DFF28R9GQAES0G6F4NK60:0)
+
+[Seller Login](https://sellercentral.amazon.in/nss/center?ref_=sdin_soa_login_prenav_nssc&mons_sel_locale=en_IN&initialSessionID=261-6930706-6080630&ld=SDINSOA-BeginnersGuideSDDirect_SDIN_Navreg2_SClogin)
+
+![](https://m.media-amazon.com/images/G/31/amazonservices/Announc.webp)
+
+Just Announced : Now Amazon.in sellers will save more as they sell more. [Explore now](https://sell.amazon.in/fees-and-pricing)
+
+[Amazon Seller](https://sell.amazon.in?ref_=sdin_h_sellerapp&initialSessionID=261-6930706-6080630&ld=SDINSOA-BeginnersGuideSDDirect) \> Beginner's Guide
+
+# How to sell on Amazon.in:   The beginner's guide
+
+Get a detailed start selling guide on everything you need to know about selling on Amazon.in and being a successful seller.
+
+[Start Selling](https://sellercentral.amazon.in/seller/onboarding?passthrough%2Faccount=soa&passthrough%2FsuperSource=OAR&ref_=sdin_soa_nav&passthrough%2FmarketplaceID=A21TJRUUN4KGV&productTier=SILVER&productType=SellOnAmazon&marketplaceId=A21TJRUUN4KGV&passthrough%2FinitialSessionID=261-6930706-6080630&passthrough%2Fld=SDINSOA-BeginnersGuideSDDirect_SDIN_Begiguide_header)
+
+Download the ebook
+
+[Disclaimer](https://sell.amazon.in/beginners-guide/#disclaimer)
+
+[![Sell on Amazon.in](https://m.media-amazon.com/images/G/31/amazonservices/Go_live_selling_fee_drop_KV.webp)](https://sell.amazon.in/fees-and-pricing)
+
+- [Intro](#intro)
+  - [Welcome to selling on Amazon](#soa)
+  - [The Amazon Edge](#edge)
+- [Before you start selling](#before)
+  - [How to register](#register)
+  - [Steps to selling on Amazon](#steps)
+- [Fees and Pricing](#fees)
+- [Seller Central](#sellercentral)
+  - [About Seller Central](#about)
+  - [Amazon Seller App](#sellerapp)
+- [How to list your products](#list)
+  - [Your first product](#firstprod)
+  - [Product details](#proddet)
+- [Delivering your products](#deliver)
+  - [Fulfillment by Amazon](#fba)
+  - [Easy ship](#es)
+  - [Self Ship](#ss)
+- [After the sale](#firstsale)
+  - [Getting your payment](#payment)
+  - [Performance metrics](#perf)
+  - [Customer reviews](#review)
+  - [Becoming a great seller](#gsel)
+- [Growth Opportunities](#growthopp)
+  - [Fulfillment by Amazon](#gfba)
+  - [Sponsored Products](#sp)
+  - [Promotions](#promo)
+  - [Services to grow](#services)
+  - [Manage your business](#manage)
+- [Amazon STEP Program](#step)
+  - [Benefits of STEP](#benefits)
+- [I need help](#help)
+  - [Get Support](#support)
+  - [Support on Facebook](#fb)
+  - [Seller University](#su)
+  - [Service Providers](#spn)
+
+## Introduction to Selling on Amazon.in
+
+### Welcome to selling on Amazon.in
+
+Amazon.in is India's most visited online shopping marketplace in India and more customers than ever rely on Amazon.in for online shopping. With orders from over 100% serviceable pin-codes in India, Amazon.in has become the online destination for small and medium sized enterprises.
+
+![](https://m.media-amazon.com/images/G/01/sp-marketing-toolkit/guides/design/iconography/Mobile_App._CB424651234_.svg)
+
+### Crores of people buy from Amazon.in
+
+![](https://m.media-amazon.com/images/G/01/sp-marketing-toolkit/guides/design/iconography/icon-plus/paid_service_rupee._SL50_FMpng_BL5_.png)
+
+### Secure payments and brand protection
+
+![](https://m.media-amazon.com/images/G/01/sp-marketing-toolkit/guides/design/iconography/icon-plus/global_store.png)
+
+### Expand your reach to 180+ countries with Amazon.in
+
+![](https://m.media-amazon.com/images/G/01/sp-marketing-toolkit/guides/design/iconography/icon-plus/home_services._SL50_FMpng_BL5_.png)
+
+### Services and tools to grow your business
+
+![](https://m.media-amazon.com/images/G/31/amazonservices/QM.webp)
+
+Did you know:
+
+More than 15,000 sellers have become millionaires and over 3500+ sellers have become crorepatis by selling on Amazon.in
+
+### The Amazon edge
+
+When you start selling on Amazon.in, you become part of a retail destination that’s home to sellers of all kinds, from Fortune 500 organizations to artisan vendors who make handcrafted goods. They all sell here for a reason: to reach the crores of customers who visit Amazon to shop.
+
+## How to Start Selling on Amazon?
+
+### How to register as a seller on Amazon.in?
+
+Now before you start selling, you need to have all your details and documents handy. Here is the checklist of all that is required to start registering as an [Amazon seller](https://sell.amazon.in/) :
+
+Email ID
+
+Active Mobile Number
+
+GST Number (or you are selling in a GST-exempt category) or PAN Details
+
+Active Bank Account
+
+\*GST is the Goods and Service tax imposed on the supply of goods and services. It is an indirect tax that replaces several others in India like excise duty, VAT, services tax, etc. to make taxation easier for people.
+
+Success! You have everything you need to sell on Amazon.in
+
+[Click here to begin registration](https://sellercentral.amazon.in/gp/on-board/workflow/Registration/login.html?passthrough%2Faccount=soa&passthrough%2FsuperSource=OAR&ref_=sdin_soa_bguide&passthrough%2FmarketplaceID=A21TJRUUN4KGV&passthrough%2FinitialSessionID=261-6930706-6080630&passthrough%2Fld=SDINSOA-BeginnersGuideSDDirect_BeginnerGuideSD_2checklist)
+
+And thats' it! Complete this checklist to start your registration.
+
+[Don't have GST? Get the detailed GST application process here](https://sell.amazon.in/seller-blog/how-to-register-for-gst)
+
+![](https://m.media-amazon.com/images/G/31/amazonservices/QM.webp)
+
+Did you know:
+
+Not all products need GST to be sold on Amazon.in. There are certain products like books, certain handicrafts, some edible goods, etc. that are exempted from GST.
+
+Click here to view the GST exempted category list
+
+### Steps to Launch your Business on Amazon.in
+
+![](https://m.media-amazon.com/images/G/31/selldot/illustrations/BoywithAmazonBox.svg)
+
+Step 1
+
+[Click here to begin registration](https://sellercentral.amazon.in/gp/on-board/workflow/Registration/login.html?passthrough%2Faccount=soa&passthrough%2FsuperSource=OAR&ref_=sdin_soa_bguide&passthrough%2FmarketplaceID=A21TJRUUN4KGV&passthrough%2FinitialSessionID=261-6930706-6080630&passthrough%2Fld=SDINSOA-BeginnersGuideSDDirect_SDIN_Begiguide_step1)
+
+Step 2
+
+If you have a customer account on amazon.in, use the email & password to **Sign In**
+
+If not, choose **'Create your Amazon account'** and enter the details required
+
+Step 3
+
+Enter the GST number of your business and verify it by uploading your GSTIN certificate
+
+Step 4
+
+Enter the store name you want your Amazon.in business to be known by
+
+Step 5
+
+Enter the pickup address from where carriers can collect products you get orders for
+
+Step 6
+
+Choose the shipping method you prefer
+
+Step 7
+
+Provide details of the active bank account of your business
+
+Step 8
+
+List the products that you want to sell
+
+Step 9
+
+Click on the 'Launch store and start selling' button
+
+Congratulations! You're now a seller on Amazon.in.
+
+To read about these steps in detail, check out the Amazon.in seller [registration guide](https://sell.amazon.in/sell-online/seller-registration-guide).
+
+## How much does it cost to sell on Amazon?
+
+There are different types of fees associated with selling on Amazon.in.
+
+Selling On Amazon Fee = Referral Fee + Closing Fee + Shipping Fee + Other Fee
+
+REFERRAL FEES
+
+Fee charged by Amazon.in as a percentage of the sales made by selling any product. It varies for different categories.
+
+CLOSING FEES
+
+Fee charged in addition to Referral Fee, based on your product price.
+
+WEIGHT HANDLING FEES
+
+Fee incurred for delivering your order through Easy Ship and FBA.
+
+OTHER FEES
+
+FBA fee to pick, pack, & store your orders.
+
+### Fulfillment Fee Structure Comparison
+
+### Fee Type
+
+### Fulfillment by Amazon (FBA)Amazon.in stores, packs, and delivers
+
+### Easy Ship (ES)You pack, Amazon.in picks and delivers
+
+### Self-ShipYou pack and deliver
+
+![](https://m.media-amazon.com/images/G/01/sp-marketing-toolkit/guides/design/iconography/Softlines_Outline._CB424650997_._SY200_.png)
+
+### Referral Fee
+
+Starts from 2%; varies by category
+
+Starts from 2%; varies by category
+
+Starts from 2%; varies by category
+
+![](https://m.media-amazon.com/images/G/01/sp-marketing-toolkit/guides/design/iconography/Enhanced_Content_Outline._CB424650991_._SY200_.png)
+
+### Closing Fee
+
+Reduced closing fee for FBA; varies by product price range
+
+Varies by product price range
+
+Varies by product price range
+
+![](https://m.media-amazon.com/images/G/01/sp-marketing-toolkit/guides/design/iconography/Delivery_Truck_Outline._CB424650770_._SY200_.png)
+
+### Shipping Fee
+
+Reduced shipping fee for FBA; starts at Rs. 28 per item
+
+Starts at Rs. 38 per item shipped; varies by item volume and distance
+
+Cost you will incur for shipping your order through a 3rd party carrier of your choice
+
+![](https://m.media-amazon.com/images/G/01/sp-marketing-toolkit/guides/design/iconography/Money-02_Outline_INR._CB432461465_._SY200_.png)
+
+### Other Fee
+
+Pick, pack, and storage fees
+
+-
+
+-
+
+[Know More about Fulfillment by Amazon](https://sell.amazon.in/shipping-and-fulfillment/fulfillment-by-amazon)
+
+[Know More about Easy Ship](https://sell.amazon.in/shipping-and-fulfillment/easy-ship)
+
+[Read about fee and pricing in detail](https://sell.amazon.in/fees-and-pricing#calculating-profitability)
+
+## Get to know Seller Central - Your Seller Portal
+
+### What is Seller Central?
+
+Once you register as an Amazon seller, you get access to your [Seller Central](https://sell.amazon.in/grow-your-business/tools/amazon-seller-central) dashboard. This is where you manage your entire business. From adding your first product to finding tools to grow a successful brand, you’ll find everything in here to run your business.
+
+Below are a just few of the things you can do on Amazon Seller Central.
+
+- Keep track of your inventory and update your listings from the Inventory tab
+- Download custom business reports and bookmark templates you use often
+- Use customer metrics tools to monitor your seller performance
+- Contact Selling Partner Support and open help tickets using the Case Log
+- Keep track of your daily sales for all the products you sell on Amazon
+
+![](https://m.media-amazon.com/images/G/01/sell/images/dashboard-lofi.png)
+
+### Go Mobile with the Amazon Seller App
+
+![Amazon seller app](https://m.media-amazon.com/images/G/31/selldot/ImagesWithoutBackground/SellerApp.png)
+
+Use the [Amazon](https://sell.amazon.in/grow-your-business/tools/amazon-seller-app) [Seller](https://sell.amazon.in/grow-your-business/tools/amazon-seller-app) [App to access your seller account](https://sell.amazon.in/grow-your-business/tools/amazon-seller-app) on the go and manage your business from anywhere, anytime! Using the Amazon Seller App, you can -
+
+- Create product listings and edit products photos
+- Manage inventory and pricing
+- Track fulfilment
+- Track and analyze sales
+
+[Learn More](https://sell.amazon.in/grow-your-business/tools/amazon-seller-app)
+
+[![Amazon seller app - App Store](https://m.media-amazon.com/images/G/01/sell/images/apple-app-us._CB1565204275_.svg)](https://apps.apple.com/in/app/amazon-seller/id794141485?initialSessionID=261-6930706-6080630&ld=SDINSOA-BeginnersGuideSDDirect)
+
+[![Amazon seller app - Google Play](https://m.media-amazon.com/images/G/01/sell/images/google-app-us.svg)](https://play.google.com/store/apps/details?id=com.amazon.sellermobile.android&initialSessionID=261-6930706-6080630&ld=SDINSOA-BeginnersGuideSDDirect)
+
+### Don't have an Amazon seller account yet?
+
+[Start Selling](https://sellercentral.amazon.in/gp/on-board/workflow/Registration/login.html?passthrough%2Faccount=soa&passthrough%2FsuperSource=OAR&ref_=sdin_soa_begguide&passthrough%2FmarketplaceID=A21TJRUUN4KGV&passthrough%2FinitialSessionID=261-6930706-6080630&passthrough%2Fld=SDINSOA-BeginnersGuideSDDirect_SDIN_Begiguide_mid)
+
+## How to list your products on Amazon.in?
+
+### Listing your first product
+
+To start selling your product on Amazon.in you first need to list it on Amazon.in. You can provide your product information such as the product category, brand name, product features and specifications, product images, and price. All these details are available to your customer to help them purchase your product (as shown here).
+
+Set up your product page to start selling. You can edit product details from the ‘Manage Inventory’ section of your Seller Central dashboard.
+
+![How to list your products](https://m.media-amazon.com/images/G/01/sp-marketing-toolkit/guides/design/illustration/Vignettes/Desktop-Products.svg)
+
+### **How to list a product on Amazon.in?**
+
+To showcase your products on Amazon.in, you need to list them from your Seller Central account in one of the two ways:
+
+![Add a new offer using search or barcode scan](https://m.media-amazon.com/images/G/01/sp-marketing-toolkit/guides/design/iconography/Brand_Registry._CB424651244_.svg)
+
+(if the product is available on Amazon.in)
+
+**Adding a new offer** by matching products with search or barcode scan
+
+![Creating a new listing by uploading product details](https://m.media-amazon.com/images/G/01/sp-marketing-toolkit/guides/design/iconography/Sponsored_Products_Mobile._CB433080556_.svg)
+
+(for new products, not yet listed on Amazon)
+
+**Create a new listing** by uploading product images and adding details & features
+
+### Why do product details matter?
+
+Customers compare different products before making a purchase and look at the product image, video, and specifications to decide if it suits their needs. Providing complete and accurate product details helps them buy your products, generating more sales.
+
+Here are some of the details required for a new listing:
+
+![Product detail page](https://m.media-amazon.com/images/G/01/sell/images/detail-page-no-shadow._CB1564761647_.svg)
+
+![](https://m.media-amazon.com/images/G/31/selldot/icons/BeginnersGuide-Icon-Image.png)
+
+Colored image
+
+![](https://m.media-amazon.com/images/G/31/selldot/icons/BeginnersGuide-Icon-Features.png)
+
+Features should be clearly visible
+
+![](https://m.media-amazon.com/images/G/31/selldot/icons/BeginnersGuide-Icon-Zooming.png)
+
+Height & width should be 1000 pixels or larger to enable zooming
+
+![](https://m.media-amazon.com/images/G/31/selldot/icons/BeginnersGuide-Icon-LongSide.png)
+
+Images must not exceed 10,000 pixels on the longest side
+
+![](https://m.media-amazon.com/images/G/31/selldot/icons/BeginnersGuide-Icon-Formats.png)
+
+Accepted formats - JPEG (.jpg), TIFF (.tif), preferred format - JPEG
+
+![](https://m.media-amazon.com/images/G/31/selldot/ImagesWithoutBackground/BeginnersGuide-SuccessfulListing.png)
+
+![](https://m.media-amazon.com/images/G/31/amazonservices/QM.webp)
+
+Did you know:
+
+While creating your product page, think about what customers come looking for. This will help you in putting down the relevant information for customers.
+
+[Click here to get a list of products that are restricted from selling on Amazon.in](https://sellercentral.amazon.in/gp/help/external/200164330?tag=beginnersguide&initialSessionID=261-6930706-6080630&ld=SDINSOA-BeginnersGuideSDDirect_BeginnersGuideSD_Restricted)
+
+The restricted products category includes items that cannot be sold on Amazon.in. Examples - Animals, weapons, narcotics drugs, etc.
+
+## How to deliver products?
+
+Fulfilling your orders includes storing inventory, packaging products, shipping, and delivering orders. Amazon.in has 3 different order fulfilling options:
+
+### Fulfillment by Amazon (FBA)
+
+When you join [FBA](https://sell.amazon.in/shipping-and-fulfillment/fulfillment-by-amazon), you send your products to the Amazon Fulfilment Center and Amazon takes care of the rest. Once an order is received, we will pack and deliver your products to the buyer as well as manage your customer queries.
+
+Here are some of the benefits of using Fulfillment by Amazon:
+
+- Offer unlimited free & fast deliveries to customers
+- You store your products in Amazon.in’s Fulfillment Centers and we take care of the rest – picking, packing, & shipping
+- Customer service & returns managed by Amazon.in
+- Eligibility for Prime
+
+![Three sponsored product listings of water bottles available with Amazon Prime shipping](https://m.media-amazon.com/images/G/01/sp-marketing-toolkit/guides/design/illustration/Vignettes/WW-FC-01.svg)
+
+#### How FBA works?
+
+![](https://m.media-amazon.com/images/G/31/selldot/ImagesWithoutBackground/BeginnersGuide-HowDoesFBAWork.png)
+
+\*FC – Fulfillment Center
+
+[Know More about Fulfillment by Amazon](https://sell.amazon.in/shipping-and-fulfillment/fulfillment-by-amazon)
+
+### Easy Ship
+
+![Three sponsored product listings of water bottles available with Amazon Prime shipping](https://m.media-amazon.com/images/G/01/sp-marketing-toolkit/guides/design/illustration/Vignettes/WW-ScooterDelivery-01.svg)
+
+[Amazon Easy Ship](https://sell.amazon.in/shipping-and-fulfillment/easy-ship) is an end-to-end delivery service for Amazon.in sellers. The packaged product is picked up by Amazon from the seller's location by an Amazon Logistics Delivery Associate and delivered to the buyers' location.
+
+Here are some of the benefits of using Easy Ship:
+
+- Fast and safe delivery of Amazon.in
+- Control over your inventory. No storage cost
+
+Customer service & returns managed by Amazon.in
+Choose your own packaging
+
+[Know More about Easy Ship](https://sell.amazon.in/shipping-and-fulfillment/easy-ship)
+
+![](https://m.media-amazon.com/images/G/31/amazonservices/QM.webp)
+
+Tip Time
+
+Become a Prime seller with FBA and increase your sales by up to 3X.
+
+### Self Ship
+
+Being an Amazon.in Seller, you can choose to store, pack, and deliver your products to the customer on your own by using a third-party carrier or your own delivery associates.
+
+Here are some of the benefits of using Self Ship:
+
+- Complete control on your business
+- Use your own resources for operations
+- Only closing & referral fee to be paid to Amazon.in
+- Enable Prime badge in your area with Local Shops on Amazon and get discovered
+
+[Know More about Local Shops on Amazon](/sell-online/local-shops-on-amazon)
+
+![Three sponsored product listings of water bottles available with Amazon Prime shipping](https://m.media-amazon.com/images/G/01/sp-marketing-toolkit/guides/design/illustration/Vignettes/WW-AmazonRenewed-01.svg)
+
+### Don't have an Amazon seller account yet?
+
+[Start Selling](https://sellercentral.amazon.in/gp/on-board/workflow/Registration/login.html?passthrough%2Faccount=soa&passthrough%2FsuperSource=OAR&ref_=sdin_soa_begguide&passthrough%2FmarketplaceID=A21TJRUUN4KGV&passthrough%2FinitialSessionID=261-6930706-6080630&passthrough%2Fld=SDINSOA-BeginnersGuideSDDirect_SDIN_Begiguide_mid2)
+
+## You’ve made your first sale. What’s next?
+
+Congratulations!
+
+You made your first sale. The first thing you might expect is your payment. Your first Amazon.in payment! So exciting, right?
+
+### Getting your payment
+
+![](https://m.media-amazon.com/images/G/31/selldot/icons/BeginnersGuide-AutomatedClearingHouse.png)
+
+Payment generated through Automated Clearing House (ACH) or electronic transfer.
+
+![](https://m.media-amazon.com/images/G/31/selldot/icons/BeginnersGuide-PaymentCalendar.png)
+
+Payment is received within 5-7 business days.
+
+![](https://m.media-amazon.com/images/G/31/selldot/icons/BeginnersGuide-Reports.png)
+
+Get payment reports and summary on the Seller Central.
+
+### Performance metrics (and why they matter)
+
+Amazon sellers operate at a high standard so we can provide a seamless, delightful shopping experience. We call it being customer-obsessed, and as an Amazon seller it means keeping an eye on these key metrics:
+
+- Measure business performance through sales dashboard and reports.
+- Ensure compliance with Amazon.in policies.
+- Monitor product reviews through feedback manager.
+- Use the voice of the customer to identify any highlighted product issue.
+
+You can keep tabs on your performance on Seller Central and make sure you’re meeting your targets.
+
+![Graph showing the health of an Amazon seller account](https://m.media-amazon.com/images/G/01/sell/images/lofi/stay-healthy.svg)
+
+### Customer reviews
+
+Customer product reviews are an integral part of the shopping experience on Amazon, and they benefit both customers and sellers. Make sure you’re familiar with the right way and wrong way to get more product reviews and avoid policy violations.
+
+![](https://m.media-amazon.com/images/G/01/sell/images/lofi/reviews.svg)
+
+![](https://m.media-amazon.com/images/G/31/selldot/ImagesWithoutBackground/BeginnersGuide-AfterSale.png)
+
+### Best Practices to Sell on Amazon.in
+
+Becoming a great seller means knowing your marketplace inside out. Make sure you do not miss out on any important information that can make your business successful.
+
+Here’s a checklist to keep in mind as you step into the Amazon.in selling world.
+
+![](https://m.media-amazon.com/images/G/01/sell/images/icon-check-blue-thick.svg)
+
+Great customer service is the most important part.
+
+![](https://m.media-amazon.com/images/G/01/sell/images/icon-check-blue-thick.svg)
+
+Check your account health timely
+
+![](https://m.media-amazon.com/images/G/01/sell/images/icon-check-blue-thick.svg)
+
+Join FBA to enjoy premium services for your business & offer a rich customer experience.
+
+![](https://m.media-amazon.com/images/G/01/sell/images/icon-check-blue-thick.svg)
+
+Use advertising tools to improve your brand presence.
+
+![](https://m.media-amazon.com/images/G/01/sell/images/icon-check-blue-thick.svg)
+
+Expand to other product categories to maximize your profits.
+
+![](https://m.media-amazon.com/images/G/01/sell/images/icon-check-blue-thick.svg)
+
+Take advantage of sale events with attractive pricing and offers to increase sales.
+
+![](https://m.media-amazon.com/images/G/01/sell/images/icon-check-blue-thick.svg)
+
+Use the Automate Pricing tool to set a competitive price and increase the chances of winning Offer Display.
+
+![](https://m.media-amazon.com/images/G/01/sell/images/icon-check-blue-thick.svg)
+
+Always, always listen to what customers say about your product.
+
+### Don't have an Amazon seller account yet?
+
+[Start Selling](https://sellercentral.amazon.in/gp/on-board/workflow/Registration/login.html?passthrough%2Faccount=soa&passthrough%2FsuperSource=OAR&ref_=sdin_soa_begguide&passthrough%2FmarketplaceID=A21TJRUUN4KGV&passthrough%2FinitialSessionID=261-6930706-6080630&passthrough%2Fld=SDINSOA-BeginnersGuideSDDirect_SDIN_Begiguide_mid3)
+
+## Opportunities for business growth
+
+### Fulfillment by Amazon
+
+Register on Fulfillment by Amazon & increase sales by up to 3X.
+
+[Know More about Fulfillment by Amazon](https://sell.amazon.in/shipping-and-fulfillment/fulfillment-by-amazon)
+
+### Sponsored Products
+
+Advertise with Sponsored Product and increase visibility on search results and product pages.
+
+[Find out about advertising on Amazon](/grow-your-business/advertise)
+
+### Set Limited Time Promotions
+
+![Amazon coupons](https://m.media-amazon.com/images/G/01/sp-marketing-toolkit/guides/design/iconography/Enhanced_Content._CB424651237_.svg)
+
+Coupons
+
+Sponsored Products are ads for individual product listings on Amazon, so they help drive product visibility (and product sales). They appear on search results pages and product detail pages.
+
+![Lightning Deals](https://m.media-amazon.com/images/G/01/sp-marketing-toolkit/guides/design/iconography/icon-plus/lighting_bolt.png)
+
+Lightning Deals
+
+Sponsored Brands showcase your brand and product portfolio. They’re search-result ads that feature your brand logo, a custom headline, and up to three of your products.
+
+![Amazon No cost EMI](https://m.media-amazon.com/images/G/01/sp-marketing-toolkit/guides/design/iconography/Money-02_INR._CB1198675309_.svg)
+
+No Cost EMI
+
+Stores are custom multipage shopping destinations for individual brands that let you share your brand story and product offerings. (And you don’t need any website experience to use them.)
+
+### Manage your business
+
+![Automate pricing](https://m.media-amazon.com/images/G/01/sp-marketing-toolkit/guides/design/iconography/icon-plus/automate_pricing_rupee.png)
+
+Automate Pricing
+
+Increase your chances of winning the Offer Display.
+
+![Voice of customer](https://m.media-amazon.com/images/G/01/sp-marketing-toolkit/guides/design/iconography/Advertising._CB424651026_.svg)
+
+Voice of Customer
+
+Monitor feedback through customer service calls, returns, reviews, etc.
+
+![Amazon Product listing ](https://m.media-amazon.com/images/G/01/sp-marketing-toolkit/guides/design/iconography/icon-plus/merch_products.png)
+
+Product listing
+
+List recommended products based on customer demand, seasonality etc.
+
+### Services to grow
+
+![](https://m.media-amazon.com/images/G/01/sp-marketing-toolkit/guides/design/iconography/Stores._CB433080532_.svg)
+
+Account Management
+
+All newly launched sellers are eligible for free Account Management service.
+
+![](https://m.media-amazon.com/images/G/01/sp-marketing-toolkit/guides/design/iconography/Customer_Segments._CB424651240_.svg)
+
+Service provider network
+
+Get paid assistance from qualified 3rd party service providers to help you with professional product photoshoots, order fulfillment, and much more.
+
+![](https://m.media-amazon.com/images/G/31/amazonservices/QM.webp)
+
+Did you know:
+
+Sellers who have used programs/products of Amazon.in have grown their business by up to 10X.
+
+## Amazon STEP Program
+
+To help you grow at a faster pace and in the right direction, Amazon.in has launched the STEP program. The program is designed for your stepwise growth through performance tracking and recommendations.
+
+### How does STEP work?
+
+![](https://m.media-amazon.com/images/G/01/sell/images/icon-check-blue-thick.svg)
+
+It is a performance-based benefits program. Amazon.in provides you with customized and actionable recommendations that can help you improve your key customer experience
+
+metrics and your growth.
+
+![](https://m.media-amazon.com/images/G/01/sell/images/icon-check-blue-thick.svg)
+
+The STEP program has different levels, starting from ‘Basic’ and goes on to ‘Standard’, ‘Advanced’, ‘Premium’ & higher levels, as your performance improves.
+
+![](https://m.media-amazon.com/images/G/01/sell/images/icon-check-blue-thick.svg)
+
+With each new level, you get access to various benefits.
+
+### Benefits of STEP
+
+![](https://m.media-amazon.com/images/G/01/sp-marketing-toolkit/guides/design/iconography/Mobile_App._CB424651234_.svg)
+
+### Performance tracking
+
+Track your performance on-the-go to speed up your growth.
+
+![](https://m.media-amazon.com/images/G/01/sp-marketing-toolkit/guides/design/iconography/icon-plus/paid_service_rupee._SL50_FMpng_BL5_.png)
+
+### Unlock benefits
+
+Get your hands on various benefits like weight handling & lightning deal fee waivers, faster disbursement cycles, priority seller support, free account management and more.
+
+![](https://m.media-amazon.com/images/G/01/sp-marketing-toolkit/guides/design/iconography/icon-plus/global_store._SL50_FMpng_BL5_.png)
+
+### Get recommendations
+
+Personalized and actionable recommendations for your business for continuous improvement and growth.
+
+## Help is just a click away!
+
+![Seller support](https://m.media-amazon.com/images/G/31/selldot/ImagesWithoutBackground/Support-ToolsPage.png)
+
+### Get Support
+
+If you are stuck somewhere during the registration process, you can seek help from Amazon.in's quick guide.
+
+Just choose your issue from the list and get a detailed answer to speed up your launch process.
+
+[Learn More](https://sell.amazon.in/sell-online/seller-registration-guide?)
+
+![Seller Support](https://m.media-amazon.com/images/G/31/selldot/ImagesWithoutBackground/FacebookSupport-ToolsPage.png)
+
+### Support on Facebook
+
+To get more help on selling on Amazon.in, join a Facebook group for sellers on Amazon.in to share information, tips, experiences, and best practices with each other. It notifies you about new products and services to help grow your business.
+
+[Get Support](https://www.facebook.com/groups/Amazon.India.Sellers/?initialSessionID=261-6930706-6080630&ld=SDINSOA-BeginnersGuideSDDirect)
+
+![Seller University](https://m.media-amazon.com/images/G/31/selldot/Images/SellerUniversity-ToolsPage.png)
+
+### Learn from Seller University
+
+Learn A to Z of Amazon.in selling on the Seller University. Find everything you need in detail through the online and offline classes. Attend your classes in your regional languages and record your sessions to catch up later.
+
+[Learn More](/learn/seller-university)
+
+![Seller Support](https://m.media-amazon.com/images/G/31/selldot/Images/SellerSupport-ToolsPage.png)
+
+### Service Provider Network (SPN)
+
+To offer more expert help for your business, Amazon.in has established a network of third-party service providers. It's a paid assistance service with over 800 service providers to help you with professional product photoshoots, order fulfillment, and much more.
+
+[Find out more](/grow-your-business/service-provider-network)
+
+## Some Frequently Asked Questions (FAQs) by Sellers
+
+How to register as an Amazon.in seller?
+
+If you already have an Amazon.in customer account, you can sign in with this Email Id / Phone No. and enter your customer account password to begin selling with the same account.
+
+You can also choose to create a separate seller account with a different email address, phone number and begin registration.
+
+[Click here to register as an Amazon Seller](https://sellercentral.amazon.in/gp/on-board/workflow/Registration/login.html?passthrough%2Faccount=soa&passthrough%2FsuperSource=OAR&ref_=sdin_soa_beguide&passthrough%2FmarketplaceID=A21TJRUUN4KGV&passthrough%2FinitialSessionID=261-6930706-6080630&passthrough%2Fld=SDINSOA-BeginnersGuideSDDirect_SDIN_Begguide_7faq)
+
+How do I manage orders and returns?
+
+Go to ‘Manage Order’ on the Seller Central page. Track all your shipments status, shipping service, payment mode here & keep yourself updated to avoid any mismanagement.
+
+To manage returns, go to ‘Return Reports’ under the Reports section. Track your return shipments and refunds. Or you can join FBA for a hassle-free experience.
+
+How do I make products more visible?
+
+You can get more visibility to your products by:
+
+- Using relevant keywords - Include keywords in your product title that people type in while searching to get on their top search list.
+- Advertising - Activate Sponsored Product ads to make your product appear at multiple places.
+
+How do I make sure my customers don’t buy a fake or counterfeit product?
+
+Amazon.in has initiated a Transparency Program to identify fake products. All you need to do is register in the program and get Transparency codes for your products.
+
+What is the Offer Display?
+
+Offer Display is the box on the right side of an Amazon.in product, from where a customer can buy or add it to their cart. Since there can be multiple sellers selling the same product category, the Offer Display goes to one seller only, for which they need to compete on certain parameters and win.
+
+More on selling on Amazon.in:
+
+[How to register as a seller](https://sell.amazon.in/sell-online/seller-registration-guide)
+
+[Benefits of selling on Amazon.in](https://sell.amazon.in/sell-online/why-sell-on-amazon)
+
+[Offers for sellers](https://sell.amazon.in/sell-online/offers-for-sellers?)
+
+[Listing a product on Amazon.in](https://amazon.https://sell.amazon.in/sell-online/list-your-products?initialSessionID=261-6930706-6080630&ld=SDINSOA-BeginnersGuideSDDirect)
+
+### Start selling today
+
+Put your products in front of the crores of customers who search Amazon.in every day.
+
+[Start Selling](https://sellercentral.amazon.in/seller/onboarding?passthrough%2Faccount=soa&passthrough%2FsuperSource=OAR&ref_=sdin_soa_nav&passthrough%2FmarketplaceID=A21TJRUUN4KGV&productTier=SILVER&productType=SellOnAmazon&marketplaceId=A21TJRUUN4KGV&passthrough%2FinitialSessionID=261-6930706-6080630&passthrough%2Fld=SDINSOA-BeginnersGuideSDDirect_SDIN_Begiguide_footer)
+
+Disclaimer
+
+\*Selling fee here refers to referral fee.
+
+\*\*This change in referral fee is applicable for select categories and for products falling under the Average Selling Price Band of INR 0-500.
+
+Amazon Seller Services Private Limited ("Amazon") reserves the right to determine, in its sole and absolute discretion, the selling fees payable on each product category listed and sold on the marketplace www.amazon.in. Amazon further reserves the right to modify/ reduce/ increase the selling fees including the referral fees being charged by Amazon on the different categories of products. Amazon hereby disclaims any and all liability and assumes no responsibility whatsoever for consequences resulting from use of the above information. Amazon shall in no event be liable for any special, direct, indirect, consequential or incidental damages (including but not limited to damages for loss of business profits, business interruption, loss of business information, and the like) arising out of the use of the above information.
+
+**Popular Products to Sell Online** [Sell Books Online](https://sell.amazon.in/sell-online/product-categories/books) \| [Sell Art Online](https://sell.amazon.in/seller-blog/sell-art-online) \| [Sell Handmade Products Online](https://sell.amazon.in/seller-blog/sell-handmade-products-online-on-amazon) \| [Sell Clothes Online](https://sell.amazon.in/sell-online/product-categories/clothes) \| [Sell Grocery Online](https://sell.amazon.in/sell-online/product-categories/grocery) \| [Sell Home Products Online](https://sell.amazon.in/sell-online/product-categories/home-products) \| [Sell Beauty Products Online](https://sell.amazon.in/sell-online/product-categories/beauty-products) \| [Sell Watches Online](https://sell.amazon.in/sell-online/product-categories/watches) \| [Sell Kitchenware Products Online](https://sell.amazon.in/sell-online/product-categories/kitchenware) \| [Sell Tea Online](https://sell.amazon.in/sell-online/product-categories/tea) \| [Sell Furniture Online](https://sell.amazon.in/sell-online/product-categories/furniture) \| [Sell Headphones Online](https://sell.amazon.in/sell-online/product-categories/headphones) \| [Sell Toys Online](https://sell.amazon.in/sell-online/product-categories/toys) \| [Sell Shoes Online](https://sell.amazon.in/sell-online/product-categories/shoes)
+
+**Blogs for Online Sellers** [6 Budget Friendly Business Ideas to Start your Online Business](https://sell.amazon.in/seller-blog/pocket-friendly-ideas-for-online-business) \| [Starting an Online Business in India - Things you may Keep in Mind](https://sell.amazon.in/seller-blog/things-to-keep-in-mind-while-starting-an-online-business) \| [What is Ecommerce?](https://sell.amazon.in/seller-blog/what-is-ecommerce) \| [How to Start your E-commerce Business](https://sell.amazon.in/seller-blog/start-your-e-commerce-business) \| [Benefits of Starting an E-commerce Business](https://sell.amazon.in/seller-blog/benefits-of-starting-your-e-commerce-business) \| [Amazon Online Business Ideas](https://sell.amazon.in/seller-blog/amazon-business-ideas) \| [Empowering Entrepreneurship: Business Ideas for Women](https://sell.amazon.in/seller-blog/business-ideas-for-women) \| [How to start an E-commerce Business in India with Minimal Investments!](https://sell.amazon.in/seller-blog/starting-an-ecommerce-business-with-minimal-investment) \| [Building Side Business Ideas to Earn Money](https://sell.amazon.in/seller-blog/best-ideas-for-starting-a-side-business-in-india-and-earn-the-extra-money) \| [How to start your own Business](https://sell.amazon.in/seller-blog/how-to-start-your-own-business)
+
+[![](https://m.media-amazon.com/images/G/01/sell/navigation/logos/amazon-in-half-logo-REV.svg)](/?ref_=sdin_soa_home_f)
+
+[Sitemap](/sitemap)
+
+[Confidentiality Policy](/standards/confidentiality-policy)
+
+[Terms of Use](/standards/terms-of-use)
+
+[Cookies](/standards/cookies)
+
+© 2024 Amazon.com, Inc. or its affiliates. All rights reserved
+

@@ -1,0 +1,1891 @@
+MEXEM COOKIE POLICY.
+
+We utilize cookies to enhance your experience and deliver personalized advertising.
+
+Cookies are small text files that can be used by websites to make a user's experience more efficient.
+
+The law states that we can store cookies on your device if they are strictly necessary for the operation of this site. For all other types of cookies we need your permission.
+
+This site uses different types of cookies. Some cookies are placed by third party services that appear on our pages.
+
+You can at any time change or withdraw your consent from the Cookie Declaration on our website.
+
+Learn more about who we are, how you can contact us and how we process personal data in our Privacy Policy.
+
+Please state your consent ID and date when you contact us regarding your consent.
+
+Your consent applies to the following domains: www.mexem.com
+
+Your current state: Deny.
+
+Your current state: Do not sell or share my personal information.
+
+Your current state: Allow selection (Necessary , Preferences , Statistics , Marketing ).
+
+Your current state: Allow all.
+
+Your consent ID: Consent date:
+
+[Change your consent](https://www.mexem.com/blog/amazons-financial-performance-a-comprehensive-analysis#)  \|  [Withdraw your consent](https://www.mexem.com/blog/amazons-financial-performance-a-comprehensive-analysis#)
+
+[Do not sell or share my personal information](https://www.mexem.com/blog/amazons-financial-performance-a-comprehensive-analysis#)
+
+Cookie declaration last updated on 11/6/24 by [Cookiebot](https://www.cookiebot.com/ "Cookiebot"):
+
+Necessary (12)
+
+Necessary cookies help make a website usable by enabling basic functions like page navigation and access to secure areas of the website. The website cannot function properly without these cookies.
+
+| Name | Provider | Purpose | Maximum Storage Duration | Type |
+| --- | --- | --- | --- | --- |
+| \_\_cf\_bm \[x4\] | cdn.jsdelivr.net<br>prod.website-files.com<br>[Vimeo](https://vimeo.com/privacy "Vimeo's privacy policy")<br>website-files.com | This cookie is used to distinguish between humans and bots. This is beneficial for the website, in order to make valid reports on the use of their website. | 1 day | HTTP Cookie |
+| \_cfuvid \[x2\] | cdn.jsdelivr.net<br>[Vimeo](https://vimeo.com/privacy "Vimeo's privacy policy") | This cookie is a part of the services provided by Cloudflare - Including load-balancing, deliverance of website content and serving DNS connection for website operators. | Session | HTTP Cookie |
+| \_zcsr\_tmp | [Zoho](https://www.zoho.com/privacy.html "Zoho's privacy policy") | This cookie is necessary for the login function on the website. | Session | HTTP Cookie |
+| 1.gif | [Cookiebot](https://www.cookiebot.com/goto/privacy-policy/ "Cookiebot's privacy policy") | Used to count the number of sessions to the website, necessary for optimizing CMP product delivery. | Session | Pixel Tracker |
+| CookieConsent | [Cookiebot](https://www.cookiebot.com/goto/privacy-policy/ "Cookiebot's privacy policy") | Stores the user's cookie consent state for the current domain | 1 year | HTTP Cookie |
+| JSESSIONID | [Zoho](https://www.zoho.com/privacy.html "Zoho's privacy policy") | Preserves users states across page requests. | Session | HTTP Cookie |
+| test\_cookie | [Google](https://business.safety.google/privacy/ "Google's privacy policy") | Pending | 1 day | HTTP Cookie |
+| zccpn | [Zoho](https://www.zoho.com/privacy.html "Zoho's privacy policy") | Ensures visitor browsing-security by preventing cross-site request forgery. This cookie is essential for the security of the website and visitor. | Session | HTTP Cookie |
+
+Preferences (4)
+
+Preference cookies enable a website to remember information that changes the way the website behaves or looks, like your preferred language or the region that you are in.
+
+| Name | Provider | Purpose | Maximum Storage Duration | Type |
+| --- | --- | --- | --- | --- |
+| activeCsaasWidgets | cdn.chaty.app | This cookie is used to collect information about how the visitor interacts with the live chat function on the website. | 1 day | HTTP Cookie |
+| csaas\_client\_id | cdn.chaty.app | Identifies the visitor across devices and visits, in order to optimize the chat-box function on the website. | Session | HTML Local Storage |
+| csaas\_user\_id | cdn.chaty.app | Identifies the visitor across devices and visits, in order to optimize the chat-box function on the website. | 1 year | HTTP Cookie |
+| wg-slugs | [Weglot](https://weglot.com/terms/ "Weglot's privacy policy") | Used in context with the language setting on the website. Facilitates the translation into the preferred language of the visitor. | Persistent | HTML Local Storage |
+
+Statistics (14)
+
+Statistic cookies help website owners to understand how visitors interact with websites by collecting and reporting information anonymously.
+
+| Name | Provider | Purpose | Maximum Storage Duration | Type |
+| --- | --- | --- | --- | --- |
+| \_hjCookieTest | [Hotjar](https://www.hotjar.com/legal/policies/privacy/ "Hotjar's privacy policy") | Collects data on the user’s navigation and behavior on the website. This is used to compile statistical reports and heatmaps for the website owner. | Session | HTTP Cookie |
+| \_hjSession\_# | [Hotjar](https://www.hotjar.com/legal/policies/privacy/ "Hotjar's privacy policy") | Collects statistics on the visitor's visits to the website, such as the number of visits, average time spent on the website and what pages have been read. | 1 day | HTTP Cookie |
+| \_hjSessionUser\_# | [Hotjar](https://www.hotjar.com/legal/policies/privacy/ "Hotjar's privacy policy") | Collects statistics on the visitor's visits to the website, such as the number of visits, average time spent on the website and what pages have been read. | 1 year | HTTP Cookie |
+| \_hjTLDTest | [Hotjar](https://www.hotjar.com/legal/policies/privacy/ "Hotjar's privacy policy") | Registers statistical data on users' behaviour on the website. Used for internal analytics by the website operator. | Session | HTTP Cookie |
+| hjActiveViewportIds | [Hotjar](https://www.hotjar.com/legal/policies/privacy/ "Hotjar's privacy policy") | This cookie contains an ID string on the current session. This contains non-personal information on what subpages the visitor enters – this information is used to optimize the visitor's experience. | Persistent | HTML Local Storage |
+| hjViewportId | [Hotjar](https://www.hotjar.com/legal/policies/privacy/ "Hotjar's privacy policy") | Saves the user's screen size in order to adjust the size of images on the website. | Session | HTML Local Storage |
+| is\_unique | [Statcounter](https://statcounter.com/about/legal/?PHPSESSID=atjp30gp8nmvu58c6j1a87vqi6 "Statcounter's privacy policy") | This cookie is used to identify the frequency of visits and how long the visitor is on the website. | 400 days | HTTP Cookie |
+| is\_visitor\_unique | [Statcounter](https://statcounter.com/about/legal/?PHPSESSID=atjp30gp8nmvu58c6j1a87vqi6 "Statcounter's privacy policy") | This cookie is used to count how many times a website has been visited by different visitors - this is done by assigning the visitor a random ID, so the visitor does not get registered twice. | 400 days | HTTP Cookie |
+| sc\_is\_visitor\_unique | [Statcounter](https://statcounter.com/about/legal/?PHPSESSID=atjp30gp8nmvu58c6j1a87vqi6 "Statcounter's privacy policy") | This cookie is used to count how many times a website has been visited by different visitors - this is done by assigning the visitor a random ID, so the visitor does not get registered twice. | 2 years | HTTP Cookie |
+| sentryReplaySession | [Spotify](https://www.spotify.com/uk/legal/privacy-policy/ "Spotify's privacy policy") | Registers data on visitors' website-behaviour. This is used for internal analysis and website optimization. | Session | HTML Local Storage |
+| statcounter\_bounce | [Statcounter](https://statcounter.com/about/legal/?PHPSESSID=atjp30gp8nmvu58c6j1a87vqi6 "Statcounter's privacy policy") | Determines if a user leaves the website straight away. This information is used for internal statistics and analytics by the website operator. | Session | HTML Local Storage |
+| statcounter\_config | [Statcounter](https://statcounter.com/about/legal/?PHPSESSID=atjp30gp8nmvu58c6j1a87vqi6 "Statcounter's privacy policy") | Used to assess user's visits to the website, such as which pages have been visited or the frequency of visits. | Session | HTML Local Storage |
+| statcounter\_session | [Statcounter](https://statcounter.com/about/legal/?PHPSESSID=atjp30gp8nmvu58c6j1a87vqi6 "Statcounter's privacy policy") | Collects statistics on the user's visits to the website, such as the number of visits, average time spent on the website and what pages have been read. | Session | HTML Local Storage |
+| vuid | [Vimeo](https://vimeo.com/privacy "Vimeo's privacy policy") | Collects data on the user's visits to the website, such as which pages have been read. | 2 years | HTTP Cookie |
+
+Marketing (49)
+
+Marketing cookies are used to track visitors across websites. The intention is to display ads that are relevant and engaging for the individual user and thereby more valuable for publishers and third party advertisers.
+
+| Name | Provider | Purpose | Maximum Storage Duration | Type |
+| --- | --- | --- | --- | --- |
+| #-# | cdn.jsdelivr.net | Used to track user’s interaction with embedded content. | Session | HTML Local Storage |
+| #:session-data | [Taboola](https://www.taboola.com/privacy-policy "Taboola's privacy policy") | Tracks the individual sessions on the website, allowing the website to compile statistical data from multiple visits. This data can also be used to create leads for marketing purposes. | Persistent | HTML Local Storage |
+| \_fbp | [Meta Platforms, Inc.](https://www.facebook.com/policy.php/ " Meta Platforms, Inc.'s privacy policy") | Used by Facebook to deliver a series of advertisement products such as real time bidding from third party advertisers. | 3 months | HTTP Cookie |
+| \_ga | [Google](https://business.safety.google/privacy/ "Google's privacy policy") | Used to send data to Google Analytics about the visitor's device and behavior. Tracks the visitor across devices and marketing channels. | 2 years | HTTP Cookie |
+| \_ga\_# | [Google](https://business.safety.google/privacy/ "Google's privacy policy") | Used to send data to Google Analytics about the visitor's device and behavior. Tracks the visitor across devices and marketing channels. | 2 years | HTTP Cookie |
+| \_gcl\_au | [Google](https://business.safety.google/privacy/ "Google's privacy policy") | Used by Google AdSense for experimenting with advertisement efficiency across websites using their services. | 3 months | HTTP Cookie |
+| \_uetsid | [Microsoft](https://privacy.microsoft.com/en-US/privacystatement "Microsoft's privacy policy") | Used to track visitors on multiple websites, in order to present relevant advertisement based on the visitor's preferences. | Persistent | HTML Local Storage |
+| \_uetsid | [Microsoft](https://privacy.microsoft.com/en-US/privacystatement "Microsoft's privacy policy") | Collects data on visitor behaviour from multiple websites, in order to present more relevant advertisement - This also allows the website to limit the number of times that they are shown the same advertisement. | 1 day | HTTP Cookie |
+| \_uetsid\_exp | [Microsoft](https://privacy.microsoft.com/en-US/privacystatement "Microsoft's privacy policy") | Contains the expiry-date for the cookie with corresponding name. | Persistent | HTML Local Storage |
+| \_uetvid | [Microsoft](https://privacy.microsoft.com/en-US/privacystatement "Microsoft's privacy policy") | Used to track visitors on multiple websites, in order to present relevant advertisement based on the visitor's preferences. | Persistent | HTML Local Storage |
+| \_uetvid | [Microsoft](https://privacy.microsoft.com/en-US/privacystatement "Microsoft's privacy policy") | Used to track visitors on multiple websites, in order to present relevant advertisement based on the visitor's preferences. | 1 year | HTTP Cookie |
+| \_uetvid\_exp | [Microsoft](https://privacy.microsoft.com/en-US/privacystatement "Microsoft's privacy policy") | Contains the expiry-date for the cookie with corresponding name. | Persistent | HTML Local Storage |
+| csaas\_referrer | cdn.chaty.app | Registers how the user has reached the website to enable pay-out of referral commission fees to partners. | 1 day | HTTP Cookie |
+| eng\_mt | [Taboola](https://www.taboola.com/privacy-policy "Taboola's privacy policy") | Tracks the conversion rate between the user and the advertisement banners on the website - This serves to optimise the relevance of the advertisements on the website. | Persistent | HTML Local Storage |
+| IDE | [Google](https://business.safety.google/privacy/ "Google's privacy policy") | Used by Google DoubleClick to register and report the website user's actions after viewing or clicking one of the advertiser's ads with the purpose of measuring the efficacy of an ad and to present targeted ads to the user. | 400 days | HTTP Cookie |
+| iU5q-!O9@$ | cdn.jsdelivr.net | Registers a unique ID to keep statistics of what videos from YouTube the user has seen. | Session | HTML Local Storage |
+| LAST\_RESULT\_ENTRY\_KEY | [YouTube](https://business.safety.google/privacy/ "YouTube's privacy policy") | Used to track user’s interaction with embedded content. | Session | HTTP Cookie |
+| lastExternalReferrer | [Meta Platforms, Inc.](https://www.facebook.com/policy.php/ " Meta Platforms, Inc.'s privacy policy") | Detects how the user reached the website by registering their last URL-address. | Persistent | HTML Local Storage |
+| lastExternalReferrerTime | [Meta Platforms, Inc.](https://www.facebook.com/policy.php/ " Meta Platforms, Inc.'s privacy policy") | Detects how the user reached the website by registering their last URL-address. | Persistent | HTML Local Storage |
+| LogsDatabaseV2:V#\|\|LogsRequestsStore | cdn.jsdelivr.net | Used to track user’s interaction with embedded content. | Persistent | IndexedDB |
+| MSPTC | [Microsoft](https://privacy.microsoft.com/en-US/privacystatement "Microsoft's privacy policy") | This cookie registers data on the visitor. The information is used to optimize advertisement relevance. | 1 year | HTTP Cookie |
+| MUID | [Microsoft](https://privacy.microsoft.com/en-US/privacystatement "Microsoft's privacy policy") | Used widely by Microsoft as a unique user ID. The cookie enables user tracking by synchronising the ID across many Microsoft domains. | 1 year | HTTP Cookie |
+| nextId | [YouTube](https://business.safety.google/privacy/ "YouTube's privacy policy") | Used to track user’s interaction with embedded content. | Session | HTTP Cookie |
+| NID | [Google](https://business.safety.google/privacy/ "Google's privacy policy") | Pending | 6 months | HTTP Cookie |
+| pagead/1p-user-list/# | [Google](https://business.safety.google/privacy/ "Google's privacy policy") | Tracks if the user has shown interest in specific products or events across multiple websites and detects how the user navigates between sites. This is used for measurement of advertisement efforts and facilitates payment of referral-fees between websites. | Session | Pixel Tracker |
+| receive-cookie-deprecation | [Taboola](https://www.taboola.com/privacy-policy "Taboola's privacy policy") | Collects information on user behaviour on multiple websites. This information is used in order to optimize the relevance of advertisement on the website. | 1 year | HTTP Cookie |
+| remote\_sid | [YouTube](https://business.safety.google/privacy/ "YouTube's privacy policy") | Necessary for the implementation and functionality of YouTube video-content on the website. | Session | HTTP Cookie |
+| requests | [YouTube](https://business.safety.google/privacy/ "YouTube's privacy policy") | Used to track user’s interaction with embedded content. | Session | HTTP Cookie |
+| sc\_medium\_source | [Statcounter](https://statcounter.com/about/legal/?PHPSESSID=atjp30gp8nmvu58c6j1a87vqi6 "Statcounter's privacy policy") | Determines how the user accessed the website. This information is used by the website operator in order to measure the efficiency of their marketing. | Persistent | HTML Local Storage |
+| ServiceWorkerLogsDatabase#SWHealthLog | cdn.jsdelivr.net | Necessary for the implementation and functionality of YouTube video-content on the website. | Persistent | IndexedDB |
+| sp\_landing | [Spotify](https://www.spotify.com/uk/legal/privacy-policy/ "Spotify's privacy policy") | Used to implement audio-content from Spotify on the website. Can also be used to register user interaction and preferences in context with audio-content - This can serve statistics and marketing purposes. | 1 day | HTTP Cookie |
+| sp\_t | [Spotify](https://www.spotify.com/uk/legal/privacy-policy/ "Spotify's privacy policy") | Used to implement audio-content from Spotify on the website. Can also be used to register user interaction and preferences in context with audio-content - This can serve statistics and marketing purposes. | 1 year | HTTP Cookie |
+| t\_gid | [Taboola](https://www.taboola.com/privacy-policy "Taboola's privacy policy") | This cookie assigns a specific visitor ID, when the visitor interacts with ads or content from the website - this allows the website to target the visitor with similar ads or content. | 1 year | HTTP Cookie |
+| t\_pt\_gid | [Taboola](https://www.taboola.com/privacy-policy "Taboola's privacy policy") | Collects information on user preferences and/or interaction with web-campaign content - This is used on CRM-campaign-platform used by website owners for promoting events or products. | 1 year | HTTP Cookie |
+| taboola global:user-id | [Taboola](https://www.taboola.com/privacy-policy "Taboola's privacy policy") | Sets a unique ID for the visitor, that allows third party advertisers to target the visitor with relevant advertisement. This pairing service is provided by third party advertisement hubs, which facilitates real-time bidding for advertisers. | Persistent | HTML Local Storage |
+| taboola\_session\_id | [Taboola](https://www.taboola.com/privacy-policy "Taboola's privacy policy") | This cookie is used to collect information on a visitor. This information will become an ID string with information on a specific visitor – ID information strings can be used to target groups with similar preferences, or can be used by third-party domains or ad-exchanges. | Session | HTTP Cookie |
+| TESTCOOKIESENABLED | [YouTube](https://business.safety.google/privacy/ "YouTube's privacy policy") | Used to track user’s interaction with embedded content. | 1 day | HTTP Cookie |
+| VISITOR\_INFO1\_LIVE | [YouTube](https://business.safety.google/privacy/ "YouTube's privacy policy") | Tries to estimate the users' bandwidth on pages with integrated YouTube videos. | 180 days | HTTP Cookie |
+| YSC | [YouTube](https://business.safety.google/privacy/ "YouTube's privacy policy") | Registers a unique ID to keep statistics of what videos from YouTube the user has seen. | Session | HTTP Cookie |
+| yt.innertube::nextId | cdn.jsdelivr.net | Registers a unique ID to keep statistics of what videos from YouTube the user has seen. | Persistent | HTML Local Storage |
+| ytidb::LAST\_RESULT\_ENTRY\_KEY | cdn.jsdelivr.net | Used to track user’s interaction with embedded content. | Persistent | HTML Local Storage |
+| YtIdbMeta#databases | cdn.jsdelivr.net | Used to track user’s interaction with embedded content. | Persistent | IndexedDB |
+| yt-remote-cast-available | [YouTube](https://business.safety.google/privacy/ "YouTube's privacy policy") | Stores the user's video player preferences using embedded YouTube video | Session | HTML Local Storage |
+| yt-remote-cast-installed | [YouTube](https://business.safety.google/privacy/ "YouTube's privacy policy") | Stores the user's video player preferences using embedded YouTube video | Session | HTML Local Storage |
+| yt-remote-connected-devices | [YouTube](https://business.safety.google/privacy/ "YouTube's privacy policy") | Stores the user's video player preferences using embedded YouTube video | Persistent | HTML Local Storage |
+| yt-remote-device-id | [YouTube](https://business.safety.google/privacy/ "YouTube's privacy policy") | Stores the user's video player preferences using embedded YouTube video | Persistent | HTML Local Storage |
+| yt-remote-fast-check-period | [YouTube](https://business.safety.google/privacy/ "YouTube's privacy policy") | Stores the user's video player preferences using embedded YouTube video | Session | HTML Local Storage |
+| yt-remote-session-app | [YouTube](https://business.safety.google/privacy/ "YouTube's privacy policy") | Stores the user's video player preferences using embedded YouTube video | Session | HTML Local Storage |
+| yt-remote-session-name | [YouTube](https://business.safety.google/privacy/ "YouTube's privacy policy") | Stores the user's video player preferences using embedded YouTube video | Session | HTML Local Storage |
+
+Unclassified (413)
+
+Unclassified cookies are cookies that we are in the process of classifying, together with the providers of individual cookies.
+
+| Name | Provider | Purpose | Maximum Storage Duration | Type |
+| --- | --- | --- | --- | --- |
+| 63ec8b41f3741ad110b1ef3d#pages | cdn.jsdelivr.net | Pending | Persistent | IndexedDB |
+| balance\_sheet-C100490 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C101156 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C1017926 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C105095 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C107798 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C1112582 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C1131464612 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C1133207 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C1140236 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C1147670 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C1166723 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C1175072 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C1195886 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C1210250 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C1219025 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C1225133 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C1241243 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C1249871 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C1261042250 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C126250814 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C130740026 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C16726247 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C183618311 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C19438685 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C1976339 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C2001843599 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C2188175 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C252477725 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C2622977 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C278462 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C280028 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C295529 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C310136 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C313663688 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C319016 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C326579 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C337061 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C338207 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C347116190 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C368762 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C373280 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C386042879 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C4027691 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C419042 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C420860 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C425657129 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C433574555 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C486821 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C506603 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C520034 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C531104 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C56258 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C59084 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C62296400 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C63392 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C65168 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C65516 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C66752 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C669710270 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C67157909 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C672165860 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C68902472 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C695190974 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C72747260 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C72974 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C741269852 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C74822 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C75048155 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C75348944 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C76380308 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C776480 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C778145 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C792494669 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C798062 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C798944 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C79937 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C821951285 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C82334267 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C825013787 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C83066 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C83289704 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C83581772 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C840009410 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C852422 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C856412 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C867101 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C87299 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C875954 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C878684 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C89189 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C90728 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C934880597 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C939176 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C957287 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C959039 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C96047 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C96932 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C970367 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C98573 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C99773 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C99995 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C100490 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C101156 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C1017926 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C105095 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C107798 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C1112582 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C1131464612 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C1133207 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C1140236 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C1147670 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C1166723 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C1175072 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C1195886 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C1210250 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C1219025 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C1225133 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C1241243 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C1249871 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C1261042250 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C126250814 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C130740026 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C16726247 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C183618311 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C19438685 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C1976339 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C2001843599 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C2188175 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C252477725 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C2622977 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C278462 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C280028 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C295529 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C310136 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C313663688 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C319016 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C326579 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C337061 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C338207 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C347116190 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C368762 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C373280 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C386042879 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C4027691 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C419042 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C420860 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C425657129 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C433574555 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C486821 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C506603 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C520034 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C531104 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C56258 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C59084 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C62296400 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C63392 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C65168 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C65516 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C66752 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C669710270 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C67157909 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C672165860 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C68902472 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C695190974 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C72747260 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C72974 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C741269852 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C74822 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C75048155 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C75348944 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C76380308 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C776480 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C778145 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C792494669 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C798062 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C798944 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C79937 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C821951285 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C82334267 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C825013787 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C83066 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C83289704 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C83581772 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C840009410 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C852422 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C856412 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C867101 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C87299 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C875954 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C878684 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C89189 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C90728 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C934880597 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C939176 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C957287 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C959039 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C96047 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C96932 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C970367 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C98573 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C99773 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C99995 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cli\_rgn | [Zoho](https://www.zoho.com/privacy.html "Zoho's privacy policy") | Pending | 1 day | HTTP Cookie |
+| cSaasWidget\_nbguiludwl | cdn.chaty.app | Pending | 7 days | HTTP Cookie |
+| income\_statement-C100490 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C101156 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C1017926 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C105095 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C107798 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C1112582 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C1131464612 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C1133207 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C1140236 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C1147670 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C1166723 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C1175072 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C1195886 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C1210250 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C1219025 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C1225133 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C1241243 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C1249871 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C1261042250 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C126250814 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C130740026 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C16726247 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C183618311 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C19438685 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C1976339 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C2001843599 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C2188175 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C252477725 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C2622977 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C278462 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C280028 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C295529 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C310136 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C313663688 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C319016 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C326579 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C337061 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C338207 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C347116190 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C368762 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C373280 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C386042879 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C4027691 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C419042 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C420860 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C425657129 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C433574555 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C486821 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C506603 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C520034 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C531104 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C56258 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C59084 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C62296400 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C63392 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C65168 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C65516 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C66752 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C669710270 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C67157909 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C672165860 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C68902472 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C695190974 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C72747260 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C72974 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C741269852 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C74822 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C75048155 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C75348944 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C76380308 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C776480 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C778145 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C792494669 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C798062 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C798944 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C79937 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C821951285 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C82334267 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C825013787 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C83066 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C83289704 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C83581772 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C840009410 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C852422 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C856412 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C867101 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C87299 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C875954 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C878684 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C89189 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C90728 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C934880597 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C939176 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C957287 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C959039 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C96047 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C96932 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C970367 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C98573 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C99773 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C99995 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| nocodelytics:visitor-id | tracker.nocodelytics.com | Pending | Persistent | HTML Local Storage |
+| statcounter\_tab\_session | [Statcounter](https://statcounter.com/about/legal/?PHPSESSID=atjp30gp8nmvu58c6j1a87vqi6 "Statcounter's privacy policy") | Pending | Session | HTML Local Storage |
+| summary-C100490 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C101156 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C1017926 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C105095 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C107798 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C1112582 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C1131464612 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C1133207 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C1140236 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C1147670 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C1166723 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C1175072 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C1195886 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C1210250 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C1219025 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C1225133 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C1241243 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C1249871 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C1261042250 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C126250814 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C130740026 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C16726247 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C183618311 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C19438685 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C1976339 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C2001843599 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C2188175 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C252477725 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C2622977 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C278462 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C280028 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C295529 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C310136 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C313663688 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C319016 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C326579 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C337061 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C338207 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C347116190 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C368762 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C373280 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C386042879 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C4027691 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C419042 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C420860 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C425657129 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C433574555 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C486821 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C506603 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C520034 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C531104 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C56258 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C59084 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C62296400 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C63392 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C65168 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C65516 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C66752 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C669710270 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C67157909 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C672165860 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C68902472 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C695190974 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C72747260 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C72974 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C741269852 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C74822 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C75048155 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C75348944 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C76380308 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C776480 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C778145 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C792494669 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C798062 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C798944 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C79937 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C821951285 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C82334267 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C825013787 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C83066 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C83289704 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C83581772 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C840009410 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C852422 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C856412 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C867101 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C87299 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C875954 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C878684 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C89189 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C90728 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C934880597 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C939176 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C957287 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C959039 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C96047 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C96932 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C970367 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C98573 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C99773 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C99995 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| triggeredForuDzJZc3K | cdn.chaty.app | Pending | 30 days | HTTP Cookie |
+| wg-translations | [Weglot](https://weglot.com/terms/ "Weglot's privacy policy") | Pending | Persistent | HTML Local Storage |
+| wg-translations-version | [Weglot](https://weglot.com/terms/ "Weglot's privacy policy") | Pending | Persistent | HTML Local Storage |
+| zalb\_# | [Zoho](https://www.zoho.com/privacy.html "Zoho's privacy policy") | Pending | Session | HTTP Cookie |
+
+Individual
+
+Institutional
+
+[TBSZ](https://www.mexem.com/tbsz)
+
+Company
+
+[🎁 Promotions](http://support.mexem.com/) [Education](https://www.mexem.com/mexem-campus) [Support](http://support.mexem.com/) [Login](https://www.clientam.com/sso/Login?partnerID=Mexemltd_mig)
+
+![](https://cdn.prod.website-files.com/63db8569ef8abaa3abd011bf/63db8569ef8aba4ad6d011d0_gb.svg)
+
+EN
+
+[![](https://cdn.prod.website-files.com/64008f63f1a428354e9966f3/64008f63f1a4280468996700_2021-mexem-logo.png)![](https://cdn.prod.website-files.com/63ec8b41f3741ad110b1ef3d/63ec951694e12de66597c554_MEXEM-LOGO-white.webp)](https://www.mexem.com/)
+
+## CHOOSE YOUR MEXEM  ACCOUNT TYPE
+
+[![](https://cdn.prod.website-files.com/63ec8b41f3741ad110b1ef3d/64f84db7b953222f9c0850eb_individual.webp)\\
+Individual](https://accounts.mexem.com/) [![](https://cdn.prod.website-files.com/63ec8b41f3741ad110b1ef3d/64f84db86e760a98b500d163_funding_manager.webp)\\
+TBSZ](https://accounts.mexem.com/) [![](https://cdn.prod.website-files.com/63ec8b41f3741ad110b1ef3d/64f84db9318057bf6eb311f3_joint.webp)\\
+Joint](https://www.clientam.com/Universal/servlet/OpenAccount.IBrokerGuestLogin?partnerID=Mexemltd_mig&invitedBy=&invitation_id=56139480) [![](https://cdn.prod.website-files.com/63ec8b41f3741ad110b1ef3d/64f84db9ce75548f3a1f1f32_small_business.webp)\\
+Corporate](https://www.clientam.com/Universal/servlet/OpenAccount.IBrokerGuestLogin?partnerID=Mexemltd_mig&invitedBy=&invitation_id=56139480)
+
+Tick the box to accept the [Terms and Conditions](https://assets.website-files.com/63ec8b41f3741ad110b1ef3d/660d5155a82058972da5a00d_Terms-and-Conditions-including-PM-and-ST-2023%20Main.docx.pdf) & open an account.
+
+Kérjük, a regisztráció során ne használjon ékezetes betűket!
+
+Por favor, ingrese sus datos sin acentos, tildes ni caracteres especiales
+
+Apple Inc.
+
+AAPL
+
+$175.49
+
+−3.58 (2.00%)
+
+Amazon's Financial Performance: A Comprehensive Analysis
+
+![](https://cdn.prod.website-files.com/63f46dc8ada663b2260ad042/6527aa83aed2d28172be4c35_amazon.jpg)
+
+![](https://cdn.prod.website-files.com/63f46dc8ada663b2260ad042/6411d993d52c7d9a794cf8ef_Lion%20Logo%20(1024x1024).png)
+
+Published by **MEXEM EUROPE**
+
+November 28, 2024
+
+(GMT+2)
+
+Amazon's Financial Performance: A Comprehensive Analysis
+
+MEXEM COOKIE POLICY.
+
+We utilize cookies to enhance your experience and deliver personalized advertising.
+
+Cookies are small text files that can be used by websites to make a user's experience more efficient.
+
+The law states that we can store cookies on your device if they are strictly necessary for the operation of this site. For all other types of cookies we need your permission.
+
+This site uses different types of cookies. Some cookies are placed by third party services that appear on our pages.
+
+You can at any time change or withdraw your consent from the Cookie Declaration on our website.
+
+Learn more about who we are, how you can contact us and how we process personal data in our Privacy Policy.
+
+Please state your consent ID and date when you contact us regarding your consent.
+
+Your consent applies to the following domains: www.mexem.com
+
+Your current state: Deny.
+
+Your current state: Do not sell or share my personal information.
+
+Your current state: Allow selection (Necessary , Preferences , Statistics , Marketing ).
+
+Your current state: Allow all.
+
+Your consent ID: Consent date:
+
+[Change your consent](https://www.mexem.com/blog/amazons-financial-performance-a-comprehensive-analysis?utm_source=generator&theme=0#)  \|  [Withdraw your consent](https://www.mexem.com/blog/amazons-financial-performance-a-comprehensive-analysis?utm_source=generator&theme=0#)
+
+[Do not sell or share my personal information](https://www.mexem.com/blog/amazons-financial-performance-a-comprehensive-analysis?utm_source=generator&theme=0#)
+
+Cookie declaration last updated on 11/6/24 by [Cookiebot](https://www.cookiebot.com/ "Cookiebot"):
+
+Necessary (12)
+
+Necessary cookies help make a website usable by enabling basic functions like page navigation and access to secure areas of the website. The website cannot function properly without these cookies.
+
+| Name | Provider | Purpose | Maximum Storage Duration | Type |
+| --- | --- | --- | --- | --- |
+| \_\_cf\_bm \[x4\] | cdn.jsdelivr.net<br>prod.website-files.com<br>[Vimeo](https://vimeo.com/privacy "Vimeo's privacy policy")<br>website-files.com | This cookie is used to distinguish between humans and bots. This is beneficial for the website, in order to make valid reports on the use of their website. | 1 day | HTTP Cookie |
+| \_cfuvid \[x2\] | cdn.jsdelivr.net<br>[Vimeo](https://vimeo.com/privacy "Vimeo's privacy policy") | This cookie is a part of the services provided by Cloudflare - Including load-balancing, deliverance of website content and serving DNS connection for website operators. | Session | HTTP Cookie |
+| \_zcsr\_tmp | [Zoho](https://www.zoho.com/privacy.html "Zoho's privacy policy") | This cookie is necessary for the login function on the website. | Session | HTTP Cookie |
+| 1.gif | [Cookiebot](https://www.cookiebot.com/goto/privacy-policy/ "Cookiebot's privacy policy") | Used to count the number of sessions to the website, necessary for optimizing CMP product delivery. | Session | Pixel Tracker |
+| CookieConsent | [Cookiebot](https://www.cookiebot.com/goto/privacy-policy/ "Cookiebot's privacy policy") | Stores the user's cookie consent state for the current domain | 1 year | HTTP Cookie |
+| JSESSIONID | [Zoho](https://www.zoho.com/privacy.html "Zoho's privacy policy") | Preserves users states across page requests. | Session | HTTP Cookie |
+| test\_cookie | [Google](https://business.safety.google/privacy/ "Google's privacy policy") | Pending | 1 day | HTTP Cookie |
+| zccpn | [Zoho](https://www.zoho.com/privacy.html "Zoho's privacy policy") | Ensures visitor browsing-security by preventing cross-site request forgery. This cookie is essential for the security of the website and visitor. | Session | HTTP Cookie |
+
+Preferences (4)
+
+Preference cookies enable a website to remember information that changes the way the website behaves or looks, like your preferred language or the region that you are in.
+
+| Name | Provider | Purpose | Maximum Storage Duration | Type |
+| --- | --- | --- | --- | --- |
+| activeCsaasWidgets | cdn.chaty.app | This cookie is used to collect information about how the visitor interacts with the live chat function on the website. | 1 day | HTTP Cookie |
+| csaas\_client\_id | cdn.chaty.app | Identifies the visitor across devices and visits, in order to optimize the chat-box function on the website. | Session | HTML Local Storage |
+| csaas\_user\_id | cdn.chaty.app | Identifies the visitor across devices and visits, in order to optimize the chat-box function on the website. | 1 year | HTTP Cookie |
+| wg-slugs | [Weglot](https://weglot.com/terms/ "Weglot's privacy policy") | Used in context with the language setting on the website. Facilitates the translation into the preferred language of the visitor. | Persistent | HTML Local Storage |
+
+Statistics (14)
+
+Statistic cookies help website owners to understand how visitors interact with websites by collecting and reporting information anonymously.
+
+| Name | Provider | Purpose | Maximum Storage Duration | Type |
+| --- | --- | --- | --- | --- |
+| \_hjCookieTest | [Hotjar](https://www.hotjar.com/legal/policies/privacy/ "Hotjar's privacy policy") | Collects data on the user’s navigation and behavior on the website. This is used to compile statistical reports and heatmaps for the website owner. | Session | HTTP Cookie |
+| \_hjSession\_# | [Hotjar](https://www.hotjar.com/legal/policies/privacy/ "Hotjar's privacy policy") | Collects statistics on the visitor's visits to the website, such as the number of visits, average time spent on the website and what pages have been read. | 1 day | HTTP Cookie |
+| \_hjSessionUser\_# | [Hotjar](https://www.hotjar.com/legal/policies/privacy/ "Hotjar's privacy policy") | Collects statistics on the visitor's visits to the website, such as the number of visits, average time spent on the website and what pages have been read. | 1 year | HTTP Cookie |
+| \_hjTLDTest | [Hotjar](https://www.hotjar.com/legal/policies/privacy/ "Hotjar's privacy policy") | Registers statistical data on users' behaviour on the website. Used for internal analytics by the website operator. | Session | HTTP Cookie |
+| hjActiveViewportIds | [Hotjar](https://www.hotjar.com/legal/policies/privacy/ "Hotjar's privacy policy") | This cookie contains an ID string on the current session. This contains non-personal information on what subpages the visitor enters – this information is used to optimize the visitor's experience. | Persistent | HTML Local Storage |
+| hjViewportId | [Hotjar](https://www.hotjar.com/legal/policies/privacy/ "Hotjar's privacy policy") | Saves the user's screen size in order to adjust the size of images on the website. | Session | HTML Local Storage |
+| is\_unique | [Statcounter](https://statcounter.com/about/legal/?PHPSESSID=atjp30gp8nmvu58c6j1a87vqi6 "Statcounter's privacy policy") | This cookie is used to identify the frequency of visits and how long the visitor is on the website. | 400 days | HTTP Cookie |
+| is\_visitor\_unique | [Statcounter](https://statcounter.com/about/legal/?PHPSESSID=atjp30gp8nmvu58c6j1a87vqi6 "Statcounter's privacy policy") | This cookie is used to count how many times a website has been visited by different visitors - this is done by assigning the visitor a random ID, so the visitor does not get registered twice. | 400 days | HTTP Cookie |
+| sc\_is\_visitor\_unique | [Statcounter](https://statcounter.com/about/legal/?PHPSESSID=atjp30gp8nmvu58c6j1a87vqi6 "Statcounter's privacy policy") | This cookie is used to count how many times a website has been visited by different visitors - this is done by assigning the visitor a random ID, so the visitor does not get registered twice. | 2 years | HTTP Cookie |
+| sentryReplaySession | [Spotify](https://www.spotify.com/uk/legal/privacy-policy/ "Spotify's privacy policy") | Registers data on visitors' website-behaviour. This is used for internal analysis and website optimization. | Session | HTML Local Storage |
+| statcounter\_bounce | [Statcounter](https://statcounter.com/about/legal/?PHPSESSID=atjp30gp8nmvu58c6j1a87vqi6 "Statcounter's privacy policy") | Determines if a user leaves the website straight away. This information is used for internal statistics and analytics by the website operator. | Session | HTML Local Storage |
+| statcounter\_config | [Statcounter](https://statcounter.com/about/legal/?PHPSESSID=atjp30gp8nmvu58c6j1a87vqi6 "Statcounter's privacy policy") | Used to assess user's visits to the website, such as which pages have been visited or the frequency of visits. | Session | HTML Local Storage |
+| statcounter\_session | [Statcounter](https://statcounter.com/about/legal/?PHPSESSID=atjp30gp8nmvu58c6j1a87vqi6 "Statcounter's privacy policy") | Collects statistics on the user's visits to the website, such as the number of visits, average time spent on the website and what pages have been read. | Session | HTML Local Storage |
+| vuid | [Vimeo](https://vimeo.com/privacy "Vimeo's privacy policy") | Collects data on the user's visits to the website, such as which pages have been read. | 2 years | HTTP Cookie |
+
+Marketing (49)
+
+Marketing cookies are used to track visitors across websites. The intention is to display ads that are relevant and engaging for the individual user and thereby more valuable for publishers and third party advertisers.
+
+| Name | Provider | Purpose | Maximum Storage Duration | Type |
+| --- | --- | --- | --- | --- |
+| #-# | cdn.jsdelivr.net | Used to track user’s interaction with embedded content. | Session | HTML Local Storage |
+| #:session-data | [Taboola](https://www.taboola.com/privacy-policy "Taboola's privacy policy") | Tracks the individual sessions on the website, allowing the website to compile statistical data from multiple visits. This data can also be used to create leads for marketing purposes. | Persistent | HTML Local Storage |
+| \_fbp | [Meta Platforms, Inc.](https://www.facebook.com/policy.php/ " Meta Platforms, Inc.'s privacy policy") | Used by Facebook to deliver a series of advertisement products such as real time bidding from third party advertisers. | 3 months | HTTP Cookie |
+| \_ga | [Google](https://business.safety.google/privacy/ "Google's privacy policy") | Used to send data to Google Analytics about the visitor's device and behavior. Tracks the visitor across devices and marketing channels. | 2 years | HTTP Cookie |
+| \_ga\_# | [Google](https://business.safety.google/privacy/ "Google's privacy policy") | Used to send data to Google Analytics about the visitor's device and behavior. Tracks the visitor across devices and marketing channels. | 2 years | HTTP Cookie |
+| \_gcl\_au | [Google](https://business.safety.google/privacy/ "Google's privacy policy") | Used by Google AdSense for experimenting with advertisement efficiency across websites using their services. | 3 months | HTTP Cookie |
+| \_uetsid | [Microsoft](https://privacy.microsoft.com/en-US/privacystatement "Microsoft's privacy policy") | Used to track visitors on multiple websites, in order to present relevant advertisement based on the visitor's preferences. | Persistent | HTML Local Storage |
+| \_uetsid | [Microsoft](https://privacy.microsoft.com/en-US/privacystatement "Microsoft's privacy policy") | Collects data on visitor behaviour from multiple websites, in order to present more relevant advertisement - This also allows the website to limit the number of times that they are shown the same advertisement. | 1 day | HTTP Cookie |
+| \_uetsid\_exp | [Microsoft](https://privacy.microsoft.com/en-US/privacystatement "Microsoft's privacy policy") | Contains the expiry-date for the cookie with corresponding name. | Persistent | HTML Local Storage |
+| \_uetvid | [Microsoft](https://privacy.microsoft.com/en-US/privacystatement "Microsoft's privacy policy") | Used to track visitors on multiple websites, in order to present relevant advertisement based on the visitor's preferences. | Persistent | HTML Local Storage |
+| \_uetvid | [Microsoft](https://privacy.microsoft.com/en-US/privacystatement "Microsoft's privacy policy") | Used to track visitors on multiple websites, in order to present relevant advertisement based on the visitor's preferences. | 1 year | HTTP Cookie |
+| \_uetvid\_exp | [Microsoft](https://privacy.microsoft.com/en-US/privacystatement "Microsoft's privacy policy") | Contains the expiry-date for the cookie with corresponding name. | Persistent | HTML Local Storage |
+| csaas\_referrer | cdn.chaty.app | Registers how the user has reached the website to enable pay-out of referral commission fees to partners. | 1 day | HTTP Cookie |
+| eng\_mt | [Taboola](https://www.taboola.com/privacy-policy "Taboola's privacy policy") | Tracks the conversion rate between the user and the advertisement banners on the website - This serves to optimise the relevance of the advertisements on the website. | Persistent | HTML Local Storage |
+| IDE | [Google](https://business.safety.google/privacy/ "Google's privacy policy") | Used by Google DoubleClick to register and report the website user's actions after viewing or clicking one of the advertiser's ads with the purpose of measuring the efficacy of an ad and to present targeted ads to the user. | 400 days | HTTP Cookie |
+| iU5q-!O9@$ | cdn.jsdelivr.net | Registers a unique ID to keep statistics of what videos from YouTube the user has seen. | Session | HTML Local Storage |
+| LAST\_RESULT\_ENTRY\_KEY | [YouTube](https://business.safety.google/privacy/ "YouTube's privacy policy") | Used to track user’s interaction with embedded content. | Session | HTTP Cookie |
+| lastExternalReferrer | [Meta Platforms, Inc.](https://www.facebook.com/policy.php/ " Meta Platforms, Inc.'s privacy policy") | Detects how the user reached the website by registering their last URL-address. | Persistent | HTML Local Storage |
+| lastExternalReferrerTime | [Meta Platforms, Inc.](https://www.facebook.com/policy.php/ " Meta Platforms, Inc.'s privacy policy") | Detects how the user reached the website by registering their last URL-address. | Persistent | HTML Local Storage |
+| LogsDatabaseV2:V#\|\|LogsRequestsStore | cdn.jsdelivr.net | Used to track user’s interaction with embedded content. | Persistent | IndexedDB |
+| MSPTC | [Microsoft](https://privacy.microsoft.com/en-US/privacystatement "Microsoft's privacy policy") | This cookie registers data on the visitor. The information is used to optimize advertisement relevance. | 1 year | HTTP Cookie |
+| MUID | [Microsoft](https://privacy.microsoft.com/en-US/privacystatement "Microsoft's privacy policy") | Used widely by Microsoft as a unique user ID. The cookie enables user tracking by synchronising the ID across many Microsoft domains. | 1 year | HTTP Cookie |
+| nextId | [YouTube](https://business.safety.google/privacy/ "YouTube's privacy policy") | Used to track user’s interaction with embedded content. | Session | HTTP Cookie |
+| NID | [Google](https://business.safety.google/privacy/ "Google's privacy policy") | Pending | 6 months | HTTP Cookie |
+| pagead/1p-user-list/# | [Google](https://business.safety.google/privacy/ "Google's privacy policy") | Tracks if the user has shown interest in specific products or events across multiple websites and detects how the user navigates between sites. This is used for measurement of advertisement efforts and facilitates payment of referral-fees between websites. | Session | Pixel Tracker |
+| receive-cookie-deprecation | [Taboola](https://www.taboola.com/privacy-policy "Taboola's privacy policy") | Collects information on user behaviour on multiple websites. This information is used in order to optimize the relevance of advertisement on the website. | 1 year | HTTP Cookie |
+| remote\_sid | [YouTube](https://business.safety.google/privacy/ "YouTube's privacy policy") | Necessary for the implementation and functionality of YouTube video-content on the website. | Session | HTTP Cookie |
+| requests | [YouTube](https://business.safety.google/privacy/ "YouTube's privacy policy") | Used to track user’s interaction with embedded content. | Session | HTTP Cookie |
+| sc\_medium\_source | [Statcounter](https://statcounter.com/about/legal/?PHPSESSID=atjp30gp8nmvu58c6j1a87vqi6 "Statcounter's privacy policy") | Determines how the user accessed the website. This information is used by the website operator in order to measure the efficiency of their marketing. | Persistent | HTML Local Storage |
+| ServiceWorkerLogsDatabase#SWHealthLog | cdn.jsdelivr.net | Necessary for the implementation and functionality of YouTube video-content on the website. | Persistent | IndexedDB |
+| sp\_landing | [Spotify](https://www.spotify.com/uk/legal/privacy-policy/ "Spotify's privacy policy") | Used to implement audio-content from Spotify on the website. Can also be used to register user interaction and preferences in context with audio-content - This can serve statistics and marketing purposes. | 1 day | HTTP Cookie |
+| sp\_t | [Spotify](https://www.spotify.com/uk/legal/privacy-policy/ "Spotify's privacy policy") | Used to implement audio-content from Spotify on the website. Can also be used to register user interaction and preferences in context with audio-content - This can serve statistics and marketing purposes. | 1 year | HTTP Cookie |
+| t\_gid | [Taboola](https://www.taboola.com/privacy-policy "Taboola's privacy policy") | This cookie assigns a specific visitor ID, when the visitor interacts with ads or content from the website - this allows the website to target the visitor with similar ads or content. | 1 year | HTTP Cookie |
+| t\_pt\_gid | [Taboola](https://www.taboola.com/privacy-policy "Taboola's privacy policy") | Collects information on user preferences and/or interaction with web-campaign content - This is used on CRM-campaign-platform used by website owners for promoting events or products. | 1 year | HTTP Cookie |
+| taboola global:user-id | [Taboola](https://www.taboola.com/privacy-policy "Taboola's privacy policy") | Sets a unique ID for the visitor, that allows third party advertisers to target the visitor with relevant advertisement. This pairing service is provided by third party advertisement hubs, which facilitates real-time bidding for advertisers. | Persistent | HTML Local Storage |
+| taboola\_session\_id | [Taboola](https://www.taboola.com/privacy-policy "Taboola's privacy policy") | This cookie is used to collect information on a visitor. This information will become an ID string with information on a specific visitor – ID information strings can be used to target groups with similar preferences, or can be used by third-party domains or ad-exchanges. | Session | HTTP Cookie |
+| TESTCOOKIESENABLED | [YouTube](https://business.safety.google/privacy/ "YouTube's privacy policy") | Used to track user’s interaction with embedded content. | 1 day | HTTP Cookie |
+| VISITOR\_INFO1\_LIVE | [YouTube](https://business.safety.google/privacy/ "YouTube's privacy policy") | Tries to estimate the users' bandwidth on pages with integrated YouTube videos. | 180 days | HTTP Cookie |
+| YSC | [YouTube](https://business.safety.google/privacy/ "YouTube's privacy policy") | Registers a unique ID to keep statistics of what videos from YouTube the user has seen. | Session | HTTP Cookie |
+| yt.innertube::nextId | cdn.jsdelivr.net | Registers a unique ID to keep statistics of what videos from YouTube the user has seen. | Persistent | HTML Local Storage |
+| ytidb::LAST\_RESULT\_ENTRY\_KEY | cdn.jsdelivr.net | Used to track user’s interaction with embedded content. | Persistent | HTML Local Storage |
+| YtIdbMeta#databases | cdn.jsdelivr.net | Used to track user’s interaction with embedded content. | Persistent | IndexedDB |
+| yt-remote-cast-available | [YouTube](https://business.safety.google/privacy/ "YouTube's privacy policy") | Stores the user's video player preferences using embedded YouTube video | Session | HTML Local Storage |
+| yt-remote-cast-installed | [YouTube](https://business.safety.google/privacy/ "YouTube's privacy policy") | Stores the user's video player preferences using embedded YouTube video | Session | HTML Local Storage |
+| yt-remote-connected-devices | [YouTube](https://business.safety.google/privacy/ "YouTube's privacy policy") | Stores the user's video player preferences using embedded YouTube video | Persistent | HTML Local Storage |
+| yt-remote-device-id | [YouTube](https://business.safety.google/privacy/ "YouTube's privacy policy") | Stores the user's video player preferences using embedded YouTube video | Persistent | HTML Local Storage |
+| yt-remote-fast-check-period | [YouTube](https://business.safety.google/privacy/ "YouTube's privacy policy") | Stores the user's video player preferences using embedded YouTube video | Session | HTML Local Storage |
+| yt-remote-session-app | [YouTube](https://business.safety.google/privacy/ "YouTube's privacy policy") | Stores the user's video player preferences using embedded YouTube video | Session | HTML Local Storage |
+| yt-remote-session-name | [YouTube](https://business.safety.google/privacy/ "YouTube's privacy policy") | Stores the user's video player preferences using embedded YouTube video | Session | HTML Local Storage |
+
+Unclassified (413)
+
+Unclassified cookies are cookies that we are in the process of classifying, together with the providers of individual cookies.
+
+| Name | Provider | Purpose | Maximum Storage Duration | Type |
+| --- | --- | --- | --- | --- |
+| 63ec8b41f3741ad110b1ef3d#pages | cdn.jsdelivr.net | Pending | Persistent | IndexedDB |
+| balance\_sheet-C100490 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C101156 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C1017926 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C105095 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C107798 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C1112582 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C1131464612 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C1133207 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C1140236 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C1147670 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C1166723 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C1175072 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C1195886 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C1210250 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C1219025 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C1225133 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C1241243 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C1249871 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C1261042250 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C126250814 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C130740026 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C16726247 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C183618311 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C19438685 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C1976339 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C2001843599 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C2188175 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C252477725 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C2622977 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C278462 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C280028 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C295529 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C310136 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C313663688 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C319016 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C326579 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C337061 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C338207 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C347116190 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C368762 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C373280 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C386042879 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C4027691 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C419042 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C420860 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C425657129 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C433574555 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C486821 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C506603 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C520034 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C531104 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C56258 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C59084 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C62296400 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C63392 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C65168 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C65516 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C66752 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C669710270 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C67157909 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C672165860 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C68902472 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C695190974 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C72747260 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C72974 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C741269852 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C74822 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C75048155 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C75348944 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C76380308 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C776480 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C778145 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C792494669 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C798062 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C798944 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C79937 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C821951285 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C82334267 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C825013787 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C83066 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C83289704 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C83581772 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C840009410 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C852422 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C856412 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C867101 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C87299 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C875954 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C878684 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C89189 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C90728 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C934880597 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C939176 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C957287 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C959039 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C96047 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C96932 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C970367 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C98573 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C99773 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| balance\_sheet-C99995 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C100490 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C101156 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C1017926 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C105095 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C107798 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C1112582 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C1131464612 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C1133207 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C1140236 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C1147670 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C1166723 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C1175072 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C1195886 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C1210250 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C1219025 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C1225133 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C1241243 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C1249871 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C1261042250 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C126250814 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C130740026 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C16726247 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C183618311 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C19438685 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C1976339 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C2001843599 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C2188175 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C252477725 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C2622977 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C278462 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C280028 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C295529 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C310136 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C313663688 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C319016 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C326579 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C337061 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C338207 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C347116190 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C368762 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C373280 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C386042879 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C4027691 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C419042 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C420860 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C425657129 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C433574555 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C486821 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C506603 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C520034 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C531104 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C56258 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C59084 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C62296400 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C63392 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C65168 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C65516 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C66752 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C669710270 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C67157909 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C672165860 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C68902472 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C695190974 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C72747260 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C72974 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C741269852 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C74822 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C75048155 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C75348944 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C76380308 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C776480 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C778145 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C792494669 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C798062 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C798944 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C79937 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C821951285 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C82334267 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C825013787 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C83066 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C83289704 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C83581772 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C840009410 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C852422 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C856412 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C867101 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C87299 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C875954 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C878684 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C89189 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C90728 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C934880597 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C939176 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C957287 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C959039 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C96047 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C96932 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C970367 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C98573 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C99773 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cash\_flow-C99995 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| cli\_rgn | [Zoho](https://www.zoho.com/privacy.html "Zoho's privacy policy") | Pending | 1 day | HTTP Cookie |
+| cSaasWidget\_nbguiludwl | cdn.chaty.app | Pending | 7 days | HTTP Cookie |
+| income\_statement-C100490 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C101156 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C1017926 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C105095 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C107798 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C1112582 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C1131464612 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C1133207 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C1140236 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C1147670 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C1166723 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C1175072 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C1195886 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C1210250 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C1219025 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C1225133 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C1241243 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C1249871 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C1261042250 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C126250814 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C130740026 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C16726247 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C183618311 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C19438685 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C1976339 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C2001843599 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C2188175 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C252477725 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C2622977 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C278462 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C280028 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C295529 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C310136 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C313663688 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C319016 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C326579 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C337061 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C338207 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C347116190 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C368762 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C373280 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C386042879 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C4027691 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C419042 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C420860 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C425657129 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C433574555 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C486821 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C506603 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C520034 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C531104 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C56258 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C59084 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C62296400 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C63392 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C65168 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C65516 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C66752 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C669710270 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C67157909 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C672165860 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C68902472 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C695190974 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C72747260 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C72974 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C741269852 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C74822 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C75048155 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C75348944 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C76380308 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C776480 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C778145 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C792494669 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C798062 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C798944 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C79937 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C821951285 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C82334267 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C825013787 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C83066 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C83289704 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C83581772 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C840009410 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C852422 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C856412 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C867101 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C87299 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C875954 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C878684 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C89189 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C90728 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C934880597 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C939176 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C957287 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C959039 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C96047 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C96932 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C970367 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C98573 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C99773 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| income\_statement-C99995 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| nocodelytics:visitor-id | tracker.nocodelytics.com | Pending | Persistent | HTML Local Storage |
+| statcounter\_tab\_session | [Statcounter](https://statcounter.com/about/legal/?PHPSESSID=atjp30gp8nmvu58c6j1a87vqi6 "Statcounter's privacy policy") | Pending | Session | HTML Local Storage |
+| summary-C100490 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C101156 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C1017926 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C105095 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C107798 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C1112582 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C1131464612 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C1133207 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C1140236 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C1147670 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C1166723 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C1175072 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C1195886 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C1210250 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C1219025 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C1225133 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C1241243 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C1249871 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C1261042250 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C126250814 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C130740026 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C16726247 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C183618311 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C19438685 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C1976339 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C2001843599 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C2188175 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C252477725 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C2622977 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C278462 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C280028 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C295529 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C310136 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C313663688 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C319016 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C326579 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C337061 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C338207 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C347116190 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C368762 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C373280 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C386042879 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C4027691 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C419042 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C420860 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C425657129 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C433574555 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C486821 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C506603 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C520034 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C531104 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C56258 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C59084 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C62296400 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C63392 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C65168 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C65516 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C66752 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C669710270 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C67157909 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C672165860 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C68902472 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C695190974 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C72747260 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C72974 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C741269852 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C74822 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C75048155 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C75348944 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C76380308 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C776480 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C778145 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C792494669 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C798062 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C798944 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C79937 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C821951285 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C82334267 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C825013787 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C83066 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C83289704 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C83581772 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C840009410 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C852422 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C856412 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C867101 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C87299 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C875954 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C878684 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C89189 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C90728 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C934880597 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C939176 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C957287 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C959039 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C96047 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C96932 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C970367 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C98573 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C99773 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| summary-C99995 | widget.bridgewise.com | Pending | Persistent | HTML Local Storage |
+| triggeredForuDzJZc3K | cdn.chaty.app | Pending | 30 days | HTTP Cookie |
+| wg-translations | [Weglot](https://weglot.com/terms/ "Weglot's privacy policy") | Pending | Persistent | HTML Local Storage |
+| wg-translations-version | [Weglot](https://weglot.com/terms/ "Weglot's privacy policy") | Pending | Persistent | HTML Local Storage |
+| zalb\_# | [Zoho](https://www.zoho.com/privacy.html "Zoho's privacy policy") | Pending | Session | HTTP Cookie |
+
+Individual
+
+Institutional
+
+[TBSZ](https://www.mexem.com/tbsz)
+
+Company
+
+[🎁 Promotions](http://support.mexem.com/) [Education](https://www.mexem.com/mexem-campus) [Support](http://support.mexem.com/) [Login](https://www.clientam.com/sso/Login?partnerID=Mexemltd_mig)
+
+![](https://cdn.prod.website-files.com/63db8569ef8abaa3abd011bf/63db8569ef8aba4ad6d011d0_gb.svg)
+
+EN
+
+[![](https://cdn.prod.website-files.com/64008f63f1a428354e9966f3/64008f63f1a4280468996700_2021-mexem-logo.png)![](https://cdn.prod.website-files.com/63ec8b41f3741ad110b1ef3d/63ec951694e12de66597c554_MEXEM-LOGO-white.webp)](https://www.mexem.com/)
+
+## CHOOSE YOUR MEXEM  ACCOUNT TYPE
+
+[![](https://cdn.prod.website-files.com/63ec8b41f3741ad110b1ef3d/64f84db7b953222f9c0850eb_individual.webp)\\
+Individual](https://accounts.mexem.com/) [![](https://cdn.prod.website-files.com/63ec8b41f3741ad110b1ef3d/64f84db86e760a98b500d163_funding_manager.webp)\\
+TBSZ](https://accounts.mexem.com/) [![](https://cdn.prod.website-files.com/63ec8b41f3741ad110b1ef3d/64f84db9318057bf6eb311f3_joint.webp)\\
+Joint](https://www.clientam.com/Universal/servlet/OpenAccount.IBrokerGuestLogin?partnerID=Mexemltd_mig&invitedBy=&invitation_id=56139480) [![](https://cdn.prod.website-files.com/63ec8b41f3741ad110b1ef3d/64f84db9ce75548f3a1f1f32_small_business.webp)\\
+Corporate](https://www.clientam.com/Universal/servlet/OpenAccount.IBrokerGuestLogin?partnerID=Mexemltd_mig&invitedBy=&invitation_id=56139480)
+
+Tick the box to accept the [Terms and Conditions](https://assets.website-files.com/63ec8b41f3741ad110b1ef3d/660d5155a82058972da5a00d_Terms-and-Conditions-including-PM-and-ST-2023%20Main.docx.pdf) & open an account.
+
+Kérjük, a regisztráció során ne használjon ékezetes betűket!
+
+Por favor, ingrese sus datos sin acentos, tildes ni caracteres especiales
+
+Apple Inc.
+
+AAPL
+
+$175.49
+
+−3.58 (2.00%)
+
+Amazon's Financial Performance: A Comprehensive Analysis
+
+![](https://cdn.prod.website-files.com/63f46dc8ada663b2260ad042/6527aa83aed2d28172be4c35_amazon.jpg)
+
+![](https://cdn.prod.website-files.com/63f46dc8ada663b2260ad042/6411d993d52c7d9a794cf8ef_Lion%20Logo%20(1024x1024).png)
+
+Published by **MEXEM EUROPE**
+
+November 28, 2024
+
+(GMT+2)
+
+#### Revenue and Earnings
+
+‍
+
+Amazon (
+NASDAQ:AMZN$210.71
+)
+reported a revenue of $134.38 billion, marking a 10.85% year-over-year increase. The company's earnings per share (EPS) stood at $0.65, exceeding analyst expectations and representing a 425% increase. These strong financials have been a significant factor in the stock's recent gains, further solidifying Amazon's market position.
+
+#### ‍
+
+#### Operational Efficiency and Cost Measures
+
+#### ‍
+
+Cost-cutting initiatives have begun to show positive results, with Amazon's operating expenses at $57.33 billion, an 11.33% increase year-over-year. The company's net income skyrocketed to $6.75 billion, a 432.84% increase. These operational efficiencies have contributed to Amazon's strong stock performance and investor confidence.
+
+#### ‍
+
+#### Amazon's Stock Performance and Market Sentiment
+
+#### ‍
+
+Amazon's stock has been on a bullish trend, closing at $131.83 as of October 11, 2023, with an after-hours increase of 0.34% to $132.28. The stock has outperformed major tech competitors like Apple (
+NASDAQ:AAPL$239.59
+)
+, Microsoft (
+NASDAQ:MSFT$430.98
+)
+, and Alphabet (
+NASDAQ:GOOGL$171.49
+)
+.
+
+‍
+
+With a market capitalization of $1.36 trillion and a P/E ratio of 104.81, Amazon remains a compelling investment choice. Analysts are optimistic about Amazon's future, with Moffett Nathanson analyst Michael Morton setting a target price of $189 for the stock.
+
+‍
+
+The company's shares have surged more than 50% in 2023, outperforming the S&P 500's 14% YTD gain. This bullish sentiment is backed by strong fundamentals and strategic investments in sectors like AI and cloud computing.
+
+#### ‍
+
+#### Conclusion
+
+#### ‍
+
+Amazon's financial performance in Q3 2023 has been nothing short of impressive. With strong revenue growth, a significant increase in EPS, and effective cost-cutting measures, the company has solidified its position as a market leader. The bullish sentiment from analysts and investors alike suggests that Amazon is well-positioned for both short-term gains and long-term growth.
+
+‍
+
+‍
+
+The information on [mexem.com](http://mexem.com/) is for general informational purposes only. It should not be regarded as investment advice. Investing in stocks involves risk. A stock's past performance is not a reliable indicator of its future performance. Always consult a financial advisor or trusted sources before making any investment decisions.
+
+‍
+
+‍
+
+[START TRADING TODAY](https://accounts.mexem.com/)
+
+WHAT TO READ NEXT
+
+No items found.
+
+STOCK ANALYSIS
+
+[Key Market Developments\\
+\\
+December 2, 2024\\
+\\
+![](https://cdn.prod.website-files.com/63f46dc8ada663b2260ad042/663a37905f29ddb240a5a330_second-image-for-article.png)](https://www.mexem.com/blog/key-market-developments-to-monitor-in-the-coming-week-80)
+
+[What to Expect in December\\
+\\
+December 2, 2024\\
+\\
+![](https://cdn.prod.website-files.com/63f46dc8ada663b2260ad042/66333bf64ca100e0184581a5_market-image.png)](https://www.mexem.com/blog/what-to-expect-in-december)
+
+[Apple Inc.: A Comprehensive Analysis\\
+\\
+November 29, 2024\\
+\\
+![](https://cdn.prod.website-files.com/63f46dc8ada663b2260ad042/67497bf6e54ec29faa787cea_apple%202.jpg)](https://www.mexem.com/blog/apple-inc-a-comprehensive-analysis-of-financial-performance-and-market-position)
+
+[Key Market Developments\\
+\\
+November 28, 2024\\
+\\
+![](https://cdn.prod.website-files.com/63f46dc8ada663b2260ad042/663a37905f29ddb240a5a330_second-image-for-article.png)](https://www.mexem.com/blog/key-market-developments-to-monitor-in-the-coming-week-79)
+
+[Key Market Developments\\
+\\
+November 28, 2024\\
+\\
+![](https://cdn.prod.website-files.com/63f46dc8ada663b2260ad042/663a37905f29ddb240a5a330_second-image-for-article.png)](https://www.mexem.com/blog/key-market-developments-to-monitor-in-the-coming-week-78)
+
+MARKET OVERVIEW
+
+- [Indices](https://www.mexem.com/blog/amazons-financial-performance-a-comprehensive-analysis?utm_source=generator&theme=0)
+- [ETFs](https://www.mexem.com/blog/amazons-financial-performance-a-comprehensive-analysis?utm_source=generator&theme=0)
+- [Stocks](https://www.mexem.com/blog/amazons-financial-performance-a-comprehensive-analysis?utm_source=generator&theme=0)
+
+[1D](https://www.mexem.com/blog/amazons-financial-performance-a-comprehensive-analysis?utm_source=generator&theme=0) [1W](https://www.mexem.com/blog/amazons-financial-performance-a-comprehensive-analysis?utm_source=generator&theme=0) [1M](https://www.mexem.com/blog/amazons-financial-performance-a-comprehensive-analysis?utm_source=generator&theme=0) [6M](https://www.mexem.com/blog/amazons-financial-performance-a-comprehensive-analysis?utm_source=generator&theme=0) [1Y](https://www.mexem.com/blog/amazons-financial-performance-a-comprehensive-analysis?utm_source=generator&theme=0)
+
+## Name
+
+## Change
+
+## %
+
+## Price
+
+SIMILAR NEWS
+
+[Key Market Developments\\
+\\
+December 2, 2024\\
+\\
+![](https://cdn.prod.website-files.com/63f46dc8ada663b2260ad042/663a37905f29ddb240a5a330_second-image-for-article.png)](https://www.mexem.com/blog/key-market-developments-to-monitor-in-the-coming-week-80)
+
+[What to Expect in December\\
+\\
+December 2, 2024\\
+\\
+![](https://cdn.prod.website-files.com/63f46dc8ada663b2260ad042/66333bf64ca100e0184581a5_market-image.png)](https://www.mexem.com/blog/what-to-expect-in-december)
+
+[Apple Inc.: A Comprehensive Analysis\\
+\\
+November 29, 2024\\
+\\
+![](https://cdn.prod.website-files.com/63f46dc8ada663b2260ad042/67497bf6e54ec29faa787cea_apple%202.jpg)](https://www.mexem.com/blog/apple-inc-a-comprehensive-analysis-of-financial-performance-and-market-position)
+
+[Key Market Developments\\
+\\
+November 28, 2024\\
+\\
+![](https://cdn.prod.website-files.com/63f46dc8ada663b2260ad042/663a37905f29ddb240a5a330_second-image-for-article.png)](https://www.mexem.com/blog/key-market-developments-to-monitor-in-the-coming-week-79)
+
+[Key Market Developments\\
+\\
+November 28, 2024\\
+\\
+![](https://cdn.prod.website-files.com/63f46dc8ada663b2260ad042/663a37905f29ddb240a5a330_second-image-for-article.png)](https://www.mexem.com/blog/key-market-developments-to-monitor-in-the-coming-week-78)
+
+## Ready to get started?
+
+Start trading with the full package, from state of the art platform to free tool and favorable transaction fees.
+
+[JOIN US NOW](https://accounts.mexem.com/)
+
+[Login Now](https://www.clientam.com/sso/Login?partnerID=Mexemltd_mig) [Sign Up](https://accounts.mexem.com/)
+
+[App Store\\
+\\
+Mexem App Store App](https://apps.apple.com/nl/app/mexem/id1437417982) [Google Play\\
+\\
+Mexem Google Play App](https://play.google.com/store/apps/details?id=mexem.app&hl=en&gl=US)
+
+[Mexem Windows App Link](https://download2.interactivebrokers.com/installers/mexem/mexem/mexem-windows-x64.exe) [Mexem MacOS App Link](https://download2.interactivebrokers.com/installers/mexem/mexem/mexem-macosx-x64.dmg) [Mexem Linux App Link](https://download2.interactivebrokers.com/installers/mexem/mexem/mexem-linux-x64.sh)
+
+Trading
+
+[Products](https://www.mexem.com/products) [Exchange Listings](https://www.mexem.com/exchange-listings) [Margins](https://www.mexem.com/margins) [Fees](https://www.mexem.com/fees) [Reporting](https://www.mexem.com/reporting) [Order Types](https://www.mexem.com/order-types) [Research & News](https://www.mexem.com/news)
+
+Invest
+
+[Asset Management](https://www.mexem.com/portfolio) [C2 - Copy Trading](https://trade.collective2.eu/) [Savings Plan](https://www.mexem.com/savings-plan) [Sustainable Investing](https://www.mexem.com/sustainable-investing) [ETF's / UCITS Zone](https://www.mexem.com/etf) [AI Stock Analytics](https://www.mexem.com/ai-stock-analytics)
+
+Platforms
+
+[All Platforms](https://www.mexem.com/trading-platforms) [Desktop](https://www.mexem.com/trader-workstation) [Mobile Apps](https://www.mexem.com/mobile-applications) [Web Platform](https://www.mexem.com/client-portal) [API](https://www.mexem.com/api) [In Platform Features](https://www.mexem.com/in-platform-features)
+
+Accounts
+
+[Individual Accounts](https://www.mexem.com/account) [Institutional Accounts](https://www.mexem.com/institutional) [Market Data](https://www.mexem.com/market-data) [SYEP](https://www.mexem.com/stock-yield-enhancement-program)
+
+Company & Legal
+
+[About Us](https://www.mexem.com/about-us) [Affiliates](https://www.mexem.com/partner-program) [Contact Us](https://www.mexem.com/contact) [Risk Disclosure](https://www.mexem.com/risk-policy) [Privacy Policy](https://www.mexem.com/privacy-policy) [Forms & Disclosures](https://www.mexem.com/forms-and-disclosures) [Regulations & Safety](https://www.mexem.com/regulations-safety) [Terms & Conditions](https://www.mexem.com/terms-conditions)
+
+[Mexem Facebook Link](https://www.facebook.com/MEXEMBROKER/) [Mexem Instagram Link](https://www.instagram.com/mexemeurope/) [Mexem Linkedin Link](https://www.linkedin.com/in/mexem/) [Mexem Youtube Link](https://www.youtube.com/channel/UCbAhbcDFNKom5RP597xjKEw) [Mexem TikTok Link](https://www.tiktok.com/@mexemeurope)
+
+All investments involve risks, including the possible loss of capital.
+
+www.mexem.com is a website owned and operated by MEXEM Ltd. MEXEM Ltd is a European broker regulated by CySEC, license No. 325/17.
+
+Read our [Forms & Disclosures.](https://www.mexem.com/forms-and-disclosures)
+
+Any advertisement or communication concerning the distribution of derivatives falling within the scope of the Regulation of the FSMA of 26 May 2016 governing the distribution of certain derivative financial instruments to retail clients is not addressed to the Belgian public.
+
+[Stock Markets](https://www.mexem.com/blog/amazons-financial-performance-a-comprehensive-analysis?utm_source=generator&theme=0#)
+
+Stock Markets
+
+Track the latest trends and movements from global stock exchanges.
+
+[View More](https://www.mexem.com/blog-categories/stock-markets)
+
+[![](https://cdn.prod.website-files.com/63f46dc8ada663b2260ad042/663a37905f29ddb240a5a330_second-image-for-article.png)\\
+\\
+Key Market Developments to Monitor in the Coming Week](https://www.mexem.com/blog/key-market-developments-to-monitor-in-the-coming-week-80)
+
+[![](https://cdn.prod.website-files.com/63f46dc8ada663b2260ad042/66333bf64ca100e0184581a5_market-image.png)\\
+\\
+What to Expect in December](https://www.mexem.com/blog/what-to-expect-in-december)
+
+[![](https://cdn.prod.website-files.com/63f46dc8ada663b2260ad042/67497bf6e54ec29faa787cea_apple%202.jpg)\\
+\\
+Apple Inc.: A Comprehensive Analysis of Financial Performance and Market Position](https://www.mexem.com/blog/apple-inc-a-comprehensive-analysis-of-financial-performance-and-market-position)
+
+[![](https://cdn.prod.website-files.com/63f46dc8ada663b2260ad042/663a37905f29ddb240a5a330_second-image-for-article.png)\\
+\\
+Key Market Developments to Monitor in the Coming Week](https://www.mexem.com/blog/key-market-developments-to-monitor-in-the-coming-week-79)
+
+[Stories For You](https://www.mexem.com/blog/amazons-financial-performance-a-comprehensive-analysis?utm_source=generator&theme=0#)
+
+Stories For You
+
+Curated news articles tailored to your interests.
+
+[View More](https://www.mexem.com/blog-categories/stories-for-you)
+
+[![](https://cdn.prod.website-files.com/63f46dc8ada663b2260ad042/663a37905f29ddb240a5a330_second-image-for-article.png)\\
+\\
+Key Market Developments to Monitor in the Coming Week](https://www.mexem.com/blog/key-market-developments-to-monitor-in-the-coming-week-80)
+
+[![](https://cdn.prod.website-files.com/63f46dc8ada663b2260ad042/66333bf64ca100e0184581a5_market-image.png)\\
+\\
+What to Expect in December](https://www.mexem.com/blog/what-to-expect-in-december)
+
+[![](https://cdn.prod.website-files.com/63f46dc8ada663b2260ad042/663a37905f29ddb240a5a330_second-image-for-article.png)\\
+\\
+Key Market Developments to Monitor in the Coming Week](https://www.mexem.com/blog/key-market-developments-to-monitor-in-the-coming-week-79)
+
+[![](https://cdn.prod.website-files.com/63f46dc8ada663b2260ad042/67408ca44a68414b3ea68db9_4.%20Recurring%20VS.%20Lump-Sum%20Investing.png)\\
+\\
+Recurring Investing vs. Lump-Sum Investing](https://www.mexem.com/blog/recurring-investing-vs-lump-sum-investing)
+
+[Technology](https://www.mexem.com/blog/amazons-financial-performance-a-comprehensive-analysis?utm_source=generator&theme=0#)
+
+Technology
+
+Keep up with the latest trends and technological stock movements.
+
+[View More](https://www.mexem.com/blog-categories/technology)
+
+[![](https://cdn.prod.website-files.com/63f46dc8ada663b2260ad042/663a37905f29ddb240a5a330_second-image-for-article.png)\\
+\\
+Key Market Developments to Monitor in the Coming Week](https://www.mexem.com/blog/key-market-developments-to-monitor-in-the-coming-week-80)
+
+[![](https://cdn.prod.website-files.com/63f46dc8ada663b2260ad042/66333bf64ca100e0184581a5_market-image.png)\\
+\\
+What to Expect in December](https://www.mexem.com/blog/what-to-expect-in-december)
+
+[![](https://cdn.prod.website-files.com/63f46dc8ada663b2260ad042/67497bf6e54ec29faa787cea_apple%202.jpg)\\
+\\
+Apple Inc.: A Comprehensive Analysis of Financial Performance and Market Position](https://www.mexem.com/blog/apple-inc-a-comprehensive-analysis-of-financial-performance-and-market-position)
+
+[![](https://cdn.prod.website-files.com/63f46dc8ada663b2260ad042/663a37905f29ddb240a5a330_second-image-for-article.png)\\
+\\
+Key Market Developments to Monitor in the Coming Week](https://www.mexem.com/blog/key-market-developments-to-monitor-in-the-coming-week-79)
+
+[Earnings Reports](https://www.mexem.com/blog/amazons-financial-performance-a-comprehensive-analysis?utm_source=generator&theme=0#)
+
+Earnings Reports
+
+Get the latest financial results and updates from the leading companies.
+
+[View More](https://www.mexem.com/blog-categories/earnings-reports)
+
+[![](https://cdn.prod.website-files.com/63f46dc8ada663b2260ad042/66333bf64ca100e0184581a5_market-image.png)\\
+\\
+What to Expect in December](https://www.mexem.com/blog/what-to-expect-in-december)
+
+[![](https://cdn.prod.website-files.com/63f46dc8ada663b2260ad042/65b3a0205cec49cf07bc0e06_intel%20logo%20s.jpg)\\
+\\
+Intel Corp’s Financial Struggles and Strategic Moves](https://www.mexem.com/blog/intel-corps-financial-struggles-and-strategic-moves)
+
+[![](https://cdn.prod.website-files.com/63f46dc8ada663b2260ad042/66333bf64ca100e0184581a5_market-image.png)\\
+\\
+What to Expect in November](https://www.mexem.com/blog/what-to-expect-in-november)
+
+[![](https://cdn.prod.website-files.com/63f46dc8ada663b2260ad042/672377d28c4ff3c4f63fe189_realty%20income%20.jpg)\\
+\\
+Realty Income Corp: A Steady Performer in the REIT Sector](https://www.mexem.com/blog/realty-income-corp-a-steady-performer-in-the-reit-sector)
+
+[Featured](https://www.mexem.com/blog/amazons-financial-performance-a-comprehensive-analysis?utm_source=generator&theme=0#)
+
+Featured
+
+Highlighting today's top news and stories across sectors.
+
+[View More](https://www.mexem.com/blog-categories/featured)
+
+[![](https://cdn.prod.website-files.com/63f46dc8ada663b2260ad042/663a37905f29ddb240a5a330_second-image-for-article.png)\\
+\\
+Key Market Developments to Monitor in the Coming Week](https://www.mexem.com/blog/key-market-developments-to-monitor-in-the-coming-week-80)
+
+[![](https://cdn.prod.website-files.com/63f46dc8ada663b2260ad042/663a37905f29ddb240a5a330_second-image-for-article.png)\\
+\\
+Key Market Developments to Monitor in the Coming Week](https://www.mexem.com/blog/key-market-developments-to-monitor-in-the-coming-week-79)
+
+[![](https://cdn.prod.website-files.com/63f46dc8ada663b2260ad042/663a37905f29ddb240a5a330_second-image-for-article.png)\\
+\\
+Key Market Developments to Monitor in the Coming Week](https://www.mexem.com/blog/key-market-developments-to-monitor-in-the-coming-week-78)
+
+[![](https://cdn.prod.website-files.com/63f46dc8ada663b2260ad042/663a37905f29ddb240a5a330_second-image-for-article.png)\\
+\\
+Key Market Developments to Monitor in the Coming Week](https://www.mexem.com/blog/key-market-developments-to-monitor-in-the-coming-week-77)
+
+consentcdn.cookiebot.com
+
+# consentcdn.cookiebot.com is blocked
+
+This page has been blocked by an extension
+
+- Try disabling your extensions.
+
+ERR\_BLOCKED\_BY\_CLIENT
+
+null
+
+Reload
+
+This page has been blocked by an extension
+
+![](<Base64-Image-Removed>)![](<Base64-Image-Removed>)
+
+![](https://bat.bing.com/action/0?ti=97063485&Ver=2&mid=582c5d4f-2719-4aea-a582-b74212116de1&bo=1&sid=78bd0e60b0f911efb8905ff731d5d22c&vid=78bd2f80b0f911ef9db3e50744b7ebe7&vids=1&msclkid=N&pi=918639831&lg=en-US&sw=1280&sh=1024&sc=24&tl=Amazon%27s%20Financial%20Performance%3A%20A%20Comprehensive%20Analysis&p=https%3A%2F%2Fwww.mexem.com%2Fblog%2Famazons-financial-performance-a-comprehensive-analysis&r=&lt=919&evt=pageLoad&ifm=1&sv=1&cdb=AQIR&rn=606272)
+
+![Cookiebot session tracker icon loaded](https://imgsct.cookiebot.com/1.gif?dgi=6bb102a5-9f43-4628-8bcc-70fba3978610)
+
+#### Revenue and Earnings
+
+‍
+
+Amazon (
+NASDAQ:AMZN$210.71
+)
+reported a revenue of $134.38 billion, marking a 10.85% year-over-year increase. The company's earnings per share (EPS) stood at $0.65, exceeding analyst expectations and representing a 425% increase. These strong financials have been a significant factor in the stock's recent gains, further solidifying Amazon's market position.
+
+#### ‍
+
+#### Operational Efficiency and Cost Measures
+
+#### ‍
+
+Cost-cutting initiatives have begun to show positive results, with Amazon's operating expenses at $57.33 billion, an 11.33% increase year-over-year. The company's net income skyrocketed to $6.75 billion, a 432.84% increase. These operational efficiencies have contributed to Amazon's strong stock performance and investor confidence.
+
+#### ‍
+
+#### Amazon's Stock Performance and Market Sentiment
+
+#### ‍
+
+Amazon's stock has been on a bullish trend, closing at $131.83 as of October 11, 2023, with an after-hours increase of 0.34% to $132.28. The stock has outperformed major tech competitors like Apple (
+NASDAQ:AAPL$239.59
+)
+, Microsoft (
+NASDAQ:MSFT$430.98
+)
+, and Alphabet (
+NASDAQ:GOOGL$171.49
+)
+.
+
+‍
+
+With a market capitalization of $1.36 trillion and a P/E ratio of 104.81, Amazon remains a compelling investment choice. Analysts are optimistic about Amazon's future, with Moffett Nathanson analyst Michael Morton setting a target price of $189 for the stock.
+
+‍
+
+The company's shares have surged more than 50% in 2023, outperforming the S&P 500's 14% YTD gain. This bullish sentiment is backed by strong fundamentals and strategic investments in sectors like AI and cloud computing.
+
+#### ‍
+
+#### Conclusion
+
+#### ‍
+
+Amazon's financial performance in Q3 2023 has been nothing short of impressive. With strong revenue growth, a significant increase in EPS, and effective cost-cutting measures, the company has solidified its position as a market leader. The bullish sentiment from analysts and investors alike suggests that Amazon is well-positioned for both short-term gains and long-term growth.
+
+‍
+
+‍
+
+The information on [mexem.com](http://mexem.com/) is for general informational purposes only. It should not be regarded as investment advice. Investing in stocks involves risk. A stock's past performance is not a reliable indicator of its future performance. Always consult a financial advisor or trusted sources before making any investment decisions.
+
+‍
+
+‍
+
+[START TRADING TODAY](https://accounts.mexem.com/)
+
+WHAT TO READ NEXT
+
+No items found.
+
+STOCK ANALYSIS
+
+[Key Market Developments\\
+\\
+December 2, 2024\\
+\\
+![](https://cdn.prod.website-files.com/63f46dc8ada663b2260ad042/663a37905f29ddb240a5a330_second-image-for-article.png)](https://www.mexem.com/blog/key-market-developments-to-monitor-in-the-coming-week-80)
+
+[What to Expect in December\\
+\\
+December 2, 2024\\
+\\
+![](https://cdn.prod.website-files.com/63f46dc8ada663b2260ad042/66333bf64ca100e0184581a5_market-image.png)](https://www.mexem.com/blog/what-to-expect-in-december)
+
+[Apple Inc.: A Comprehensive Analysis\\
+\\
+November 29, 2024\\
+\\
+![](https://cdn.prod.website-files.com/63f46dc8ada663b2260ad042/67497bf6e54ec29faa787cea_apple%202.jpg)](https://www.mexem.com/blog/apple-inc-a-comprehensive-analysis-of-financial-performance-and-market-position)
+
+[Key Market Developments\\
+\\
+November 28, 2024\\
+\\
+![](https://cdn.prod.website-files.com/63f46dc8ada663b2260ad042/663a37905f29ddb240a5a330_second-image-for-article.png)](https://www.mexem.com/blog/key-market-developments-to-monitor-in-the-coming-week-79)
+
+[Key Market Developments\\
+\\
+November 28, 2024\\
+\\
+![](https://cdn.prod.website-files.com/63f46dc8ada663b2260ad042/663a37905f29ddb240a5a330_second-image-for-article.png)](https://www.mexem.com/blog/key-market-developments-to-monitor-in-the-coming-week-78)
+
+MARKET OVERVIEW
+
+- [Indices](https://www.mexem.com/blog/amazons-financial-performance-a-comprehensive-analysis)
+- [ETFs](https://www.mexem.com/blog/amazons-financial-performance-a-comprehensive-analysis)
+- [Stocks](https://www.mexem.com/blog/amazons-financial-performance-a-comprehensive-analysis)
+
+[1D](https://www.mexem.com/blog/amazons-financial-performance-a-comprehensive-analysis) [1W](https://www.mexem.com/blog/amazons-financial-performance-a-comprehensive-analysis) [1M](https://www.mexem.com/blog/amazons-financial-performance-a-comprehensive-analysis) [6M](https://www.mexem.com/blog/amazons-financial-performance-a-comprehensive-analysis) [1Y](https://www.mexem.com/blog/amazons-financial-performance-a-comprehensive-analysis)
+
+## Name
+
+## Change
+
+## %
+
+## Price
+
+SIMILAR NEWS
+
+[Key Market Developments\\
+\\
+December 2, 2024\\
+\\
+![](https://cdn.prod.website-files.com/63f46dc8ada663b2260ad042/663a37905f29ddb240a5a330_second-image-for-article.png)](https://www.mexem.com/blog/key-market-developments-to-monitor-in-the-coming-week-80)
+
+[What to Expect in December\\
+\\
+December 2, 2024\\
+\\
+![](https://cdn.prod.website-files.com/63f46dc8ada663b2260ad042/66333bf64ca100e0184581a5_market-image.png)](https://www.mexem.com/blog/what-to-expect-in-december)
+
+[Apple Inc.: A Comprehensive Analysis\\
+\\
+November 29, 2024\\
+\\
+![](https://cdn.prod.website-files.com/63f46dc8ada663b2260ad042/67497bf6e54ec29faa787cea_apple%202.jpg)](https://www.mexem.com/blog/apple-inc-a-comprehensive-analysis-of-financial-performance-and-market-position)
+
+[Key Market Developments\\
+\\
+November 28, 2024\\
+\\
+![](https://cdn.prod.website-files.com/63f46dc8ada663b2260ad042/663a37905f29ddb240a5a330_second-image-for-article.png)](https://www.mexem.com/blog/key-market-developments-to-monitor-in-the-coming-week-79)
+
+[Key Market Developments\\
+\\
+November 28, 2024\\
+\\
+![](https://cdn.prod.website-files.com/63f46dc8ada663b2260ad042/663a37905f29ddb240a5a330_second-image-for-article.png)](https://www.mexem.com/blog/key-market-developments-to-monitor-in-the-coming-week-78)
+
+## Ready to get started?
+
+Start trading with the full package, from state of the art platform to free tool and favorable transaction fees.
+
+[JOIN US NOW](https://accounts.mexem.com/)
+
+[Login Now](https://www.clientam.com/sso/Login?partnerID=Mexemltd_mig) [Sign Up](https://accounts.mexem.com/)
+
+[App Store\\
+\\
+Mexem App Store App](https://apps.apple.com/nl/app/mexem/id1437417982) [Google Play\\
+\\
+Mexem Google Play App](https://play.google.com/store/apps/details?id=mexem.app&hl=en&gl=US)
+
+[Mexem Windows App Link](https://download2.interactivebrokers.com/installers/mexem/mexem/mexem-windows-x64.exe) [Mexem MacOS App Link](https://download2.interactivebrokers.com/installers/mexem/mexem/mexem-macosx-x64.dmg) [Mexem Linux App Link](https://download2.interactivebrokers.com/installers/mexem/mexem/mexem-linux-x64.sh)
+
+Trading
+
+[Products](https://www.mexem.com/products) [Exchange Listings](https://www.mexem.com/exchange-listings) [Margins](https://www.mexem.com/margins) [Fees](https://www.mexem.com/fees) [Reporting](https://www.mexem.com/reporting) [Order Types](https://www.mexem.com/order-types) [Research & News](https://www.mexem.com/news)
+
+Invest
+
+[Asset Management](https://www.mexem.com/portfolio) [C2 - Copy Trading](https://trade.collective2.eu/) [Savings Plan](https://www.mexem.com/savings-plan) [Sustainable Investing](https://www.mexem.com/sustainable-investing) [ETF's / UCITS Zone](https://www.mexem.com/etf) [AI Stock Analytics](https://www.mexem.com/ai-stock-analytics)
+
+Platforms
+
+[All Platforms](https://www.mexem.com/trading-platforms) [Desktop](https://www.mexem.com/trader-workstation) [Mobile Apps](https://www.mexem.com/mobile-applications) [Web Platform](https://www.mexem.com/client-portal) [API](https://www.mexem.com/api) [In Platform Features](https://www.mexem.com/in-platform-features)
+
+Accounts
+
+[Individual Accounts](https://www.mexem.com/account) [Institutional Accounts](https://www.mexem.com/institutional) [Market Data](https://www.mexem.com/market-data) [SYEP](https://www.mexem.com/stock-yield-enhancement-program)
+
+Company & Legal
+
+[About Us](https://www.mexem.com/about-us) [Affiliates](https://www.mexem.com/partner-program) [Contact Us](https://www.mexem.com/contact) [Risk Disclosure](https://www.mexem.com/risk-policy) [Privacy Policy](https://www.mexem.com/privacy-policy) [Forms & Disclosures](https://www.mexem.com/forms-and-disclosures) [Regulations & Safety](https://www.mexem.com/regulations-safety) [Terms & Conditions](https://www.mexem.com/terms-conditions)
+
+[Mexem Facebook Link](https://www.facebook.com/MEXEMBROKER/) [Mexem Instagram Link](https://www.instagram.com/mexemeurope/) [Mexem Linkedin Link](https://www.linkedin.com/in/mexem/) [Mexem Youtube Link](https://www.youtube.com/channel/UCbAhbcDFNKom5RP597xjKEw) [Mexem TikTok Link](https://www.tiktok.com/@mexemeurope)
+
+All investments involve risks, including the possible loss of capital.
+
+www.mexem.com is a website owned and operated by MEXEM Ltd. MEXEM Ltd is a European broker regulated by CySEC, license No. 325/17.
+
+Read our [Forms & Disclosures.](https://www.mexem.com/forms-and-disclosures)
+
+Any advertisement or communication concerning the distribution of derivatives falling within the scope of the Regulation of the FSMA of 26 May 2016 governing the distribution of certain derivative financial instruments to retail clients is not addressed to the Belgian public.
+
+[Stock Markets](https://www.mexem.com/blog/amazons-financial-performance-a-comprehensive-analysis#)
+
+Stock Markets
+
+Track the latest trends and movements from global stock exchanges.
+
+[View More](https://www.mexem.com/blog-categories/stock-markets)
+
+[![](https://cdn.prod.website-files.com/63f46dc8ada663b2260ad042/663a37905f29ddb240a5a330_second-image-for-article.png)\\
+\\
+Key Market Developments to Monitor in the Coming Week](https://www.mexem.com/blog/key-market-developments-to-monitor-in-the-coming-week-80)
+
+[![](https://cdn.prod.website-files.com/63f46dc8ada663b2260ad042/66333bf64ca100e0184581a5_market-image.png)\\
+\\
+What to Expect in December](https://www.mexem.com/blog/what-to-expect-in-december)
+
+[![](https://cdn.prod.website-files.com/63f46dc8ada663b2260ad042/67497bf6e54ec29faa787cea_apple%202.jpg)\\
+\\
+Apple Inc.: A Comprehensive Analysis of Financial Performance and Market Position](https://www.mexem.com/blog/apple-inc-a-comprehensive-analysis-of-financial-performance-and-market-position)
+
+[![](https://cdn.prod.website-files.com/63f46dc8ada663b2260ad042/663a37905f29ddb240a5a330_second-image-for-article.png)\\
+\\
+Key Market Developments to Monitor in the Coming Week](https://www.mexem.com/blog/key-market-developments-to-monitor-in-the-coming-week-79)
+
+[Stories For You](https://www.mexem.com/blog/amazons-financial-performance-a-comprehensive-analysis#)
+
+Stories For You
+
+Curated news articles tailored to your interests.
+
+[View More](https://www.mexem.com/blog-categories/stories-for-you)
+
+[![](https://cdn.prod.website-files.com/63f46dc8ada663b2260ad042/663a37905f29ddb240a5a330_second-image-for-article.png)\\
+\\
+Key Market Developments to Monitor in the Coming Week](https://www.mexem.com/blog/key-market-developments-to-monitor-in-the-coming-week-80)
+
+[![](https://cdn.prod.website-files.com/63f46dc8ada663b2260ad042/66333bf64ca100e0184581a5_market-image.png)\\
+\\
+What to Expect in December](https://www.mexem.com/blog/what-to-expect-in-december)
+
+[![](https://cdn.prod.website-files.com/63f46dc8ada663b2260ad042/663a37905f29ddb240a5a330_second-image-for-article.png)\\
+\\
+Key Market Developments to Monitor in the Coming Week](https://www.mexem.com/blog/key-market-developments-to-monitor-in-the-coming-week-79)
+
+[![](https://cdn.prod.website-files.com/63f46dc8ada663b2260ad042/67408ca44a68414b3ea68db9_4.%20Recurring%20VS.%20Lump-Sum%20Investing.png)\\
+\\
+Recurring Investing vs. Lump-Sum Investing](https://www.mexem.com/blog/recurring-investing-vs-lump-sum-investing)
+
+[Technology](https://www.mexem.com/blog/amazons-financial-performance-a-comprehensive-analysis#)
+
+Technology
+
+Keep up with the latest trends and technological stock movements.
+
+[View More](https://www.mexem.com/blog-categories/technology)
+
+[![](https://cdn.prod.website-files.com/63f46dc8ada663b2260ad042/663a37905f29ddb240a5a330_second-image-for-article.png)\\
+\\
+Key Market Developments to Monitor in the Coming Week](https://www.mexem.com/blog/key-market-developments-to-monitor-in-the-coming-week-80)
+
+[![](https://cdn.prod.website-files.com/63f46dc8ada663b2260ad042/66333bf64ca100e0184581a5_market-image.png)\\
+\\
+What to Expect in December](https://www.mexem.com/blog/what-to-expect-in-december)
+
+[![](https://cdn.prod.website-files.com/63f46dc8ada663b2260ad042/67497bf6e54ec29faa787cea_apple%202.jpg)\\
+\\
+Apple Inc.: A Comprehensive Analysis of Financial Performance and Market Position](https://www.mexem.com/blog/apple-inc-a-comprehensive-analysis-of-financial-performance-and-market-position)
+
+[![](https://cdn.prod.website-files.com/63f46dc8ada663b2260ad042/663a37905f29ddb240a5a330_second-image-for-article.png)\\
+\\
+Key Market Developments to Monitor in the Coming Week](https://www.mexem.com/blog/key-market-developments-to-monitor-in-the-coming-week-79)
+
+[Earnings Reports](https://www.mexem.com/blog/amazons-financial-performance-a-comprehensive-analysis#)
+
+Earnings Reports
+
+Get the latest financial results and updates from the leading companies.
+
+[View More](https://www.mexem.com/blog-categories/earnings-reports)
+
+[![](https://cdn.prod.website-files.com/63f46dc8ada663b2260ad042/66333bf64ca100e0184581a5_market-image.png)\\
+\\
+What to Expect in December](https://www.mexem.com/blog/what-to-expect-in-december)
+
+[![](https://cdn.prod.website-files.com/63f46dc8ada663b2260ad042/65b3a0205cec49cf07bc0e06_intel%20logo%20s.jpg)\\
+\\
+Intel Corp’s Financial Struggles and Strategic Moves](https://www.mexem.com/blog/intel-corps-financial-struggles-and-strategic-moves)
+
+[![](https://cdn.prod.website-files.com/63f46dc8ada663b2260ad042/66333bf64ca100e0184581a5_market-image.png)\\
+\\
+What to Expect in November](https://www.mexem.com/blog/what-to-expect-in-november)
+
+[![](https://cdn.prod.website-files.com/63f46dc8ada663b2260ad042/672377d28c4ff3c4f63fe189_realty%20income%20.jpg)\\
+\\
+Realty Income Corp: A Steady Performer in the REIT Sector](https://www.mexem.com/blog/realty-income-corp-a-steady-performer-in-the-reit-sector)
+
+[Featured](https://www.mexem.com/blog/amazons-financial-performance-a-comprehensive-analysis#)
+
+Featured
+
+Highlighting today's top news and stories across sectors.
+
+[View More](https://www.mexem.com/blog-categories/featured)
+
+[![](https://cdn.prod.website-files.com/63f46dc8ada663b2260ad042/663a37905f29ddb240a5a330_second-image-for-article.png)\\
+\\
+Key Market Developments to Monitor in the Coming Week](https://www.mexem.com/blog/key-market-developments-to-monitor-in-the-coming-week-80)
+
+[![](https://cdn.prod.website-files.com/63f46dc8ada663b2260ad042/663a37905f29ddb240a5a330_second-image-for-article.png)\\
+\\
+Key Market Developments to Monitor in the Coming Week](https://www.mexem.com/blog/key-market-developments-to-monitor-in-the-coming-week-79)
+
+[![](https://cdn.prod.website-files.com/63f46dc8ada663b2260ad042/663a37905f29ddb240a5a330_second-image-for-article.png)\\
+\\
+Key Market Developments to Monitor in the Coming Week](https://www.mexem.com/blog/key-market-developments-to-monitor-in-the-coming-week-78)
+
+[![](https://cdn.prod.website-files.com/63f46dc8ada663b2260ad042/663a37905f29ddb240a5a330_second-image-for-article.png)\\
+\\
+Key Market Developments to Monitor in the Coming Week](https://www.mexem.com/blog/key-market-developments-to-monitor-in-the-coming-week-77)
+
+consentcdn.cookiebot.com
+
+# consentcdn.cookiebot.com is blocked
+
+This page has been blocked by an extension
+
+- Try disabling your extensions.
+
+ERR\_BLOCKED\_BY\_CLIENT
+
+null
+
+Reload
+
+This page has been blocked by an extension
+
+![](<Base64-Image-Removed>)![](<Base64-Image-Removed>)
+
+![](https://bat.bing.com/action/0?ti=97063485&Ver=2&mid=5e53f276-8e58-4633-a0ff-9b2e63247982&bo=1&sid=78bd0e60b0f911efb8905ff731d5d22c&vid=78bd2f80b0f911ef9db3e50744b7ebe7&vids=0&msclkid=N&pi=918639831&lg=en-US&sw=1280&sh=1024&sc=24&tl=Amazon%27s%20Financial%20Performance%3A%20A%20Comprehensive%20Analysis&p=https%3A%2F%2Fwww.mexem.com%2Fblog%2Famazons-financial-performance-a-comprehensive-analysis&r=&lt=1371&evt=pageLoad&sv=1&cdb=AQIR&rn=91438)
+
+![Cookiebot session tracker icon loaded](https://imgsct.cookiebot.com/1.gif?dgi=6bb102a5-9f43-4628-8bcc-70fba3978610)
+
+WhatsApp
+
+Hide Chaty Channels
+
+![](https://cdn.chaty.app/images/wa-logo.webp)
+
+Hello, how can I help you?17:04

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useStoredInput } from '@/hooks/useStoredInput';
 import { Bar } from 'react-chartjs-2';
 import jsPDF from 'jspdf';
@@ -38,6 +38,15 @@ export default function MarketAssessmentContent() {
   const [error, setError] = useState(null);
   const [currentPhase, setCurrentPhase] = useState(0);
   const analysisRef = useRef(null);
+
+  // Load market analysis from local storage on component mount
+  useEffect(() => {
+    const storedAnalysis = localStorage.getItem(`marketAnalysis_${userInput}`);
+    if (storedAnalysis) {
+      setMarketAnalysis(JSON.parse(storedAnalysis));
+      setCurrentPhase(6); // Assuming all phases are complete if data is loaded
+    }
+  }, [userInput]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -93,6 +102,40 @@ export default function MarketAssessmentContent() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const exportToPDF = () => {
+    const doc = new jsPDF();
+    doc.setFontSize(20);
+    doc.text("Market Assessment Report", 10, 10);
+    
+    let y = 20;
+    const sections = [
+      { title: "Market Overview", data: marketAnalysis.market_overview },
+      { title: "Market Dynamics", data: marketAnalysis.market_dynamics },
+      { title: "Competitive Landscape", data: marketAnalysis.competitive_landscape },
+      { title: "Future Outlook", data: marketAnalysis.future_outlook },
+      { title: "Data Sources", data: marketAnalysis.sources.map(source => source.domain) } // Changed to an array
+    ];
+
+    sections.forEach(section => {
+      doc.setFontSize(16);
+      doc.text(section.title, 10, y);
+      y += 10;
+      doc.setFontSize(12);
+      if (Array.isArray(section.data)) { // Check if section.data is an array
+        section.data.forEach(item => {
+          doc.text(item, 10, y);
+          y += 10;
+        });
+      } else {
+        doc.text(section.data, 10, y); // Handle case where data is a string
+        y += 10;
+      }
+      y += 5; // Add space between sections
+    });
+
+    doc.save("market_assessment_report.pdf");
   };
 
   const renderMarketSection = (title, data) => {
@@ -255,6 +298,16 @@ export default function MarketAssessmentContent() {
               )}
             </button>
           </form>
+
+          {/* PDF Export Button */}
+          <div className="mt-4">
+            <button
+              onClick={exportToPDF}
+              className="w-full py-3 sm:py-4 px-4 sm:px-6 rounded-xl bg-purple-600 text-white font-medium transition-all duration-200 text-sm sm:text-base"
+            >
+              Export to PDF
+            </button>
+          </div>
 
           {/* Analysis Results */}
           <div ref={analysisRef} className="mt-6">

@@ -29,7 +29,7 @@ CORS(app)
 logging.basicConfig(level=logging.DEBUG)
 
 # Initialize Firecrawl
-FIRECRAWL_API_KEY = "fc-b69d6504ab0a42b79e87b7827a538199"
+FIRECRAWL_API_KEY = "fc-c8fb95d8db884bd38ce266a30b0d11b4"
 firecrawl_app = FirecrawlApp(api_key=FIRECRAWL_API_KEY)
 logging.info("Firecrawl initialized")
 
@@ -43,26 +43,35 @@ if GEMINI_AVAILABLE:
     else:
         logging.warning("No Gemini API key found")
 
-def get_feature_data(business_query):
+def extract_domain(url):
+    """Extract domain name from URL"""
+    try:
+        from urllib.parse import urlparse
+        domain = urlparse(url).netloc
+        return domain.replace('www.', '')
+    except:
+        return url
+
+def get_gap_data(business_query):
     """
-    Get feature priority data using search and Firecrawl
+    Get gap analysis data using search and Firecrawl
     """
-    logging.info(f"\n{'='*50}\nGathering feature data for: {business_query}\n{'='*50}")
+    logging.info(f"\n{'='*50}\nGathering gap data for: {business_query}\n{'='*50}")
     
     result = {
-        "social_impact": [],
-        "economic_impact": [],
-        "environmental_impact": [],
-        "implementation_priority": [],
+        "current_state": [],
+        "desired_state": [],
+        "identified_gaps": [],
+        "recommendations": [],
         "sources": []
     }
     
     search_queries = [
-        f"{business_query} product features analysis",
-        f"{business_query} feature prioritization",
-        f"{business_query} product roadmap",
-        f"{business_query} user requirements",
-        f"{business_query} product development priorities"
+        f"{business_query} business performance analysis",
+        f"{business_query} market position analysis",
+        f"{business_query} business challenges",
+        f"{business_query} growth opportunities",
+        f"{business_query} business improvement areas"
     ]
     
     scraped_content = []
@@ -93,13 +102,13 @@ def get_feature_data(business_query):
                                 scraped_content.append({
                                     'url': url,
                                     'domain': extract_domain(url),
-                                    'section': 'Feature Analysis',
+                                    'section': 'Gap Analysis',
                                     'date': datetime.now().strftime("%Y-%m-%d"),
                                     'content': content[:1000]  # Limit content size
                                 })
                                 
                                 # Create a text file for the scraped content
-                                with open(f"{extract_domain(url)}_feature_analysis.txt", "w") as f:
+                                with open(f"{extract_domain(url)}_gap_analysis.txt", "w") as f:
                                     f.write(content)
                                 
                                 break
@@ -109,9 +118,9 @@ def get_feature_data(business_query):
                             scraped_content.append({
                                 'url': url,
                                 'domain': extract_domain(url),
-                                'section': 'Feature Analysis (Limited)',
+                                'section': 'Gap Analysis (Limited)',
                                 'date': datetime.now().strftime("%Y-%m-%d"),
-                                'content': f"Content from {extract_domain(url)} about {business_query}'s features"
+                                'content': f"Content from {extract_domain(url)} about {business_query}'s gap analysis"
                             })
                         else:
                             logging.error(f"Error scraping {url}: {str(e)}")
@@ -132,48 +141,36 @@ def get_feature_data(business_query):
         'date': item['date']
     } for item in scraped_content]
     
-    # Generate feature analysis using scraped content
+    # Generate analysis using available content
     if scraped_content:
         try:
             prompt = f"""
-            Analyze this content about {business_query}'s features and create a detailed priority analysis.
+            Analyze this content about {business_query} and create a detailed gap analysis.
             
             Content to analyze:
             {[item['content'] for item in scraped_content]}
             
             Provide a structured analysis with these exact sections:
 
-            SOCIAL IMPACT:
-            • Community Benefits:
-              - List positive community impacts
-            • Employment Impact:
-              - List job creation effects
-            • Social Value:
-              - List societal benefits
+            CURRENT STATE:
+            • List current performance metrics
+            • List available resources
+            • List market position
 
-            ECONOMIC IMPACT:
-            • Revenue Potential:
-              - List revenue opportunities
-            • Market Growth:
-              - List expansion possibilities
-            • Cost Benefits:
-              - List efficiency gains
+            DESIRED STATE:
+            • List target objectives
+            • List required capabilities
+            • List market aspirations
 
-            ENVIRONMENTAL IMPACT:
-            • Sustainability:
-              - List green initiatives
-            • Resource Usage:
-              - List optimization measures
-            • Environmental Benefits:
-              - List positive impacts
+            IDENTIFIED GAPS:
+            • List performance gaps
+            • List resource gaps
+            • List market position gaps
 
-            IMPLEMENTATION PRIORITY:
-            • Timeline:
-              - List implementation phases
-            • Resources:
-              - List required resources
-            • Success Metrics:
-              - List key indicators
+            RECOMMENDATIONS:
+            • List action items
+            • List resource needs
+            • List timeline phases
 
             Use factual information where available, mark inferences with (Inferred).
             Format each point as a clear, actionable item.
@@ -183,10 +180,10 @@ def get_feature_data(business_query):
             analysis = response.text
             
             # Extract sections
-            result["social_impact"] = extract_section(analysis, "SOCIAL IMPACT")
-            result["economic_impact"] = extract_section(analysis, "ECONOMIC IMPACT")
-            result["environmental_impact"] = extract_section(analysis, "ENVIRONMENTAL IMPACT")
-            result["implementation_priority"] = extract_section(analysis, "IMPLEMENTATION PRIORITY")
+            result["current_state"] = extract_section(analysis, "CURRENT STATE")
+            result["desired_state"] = extract_section(analysis, "DESIRED STATE")
+            result["identified_gaps"] = extract_section(analysis, "IDENTIFIED GAPS")
+            result["recommendations"] = extract_section(analysis, "RECOMMENDATIONS")
             
             # Create a text file for the Gemini output
             with open(f"{business_query}_gemini_analysis.txt", "w") as f:
@@ -200,15 +197,6 @@ def get_feature_data(business_query):
     
     return generate_fallback_response(business_query)
 
-def extract_domain(url):
-    """Extract domain name from URL"""
-    try:
-        from urllib.parse import urlparse
-        domain = urlparse(url).netloc
-        return domain.replace('www.', '')
-    except:
-        return url
-
 def extract_section(text, section_name):
     """Extract content from a specific section"""
     try:
@@ -219,7 +207,7 @@ def extract_section(text, section_name):
             if section_name + ":" in line:
                 in_section = True
                 continue
-            elif any(s + ":" in line for s in ["SOCIAL IMPACT", "ECONOMIC IMPACT", "ENVIRONMENTAL IMPACT", "IMPLEMENTATION PRIORITY"]):
+            elif any(s + ":" in line for s in ["CURRENT STATE", "DESIRED STATE", "IDENTIFIED GAPS", "RECOMMENDATIONS"]):
                 in_section = False
             elif in_section and line.strip():
                 cleaned_line = line.strip('- *').strip()
@@ -232,33 +220,33 @@ def extract_section(text, section_name):
         return []
 
 def generate_fallback_response(business_query):
-    """Generate basic feature priority analysis when no data is found"""
+    """Generate basic gap analysis when no data is found"""
     return {
-        "social_impact": [
-            "Community engagement opportunities (Inferred)",
-            "Job creation potential (Inferred)",
-            "Social value contribution (Inferred)"
+        "current_state": [
+            f"Current market position of {business_query} (Inferred)",
+            "Existing resources and capabilities (Inferred)",
+            "Present performance metrics (Inferred)"
         ],
-        "economic_impact": [
-            "Revenue growth potential (Inferred)",
-            "Market expansion opportunities (Inferred)",
-            "Cost optimization possibilities (Inferred)"
+        "desired_state": [
+            "Target market position (Inferred)",
+            "Required capabilities and resources (Inferred)",
+            "Desired performance levels (Inferred)"
         ],
-        "environmental_impact": [
-            "Sustainability initiatives (Inferred)",
-            "Resource efficiency measures (Inferred)",
-            "Environmental protection efforts (Inferred)"
+        "identified_gaps": [
+            "Performance improvement areas (Inferred)",
+            "Resource and capability needs (Inferred)",
+            "Market position enhancement requirements (Inferred)"
         ],
-        "implementation_priority": [
-            "Phased implementation plan (Inferred)",
-            "Resource allocation strategy (Inferred)",
-            "Risk mitigation approach (Inferred)"
+        "recommendations": [
+            "Strategic initiatives needed (Inferred)",
+            "Resource acquisition plan (Inferred)",
+            "Implementation timeline suggestions (Inferred)"
         ],
         "sources": []
     }
 
-@app.route('/api/feature-priority', methods=['POST', 'OPTIONS'])
-def analyze_features():
+@app.route('/api/gap-analysis', methods=['POST', 'OPTIONS'])
+def analyze_gap():
     if request.method == 'OPTIONS':
         return '', 204
         
@@ -269,12 +257,12 @@ def analyze_features():
         if not business_query:
             return jsonify({'error': 'No business query provided'}), 400
 
-        feature_data = get_feature_data(business_query)
-        return jsonify(feature_data)
+        gap_data = get_gap_data(business_query)
+        return jsonify(gap_data)
 
     except Exception as e:
-        logging.error(f"Error during feature analysis: {str(e)}")
+        logging.error(f"Error during gap analysis: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(port=5006, debug=True) 
+    app.run(port=5005, debug=True) 

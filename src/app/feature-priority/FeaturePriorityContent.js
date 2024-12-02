@@ -84,6 +84,35 @@ export default function FeaturePriorityContent() {
     }
   };
 
+  const exportToPDF = () => {
+    const doc = new jsPDF();
+    doc.setFontSize(16);
+    doc.text("Feature Priority Analysis", 10, 10);
+    
+    const sections = [
+      { title: "Social Impact", data: featureAnalysis.social_impact },
+      { title: "Economic Impact", data: featureAnalysis.economic_impact },
+      { title: "Environmental Impact", data: featureAnalysis.environmental_impact },
+      { title: "Implementation Priority", data: featureAnalysis.implementation_priority },
+      { title: "Data Sources", data: featureAnalysis.sources.map(source => source.domain || new URL(source.url).hostname.replace('www.', '')) }
+    ];
+
+    let y = 20;
+    sections.forEach(section => {
+      doc.setFontSize(14);
+      doc.text(section.title, 10, y);
+      y += 10;
+      section.data.forEach(item => {
+        doc.setFontSize(12);
+        doc.text(`- ${item}`, 10, y);
+        y += 5;
+      });
+      y += 10; // Add space between sections
+    });
+
+    doc.save('feature_priority_analysis.pdf');
+  };
+
   const renderFeatureSection = (title, data) => {
     return (
       <div className="mb-6">
@@ -244,6 +273,16 @@ export default function FeaturePriorityContent() {
               )}
             </button>
           </form>
+
+          {/* PDF Export Button */}
+          <div className="mt-4">
+            <button
+              onClick={exportToPDF}
+              className="w-full py-3 sm:py-4 px-4 sm:px-6 rounded-xl bg-purple-600 text-white font-medium transition-all duration-200 text-sm sm:text-base hover:bg-purple-700"
+            >
+              Export to PDF
+            </button>
+          </div>
 
           {/* Analysis Results */}
           <div ref={analysisRef} className="mt-6">

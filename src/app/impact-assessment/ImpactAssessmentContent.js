@@ -78,6 +78,7 @@ export default function ImpactAssessmentContent() {
         setImpactAnalysis(prev => ({ ...prev, sources: data.sources }));
       }
       
+      // Store the analysis in local storage
       localStorage.setItem(`impactAnalysis_${userInput}`, JSON.stringify(data));
 
     } catch (error) {
@@ -86,6 +87,36 @@ export default function ImpactAssessmentContent() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const exportToPDF = () => {
+    const doc = new jsPDF();
+    doc.setFontSize(20);
+    doc.text("Impact Assessment Report", 10, 10);
+    doc.setFontSize(12);
+    
+    const sections = [
+      { title: "Social Impact", data: impactAnalysis.social_impact },
+      { title: "Economic Impact", data: impactAnalysis.economic_impact },
+      { title: "Environmental Impact", data: impactAnalysis.environmental_impact },
+      { title: "Long-term Impact", data: impactAnalysis.long_term_impact },
+      { title: "Data Sources", data: impactAnalysis.sources.map(source => source.domain) }
+    ];
+
+    let y = 20;
+    sections.forEach(section => {
+      doc.setFontSize(16);
+      doc.text(section.title, 10, y);
+      y += 10;
+      doc.setFontSize(12);
+      section.data.forEach(item => {
+        doc.text(`- ${item}`, 10, y);
+        y += 5;
+      });
+      y += 10; // Add space between sections
+    });
+
+    doc.save("impact_assessment_report.pdf");
   };
 
   const renderImpactSection = (title, data) => {
@@ -252,6 +283,16 @@ export default function ImpactAssessmentContent() {
               )}
             </button>
           </form>
+
+          {/* PDF Export Button */}
+          <div className="mt-4">
+            <button
+              onClick={exportToPDF}
+              className="w-full py-3 sm:py-4 px-4 sm:px-6 rounded-xl bg-purple-600 text-white font-medium transition-all duration-200 text-sm sm:text-base"
+            >
+              Export to PDF
+            </button>
+          </div>
 
           {/* Analysis Results */}
           <div ref={analysisRef} className="mt-6">

@@ -1,0 +1,237 @@
+[All Posts](https://www.hopstack.io/blogs)
+
+[Amazon Sellers](https://www.hopstack.io/blog-tags/amazon-sellers)
+
+[Ecommerce Challenges](https://www.hopstack.io/blog-tags/ecommerce-challenges)
+
+[Fulfillment Solutions](https://www.hopstack.io/blog-tags/fulfillment-solutions)
+
+[Amazon FBA](https://www.hopstack.io/blog-tags/amazon-fba)
+
+# Top 8 Amazon Challenges in 2024 & Their Solutions
+
+By
+
+Team Hopstack
+
+February 10, 2022
+
+•
+
+5 min read
+
+![Top 8 Amazon Challenges in 2024 & Their Solutions](https://cdn.prod.website-files.com/668026bd6ba918352b4b09d2/668c1c0f5780ee71a360a916_642d7949323a9db0b6fa5a84_images.jpeg)
+
+Amazon challenges and problems have haunted the Amazon FBA sellers in recent past. There is no doubt that even in 2024 Amazon provides a stellar system for merchants to reach out to their customers and fulfill orders in an efficient manner.
+
+That is the reason why over 300 million people globally buy on the Amazon marketplace each year and over [2.5M third-party sellers](https://techjury.net/blog/amazon-statistics/) (FBA and FBM) are active on the platform.
+
+However, selling on Amazon comes with its own set of Amazon challenges and drawbacks. What makes matters more complicated is the fulfillment process carried out by Amazon and the exorbitant fees that take away control from the original merchant and make fulfillment a costly affair.
+
+This is why the in 2024, majority of Amazon sellers prefer to adopt a different strategy as they grow in revenue and customers. They may turn to the Fulfilled-by-Merchant strategy or may do a combination of FBA and FBM. Some may completely part ways with Amazon and manage sales channels, orders, inventory, and fulfillment independently. This helps them retain control and lower operational costs at scale.
+
+## Top 8 Amazon Challenges Faced By Sellers
+
+Here is a guide on the most common challenges faced by Amazon sellers on the platform face and what they need to bring their fulfillment process in-house.
+
+![Top 5 Amazon Challenges Faced By Sellers](https://cdn.prod.website-files.com/668026bd6ba918352b4b09d2/66870fa6e3bf02ecd4b3efe5_64d4c0369f93909ea7825311_Amazon%2520FBA%2520challenges.png)
+
+### 1\. Compromised Cash Flow
+
+Amazon has a strict structure around payouts. Usually, the [payouts are made every two weeks](https://sell.amazon.in/seller-blog/how-payments-work-for-online-selling#:~:text=Generally%2C%20Amazon%20first%20settles%20your,process%20repeats%20every%207%20days.). On the other hand, vendors need to pay to acquire/produce inventory that they later sell on Amazon and other channels. Many manufacturers in China, for example, expect a 25% payment upfront.
+
+The manufacturing process, coupled with shipping, customs clearance, and Amazon payout cycles could mean a merchant gets paid after 3-4 months post the advanced payment for obtaining the goods. This way, the Amazon sellers are subject to long periods of time before they achieve any return on their investment in inventory.
+
+Cash flow is certainly one of the massive challenges faced by Amazon merchants that sell on Amazon. One solution to this problem is setting up one’s own sales channels such as an e-commerce store. This way a merchant can retain control over sales and also be the direct recipient of payouts anytime a sale is made. This also helps in eliminating Amazon as an intermediary in the payments process. More details of how Amazon charges for its services can be found later in the article.
+
+### 2\. High Degree of Competition
+
+Another one of the key challenges faced by Amazon sellers is that it allows a large number of sellers to sell the same product. At the same time, the barrier to entry for sellers on the Amazon platform is extremely low.
+
+Unless the merchants are selling an exclusive product, they are always competing with a large number of other players. The excessive competition also makes it typically hard to be discovered by enough customers to convert more sales. The said competition isn’t just local. Out of the 900,000 Amazon sellers registered in the United States, [almost 38% of them are based out of China](https://www.modernretail.co/retailers/amazon-briefing-the-relationship-between-chinese-sellers-and-amazon-is-straining/) where manufacturing goods is a lot cheaper giving them an opportunity to penetrate the market with lower prices.
+
+In fact, in 2020, [2/3rd of all Amazon FBA](https://www.junglescout.com/amazon-seller-report/) sellers interviewed in a survey expressed concern and fear over the increased competition leading to a steep decline in prices.
+
+Having one’s exclusive sales channels and marketing mediums provides merchants a chance to create a unique positioning for their products and go one step further in building the brand that they wish to.
+
+![](https://global-uploads.webflow.com/61408d1fb0d58669de167b5d/643298f0bc4ac1334646b84d_crossdock-logo-blue.png)
+
+Monthly roundup of top stories in e-commerce fulfillment and warehousing.
+
+Submission Received! Keep an eye out on your inbox for our upcoming editions.
+
+Oops! Something went wrong while submitting the form.
+
+### 3\. Packaging Restrictions
+
+Amazon has strict guidelines on how products must be sent to the Amazon Fulfillment Centers. The company has over the years suggested certain box sizes and deviations from them could either slow down the process or worse, may render the entire consignment improper. In the latter case, the items are sent back to the merchant and all costs associated with the activities completed previously are borne by the merchants.
+
+The challenges faced by Amazon company sellers here are the charges for both the delivery and the return from the Amazon warehouse are paid for by the Amazon FBA sellers. This also poses a major opportunity cost since the inventory stuck in transit/inspection could have been sold on other channels. There are various other reasons why Amazon could reject shipments such as unaffiliated shipping partners, failing to meet Amazon pallet requirements, cancellation due to delay, etc.
+
+Both FBA and FBM merchants are bound by policies that dictate their packaging process. The packaging process typically consists of two pillars, the labeling and the actual packaging of individual products and the consignments sent out to the Amazon Fulfillment Centres. Amazon expects each merchant to follow international labeling standards for their manufacturing labels, Amazon labels (such as FNSKU), and brand owner labeling (to prevent counterfeiting of high-value items).
+
+Amazon sellers also have a choice to let Amazon produce labels for their individual product units. However, the FBA Label Service may turn out to be costly for low-margin products as Amazon charges [about £0.15 or $0.20](https://www.optimizon.co.uk/amazon-knowhow/amazon-packaging-requirements-everything-you-need-to-know/) for each unit it generates and places a label on.
+
+Once the merchant has taken care of the labeling and the barcodes, the next step is to adhere to all the packaging requirements for selling on the Amazon platform. Amazon has rigid guidelines around [loose products, sets, boxed units, polybagged units, and case-packed products](https://sellercentral.amazon.com/gp/help/external/G200141500?language=en_US) where each box with the same product must have the same number of units and the same SKUs. This ends up adding to the operational complexity and the costs associated with the fulfillment process.
+
+One of the another problems faced by Amazon sellers is that Merchants do also have the alternate FBA Prep Service, where Amazon prepares the consignments to be sent to the Fulfillment Centers and properly packages the products. However, the cost of this service can range anywhere from $0.95 to $3 and isn’t available for each category of product.
+
+Similarly, merchants can also choose to buy the recommended packaging material from providers of Amazon Preferred Packaging, but, this again isn’t cheap and may not be suitable for lower margin products.
+
+### 4\. Strict Inventory Expectations
+
+One of the biggest Amazon challenges is that Merchants on Amazon are expected to maintain prescribed levels of inventory at all points. Too little inventory with high turnover means frequent stockouts. High levels of inventory that doesn’t liquidate for longer periods of time means high storage charges and penalties imposed by Amazon. Both situations tend to impact a seller’s performance on the Amazon marketplace.
+
+Businesses in today’s age need an [algorithmic forecasting and recommendation](https://hopstack.io/features) system to attain optimal inventory levels based on historical inventory and sales data. This helps companies save on inventory holding costs and drive higher customer satisfaction and retention.
+
+Amazon doesn’t just have restrictions around inventory levels but it uses a metric called Inventory Performance Index (IPI) to assess a seller’s handling of inventory. The metric is based on the 12-month performance of four components, excess inventory, sell-through rate, stranded inventory, and in-stock inventory.
+
+There are quite a few disadvantages associated with a low IPI score. First, Amazon sellers with lower IPI scores may have their products show up lower in the search results. This leads to them losing their product positions to their competitors in an already highly competitive environment. A lower IPI score can also lead to sellers [losing on the Amazon Buy Box](https://feedvisor.com/university/amazon-buy-box/) leading to other vendors for the same being prioritized in the product page on the platform.
+
+The problem faced by Amazon sellers is that they may also lose their Amazon Prime status making their listings less appealing to the consumers in the age of rapid and expedited deliveries. This way, an Amazon seller is totally dependent on Amazon for how well their products are discoverable to the consumers and if they get the Amazon Prime tag.
+
+Currently, due to the COVID-19 pandemic that has caused severe disturbances to inventory and supply chain operations, the recommended IPI score is between 300-700. However, as of the 2021 Holiday Season, Amazon has also started using the IPI to prescribe certain limits on the restock quantity and the storage space allocated to a fba seller with some sellers only being allowed up to 25 cubic feet worth of inventory.
+
+Vendors with [IPI scores of less than 500](https://www.sellerapp.com/blog/amazon-fba-storage-limits/) are subject to losing out on allocated storage space and are supposed to operate under the limits imposed on them.  There is no way a merchant can appeal these restrictions and has to wait till the next quarter when the inventory performance is reassessed and new IPI scores are computed.
+
+### 5\. High Amazon Fees
+
+The last but not least in this Amazon challenges list is that Amazon charges medium to high Amazon fba fees for its services at every step of the process. These charges range from one-time to regular. As these charges pile up, some Amazon FBA sellers have even recorded up to [53% of their entire revenue going to Amazon](https://www.molsonhart.com/blog/clarifying-the-costs-of-selling-on-various-marketplaces) in the form of various fees and charges. Even for the FBM or Fulfillment-by-merchant model, sellers have had their Amazon-related costs as high as 27% only for the product listing and any search ads they may have run.
+
+First-off, Amazon charges 39.99 for setting up an Amazon seller account for ‘Professional Sellers’. This is a recurring monthly payment irrespective of the number of products and volume of sales. Additionally, merchants must also pay the referral fee or commonly called the commission. This [ranges anywhere from 6-45%](https://fitsmallbusiness.com/amazon-seller-fees/#1) depending on the retail price and the product category.
+
+The referral fee is bound by the ‘Minimum Referral Fee’ which sets the lower threshold for the commission in each category. The Minimum Referral Fee is typically 0-2% depending on the category. The biggest contributor to the costs is by far the fulfillment fees under the Amazon FBA program. Amazon clubs the picking, packing, and shipping costs as one and it is to be paid for by the merchants.
+
+These costs can range anywhere from $2 to $6.8 in the US depending on the size, weight, and category of the products. Additionally, a lot of sellers do fall prey to the storage fees if their inventory is not liquidating quickly enough. Amazon normally charges $.75 per cubic foot for most parts of the year but during the October-December period, the charge is around $2.4 per cubic foot of storage space used. In order to keep up with the demand and the competition during this period, sellers end up paying exorbitant amounts towards storage that hampers their profitability.
+
+To top it all, it is becoming increasingly difficult for merchants to rank higher on search results without the use of paid advertising. 3 out of 10 top results on Amazon are normally the products being promoted for the keyword/category. In fact, [Amazon earned over $9.7B](https://finshots.in/archive/amazon-the-advertising-giant/) from their advertising segment only in 2021. This leads to sellers bearing more costs in addition to their regular promotion and marketing spends.
+
+### **6\. Counterfeiting and intellectual property issues**
+
+In the evolving landscape of Amazon's marketplace in 2024, sellers are increasingly grappling with the challenge of counterfeiting and intellectual property (IP) issues. This challenge is multifaceted, involving not just the loss of sales, but also the potential erosion of brand reputation and customer trust. Counterfeiters and unscrupulous competitors may list unauthorized replicas or copycat versions of products, effectively duping customers and diluting the brand’s market presence. This situation can lead to a significant decline in the perceived value of the original products, making it harder for legitimate sellers to maintain their market position.
+
+To effectively combat this issue, Amazon sellers must adopt a proactive and comprehensive approach towards brand protection. This involves regular monitoring of the marketplace for any unauthorized listings that infringe on their intellectual property. Sellers should be vigilant in identifying and reporting such listings to Amazon, leveraging the platform's mechanisms for handling counterfeit and IP infringement cases. However, this is not a one-time effort but an ongoing process requiring consistent attention and resources.
+
+One pivotal tool in a seller's arsenal is Amazon's Brand Registry program. By enrolling in this program, sellers can gain more control over their product listings, ensuring that their brand is accurately represented on the platform. The Brand Registry aids in safeguarding against counterfeiters, as it provides sellers with advanced tools to search Amazon for potentially infringing content, using custom criteria like their brand name, trademarks, or even product images. Additionally, it streamlines the process of reporting violations, making it more efficient for sellers to take action against infringers.
+
+Beyond Amazon's internal tools, sellers should also consider broader strategies for brand protection. This includes legal measures like securing trademarks and patents, as well as developing unique product features or packaging that are harder to replicate. Educating customers about the value and unique aspects of their products can also play a crucial role in building a loyal customer base that is less likely to fall prey to counterfeit products. Furthermore, engaging with customers through social media and other channels can help in quickly identifying and responding to counterfeit issues as they arise
+
+### 7\. Customer Review Management
+
+In the competitive arena of Amazon's marketplace, review management emerges as a crucial element for sellers, playing a pivotal role in shaping consumer perception and decision-making. The impact of reviews on Amazon extends far beyond mere ratings; they form the backbone of a product's credibility and significantly influence the buying behavior of potential customers. In this context, sellers are faced with the complex task of not just fostering positive reviews but also addressing the inevitable negative feedback that can arise.
+
+The challenge of managing reviews on Amazon is multifaceted. Positive reviews act as a powerful endorsement, boosting the visibility and desirability of a product. They serve as social proof, reassuring potential buyers about the quality and reliability of what they are considering purchasing. Conversely, negative reviews can have a disproportionately damaging effect. Even a single negative review, if left unaddressed, can deter potential customers, leading to a decline in sales and an adverse impact on the seller’s reputation. This issue is compounded by the fact that dissatisfied customers are often more motivated to leave reviews, potentially skewing the overall perception of a product.
+
+The complexity of review management is further heightened by the diverse nature of customer feedback. Reviews can range from constructive criticism and genuine grievances to subjective opinions and unrealistic expectations. Sellers must navigate this landscape carefully, discerning between different types of negative feedback and understanding the underlying concerns of their customers. This process is not just about damage control but also about gaining valuable insights into customer preferences and expectations, which can inform product improvements and customer service enhancements.
+
+Additionally, the authenticity of reviews has become a growing concern on Amazon. The platform's strict policies against incentivized or fake reviews put sellers in a difficult position. They must encourage genuine customer feedback without violating Amazon's guidelines, which is a delicate balancing act. The authenticity of reviews is critical not only for maintaining trust with customers but also for adhering to Amazon's standards, which can affect a seller's standing on the platform.
+
+### **8\. Account security and fraud prevention**
+
+Account security and fraud prevention have emerged as critical issues for Amazon sellers in recent years, reflecting the broader challenges of operating in the digital marketplace. As online retail continues to grow, the threats posed by fraudulent activities and security breaches have become more sophisticated and frequent, posing a significant risk to both sellers and consumers. For Amazon sellers, the stakes are particularly high, as issues related to account security and fraud can have far-reaching consequences on their business operations, financial stability, and reputation.
+
+The nature of these security challenges is diverse and constantly evolving. Sellers face threats from various fronts, including phishing attempts, unauthorized account access, fraudulent transactions, and even sophisticated cyberattacks aimed at compromising seller accounts. These security breaches can lead to a range of adverse outcomes, such as the theft of sensitive information, financial losses, unauthorized listings or changes to product information, and the potential for compromised customer data. The impact of such incidents can be devastating, eroding customer trust and damaging the seller's reputation, sometimes irreparably.
+
+One of the primary concerns for Amazon sellers is the protection of their account credentials and sensitive business information. Cybercriminals often employ deceptive tactics to gain access to seller accounts, using methods like phishing emails, fake websites, or social engineering. Once they gain access, they can manipulate product listings, divert payments, or engage in other fraudulent activities. This not only leads to immediate financial losses but can also have long-term implications, such as the suspension of the seller's account by Amazon due to suspicious activities, which can be a significant setback.
+
+Additionally, sellers must contend with the issue of fraudulent transactions and counterfeit products. There are instances where fraudulent buyers exploit Amazon's return and refund policies, leading to financial losses for sellers. Moreover, the rise in counterfeit products not only affects the sales of genuine sellers but also poses risks to customers, thereby harming the overall trust in the Amazon platform.
+
+Fraud prevention and maintaining account security thus require constant vigilance and a proactive approach from sellers. This involves staying informed about the latest security threats and fraud trends, implementing robust security practices (such as two-factor authentication and regular password changes), and educating themselves and their teams about recognizing and avoiding potential scams. Furthermore, sellers should regularly monitor their accounts for any unusual activity and report any suspicious behavior to Amazon immediately.
+
+## How To Solve Challenges Faced By Amazon FBA Sellers
+
+![Ways to solve Amazon FBA challenges](https://cdn.prod.website-files.com/668026bd6ba918352b4b09d2/66870fa6e3bf02ecd4b3efd6_63d7946f57a6e48afd3b8b51_Ways-to-Solve-FBA-Challenges.webp)
+
+As manufacturing and trading companies grow in revenue and volume of units sold, there is an innate need for them to set up their own fulfillment operations. This involves setting up their own order fulfillment warehouses and tying up with a shipping service such as FedEx, UPS, etc. Taking ownership and control of the entire fulfillment cycle proves to be beneficial to a growing company and solving challenges faced by Amazon in many ways such as:
+
+### **Consistency in Storage Fee**
+
+Maintaining a dedicated warehouse offers sellers the advantage of greater control over their inventory and helps mitigate the impact of fluctuations in storage fees, a concern often tied to seasonality or changes in inventory performance metrics, such as Amazon's Inventory Performance Index (IPI).
+
+One key benefit of using a dedicated warehouse is the ability to plan and manage inventory storage costs more effectively. Unlike Amazon's fulfillment services, where storage fees can vary based on factors like seasonal demand or a seller's IPI score, having a dedicated warehouse provides a consistent cost structure. Sellers can forecast storage expenses with greater accuracy, facilitating more precise budgeting and financial planning.
+
+### **No Seasonal Restrictions**
+
+**‍** As discussed above, Amazon may at any point in time, impose limitations on the storage space allocated and the restock quantities allowed to a merchant. This is the reason why the number of [FBM sellers grew by over 20% in 2021](https://www.junglescout.com/amazon-seller-report/). FBM allows sellers to have full control over their warehouse space utilization.
+
+Additionally, Amazon's Fulfillment by Amazon (FBA) program, while offering convenience and a wide-reaching customer base, comes with potential drawbacks, such as seasonal limitations on storage capacity. During peak seasons or when inventory performance metrics fluctuate, FBA sellers may encounter restrictions on the volume of goods they can store in Amazon's fulfillment centers. This limitation can be a significant hurdle for sellers looking to capitalize on seasonal demand or fluctuations in market trends.
+
+### **Control over Fees and Costs**
+
+Operating independent fulfillment operations outside of Amazon's services grants businesses greater control over their cost structures, liberating them from potential challenges associated with Amazon's fee structures and pricing policies.
+
+One significant advantage of managing fulfillment independently is the ability to avoid certain fees imposed by Amazon. For example, third-party sellers using Fulfillment by Amazon (FBA) are subject to fees for storage, order fulfillment, and additional services. By handling fulfillment in-house, businesses can eliminate or reduce these fees, leading to potential cost savings. This independence allows companies to make strategic decisions about their fulfillment processes, optimizing them for efficiency and cost-effectiveness.
+
+### **Inventory Control**
+
+**‍** Should a company wish to move its inventory out of Amazon’s warehouses, it is subject to high fees and taxes. This is a major issue faced by sellers and is all the more severe in the age of the pandemic where [93% of all SME Amazon sellers](https://www.junglescout.com/blog/supply-chain-disruptions/) have experienced supply chain disruptions. However, this can be prevented with the company's own independent warehouses.
+
+The pandemic has been a challenging period for all retailers alike, e-commerce or not. One important lesson learnt is that Amazon doesn’t always have the sellers’ best interests in mind. That’s why so many companies, [from multi-billion dollar Nike](https://www.forbes.com/sites/forbesbusinesscouncil/2020/01/22/why-nike-cut-ties-with-amazon-and-what-it-means-for-other-retailers/?sh=35d260f64ff6) to SMEs are parting ways with Amazon and taking charge of their fulfillment process. A lot of scaling businesses are beginning to realize that the benefits of taking ownership of their operations far outweigh the vast network Amazon provides.
+
+The move from an arrangement like the [Amazon FBA](https://www.hopstack.io/blog/fulfillment-by-amazon-fba) to insourced [order fulfillment](https://www.hopstack.io/order-fulfillment-guide) is complex and challenging for large and small businesses alike. Firstly, they must find and compare different shipping services that can provide the transportation infrastructure suitable for their products and the target market. Similarly, they also need to have a robust [Warehouse Management System (WMS)](https://hopstack.io/) that can assist and automate the activity of providing data-driven actionable insights for better inventory control, multi-channel [order management](https://www.hopstack.io/warehouse-order-management) and batching, picking and [warehouse packing processes](https://www.hopstack.io/automated-warehouse-packing), and overall fulfillment efficiency.
+
+[Schedule a demo](https://hopstack.io/demosignup) today to understand how Hopstack’s AI-driven WMS can help you supercharge your [warehousing operations](https://www.hopstack.io/blog/iot-can-transform-warehouse-operations) and can make the switch to in-house fulfillment seamless!
+
+[All tags](https://www.hopstack.io/blog-tags) [All categories](https://www.hopstack.io/categories)
+
+Table of Contents
+
+[Top 8 Amazon Challenges Faced By Sellers](https://www.hopstack.io/blog/challenges-faced-by-amazon-fba-sellers#top-8-amazon-challenges-faced-by-sellers) [How To Solve Challenges Faced By Amazon FBA Sellers](https://www.hopstack.io/blog/challenges-faced-by-amazon-fba-sellers#how-to-solve-challenges-faced-by-amazon-fba-sellers)
+
+Modern Digital Warehousing and Fulfillment Platform
+
+Modern Digital Warehousing and Fulfillment Platform
+
+[Schedule a Demo Now](https://www.hopstack.io/demo)
+
+Subscribe to newsletter
+
+Share this post
+
+false
+
+## Similar Blog Posts
+
+[![](https://cdn.prod.website-files.com/668026bd6ba918352b4b09d2/668c1bec91c79a368e3919fe_6565ceb6b64b81c4d36101a0_FBA%2520Prep%2520and%2520Packaging%2520Guide%2520Content.png)\\
+\\
+Team Hopstack\\
+\\
+• \\
+\\
+September 18, 2024\\
+\\
+**Amazon FBA’s Prep and Packaging Requirements Explained (2024)**\\
+\\
+Everything you need to know about Amazon FBA's prep and packaging requirements to avoid penalties, inventory returns, an...](https://www.hopstack.io/blog/fba-prep-and-packaging-requirements)
+
+E-Commerce
+
+[![](https://cdn.prod.website-files.com/668026bd6ba918352b4b09d2/668c1befb7939f9b530bc0ba_652cffa6dd74c2849a6c4969_Amazon%2520FBA%2520Everything%2520to%2520know.png)\\
+\\
+Team Hopstack\\
+\\
+• \\
+\\
+August 30, 2024\\
+\\
+**Fulfillment by Amazon (FBA): Everything Sellers Need to Know**\\
+\\
+A comprehensive guide to Amazon FBA for sellers to mastering selling on Amazon including, what it is, benefits, FBA fees...](https://www.hopstack.io/blog/fulfillment-by-amazon-fba)
+
+E-Commerce
+
+[![](https://cdn.prod.website-files.com/668026bd6ba918352b4b09d2/668c1bed37397c54a21176e6_65435bb4454d45444233e495_Amazon%2520FBA%2520vs%25203PL_%2520Choosing%2520the%2520Right%2520Fulfillment%2520Partner%2520for%2520Amazon%2520Sellers.png)\\
+\\
+Team Hopstack\\
+\\
+• \\
+\\
+July 18, 2024\\
+\\
+**Amazon FBA vs 3PL: Choosing the Right Fulfillment Partner for Amazon Sellers**\\
+\\
+In this blog, we compare the two main outsourced fulfillment services for Amazon sellers - Amazon FBA and Third-party Lo...](https://www.hopstack.io/blog/amazon-fba-vs-3pl)
+
+E-Commerce
+
+3PL

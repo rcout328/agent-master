@@ -29,7 +29,7 @@ CORS(app)
 logging.basicConfig(level=logging.DEBUG)
 
 # Initialize Firecrawl
-FIRECRAWL_API_KEY = "fc-c8fb95d8db884bd38ce266a30b0d11b4"
+FIRECRAWL_API_KEY = "fc-b69d6504ab0a42b79e87b7827a538199"
 firecrawl_app = FirecrawlApp(api_key=FIRECRAWL_API_KEY)
 logging.info("Firecrawl initialized")
 

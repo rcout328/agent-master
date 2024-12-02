@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useStoredInput } from '@/hooks/useStoredInput';
 import jsPDF from 'jspdf';
 import Link from 'next/link';
@@ -18,6 +18,16 @@ export default function GapAnalysisContent() {
   const [error, setError] = useState(null);
   const [currentPhase, setCurrentPhase] = useState(0);
   const analysisRef = useRef(null);
+
+  // Load gap analysis data from local storage on component mount
+  useEffect(() => {
+    const storedData = localStorage.getItem(`gapAnalysis_${userInput}`);
+    if (storedData) {
+      const data = JSON.parse(storedData);
+      setGapAnalysis(data);
+      setCurrentPhase(6); // Set to last phase if data is available
+    }
+  }, [userInput]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -73,6 +83,35 @@ export default function GapAnalysisContent() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const exportToPDF = () => {
+    const doc = new jsPDF();
+    doc.setFontSize(16);
+    doc.text("Gap Analysis Report", 10, 10);
+    
+    const sections = [
+      { title: "Current State", data: gapAnalysis.current_state },
+      { title: "Desired State", data: gapAnalysis.desired_state },
+      { title: "Identified Gaps", data: gapAnalysis.identified_gaps },
+      { title: "Recommendations", data: gapAnalysis.recommendations },
+      { title: "Data Sources", data: gapAnalysis.sources.map(source => source.domain) }
+    ];
+
+    let y = 20;
+    sections.forEach(section => {
+      doc.setFontSize(14);
+      doc.text(section.title, 10, y);
+      y += 10;
+      doc.setFontSize(12);
+      section.data.forEach(item => {
+        doc.text(`- ${item}`, 10, y);
+        y += 5;
+      });
+      y += 5; // Add space between sections
+    });
+
+    doc.save("gap_analysis_report.pdf");
   };
 
   const renderGapSection = (title, data) => {
@@ -251,6 +290,20 @@ export default function GapAnalysisContent() {
                 {renderSourcesSection(gapAnalysis.sources)}
               </div>
             )}
+          </div>
+
+          {/* Export PDF Button */}
+          <div className="mt-6">
+            <button
+              onClick={exportToPDF}
+              disabled={isLoading || !gapAnalysis || Object.keys(gapAnalysis).length === 0}
+              className={`w-full py-3 sm:py-4 px-4 sm:px-6 rounded-xl font-medium transition-all duration-200 text-sm sm:text-base
+                          ${!isLoading && gapAnalysis && Object.keys(gapAnalysis).length > 0
+                ? 'bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white shadow-lg shadow-green-500/25'
+                : 'bg-gray-600 text-gray-300 cursor-not-allowed'}`}
+            >
+              Export to PDF
+            </button>
           </div>
         </div>
       </div>

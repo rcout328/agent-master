@@ -1,0 +1,214 @@
+URL: https://advertising.amazon.com/library/guides/buyer-persona
+Content:
+![](//fls-na.amazon.com/1/batch/1/OP/A381WA5GOSXMH7:141-8788269-5002567:FZ8X2D414HJDHF1DJYDT$uedata=s:%2Fuedata%2Fuedata%3Fstaticb%26id%3DFZ8X2D414HJDHF1DJYDT:0)
+
+Guide
+
+# What is a buyer persona?
+
+## Definition, examples, and how to a buyer persona step-by-step
+
+A buyer persona is a detailed description of your target audience or ideal customer based on detailed analysis and insights. Buyer personas are important because they can help you develop tailored marketing strategies to meet the wants and needs of your customers.
+
+[![](https://m.media-amazon.com/images/G/01/AdProductsWebsite/images/pageElements/Icons/Royal2x/Multi-device_Royal2x._TTW_.png)](https://advertising.amazon.com/register?ref_=a20m_us_lbr_gd_byrpsna_rgstr_4b)
+
+[Register to advertise](https://advertising.amazon.com/register?ref_=a20m_us_lbr_gd_byrpsna_rgstr_4b)
+
+Start using Amazon Ads to display your products and create campaigns.
+
+[![](https://m.media-amazon.com/images/G/01/AdProductsWebsite/images/pageElements/Icons/Royal2x/Certification_Royal2x._TTW_.png)](https://advertising.amazon.com/contact-sales?ref_=a20m_us_lbr_gd_byrpsna_cntct_4b)
+
+[Contact us](https://advertising.amazon.com/contact-sales?ref_=a20m_us_lbr_gd_byrpsna_cntct_4b)
+
+If you have limited experience, contact us to request services managed by Amazon Ads. Budget minimums apply.
+
+[![](https://m.media-amazon.com/images/G/01/AdProductsWebsite/images/pageElements/Icons/Royal2x/Reach_Across_Devices_Royal2x._TTW_.png)](https://advertising.amazon.com/solutions/products/sponsored-products?ref_=a20m_us_lbr_gd_byrpsna_p_sp_4b)
+
+[Sponsored Products](https://advertising.amazon.com/solutions/products/sponsored-products?ref_=a20m_us_lbr_gd_byrpsna_p_sp_4b)
+
+Create cost-per-click ads to help customers find your products on Amazon.
+
+[![](https://m.media-amazon.com/images/G/01/AdProductsWebsite/images/pageElements/Icons/Royal2x/Browsing_Royal2x._TTW_.png)](https://advertising.amazon.com/solutions/products/amazon-marketing-cloud?ref_=a20m_us_lbr_gd_byrpsna_p_amc_4b)
+
+[Amazon Marketing Cloud](https://advertising.amazon.com/solutions/products/amazon-marketing-cloud?ref_=a20m_us_lbr_gd_byrpsna_p_amc_4b)
+
+Amazon Marketing Cloud (AMC) provides you with campaign measurement, analysis, and optimization.
+
+**Jump to:**
+
+[What is a buyer persona?](#a1)
+
+[Why is a buyer persona important?](#a2)
+
+[Types of buyer personas](#a3)
+
+[How do you create a buyer persona?](#a4)
+
+[Examples of buyer personas](#a5)
+
+## What is a buyer persona?
+
+A buyer persona is a fictitious representation of your customer segments typically grounded in first- or third-party customer insights. Buyer personas can help you imagine the wants, needs, behaviors, and values of your customers. By creating buyer personas and using them as the catalyst for your advertising campaigns, you put your customers first.
+
+Buyer personas are also known as marketing personas, customer personas, or audience personas.
+
+![Buyer Persona](https://m.media-amazon.com/images/G/01/AdProductsWebsite/images/refreshCreative/HeadersThumbnails/icons/IconsLayout02_AdvertiserAudiences_Thumbnail_Lavender._TTW_.jpg)
+
+## What is a buyer persona?
+
+A buyer persona is a fictitious representation of your customer segments typically grounded in first- or third-party customer insights. Buyer personas can help you imagine the wants, needs, behaviors, and values of your customers. By creating buyer personas and using them as the catalyst for your advertising campaigns, you put your customers first.
+
+Buyer personas are also known as marketing personas, customer personas, or audience personas.
+
+## Why is a buyer persona important?
+
+A buyer persona is an important part of your [marketing strategy](https://advertising.amazon.com/library/guides/marketing-strategy?ref_=a20m_us_lbr_gd_byrpsna_gd_mktsty). By thinking about your audience personas, you can then start planning your [customer journey map](https://advertising.amazon.com/library/guides/customer-journey-map?ref_=a20m_us_lbr_gd_byrpsna_gd_cusmp), which details the complete shopping timeline from beginning to end. A key component of the map is the audience personas, and attributes and interests that those personas represent, and then, from there, using those signals and insights to inform the potential for expansion of your business.
+
+Creating buyer personas can also be useful for your brand’s storytelling, helping outline the path to purchase on the customer journey. As part of your [inbound marketing](https://advertising.amazon.com/library/guides/inbound-marketing/?ref_=a20m_us_lbr_gd_byrpsna_gd_mktginbd) strategy, buyer personas can be necessary to help determine, for example, where you need to [raise brand awareness](https://advertising.amazon.com/library/guides/brand-awareness/?ref_=a20m_us_lbr_gd_byrpsna_gd_brdaw) or scale prioritization. Buyer personas can also help develop more [personalized, tailored advertising strategies](https://advertising.amazon.com/library/guides/tailored-marketing) to meet the specific demands of your customers.
+
+## Types of buyer personas
+
+There’s no one right answer to how many buyer personas a company should have, or even how many different types of buyer personas exist. Different brands and companies will have different answers to these questions. However, there are several components to consider including in your buyer persona profiles. [Audience segmentation](https://advertising.amazon.com/library/guides/market-segmentation/?ref_=a20m_us_lbr_gd_byrpsna_gd_mktsgm) is the organization of various types of audiences into segments, to better reach them with relevant campaigns.
+
+There are four types of audience segmentation:
+
+- **Demographic segmentation** reaches audiences based on identifying characteristics such as age, gender, or education level.
+- **Geographic segmentation** organizes audiences based on their localities (e.g., a US-based audience).
+- **Psychographic segmentation** considers the needs or wants of customers.
+- **Behavioral segmentation** focuses on shopping behaviors.
+
+By considering these four components, you can create a robust definition of your buyer personas.
+
+Additionally, you could categorize your buyer personas by industry, if your brand encompasses more than one. For example, a brand [marketing both beauty](https://advertising.amazon.com/solutions/industries/beauty?ref_=a20m_us_lbr_gd_byrpsna_ind_bty) and [fashion products](https://advertising.amazon.com/solutions/industries/fashion-marketing?ref_=a20m_us_lbr_gd_byrpsna_ind_fshn) could create separate personas for each.
+
+Finally, there are also negative buyer personas, which represent an audience with attributes such as being unlikely to engage with your brand or make purchases.
+
+## How do you create a buyer persona?
+
+Once you are clear on the components and criteria for creating a buyer persona, you can begin making your own. Filling out your buyer persona template by using your existing customer insights is an easy way to get started. You can also get as detailed or as general as you want. For example, buyer personas could include a fictional name and job title for a single character, like John Smith the engineer. Or, your buyer persona could be a broader group of your ideal customers, like millennials looking to go on vacation. Regardless, here are the four steps to formulating your buyer personas.
+
+![Customer Feedback](https://m.media-amazon.com/images/G/01/AdProductsWebsite/images/icons/brandEvo/Customer_reviews_blue2x._TTW_.png)
+
+### Step 1: Review feedback from customers
+
+Considering your current audience is a great place to start. Any insights you have from eligible audience surveys or product/service reviews can help provide some basic insights for outlining your buyer personas and which pain points you could resolve. Consider what your ideal customers would look like, and if that’s not who you’re already reaching, what could you do to help change that? For example, you could create educational campaigns to provide information on your product development, or use promotions to help reach potential customers.
+
+![Audience with Amazon Sign](https://m.media-amazon.com/images/G/01/AdProductsWebsite/images/icons/brandEvo/Exclusive-Amazon-_audiences_blue2x._TTW_.png)
+
+### Step 2: Consider the values and motivations of customers
+
+It also is crucial to consider the potential driving forces for the shopping behaviors of your customers. How do your [brand values](https://advertising.amazon.com/library/guides/brand-values?ref_=a20m_us_lbr_gd_byrpsna_gd_brndvls) align with those of your customers, and how could you better communicate that through marketing messages? For example, [sustainable marketing](https://advertising.amazon.com/blog/sustainable-marketing/?ref_=a20m_us_lbr_gd_byrpsna_blg_unbxd_sustnble) is very important to consumers. According to a study by Environics Research and Amazon Ads, over 70% of consumers in the US and Europe said they’re [tired of brands acting like they’re exempt from environmental responsibility](https://advertising.amazon.com/library/guides/customer-values/?ref_=a20m_us_lbr_gd_byrpsna_gd_cusval).1
+
+![Venn diagram with audience in the middle](https://m.media-amazon.com/images/G/01/AdProductsWebsite/images/icons/brandEvo/Relevancy_blue2x._TTW_.png)
+
+### Step 3: Define high-value audiences
+
+Next, consider the ways you could measure your buyer personas. For example, high-value audiences could encompass repeat visitors or people who make multiple purchases. If there are recurring wants, needs, or pain points of these customers, make sure they are addressed. The goal of buyer personas is to help you be efficient with your advertising and spending.
+
+![Campaign on a desktop](https://m.media-amazon.com/images/G/01/AdProductsWebsite/images/icons/brandEvo/SponsoredDisplayDesktop_blue._TTW_.png)
+
+### Step 4: Create your campaign
+
+When you create your marketing campaigns, consider creating campaigns that are relevant and engaging to your audiences. Amazon Ads can help you [reach audiences with meaningful messages](https://advertising.amazon.com/library/research/messages-that-matter?ref_=a20m_us_lbr_gd_byrpsna_cmprg_mtm). By considering buyer personas, you can then begin crafting campaigns that will better speak to your audiences where they are already consuming content, whether that’s via streaming video, on social media, or while browsing products.
+
+## Examples of buyer personas
+
+Here are three examples of specific buyer personas and their shopping habits, and how they could potentially differ from other personas.
+
+**Case Study**
+
+[Toy-buying consumer insights](https://advertising.amazon.com/library/research/purchase-journey-toy-shoppers-canada-2022/?ref_=a20m_us_lbr_gd_byrpsna_rsh_toyhbts)
+
+Amazon Ads and Kantar surveyed 1,000 shoppers on [Amazon.ca](https://www.amazon.ca/?ref_=a20m_us_lbr_gd_byrpsna_ca) to provide insights into Canadian toy customers, which could be an example of a buyer persona. The study found that 92% of buyers shop for toys that encourage creativity, and 82% favor toys that encourage outside play and physical activity.2
+
+![Red and pink graphics](https://m.media-amazon.com/images/G/01/AdProductsWebsite/images/Insights/dataviz_thumb/02_Insights_Educational_Thumbnail_Image_1092x730px_Watermelon._TTW_.jpg)
+
+**Case Study**
+
+[Consumer buying insights for small kitchen appliances](https://advertising.amazon.com/library/research/purchase-journey-small-kitchen-appliance-uk-2022/?ref_=a20m_us_lbr_gd_byrpsna_rsh_smllktchn)
+
+A UK survey from Amazon Ads and Kantar looked into the shopping habits of small-kitchen-appliance customers. The survey found that 56% who visited Amazon.co.uk discovered a new brand or product.3
+
+![Blue graphics](https://m.media-amazon.com/images/G/01/AdProductsWebsite/images/Insights/dataviz_thumb/02_Insights_Educational_Thumbnail_Image_1092x730px_Neptune._TTW_.jpg)
+
+**Case Study**
+
+[How brands can better understand US luxury fashion shoppers](https://advertising.amazon.com/blog/luxury-marketing?ref_=a20m_us_lbr_gd_byrpsna_blg_lxryfsh)
+
+A 2022 Amazon Ads and Vogue Business survey of US luxury consumers showed how brands can better understand shoppers’ needs. For example, the survey found that the majority (84%) of millennial male shoppers surveyed watch content through streaming services and are more likely to engage with digital touchpoints throughout their shopping journeys. Millennial men are also 1.3x more likely for their purchases to be informed by advertising seen on [streaming TV](https://advertising.amazon.com/solutions/products/video-ads?ref_=a20m_us_lbr_gd_byrpsna_p_va#01) services, compared to luxury shoppers overall.
+
+![Hand bag and a dress in blue background](https://m.media-amazon.com/images/G/01/AdProductsWebsite/images/refreshCreative/HeadersThumbnails/icons/IconsLayout45_Fashion_Style_Inverse_Neptune._TTW_.jpg)
+
+## Using buyer personas
+
+Buyer personas can be used to better understand your audience, inform your ad campaigns, and personalize your brand messaging. Once you have insights into your various personas, you can craft campaigns that will organically appeal to different personas and help optimize your marketing efforts. The better you understand your audience, the better you can serve them information and advertising that could appeal to them. Ultimately, creating buyer personas can help your brand and products be more relevant and useful to your customers.
+
+[Register for Amazon Ads](https://advertising.amazon.com/register?ref_=a20m_us_lbr_gd_byrpsna_rgstr_bop)
+
+[See more ways Amazon Ads can help your brand engage audiences in the places they love to be](https://advertising.amazon.com/reaching-audiences?ref_=a20m_us_lbr_gd_byrpsna_cmprg_rae)
+
+_1_ _Amazon Ads and Environics Research, “Social Values Global Consumer Themes,” US, UK, ES, FR, DE, IT, 2021_ _2_ _Amazon Ads and Kantar, Toys P2P survey, CA, 2021_ _3_ _Amazon Ads and Kantar, Small kitchen appliances P2P survey, UK, 2021_
+
+Related content
+
+[![](https://m.media-amazon.com/images/G/01/AdProductsWebsite/images/CaseStudies/sonythumbnail._TTW_.jpg)\\
+\\
+Case study\\
+\\
+Using interactive audio ads to increase branded searches](https://advertising.amazon.com/library/case-studies/sony-interactive-audio-ads/?ref_=a20m_us_lbr_gd_rfy_1_lbr_cs) [![](https://m.media-amazon.com/images/G/01/AdProductsWebsite/images/campaigns/rising-stars/RisingStars_US_Kazi_1092x730._TTW_.jpg)\\
+\\
+Case study\\
+\\
+How a small home goods brand grew their business by 350%](https://advertising.amazon.com/library/case-studies/kazi/?ref_=a20m_us_lbr_gd_rfy_2_lbr_cs) [![](https://m.media-amazon.com/images/G/01/AdProductsWebsite/images/CaseStudies/ClearSpace_3_1._TTW_.jpg)\\
+\\
+Case study\\
+\\
+Amazon Ads specialists help ClearSpace drive brand growth](https://advertising.amazon.com/library/case-studies/clearspace-increase-ad-sales/?ref_=a20m_us_lbr_gd_rfy_3_lbr_cs)
+
+**Was this article helpful?**
+
+Help us improve by sharing your feedback.
+
+**Thank you**
+
+Have more to share? We love to hear your feedback.
+
+- [Facebook](https://www.facebook.com/sharer/sharer.php?u=https://advertising.amazon.com/library/guides/buyer-persona?ref_=a20m_us_blg_fb "Share on Facebook")
+- [twitter](https://twitter.com/home?status=What%20is%20a%20buyer%20persona?%20%7C%20Amazon%20Ads:%20Solutions%20to%20find,%20attract,%20and%20engage%20customers%20https://advertising.amazon.com/library/guides/buyer-persona?ref_=a20m_us_blg_tw "Share on Twitter")
+- [LinkedIn](https://www.linkedin.com/shareArticle?mini=true&title=Amazon%20Ads:%20Solutions%20to%20find,%20attract,%20and%20engage%20customers&summary=Amazon%20Ads:%20Ad%20solutions%20to%20find,%20attract,%20and%20engage%20customers%20throughout%20their%20journey&source=&url=https://advertising.amazon.com/library/guides/buyer-persona?ref_=a20m_us_blg_ln "Share on LinkedIn")
+- [Email](mailto:?subject=What%20is%20a%20buyer%20persona?%20from%20Amazon%20Ads&body=Learn%20more%20about%20Amazon%20Ads:%20Ad%20solutions%20to%20find,%20attract,%20and%20engage%20customers%20throughout%20their%20journey%20https://advertising.amazon.com/library/guides/buyer-persona?ref_=a20m_us_blg_em "Share on Email")
+
+Feedback
+
+How relevant was this content to your needs?
+
+Very relevant
+Somewhat relevant
+Not relevant enough
+
+How easy was this content to comprehend?
+
+Very easy
+Somewhat easy
+Not easy enough
+
+How would you rate the quality of this content?
+
+High-quality
+Medium-quality
+Low-quality
+
+How likely are you to recommend this content to others?
+
+Very likely
+Somewhat likely
+Not likely at all
+
+Tell us the reason for your ratings (optional)
+
+Due to the volume of submissions we receive, we cannot respond to feedback submitted through this form.
+
+Thanks for the feedback!
+
+Your feedback helps us continually improve our website experience.
+

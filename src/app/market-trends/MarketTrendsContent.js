@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { Line, Bar } from 'react-chartjs-2';
 import {
@@ -14,6 +14,8 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 // Register ChartJS components
 ChartJS.register(
@@ -28,11 +30,29 @@ ChartJS.register(
 );
 
 export default function MarketTrendsContent() {
+  const [mounted, setMounted] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [apiResponse, setApiResponse] = useState(null);
+  const [apiResponse, setApiResponse] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const storedData = localStorage.getItem('marketTrendsData');
+      return storedData ? JSON.parse(storedData) : null;
+    }
+    return null;
+  });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [currentPhase, setCurrentPhase] = useState(0);
+  const [isExporting, setIsExporting] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && apiResponse) {
+      localStorage.setItem('marketTrendsData', JSON.stringify(apiResponse));
+    }
+  }, [apiResponse]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -189,15 +209,200 @@ export default function MarketTrendsContent() {
     );
   };
 
+  const exportToPDF = async () => {
+    if (!apiResponse || Object.keys(apiResponse).length === 0) return;
+    
+    setIsExporting(true);
+    try {
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4'
+      });
+
+      // Add header
+      pdf.setFillColor(48, 48, 51); // Dark background
+      pdf.rect(0, 0, pdf.internal.pageSize.getWidth(), 40, 'F');
+      pdf.setTextColor(255, 255, 255);
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(24);
+      pdf.text("Market Trends Analysis", 20, 25);
+      pdf.setFontSize(12);
+      pdf.setFont("helvetica", "normal");
+      pdf.text(`Report for: ${searchQuery}`, 20, 35);
+      pdf.text(`Generated: ${new Date().toLocaleDateString()}`, pdf.internal.pageSize.getWidth() - 60, 35);
+
+      let yPos = 50; // Starting position after header
+
+      // Helper function to add section
+      const addSection = (title, data, subsections) => {
+        if (!data) return yPos;
+
+        // Add section title
+        pdf.setFont("helvetica", "bold");
+        pdf.setFontSize(16);
+        pdf.setTextColor(128, 90, 213); // Purple color
+        pdf.text(title, 20, yPos);
+        yPos += 10;
+
+        // Add subsections
+        Object.entries(subsections).forEach(([key, label]) => {
+          // Check if we need a new page
+          if (yPos > 250) {
+            pdf.addPage();
+            yPos = 20;
+          }
+
+          pdf.setFont("helvetica", "bold");
+          pdf.setFontSize(12);
+          pdf.setTextColor(80, 80, 80);
+          pdf.text(label, 25, yPos);
+          yPos += 7;
+
+          // Add items
+          pdf.setFont("helvetica", "normal");
+          pdf.setFontSize(10);
+          pdf.setTextColor(60, 60, 60);
+          data[key]?.forEach(item => {
+            // Handle text wrapping
+            const lines = pdf.splitTextToSize(item, 160);
+            lines.forEach(line => {
+              if (yPos > 270) {
+                pdf.addPage();
+                yPos = 20;
+              }
+              pdf.text(line, 30, yPos);
+              yPos += 5;
+            });
+            yPos += 2;
+          });
+          yPos += 5;
+        });
+
+        yPos += 10;
+        return yPos;
+      };
+
+      // Add each section
+      addSection("Market Size & Growth", apiResponse.market_size_growth, {
+        total_market_value: "Total Market Value",
+        market_segments: "Market Segments",
+        regional_distribution: "Regional Distribution"
+      });
+
+      addSection("Competitive Analysis", apiResponse.competitive_analysis, {
+        market_leaders: "Market Leaders",
+        competitive_advantages: "Competitive Advantages",
+        market_concentration: "Market Concentration"
+      });
+
+      addSection("Industry Trends", apiResponse.industry_trends, {
+        current_trends: "Current Trends",
+        technology_impact: "Technology Impact",
+        regulatory_environment: "Regulatory Environment"
+      });
+
+      addSection("Growth Forecast", apiResponse.growth_forecast, {
+        short_term: "Short-term Outlook",
+        long_term: "Long-term Potential",
+        growth_drivers: "Growth Drivers"
+      });
+
+      addSection("Risk Assessment", apiResponse.risk_assessment, {
+        market_challenges: "Market Challenges",
+        economic_factors: "Economic Factors",
+        competitive_threats: "Competitive Threats"
+      });
+
+      // Add sources section
+      if (apiResponse.sources?.length) {
+        if (yPos > 250) {
+          pdf.addPage();
+          yPos = 20;
+        }
+
+        pdf.setFont("helvetica", "bold");
+        pdf.setFontSize(16);
+        pdf.setTextColor(128, 90, 213);
+        pdf.text("Data Sources", 20, yPos);
+        yPos += 10;
+
+        pdf.setFont("helvetica", "normal");
+        pdf.setFontSize(10);
+        pdf.setTextColor(60, 60, 60);
+
+        apiResponse.sources.forEach((source, index) => {
+          if (yPos > 270) {
+            pdf.addPage();
+            yPos = 20;
+          }
+          pdf.text(`${index + 1}. ${source.domain}`, 25, yPos);
+          pdf.setTextColor(100, 100, 100);
+          pdf.text(`Accessed: ${source.date}`, 25, yPos + 4);
+          yPos += 10;
+        });
+      }
+
+      // Add footer to each page
+      const pageCount = pdf.internal.getNumberOfPages();
+      for (let i = 1; i <= pageCount; i++) {
+        pdf.setPage(i);
+        pdf.setFont("helvetica", "italic");
+        pdf.setFontSize(8);
+        pdf.setTextColor(150, 150, 150);
+        pdf.text(
+          `Generated by Market Trends Analysis Tool - Page ${i} of ${pageCount}`,
+          pdf.internal.pageSize.getWidth() / 2,
+          pdf.internal.pageSize.getHeight() - 10,
+          { align: "center" }
+        );
+      }
+
+      // Save the PDF
+      pdf.save(`${searchQuery.replace(/\s+/g, '_')}_market_trends.pdf`);
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  if (!mounted) {
+    return null;
+  }
+
   return (
     <div className="min-h-screen bg-[#131314] text-white p-4 sm:p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-6">
-          <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-purple-400 via-purple-600 to-indigo-600 bg-clip-text text-transparent">
-            Market Trends Analysis
-          </h1>
-          <p className="text-gray-400 mt-2">Analyze market trends, growth, and opportunities</p>
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 sm:mb-8 space-y-4 sm:space-y-0">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-purple-400 via-purple-600 to-indigo-600 bg-clip-text text-transparent">
+              Market Trends Analysis
+            </h1>
+            <p className="text-gray-400 mt-2">Analyze market trends, growth, and opportunities</p>
+          </div>
+          <button
+            onClick={exportToPDF}
+            disabled={!apiResponse || Object.keys(apiResponse).length === 0 || isExporting}
+            className={`px-4 py-2 rounded-xl font-medium flex items-center space-x-2 transition-all duration-200 ${
+              apiResponse && Object.keys(apiResponse).length > 0 && !isExporting
+                ? 'bg-purple-600 hover:bg-purple-700 text-white cursor-pointer'
+                : 'bg-gray-600 text-gray-400 cursor-not-allowed'
+            }`}
+          >
+            {isExporting ? (
+              <>
+                <div className="w-4 h-4 border-t-2 border-white rounded-full animate-spin"></div>
+                <span>Exporting...</span>
+              </>
+            ) : (
+              <>
+                <span role="img" aria-label="download">📥</span>
+                <span>Export PDF</span>
+              </>
+            )}
+          </button>
         </div>
 
         {/* Search Form */}
@@ -242,7 +447,7 @@ export default function MarketTrendsContent() {
 
         {/* Results */}
         {apiResponse && (
-          <div className="space-y-8">
+          <div id="market-trends-content" className="space-y-8">
             {renderSection("Market Size & Growth", apiResponse.market_size_growth, {
               total_market_value: "Total Market Value",
               market_segments: "Market Segments",

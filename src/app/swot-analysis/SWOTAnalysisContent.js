@@ -85,6 +85,35 @@ export default function SWOTAnalysisContent() {
     }
   };
 
+  const exportToPDF = () => {
+    const doc = new jsPDF();
+    doc.setFontSize(20);
+    doc.text("SWOT Analysis", 10, 10);
+    
+    const sections = [
+      { title: "Strengths", data: swotAnalysis.strengths },
+      { title: "Weaknesses", data: swotAnalysis.weaknesses },
+      { title: "Opportunities", data: swotAnalysis.opportunities },
+      { title: "Threats", data: swotAnalysis.threats },
+      { title: "Data Sources", data: swotAnalysis.sources.map(source => source.domain) }
+    ];
+
+    let y = 20;
+    sections.forEach(section => {
+      doc.setFontSize(16);
+      doc.text(section.title, 10, y);
+      y += 10;
+      doc.setFontSize(12);
+      section.data.forEach(item => {
+        doc.text(`- ${item}`, 10, y);
+        y += 5;
+      });
+      y += 10; // Add space between sections
+    });
+
+    doc.save("SWOT_Analysis.pdf");
+  };
+
   const renderSwotSection = (title, data) => {
     return (
       <div className="mb-6">
@@ -261,6 +290,20 @@ export default function SWOTAnalysisContent() {
                 {renderSourcesSection(swotAnalysis.sources)}
               </div>
             )}
+          </div>
+
+          {/* Export PDF Button */}
+          <div className="mt-6">
+            <button
+              onClick={exportToPDF}
+              disabled={isLoading || !swotAnalysis || Object.keys(swotAnalysis).length === 0}
+              className={`w-full py-3 sm:py-4 px-4 sm:px-6 rounded-xl font-medium transition-all duration-200 text-sm sm:text-base
+                          ${!isLoading && swotAnalysis && Object.keys(swotAnalysis).length > 0
+                ? 'bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white shadow-lg shadow-green-500/25'
+                : 'bg-gray-600 text-gray-300 cursor-not-allowed'}`}
+            >
+              Export to PDF
+            </button>
           </div>
         </div>
       </div>

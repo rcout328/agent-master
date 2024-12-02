@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useStoredInput } from '@/hooks/useStoredInput';
 import jsPDF from 'jspdf';
 import Link from 'next/link';
@@ -18,6 +18,15 @@ export default function FeedbackCollectionContent() {
   const [error, setError] = useState(null);
   const [currentPhase, setCurrentPhase] = useState(0);
   const analysisRef = useRef(null);
+
+  // Load feedback analysis from local storage on component mount
+  useEffect(() => {
+    const storedData = localStorage.getItem(`feedbackAnalysis_${userInput}`);
+    if (storedData) {
+      setFeedbackAnalysis(JSON.parse(storedData));
+      setCurrentPhase(6); // Assuming the last phase is reached if data is loaded from local storage
+    }
+  }, [userInput]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -73,6 +82,35 @@ export default function FeedbackCollectionContent() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const exportToPDF = () => {
+    const doc = new jsPDF();
+    doc.setFontSize(16);
+    doc.text("Feedback Analysis Report", 10, 10);
+    
+    const sections = [
+      { title: "Satisfaction Metrics", data: feedbackAnalysis.satisfaction_metrics },
+      { title: "Product Feedback", data: feedbackAnalysis.product_feedback },
+      { title: "Service Feedback", data: feedbackAnalysis.service_feedback },
+      { title: "Recommendations", data: feedbackAnalysis.recommendations },
+      { title: "Data Sources", data: feedbackAnalysis.sources.map(source => source.domain) }
+    ];
+
+    let y = 20;
+    sections.forEach(section => {
+      doc.setFontSize(14);
+      doc.text(section.title, 10, y);
+      y += 10;
+      section.data.forEach(item => {
+        doc.setFontSize(12);
+        doc.text(`- ${item}`, 10, y);
+        y += 5;
+      });
+      y += 5; // Add space between sections
+    });
+
+    doc.save("feedback_analysis_report.pdf");
   };
 
   const renderFeedbackSection = (title, data) => {
@@ -235,6 +273,18 @@ export default function FeedbackCollectionContent() {
               )}
             </button>
           </form>
+
+          {/* PDF Export Button */}
+          <div className="mt-4">
+            <button
+              onClick={exportToPDF}
+              disabled={isLoading || error}
+              className={`w-full py-3 sm:py-4 px-4 sm:px-6 rounded-xl bg-purple-600 text-white font-medium transition-all duration-200 text-sm sm:text-base
+                          ${isLoading || error ? 'bg-gray-600 text-gray-300 cursor-not-allowed' : 'hover:bg-purple-700'}`}
+            >
+              Export to PDF
+            </button>
+          </div>
 
           {/* Analysis Results */}
           <div ref={analysisRef} className="mt-6">

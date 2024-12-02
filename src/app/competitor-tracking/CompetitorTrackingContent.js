@@ -1,14 +1,14 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { callGeminiApi } from '@/utils/geminiApi';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 export default function CompetitorTrackingContent() {
   const [searchQuery, setSearchQuery] = useState('');
   const [apiResponse, setApiResponse] = useState({
     main_competitors: [],
-    market_share_data: [],
     competitor_strengths: [],
     key_findings: [],
     sources: []
@@ -16,6 +16,8 @@ export default function CompetitorTrackingContent() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [currentPhase, setCurrentPhase] = useState(0);
+  const [isExporting, setIsExporting] = useState(false);
+  const analysisRef = useRef(null);
 
   // Load data from local storage on component mount
   useEffect(() => {
@@ -55,20 +57,16 @@ export default function CompetitorTrackingContent() {
         setCurrentPhase(2);
         setApiResponse(prev => ({ ...prev, main_competitors: data.main_competitors }));
       }
-      if (data.market_share_data?.length) {
-        setCurrentPhase(3);
-        setApiResponse(prev => ({ ...prev, market_share_data: data.market_share_data }));
-      }
       if (data.competitor_strengths?.length) {
-        setCurrentPhase(4);
+        setCurrentPhase(3);
         setApiResponse(prev => ({ ...prev, competitor_strengths: data.competitor_strengths }));
       }
       if (data.key_findings?.length) {
-        setCurrentPhase(5);
+        setCurrentPhase(4);
         setApiResponse(prev => ({ ...prev, key_findings: data.key_findings }));
       }
       if (data.sources?.length) {
-        setCurrentPhase(6);
+        setCurrentPhase(5);
         setApiResponse(prev => ({ ...prev, sources: data.sources }));
       }
 
@@ -76,270 +74,244 @@ export default function CompetitorTrackingContent() {
       localStorage.setItem('geminiApiResponse', JSON.stringify(data));
     } catch (error) {
       console.error('Error:', error);
-      setError('Failed to get data. Please try again.');
+      setError('Failed to get competitor data. Please try again.');
     } finally {
       setIsLoading(false);
     }
   };
 
-  const renderPhaseStatus = () => {
-    const phases = [
-      'Starting Analysis',
-      'Finding Competitors',
-      'Analyzing Market Share',
-      'Identifying Strengths',
-      'Gathering Insights',
-      'Data Sources',
-      'Citation Note'
-    ];
+  const exportToPDF = async () => {
+    if (!apiResponse || Object.keys(apiResponse).length === 0) return;
 
-    return (
-      <div className="mb-4">
-        <div className="flex items-center space-x-2">
-          {phases.map((phase, index) => (
-            <div key={index} className="flex items-center">
-              <div className={`h-2 w-2 rounded-full ${
-                currentPhase > index ? 'bg-purple-500' : 'bg-gray-600'
-              }`} />
-              <span className={`text-sm ml-1 ${
-                currentPhase > index ? 'text-purple-400' : 'text-gray-500'
-              }`}>
-                {phase}
-              </span>
-              {index < phases.length - 1 && (
-                <div className={`h-0.5 w-4 mx-2 ${
-                  currentPhase > index ? 'bg-purple-500' : 'bg-gray-600'
-                }`} />
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
-    );
+    setIsExporting(true);
+    try {
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4'
+      });
+
+      // Add header
+      pdf.setFillColor(48, 48, 51); // Dark background
+      pdf.rect(0, 0, pdf.internal.pageSize.getWidth(), 40, 'F');
+      pdf.setTextColor(255, 255, 255);
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(24);
+      pdf.text("Competitor Analysis", 20, 25);
+      pdf.setFontSize(12);
+      pdf.setFont("helvetica", "normal");
+      pdf.text(`Report for: ${searchQuery}`, 20, 35);
+      pdf.text(`Generated: ${new Date().toLocaleDateString()}`, pdf.internal.pageSize.getWidth() - 60, 35);
+
+      let yPos = 50; // Starting position after header
+
+      // Helper function to add section
+      const addSection = (title, data) => {
+        if (!data || data.length === 0) return yPos;
+
+        // Add section title
+        pdf.setFont("helvetica", "bold");
+        pdf.setFontSize(16);
+        pdf.setTextColor(128, 90, 213); // Purple color
+        pdf.text(title, 20, yPos);
+        yPos += 10;
+
+        // Add items
+        pdf.setFont("helvetica", "normal");
+        pdf.setFontSize(10);
+        pdf.setTextColor(60, 60, 60);
+        data.forEach(item => {
+          // Handle text wrapping
+          const lines = pdf.splitTextToSize(item, 160);
+          lines.forEach(line => {
+            if (yPos > 270) {
+              pdf.addPage();
+              yPos = 20;
+            }
+            pdf.text(line, 30, yPos);
+            yPos += 5;
+          });
+          yPos += 2;
+        });
+
+        yPos += 10;
+        return yPos;
+      };
+
+      // Add each section
+      addSection("Main Competitors", apiResponse.main_competitors);
+      addSection("Competitor Strengths", apiResponse.competitor_strengths);
+      addSection("Key Findings", apiResponse.key_findings);
+
+      // Add sources section
+      if (apiResponse.sources?.length) {
+        if (yPos > 250) {
+          pdf.addPage();
+          yPos = 20;
+        }
+
+        pdf.setFont("helvetica", "bold");
+        pdf.setFontSize(16);
+        pdf.setTextColor(128, 90, 213);
+        pdf.text("Data Sources", 20, yPos);
+        yPos += 10;
+
+        pdf.setFont("helvetica", "normal");
+        pdf.setFontSize(10);
+        pdf.setTextColor(60, 60, 60);
+
+        apiResponse.sources.forEach((source, index) => {
+          if (yPos > 270) {
+            pdf.addPage();
+            yPos = 20;
+          }
+          pdf.text(`${index + 1}. ${source.domain}`, 25, yPos);
+          pdf.setTextColor(100, 100, 100);
+          pdf.text(`Accessed: ${source.date}`, 25, yPos + 4);
+          yPos += 10;
+        });
+      }
+
+      // Add footer to each page
+      const pageCount = pdf.internal.getNumberOfPages();
+      for (let i = 1; i <= pageCount; i++) {
+        pdf.setPage(i);
+        pdf.setFont("helvetica", "italic");
+        pdf.setFontSize(8);
+        pdf.setTextColor(150, 150, 150);
+        pdf.text(
+          `Generated by Competitor Analysis Tool - Page ${i} of ${pageCount}`,
+          pdf.internal.pageSize.getWidth() / 2,
+          pdf.internal.pageSize.getHeight() - 10,
+          { align: "center" }
+        );
+      }
+
+      // Save the PDF
+      pdf.save(`${searchQuery.replace(/\s+/g, '_')}_competitor_analysis.pdf`);
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+    } finally {
+      setIsExporting(false);
+    }
   };
 
-  const renderApiResponse = (data) => {
-    return (
-      <div className="space-y-6">
-        {/* Competitors Section */}
-        {data.main_competitors?.length > 0 && (
-          <div className="bg-[#2D2D2F] p-4 rounded-xl">
-            <h3 className="text-lg font-semibold text-purple-400 mb-4">Main Competitors</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {data.main_competitors.map((competitor, index) => (
-                <div key={index} className="bg-[#1D1D1F] p-4 rounded-lg">
-                  <p className="text-gray-300">{competitor}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Competitor Strengths Section */}
-        {data.competitor_strengths?.length > 0 && (
-          <div className="bg-[#2D2D2F] p-4 rounded-xl">
-            <h3 className="text-lg font-semibold text-purple-400 mb-4">Competitor Strengths</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {data.competitor_strengths.map((strength, index) => (
-                <div key={index} className="bg-[#1D1D1F] p-4 rounded-lg">
-                  <p className="text-gray-300">{strength}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Key Findings Section */}
-        {data.key_findings?.length > 0 && (
-          <div className="bg-[#2D2D2F] p-4 rounded-xl">
-            <h3 className="text-lg font-semibold text-purple-400 mb-4">Key Findings</h3>
-            <div className="space-y-4">
-              {data.key_findings.map((finding, index) => (
-                <div key={index} className="bg-[#1D1D1F] p-4 rounded-lg">
-                  <p className="text-gray-300">{finding}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Sources Section */}
-        {data.sources?.length > 0 && (
-          <div className="bg-[#2D2D2F] p-4 rounded-xl">
-            <h3 className="text-lg font-semibold text-purple-400 mb-4">Data Sources</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {data.sources.map((source, index) => (
-                <div key={index} className="bg-[#1D1D1F] p-4 rounded-lg flex items-start space-x-3">
-                  <div className="flex-shrink-0 w-8 h-8 bg-purple-500/10 rounded-full flex items-center justify-center">
-                    <span className="text-purple-400 text-sm">{index + 1}</span>
-                  </div>
-                  <div className="flex-grow">
-                    <a 
-                      href={source.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-purple-400 hover:text-purple-300 transition-colors"
-                    >
-                      {source.domain}
-                    </a>
-                    <div className="text-sm text-gray-400 mt-1">
-                      <span className="bg-purple-500/10 px-2 py-1 rounded text-xs">
-                        {source.section}
-                      </span>
-                      <span className="ml-2">
-                        {source.date}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div className="text-sm text-gray-400 mt-4">
-              * Analysis based on {data.sources.length} trusted sources
-            </div>
-          </div>
-        )}
-      </div>
-    );
-  };
-
-  const renderMarketShareSection = (marketShareData) => {
-    if (!marketShareData?.length) return null;
-
+  // Define renderSection function
+  const renderSection = (title, data, subsections) => {
     return (
       <div className="mb-6">
-        <h3 className="text-lg font-semibold text-purple-400 mb-4">Market Share Analysis</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {marketShareData.map((item, index) => (
-            <div key={index} className="bg-[#2D2D2F] p-4 rounded-lg">
-              <div className="flex items-center justify-between mb-3">
-                <h4 className="font-medium text-white">{item.company}</h4>
-                <span className="text-purple-400 font-semibold">
-                  {item.market_share}
-                </span>
-              </div>
-              {item.details?.length > 0 && (
-                <ul className="space-y-2">
-                  {item.details.map((detail, idx) => (
-                    <li key={idx} className="text-gray-300 text-sm">
-                      {detail}
-                    </li>
-                  ))}
-                </ul>
-              )}
-              {item.is_inferred && (
-                <div className="mt-2 text-xs text-gray-400">
-                  (Inferred data)
-                </div>
-              )}
+        <h3 className="text-lg font-semibold text-purple-400 mb-4">{title}</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {data.map((item, index) => (
+            <div key={index} className="bg-[#1D1D1F] p-4 rounded-lg">
+              <p className="text-gray-300">{item}</p>
             </div>
           ))}
         </div>
-        
-        {/* Market Share Visualization */}
-        <div className="mt-6 bg-[#2D2D2F] p-4 rounded-lg">
-          <h4 className="font-medium text-white mb-4">Market Share Distribution</h4>
-          <div className="space-y-3">
-            {marketShareData.map((item, index) => {
-              const sharePercentage = parseInt(item.market_share) || 0;
-              return (
-                <div key={index} className="relative">
-                  <div className="flex justify-between text-sm mb-1">
-                    <span className="text-gray-300">{item.company}</span>
-                    <span className="text-purple-400">{item.market_share}</span>
-                  </div>
-                  <div className="h-2 bg-gray-700 rounded-full overflow-hidden">
-                    <div 
-                      className="h-full bg-purple-500 rounded-full"
-                      style={{ 
-                        width: `${sharePercentage}%`,
-                        transition: 'width 1s ease-in-out'
-                      }}
-                    />
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+      </div>
+    );
+  };
+
+  // Define renderSourcesSection function
+  const renderSourcesSection = (sources) => {
+    return (
+      <div className="mb-6">
+        <h3 className="text-lg font-semibold text-purple-400 mb-4">Data Sources</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {sources.map((source, index) => (
+            <div key={index} className="bg-[#1D1D1F] p-4 rounded-lg">
+              <p className="text-gray-300">{source.domain}</p>
+              <p className="text-gray-400">Accessed: {source.date}</p>
+            </div>
+          ))}
         </div>
       </div>
     );
   };
 
   return (
-    <div className="min-h-screen bg-[#131314] text-white p-3 sm:p-4 lg:p-6">
+    <div className="min-h-screen bg-[#131314] text-white p-4 sm:p-6">
       <div className="max-w-7xl mx-auto">
-        {/* Navigation Section */}
-        <div className="mb-6">
-          <h2 className="text-lg font-semibold text-purple-400 mb-4">Navigation</h2>
-          <div className="flex space-x-4">
-            <Link href="/">
-              <button className="px-4 py-2 rounded-lg bg-purple-600 text-white">Home</button>
-            </Link>
-            <Link href="/market-trends">
-              <button className="px-4 py-2 rounded-lg bg-purple-600 text-white">Market Trends</button>
-            </Link>
-            <Link href="/competitor-tracking">
-              <button className="px-4 py-2 rounded-lg bg-purple-600 text-white">Competitor Tracking</button>
-            </Link>
+        {/* Header Section */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 sm:mb-8 space-y-4 sm:space-y-0">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-purple-400 via-purple-600 to-indigo-600 bg-clip-text text-transparent">
+              Competitor Tracking
+            </h1>
+            <p className="text-gray-400 mt-2">Analyze competitors and their strengths</p>
           </div>
+          <button
+            onClick={exportToPDF}
+            disabled={!apiResponse || Object.keys(apiResponse).length === 0 || isExporting}
+            className={`px-4 py-2 rounded-xl font-medium flex items-center space-x-2 transition-all duration-200 ${
+              apiResponse && Object.keys(apiResponse).length > 0 && !isExporting
+                ? 'bg-purple-600 hover:bg-purple-700 text-white cursor-pointer'
+                : 'bg-gray-600 text-gray-400 cursor-not-allowed'
+            }`}
+          >
+            {isExporting ? (
+              <>
+                <div className="w-4 h-4 border-t-2 border-white rounded-full animate-spin"></div>
+                <span>Exporting...</span>
+              </>
+            ) : (
+              <>
+                <span role="img" aria-label="download"></span>
+                <span>Export PDF</span>
+              </>
+            )}
+          </button>
         </div>
 
         {/* Search Form */}
-        <div className="mb-6">
-          <form onSubmit={handleSubmit} className="w-full">
-            <div className="flex flex-col sm:flex-row gap-3">
-              <div className="flex-grow">
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Enter business name for competitor analysis..."
-                  className="w-full px-4 py-2 bg-[#1D1D1F] border border-purple-500/30 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 transition-colors"
-                />
-              </div>
-              <button
-                type="submit"
-                disabled={isLoading || !searchQuery.trim()}
-                className={`px-6 py-2 rounded-xl font-medium transition-all duration-200 ${
-                  isLoading || !searchQuery.trim()
-                    ? 'bg-purple-600/50 cursor-not-allowed'
-                    : 'bg-purple-600 hover:bg-purple-700'
-                }`}
-              >
-                {isLoading ? (
-                  <div className="flex items-center justify-center">
-                    <div className="w-5 h-5 border-t-2 border-white rounded-full animate-spin"></div>
-                  </div>
-                ) : (
-                  'Analyze'
-                )}
-              </button>
-            </div>
-          </form>
-        </div>
+        <form onSubmit={handleSubmit} className="mb-6">
+          <div className="flex flex-col sm:flex-row gap-3">
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Enter business name for competitor analysis..."
+              className="flex-grow px-4 py-2 bg-[#1D1D1F] border border-purple-500/30 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-purple-500"
+            />
+            <button
+              type="submit"
+              disabled={isLoading || !searchQuery.trim()}
+              className={`px-6 py-2 rounded-xl font-medium transition-all duration-200 ${
+                isLoading || !searchQuery.trim()
+                  ? 'bg-purple-600/50 cursor-not-allowed'
+                  : 'bg-purple-600 hover:bg-purple-700'
+              }`}
+            >
+              {isLoading ? (
+                <div className="flex items-center justify-center">
+                  <div className="w-5 h-5 border-t-2 border-white rounded-full animate-spin"></div>
+                </div>
+              ) : (
+                'Analyze'
+              )}
+            </button>
+          </div>
+        </form>
+
+        {/* Phase Status */}
+        {isLoading && renderPhaseStatus()}
 
         {/* Error Message */}
         {error && (
           <div className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400">
-            <p>{error}</p>
+            {error}
           </div>
         )}
 
-        {/* API Response Display */}
-        <div className="bg-[#1D1D1F] rounded-2xl border border-purple-500/10 p-3 sm:p-4 lg:p-6">
-          {isLoading ? (
-            <div className="flex justify-center items-center py-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500"></div>
-            </div>
-          ) : apiResponse ? (
-            renderApiResponse(apiResponse)
-          ) : (
-            <div className="text-center text-gray-400 py-8">
-              Enter a business name above to analyze competitors
-            </div>
-          )}
-        </div>
+        {/* Results */}
+        {apiResponse && (
+          <div id="competitor-tracking-content" className="space-y-8">
+            {renderSection("Main Competitors", apiResponse.main_competitors, {})}
+            {renderSection("Competitor Strengths", apiResponse.competitor_strengths, {})}
+            {renderSection("Key Findings", apiResponse.key_findings, {})}
+            {renderSourcesSection(apiResponse.sources)}
+          </div>
+        )}
       </div>
     </div>
   );
