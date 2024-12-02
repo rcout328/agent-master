@@ -97,6 +97,9 @@ def get_swot_data(business_query):
                                     'date': datetime.now().strftime("%Y-%m-%d"),
                                     'content': content[:1000]  # Limit content size
                                 })
+                                # Create a text file for the scraped content
+                                with open(f"{business_query.replace(' ', '_')}_SWOT_analysis.txt", "a") as f:
+                                    f.write(f"URL: {url}\nContent:\n{content}\n\n")
                                 break
                     except Exception as e:
                         if "402" in str(e):  # Credit limit error
@@ -180,6 +183,10 @@ def get_swot_data(business_query):
             
             logging.info("\nGemini Analysis Received:")
             logging.info(f"\n{analysis}\n")
+            
+            # Create a text file for the Gemini analysis
+            with open(f"{business_query.replace(' ', '_')}_Gemini_analysis.txt", "w") as f:
+                f.write(analysis)
             
             # Extract sections
             result["strengths"] = extract_section(analysis, "STRENGTHS")

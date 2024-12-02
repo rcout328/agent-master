@@ -106,6 +106,11 @@ def get_gap_data(business_query):
                                     'date': datetime.now().strftime("%Y-%m-%d"),
                                     'content': content[:1000]  # Limit content size
                                 })
+                                
+                                # Create a text file for the scraped content
+                                with open(f"{extract_domain(url)}_gap_analysis.txt", "w") as f:
+                                    f.write(content)
+                                
                                 break
                     except Exception as e:
                         if "402" in str(e):  # Credit limit error
@@ -179,6 +184,10 @@ def get_gap_data(business_query):
             result["desired_state"] = extract_section(analysis, "DESIRED STATE")
             result["identified_gaps"] = extract_section(analysis, "IDENTIFIED GAPS")
             result["recommendations"] = extract_section(analysis, "RECOMMENDATIONS")
+            
+            # Create a text file for the Gemini output
+            with open(f"{business_query}_gemini_analysis.txt", "w") as f:
+                f.write(analysis)
             
             return result
             

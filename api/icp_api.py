@@ -104,6 +104,11 @@ def get_icp_data(business_query):
                                     'section': 'ICP Analysis',
                                     'date': datetime.now().strftime("%Y-%m-%d")
                                 })
+                                
+                                # Create a text file for the scraped content
+                                with open(f"scraped_content_{datetime.now().strftime('%Y%m%d%H%M%S')}.txt", 'a') as f:
+                                    f.write(f"URL: {url}\nContent:\n{content}\n\n")
+                                
                                 break
                     except Exception as e:
                         logging.error(f"Error scraping {url}: {str(e)}")
@@ -167,6 +172,10 @@ def get_icp_data(business_query):
             
             logging.info("\nGemini Analysis Received:")
             logging.info(f"\n{analysis}\n")
+            
+            # Create a text file for the Gemini analysis
+            with open(f"gemini_analysis_{datetime.now().strftime('%Y%m%d%H%M%S')}.txt", 'w') as f:
+                f.write(f"Business Query: {business_query}\nAnalysis:\n{analysis}\n")
             
             # Process and structure the response
             sections = extract_meaningful_content(analysis)

@@ -72,7 +72,6 @@ def get_feedback_data(business_query):
     for query in search_queries:
         try:
             logging.info(f"\nSearching for: {query}")
-            # Changed from num to num_results
             search_results = list(search(query, lang="en", num_results=2))
             attempts = 0
             
@@ -99,6 +98,11 @@ def get_feedback_data(business_query):
                                     'date': datetime.now().strftime("%Y-%m-%d"),
                                     'content': content[:1000]  # Limit content size
                                 })
+                                
+                                # Create a text file for the scraped content
+                                with open(f"{extract_domain(url)}_feedback.txt", "w") as f:
+                                    f.write(content)
+                                
                                 break
                     except Exception as e:
                         if "402" in str(e):  # Credit limit error
@@ -178,6 +182,10 @@ def get_feedback_data(business_query):
             
             response = model.generate_content(prompt)
             analysis = response.text
+            
+            # Create a text file for the Gemini output
+            with open(f"{business_query.replace(' ', '_')}_gemini_analysis.txt", "w") as f:
+                f.write(analysis)
             
             # Extract sections
             result["satisfaction_metrics"] = extract_section(analysis, "SATISFACTION METRICS")

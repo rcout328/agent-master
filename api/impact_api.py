@@ -108,6 +108,9 @@ def get_impact_data(business_query):
                                     'date': datetime.now().strftime("%Y-%m-%d"),
                                     'content': content[:1000]  # Limit content size
                                 })
+                                # Create a text file for each scraped resource
+                                with open(f"{extract_domain(url)}_impact_analysis.txt", "w") as f:
+                                    f.write(content)
                                 break
                     except Exception as e:
                         if "402" in str(e):  # Credit limit error
@@ -175,6 +178,10 @@ def get_impact_data(business_query):
             
             response = model.generate_content(prompt)
             analysis = response.text
+            
+            # Create a text file for the Gemini output
+            with open(f"{business_query.replace(' ', '_')}_gemini_analysis.txt", "w") as f:
+                f.write(analysis)
             
             # Extract sections
             result["social_impact"] = extract_section(analysis, "SOCIAL IMPACT")

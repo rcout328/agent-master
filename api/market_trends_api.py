@@ -104,6 +104,9 @@ def get_trends_data(query):
                                     'date': datetime.now().strftime("%Y-%m-%d"),
                                     'content': content[:1000]  # Limit content size
                                 })
+                                # Save scraped content to a text file
+                                with open('scraped_sources.txt', 'a') as f:
+                                    f.write(f"URL: {url}\nContent: {content}\n\n")
                                 break
                     except Exception as e:
                         if "429" in str(e):  # Rate limit error
@@ -130,78 +133,126 @@ def get_trends_data(query):
     # Generate analysis using scraped content
     if scraped_content:
         try:
-            prompt = f"""
-            Analyze this content about {query}'s market trends and create a detailed assessment.
+            # First prompt to extract and structure raw data
+            raw_data_prompt = f"""
+            Extract and structure key market data from this content about {query}.
             
             Content to analyze:
             {[item['content'] for item in scraped_content]}
             
-            Provide a structured analysis with these exact sections:
+            Extract specific data points in this format:
+            1. Market Size: Include exact numbers (billions/millions)
+            2. Growth Rates: CAGR, YoY growth percentages
+            3. Market Leaders: Company names with market share %
+            4. Regional Data: Geographic breakdown with percentages
+            5. Key Statistics: Any relevant numerical data
+            
+            Format as clear data points with numbers and percentages.
+            Mark estimates or inferences with (Inferred).
+            """
+            # Save the raw data prompt to a text file
+            with open('gemini_prompt.txt', 'a') as f:
+                f.write(raw_data_prompt + "\n")
+
+            raw_data_response = model.generate_content(raw_data_prompt)
+            structured_data = raw_data_response.text
+
+            # Second prompt for detailed analysis using structured data
+            analysis_prompt = f"""
+            Using this structured market data about {query}, provide a comprehensive analysis.
+            
+            Data to analyze:
+            {structured_data}
+
+            Create a detailed report with these exact sections:
 
             MARKET SIZE & GROWTH:
             • Total Market Value:
-              - Current market size in billions/millions
-              - Year-over-year growth rate
+              - Exact current market size (use specific numbers)
+              - Historical growth trajectory
+              - YoY growth rate with percentages
             • Market Segments:
-              - Key product/service categories
-              - Segment-wise breakdown
+              - Segment sizes and percentages
+              - Growth rates by segment
+              - Key segment drivers
             • Regional Distribution:
-              - Geographic market share
-              - Key regional trends
+              - Market share by region (%)
+              - Growth rates by region
+              - Regional market characteristics
 
             COMPETITIVE ANALYSIS:
             • Market Leaders:
-              - Top 3-5 companies
-              - Market share percentages
+              - Top 5 companies with market share %
+              - Revenue figures where available
+              - YoY growth rates
             • Competitive Advantages:
-              - Key differentiators
-              - Strategic positions
+              - Core differentiators
+              - Technology capabilities
+              - Market positioning
             • Market Concentration:
-              - Industry consolidation
-              - Market fragmentation level
+              - Concentration ratios
+              - Market power distribution
+              - Entry barrier analysis
 
             INDUSTRY TRENDS:
             • Current Trends:
-              - Major market movements
-              - Consumer behavior shifts
+              - Consumer behavior shifts (with data)
+              - Technology adoption rates
+              - Market disruptions
             • Technology Impact:
-              - Digital transformation
-              - Innovation trends
+              - Digital transformation metrics
+              - Innovation investment data
+              - Tech adoption rates
             • Regulatory Environment:
-              - Key regulations
-              - Compliance requirements
+              - Key regulation impacts
+              - Compliance costs
+              - Future regulatory trends
 
             GROWTH FORECAST:
-            • Short-term Outlook:
-              - 1-2 year projections
-              - Immediate opportunities
-            • Long-term Potential:
-              - 5-year CAGR
-              - Future market size
+            • Short-term Outlook (1-2 years):
+              - Growth projections with CAGR
+              - Segment-wise forecasts
+              - Market size targets
+            • Long-term Potential (5 years):
+              - Market size projections
+              - Growth trajectories
+              - Segment evolution
             • Growth Drivers:
-              - Key catalysts
-              - Market enablers
+              - Primary catalysts with impact %
+              - Investment trends
+              - Innovation metrics
 
             RISK ASSESSMENT:
             • Market Challenges:
-              - Current obstacles
-              - Potential threats
+              - Risk factors with impact ratings
+              - Mitigation strategies
+              - Cost implications
             • Economic Factors:
-              - Market dependencies
-              - Economic impacts
+              - Economic sensitivity metrics
+              - Cost structure analysis
+              - Margin trends
             • Competitive Threats:
-              - New entrants
-              - Substitutes
+              - New entrant probability
+              - Substitution risks
+              - Market share threats
 
-            Use factual data where available and mark inferences with (Inferred).
-            Format each point as a clear, actionable insight.
-            Include specific numbers and percentages where possible.
+            Requirements:
+            1. Use specific numbers and percentages
+            2. Include data sources where available
+            3. Mark estimates with (Inferred)
+            4. Prioritize actionable insights
+            5. Focus on quantifiable metrics
+            6. Include trend indicators (↑↓→)
+            7. Rate impacts (High/Medium/Low)
             """
-            
-            response = model.generate_content(prompt)
-            analysis = response.text
-            
-            # Extract sections
+            # Save the analysis prompt to a text file
+            with open('gemini_analysis_prompt.txt', 'a') as f:
+                f.write(analysis_prompt + "\n")
+
+            analysis_response = model.generate_content(analysis_prompt)
+            analysis = analysis_response.text
+
+            # Extract and structure the sections
             result["market_size_growth"]["total_market_value"] = extract_section(analysis, "MARKET SIZE & GROWTH", "Total Market Value")
             result["market_size_growth"]["market_segments"] = extract_section(analysis, "MARKET SIZE & GROWTH", "Market Segments")
             result["market_size_growth"]["regional_distribution"] = extract_section(analysis, "MARKET SIZE & GROWTH", "Regional Distribution")
@@ -221,11 +272,19 @@ def get_trends_data(query):
             result["risk_assessment"]["market_challenges"] = extract_section(analysis, "RISK ASSESSMENT", "Market Challenges")
             result["risk_assessment"]["economic_factors"] = extract_section(analysis, "RISK ASSESSMENT", "Economic Factors")
             result["risk_assessment"]["competitive_threats"] = extract_section(analysis, "RISK ASSESSMENT", "Competitive Threats")
-            
+
+            # Add confidence scores
+            result["analysis_metadata"] = {
+                "confidence_score": "High" if len(scraped_content) >= 3 else "Medium",
+                "data_points": len(structured_data.split('\n')),
+                "analysis_date": datetime.now().strftime("%Y-%m-%d"),
+                "data_quality": "High" if any(x in structured_data.lower() for x in ['billion', 'million', '%', 'market share']) else "Medium"
+            }
+
             return result
-            
+
         except Exception as e:
-            logging.error(f"Error generating analysis: {str(e)}")
+            logging.error(f"Error in Gemini analysis: {str(e)}")
             return generate_fallback_response(query)
     
     return generate_fallback_response(query)

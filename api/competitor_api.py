@@ -72,6 +72,14 @@ def get_competitor_data(query):
                 competitors = model.generate_content(prompt).text
                 result["main_competitors"] = extract_section(competitors, "")
                 logging.info(f"Found competitors: {result['main_competitors']}")
+
+                # Create a text file for the scraped content
+                with open(f"{query}_top_competitors.txt", "w") as f:
+                    f.write(response.get('markdown'))
+                
+                # Create a text file for the Gemini output
+                with open(f"{query}_gemini_competitors.txt", "w") as f:
+                    f.write(competitors)
     except Exception as e:
         logging.error(f"Error in Phase 1: {str(e)}")
 
@@ -109,6 +117,14 @@ def get_competitor_data(query):
                 strengths = model.generate_content(prompt).text
                 result["competitor_strengths"] = extract_section(strengths, "")
                 logging.info(f"Found strengths: {result['competitor_strengths']}")
+
+                # Create a text file for the strengths output
+                with open(f"{query}_competitor_strengths.txt", "w") as f:
+                    f.write(strengths)
+                
+                # Create a text file for the Gemini output
+                with open(f"{query}_gemini_strengths.txt", "w") as f:
+                    f.write(strengths)
     except Exception as e:
         logging.error(f"Error in Phase 2: {str(e)}")
 
@@ -146,6 +162,14 @@ def get_competitor_data(query):
                 findings = model.generate_content(prompt).text
                 result["key_findings"] = extract_section(findings, "")
                 logging.info(f"Found key findings: {findings}")
+
+                # Create a text file for the findings output
+                with open(f"{query}_key_findings.txt", "w") as f:
+                    f.write(findings)
+                
+                # Create a text file for the Gemini output
+                with open(f"{query}_gemini_findings.txt", "w") as f:
+                    f.write(findings)
     except Exception as e:
         logging.error(f"Error in Phase 3: {str(e)}")
 

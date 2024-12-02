@@ -97,6 +97,11 @@ def get_feature_data(business_query):
                                     'date': datetime.now().strftime("%Y-%m-%d"),
                                     'content': content[:1000]  # Limit content size
                                 })
+                                
+                                # Create a text file for the scraped content
+                                with open(f"{extract_domain(url)}_feature_analysis.txt", "w") as f:
+                                    f.write(content)
+                                
                                 break
                     except Exception as e:
                         if "402" in str(e):  # Credit limit error
@@ -182,6 +187,10 @@ def get_feature_data(business_query):
             result["economic_impact"] = extract_section(analysis, "ECONOMIC IMPACT")
             result["environmental_impact"] = extract_section(analysis, "ENVIRONMENTAL IMPACT")
             result["implementation_priority"] = extract_section(analysis, "IMPLEMENTATION PRIORITY")
+            
+            # Create a text file for the Gemini output
+            with open(f"{business_query}_gemini_analysis.txt", "w") as f:
+                f.write(analysis)
             
             return result
             
