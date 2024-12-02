@@ -107,123 +107,149 @@ export default function CompetitorTrackingContent() {
   };
 
   const renderApiResponse = (data) => {
-    if (!data) return null;
-
     return (
       <div className="space-y-6">
-        {/* Main Competitors */}
-        <div>
-          <h3 className="text-lg font-semibold text-purple-400 mb-2">Top Competitors</h3>
+        {/* Competitors Section */}
+        {data.main_competitors?.length > 0 && (
           <div className="bg-[#2D2D2F] p-4 rounded-xl">
-            {data.main_competitors.length > 0 ? (
-              <ul className="space-y-2">
-                {data.main_competitors.slice(0, 5).map((competitor, index) => (
-                  <li key={index} className="text-gray-300">{competitor}</li>
-                ))}
-              </ul>
-            ) : (
-              <p className="text-gray-400">No competitors found.</p>
-            )}
-          </div>
-        </div>
-
-        {/* Market Share Data */}
-        <div>
-          <h3 className="text-lg font-semibold text-purple-400 mb-2">Market Share Data</h3>
-          <div className="bg-[#2D2D2F] p-4 rounded-xl">
-            {data.market_share_data.length > 0 ? (
-              <ul className="space-y-2">
-                {data.market_share_data.map((item, index) => (
-                  <li key={index} className="text-gray-300">
-                    {item.competitor}: {item.share}%
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className="text-gray-400">No market share data available.</p>
-            )}
-          </div>
-        </div>
-
-        {/* Competitor Strengths */}
-        <div>
-          <h3 className="text-lg font-semibold text-purple-400 mb-2">Competitor Strengths</h3>
-          <div className="bg-[#2D2D2F] p-4 rounded-xl">
-            {data.competitor_strengths.length > 0 ? (
-              <ul className="space-y-2">
-                {data.competitor_strengths.map((strength, index) => (
-                  <li key={index} className="text-gray-300">{strength}</li>
-                ))}
-              </ul>
-            ) : (
-              <p className="text-gray-400">No strengths data available.</p>
-            )}
-          </div>
-        </div>
-
-        {/* Key Findings */}
-        <div>
-          <h3 className="text-lg font-semibold text-purple-400 mb-2">Key Findings</h3>
-          <div className="space-y-3">
-            {data.key_findings.length > 0 ? (
-              data.key_findings.map((finding, index) => (
-                <div key={index} className="bg-[#2D2D2F] p-4 rounded-xl">
-                  <h4 className="font-medium text-white">{finding.title}</h4>
-                  <p className="text-gray-400 mt-1">{finding.snippet}</p>
-                  <div className="flex justify-between mt-2 text-sm text-gray-500">
-                    <span>{finding.source}</span>
-                    <span>{finding.date}</span>
-                  </div>
+            <h3 className="text-lg font-semibold text-purple-400 mb-4">Main Competitors</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {data.main_competitors.map((competitor, index) => (
+                <div key={index} className="bg-[#1D1D1F] p-4 rounded-lg">
+                  <p className="text-gray-300">{competitor}</p>
                 </div>
-              ))
-            ) : (
-              <p className="text-gray-400">No key findings available.</p>
-            )}
-          </div>
-        </div>
-
-        {/* Sources Section */}
-        {data.sources && data.sources.length > 0 && (
-          <div>
-            <h3 className="text-lg font-semibold text-purple-400 mb-2">Data Sources</h3>
-            <div className="bg-[#2D2D2F] p-4 rounded-xl">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {data.sources.map((source, index) => (
-                  <div key={index} className="flex items-start space-x-3">
-                    <div className="flex-shrink-0 w-8 h-8 bg-purple-500/10 rounded-full flex items-center justify-center">
-                      <span className="text-purple-400 text-sm">{index + 1}</span>
-                    </div>
-                    <div className="flex-grow">
-                      <div className="flex justify-between items-start">
-                        <a 
-                          href={source.url} 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className="text-purple-400 hover:text-purple-300 transition-colors"
-                        >
-                          {source.domain}
-                        </a>
-                        <span className="text-xs text-gray-500 ml-2">
-                          {source.section}
-                        </span>
-                      </div>
-                      <p className="text-gray-400 text-sm mt-1">
-                        Accessed: {source.date}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
+              ))}
             </div>
           </div>
         )}
 
-        {/* Citation Note */}
-        {data.sources && data.sources.length > 0 && (
-          <div className="text-sm text-gray-400 mt-4">
-            <p>* Data compiled from {data.sources.length} trusted sources</p>
+        {/* Competitor Strengths Section */}
+        {data.competitor_strengths?.length > 0 && (
+          <div className="bg-[#2D2D2F] p-4 rounded-xl">
+            <h3 className="text-lg font-semibold text-purple-400 mb-4">Competitor Strengths</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {data.competitor_strengths.map((strength, index) => (
+                <div key={index} className="bg-[#1D1D1F] p-4 rounded-lg">
+                  <p className="text-gray-300">{strength}</p>
+                </div>
+              ))}
+            </div>
           </div>
         )}
+
+        {/* Key Findings Section */}
+        {data.key_findings?.length > 0 && (
+          <div className="bg-[#2D2D2F] p-4 rounded-xl">
+            <h3 className="text-lg font-semibold text-purple-400 mb-4">Key Findings</h3>
+            <div className="space-y-4">
+              {data.key_findings.map((finding, index) => (
+                <div key={index} className="bg-[#1D1D1F] p-4 rounded-lg">
+                  <p className="text-gray-300">{finding}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Sources Section */}
+        {data.sources?.length > 0 && (
+          <div className="bg-[#2D2D2F] p-4 rounded-xl">
+            <h3 className="text-lg font-semibold text-purple-400 mb-4">Data Sources</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {data.sources.map((source, index) => (
+                <div key={index} className="bg-[#1D1D1F] p-4 rounded-lg flex items-start space-x-3">
+                  <div className="flex-shrink-0 w-8 h-8 bg-purple-500/10 rounded-full flex items-center justify-center">
+                    <span className="text-purple-400 text-sm">{index + 1}</span>
+                  </div>
+                  <div className="flex-grow">
+                    <a 
+                      href={source.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-purple-400 hover:text-purple-300 transition-colors"
+                    >
+                      {source.domain}
+                    </a>
+                    <div className="text-sm text-gray-400 mt-1">
+                      <span className="bg-purple-500/10 px-2 py-1 rounded text-xs">
+                        {source.section}
+                      </span>
+                      <span className="ml-2">
+                        {source.date}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="text-sm text-gray-400 mt-4">
+              * Analysis based on {data.sources.length} trusted sources
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  const renderMarketShareSection = (marketShareData) => {
+    if (!marketShareData?.length) return null;
+
+    return (
+      <div className="mb-6">
+        <h3 className="text-lg font-semibold text-purple-400 mb-4">Market Share Analysis</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {marketShareData.map((item, index) => (
+            <div key={index} className="bg-[#2D2D2F] p-4 rounded-lg">
+              <div className="flex items-center justify-between mb-3">
+                <h4 className="font-medium text-white">{item.company}</h4>
+                <span className="text-purple-400 font-semibold">
+                  {item.market_share}
+                </span>
+              </div>
+              {item.details?.length > 0 && (
+                <ul className="space-y-2">
+                  {item.details.map((detail, idx) => (
+                    <li key={idx} className="text-gray-300 text-sm">
+                      {detail}
+                    </li>
+                  ))}
+                </ul>
+              )}
+              {item.is_inferred && (
+                <div className="mt-2 text-xs text-gray-400">
+                  (Inferred data)
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+        
+        {/* Market Share Visualization */}
+        <div className="mt-6 bg-[#2D2D2F] p-4 rounded-lg">
+          <h4 className="font-medium text-white mb-4">Market Share Distribution</h4>
+          <div className="space-y-3">
+            {marketShareData.map((item, index) => {
+              const sharePercentage = parseInt(item.market_share) || 0;
+              return (
+                <div key={index} className="relative">
+                  <div className="flex justify-between text-sm mb-1">
+                    <span className="text-gray-300">{item.company}</span>
+                    <span className="text-purple-400">{item.market_share}</span>
+                  </div>
+                  <div className="h-2 bg-gray-700 rounded-full overflow-hidden">
+                    <div 
+                      className="h-full bg-purple-500 rounded-full"
+                      style={{ 
+                        width: `${sharePercentage}%`,
+                        transition: 'width 1s ease-in-out'
+                      }}
+                    />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
       </div>
     );
   };

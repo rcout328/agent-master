@@ -77,7 +77,7 @@ def get_market_data(business_query):
     ]
     
     scraped_content = []
-    max_attempts = 2  # Limit number of attempts per query
+    max_attempts = 2  # Limit num_resultsber of attempts per query
     
     for query in search_queries:
         try:
