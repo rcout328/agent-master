@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { callGeminiApi } from '@/utils/geminiApi';
 
@@ -16,6 +16,15 @@ export default function CompetitorTrackingContent() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [currentPhase, setCurrentPhase] = useState(0);
+
+  // Load data from local storage on component mount
+  useEffect(() => {
+    const storedData = localStorage.getItem('geminiApiResponse');
+    if (storedData) {
+      setApiResponse(JSON.parse(storedData));
+      setCurrentPhase(6); // Assuming the last phase is reached if data is loaded from local storage
+    }
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -62,6 +71,9 @@ export default function CompetitorTrackingContent() {
         setCurrentPhase(6);
         setApiResponse(prev => ({ ...prev, sources: data.sources }));
       }
+
+      // Store the API response in local storage
+      localStorage.setItem('geminiApiResponse', JSON.stringify(data));
     } catch (error) {
       console.error('Error:', error);
       setError('Failed to get data. Please try again.');

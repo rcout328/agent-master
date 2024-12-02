@@ -19,6 +19,16 @@ export default function SWOTAnalysisContent() {
   const [currentPhase, setCurrentPhase] = useState(0);
   const analysisRef = useRef(null);
 
+  // Load SWOT analysis from local storage on component mount
+  useEffect(() => {
+    const storedData = localStorage.getItem(`swotAnalysis_${userInput}`);
+    if (storedData) {
+      const data = JSON.parse(storedData);
+      setSwotAnalysis(data);
+      setCurrentPhase(6); // Set to last phase if data is loaded
+    }
+  }, [userInput]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!userInput.trim() || isLoading) return;

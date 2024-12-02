@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useStoredInput } from '@/hooks/useStoredInput';
 import jsPDF from 'jspdf';
 import Link from 'next/link';
@@ -18,6 +18,14 @@ export default function FeaturePriorityContent() {
   const [error, setError] = useState(null);
   const [currentPhase, setCurrentPhase] = useState(0);
   const analysisRef = useRef(null);
+
+  // Load feature analysis from local storage on component mount
+  useEffect(() => {
+    const storedAnalysis = localStorage.getItem(`featureAnalysis_${userInput}`);
+    if (storedAnalysis) {
+      setFeatureAnalysis(JSON.parse(storedAnalysis));
+    }
+  }, [userInput]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -65,6 +73,7 @@ export default function FeaturePriorityContent() {
         setFeatureAnalysis(prev => ({ ...prev, sources: data.sources }));
       }
       
+      // Store the analysis in local storage
       localStorage.setItem(`featureAnalysis_${userInput}`, JSON.stringify(data));
 
     } catch (error) {

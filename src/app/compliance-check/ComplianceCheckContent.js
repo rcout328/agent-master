@@ -135,6 +135,13 @@ export default function ComplianceCheckContent() {
     }
   };
 
+  useEffect(() => {
+    const storedAnalysis = localStorage.getItem(`complianceAnalysis_${userInput}`);
+    if (storedAnalysis) {
+      setComplianceAnalysis(storedAnalysis);
+    }
+  }, [userInput]);
+
   if (!mounted) return null;
 
   return (
