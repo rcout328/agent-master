@@ -46,7 +46,7 @@ def get_trends_data(query):
             logging.info(f"\nSearching for: {search_query}")
             urls = list(search(
                 search_query, 
-                num=3,
+                num_results=3,
                 lang="en"
             ))
             

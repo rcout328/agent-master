@@ -1,5 +1,3 @@
-from flask import Flask, request, jsonify
-from flask_cors import CORS
 import logging
 from datetime import datetime
 from firecrawl import FirecrawlApp
@@ -7,25 +5,9 @@ import json
 import os
 from googlesearch import search
 import time
+import google.generativeai as genai
 
-# Import Gemini with error handling
-try:
-    import google.generativeai as genai
-    GEMINI_AVAILABLE = True
-except ImportError:
-    GEMINI_AVAILABLE = False
-    logging.warning("Gemini API not available. Installing required package...")
-    os.system('pip install google-generativeai')
-    try:
-        import google.generativeai as genai
-        GEMINI_AVAILABLE = True
-    except ImportError:
-        logging.error("Failed to install google-generativeai package")
-        GEMINI_AVAILABLE = False
-
-app = Flask(__name__)
-CORS(app)
-
+# Initialize logging
 logging.basicConfig(level=logging.DEBUG)
 
 # Initialize Firecrawl
@@ -33,20 +15,26 @@ FIRECRAWL_API_KEY = "fc-b69d6504ab0a42b79e87b7827a538199"
 firecrawl_app = FirecrawlApp(api_key=FIRECRAWL_API_KEY)
 logging.info("Firecrawl initialized")
 
-# Initialize Gemini if available
-if GEMINI_AVAILABLE:
-    GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY', '')
-    if GOOGLE_API_KEY:
-        genai.configure(api_key=GOOGLE_API_KEY)
-        model = genai.GenerativeModel('gemini-1.5-flash')
-        logging.info("Gemini initialized")
-    else:
-        logging.warning("No Gemini API key found")
+# Initialize Gemini
+GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY', '')
+if GOOGLE_API_KEY:
+    genai.configure(api_key=GOOGLE_API_KEY)
+    model = genai.GenerativeModel('gemini-1.5-flash')
+    logging.info("Gemini initialized")
+else:
+    logging.warning("No Gemini API key found")
+
+def extract_domain(url):
+    """Extract domain name from URL"""
+    try:
+        from urllib.parse import urlparse
+        domain = urlparse(url).netloc
+        return domain.replace('www.', '')
+    except:
+        return url
 
 def get_swot_data(business_query):
-    """
-    Get SWOT analysis data using search and Firecrawl
-    """
+    """Get SWOT analysis data using search and Firecrawl"""
     logging.info(f"\n{'='*50}\nGathering SWOT data for: {business_query}\n{'='*50}")
     
     result = {
@@ -66,7 +54,7 @@ def get_swot_data(business_query):
     ]
     
     scraped_content = []
-    max_attempts = 2  # Limit number of attempts per query
+    max_attempts = 2
     
     for query in search_queries:
         try:
@@ -95,22 +83,18 @@ def get_swot_data(business_query):
                                     'domain': extract_domain(url),
                                     'section': 'SWOT Analysis',
                                     'date': datetime.now().strftime("%Y-%m-%d"),
-                                    'content': content[:1000]  # Limit content size
+                                    'content': content[:1000]
                                 })
-                                # Create a text file for the scraped content
-                                with open(f"{business_query.replace(' ', '_')}_SWOT_analysis.txt", "a") as f:
-                                    f.write(f"URL: {url}\nContent:\n{content}\n\n")
                                 break
                     except Exception as e:
-                        if "402" in str(e):  # Credit limit error
+                        if "402" in str(e):
                             logging.warning(f"Firecrawl credit limit reached for {url}")
-                            # Add URL as source even if we can't scrape it
                             scraped_content.append({
                                 'url': url,
                                 'domain': extract_domain(url),
                                 'section': 'SWOT Analysis (Limited)',
                                 'date': datetime.now().strftime("%Y-%m-%d"),
-                                'content': f"Content from {extract_domain(url)} about {business_query}'s SWOT analysis"
+                                'content': f"Content from {extract_domain(url)} about {business_query}'s SWOT"
                             })
                         else:
                             logging.error(f"Error scraping {url}: {str(e)}")
@@ -122,16 +106,7 @@ def get_swot_data(business_query):
         except Exception as e:
             logging.error(f"Error in search: {str(e)}")
             continue
-    
-    # Add sources to result
-    result["sources"] = [{
-        'url': item['url'],
-        'domain': item['domain'],
-        'section': item['section'],
-        'date': item['date']
-    } for item in scraped_content]
-    
-    # Generate SWOT analysis using scraped content
+
     if scraped_content:
         try:
             prompt = f"""
@@ -143,50 +118,31 @@ def get_swot_data(business_query):
             Provide a structured analysis with these exact sections:
 
             STRENGTHS:
-            1. Core Competencies:
-               - List unique capabilities and advantages
-            2. Market Position:
-               - List competitive advantages
-            3. Resources:
-               - List valuable assets and capabilities
+            • Core Competencies
+            • Market Position
+            • Resources
 
             WEAKNESSES:
-            1. Internal Limitations:
-               - List operational challenges
-            2. Competitive Disadvantages:
-               - List areas where competitors are stronger
-            3. Resource Gaps:
-               - List missing capabilities or resources
+            • Internal Limitations
+            • Competitive Disadvantages
+            • Resource Gaps
 
             OPPORTUNITIES:
-            1. Market Trends:
-               - List emerging opportunities
-            2. Growth Potential:
-               - List expansion possibilities
-            3. Innovation Areas:
-               - List potential improvements
+            • Market Trends
+            • Growth Potential
+            • Innovation Areas
 
             THREATS:
-            1. Market Risks:
-               - List external challenges
-            2. Competitive Pressures:
-               - List competitor actions
-            3. Industry Changes:
-               - List disruptive trends
+            • Market Risks
+            • Competitive Pressures
+            • Industry Changes
 
-            Use only factual information from the content. If making logical inferences, mark them with (Inferred).
+            Use factual information where available, mark inferences with (Inferred).
             Format each point as a clear, actionable item.
             """
             
             response = model.generate_content(prompt)
             analysis = response.text
-            
-            logging.info("\nGemini Analysis Received:")
-            logging.info(f"\n{analysis}\n")
-            
-            # Create a text file for the Gemini analysis
-            with open(f"{business_query.replace(' ', '_')}_Gemini_analysis.txt", "w") as f:
-                f.write(analysis)
             
             # Extract sections
             result["strengths"] = extract_section(analysis, "STRENGTHS")
@@ -194,22 +150,21 @@ def get_swot_data(business_query):
             result["opportunities"] = extract_section(analysis, "OPPORTUNITIES")
             result["threats"] = extract_section(analysis, "THREATS")
             
+            # Add sources
+            result["sources"] = [{
+                'url': item['url'],
+                'domain': item['domain'],
+                'section': item['section'],
+                'date': item['date']
+            } for item in scraped_content]
+            
             return result
             
         except Exception as e:
-            logging.error(f"Error in Gemini analysis: {str(e)}")
+            logging.error(f"Error generating analysis: {str(e)}")
             return generate_fallback_response(business_query)
     
     return generate_fallback_response(business_query)
-
-def extract_domain(url):
-    """Extract domain name from URL"""
-    try:
-        from urllib.parse import urlparse
-        domain = urlparse(url).netloc
-        return domain.replace('www.', '')
-    except:
-        return url
 
 def extract_section(text, section_name):
     """Extract content from a specific section"""
@@ -237,46 +192,24 @@ def generate_fallback_response(business_query):
     """Generate basic SWOT analysis when no data is found"""
     return {
         "strengths": [
-            f"Strong market presence (Inferred for {business_query})",
-            "Established brand reputation (Inferred)",
-            "Quality products/services (Inferred)"
+            f"Core competencies of {business_query} pending analysis (Inferred)",
+            "Market position assessment needed (Inferred)",
+            "Resource evaluation in progress (Inferred)"
         ],
         "weaknesses": [
-            "Limited market coverage (Inferred)",
-            "Resource constraints (Inferred)",
-            "Areas needing improvement (Inferred)"
+            "Internal limitations being identified (Inferred)",
+            "Competitive disadvantages under review (Inferred)",
+            "Resource gaps to be assessed (Inferred)"
         ],
         "opportunities": [
-            "Market expansion potential (Inferred)",
-            "New product possibilities (Inferred)",
-            "Technology adoption (Inferred)"
+            "Market trend analysis pending (Inferred)",
+            "Growth potential being evaluated (Inferred)",
+            "Innovation opportunities to be identified (Inferred)"
         ],
         "threats": [
-            "Increasing competition (Inferred)",
-            "Market uncertainties (Inferred)",
-            "Changing consumer preferences (Inferred)"
+            "Market risk assessment needed (Inferred)",
+            "Competitive pressure analysis pending (Inferred)",
+            "Industry change impact to be evaluated (Inferred)"
         ],
         "sources": []
-    }
-
-@app.route('/api/swot-analysis', methods=['POST', 'OPTIONS'])
-def analyze_swot():
-    if request.method == 'OPTIONS':
-        return '', 204
-        
-    try:
-        data = request.json
-        business_query = data.get('query')
-        
-        if not business_query:
-            return jsonify({'error': 'No business query provided'}), 400
-
-        swot_data = get_swot_data(business_query)
-        return jsonify(swot_data)
-
-    except Exception as e:
-        logging.error(f"Error during SWOT analysis: {str(e)}")
-        return jsonify({'error': str(e)}), 500
-
-if __name__ == '__main__':
-    app.run(port=5004, debug=True) 
+    } 

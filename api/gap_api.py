@@ -1,5 +1,3 @@
-from flask import Flask, request, jsonify
-from flask_cors import CORS
 import logging
 from datetime import datetime
 from firecrawl import FirecrawlApp
@@ -7,41 +5,24 @@ import json
 import os
 from googlesearch import search
 import time
+import google.generativeai as genai
 
-# Import Gemini with error handling
-try:
-    import google.generativeai as genai
-    GEMINI_AVAILABLE = True
-except ImportError:
-    GEMINI_AVAILABLE = False
-    logging.warning("Gemini API not available. Installing required package...")
-    os.system('pip install google-generativeai')
-    try:
-        import google.generativeai as genai
-        GEMINI_AVAILABLE = True
-    except ImportError:
-        logging.error("Failed to install google-generativeai package")
-        GEMINI_AVAILABLE = False
-
-app = Flask(__name__)
-CORS(app)
-
+# Initialize logging
 logging.basicConfig(level=logging.DEBUG)
 
 # Initialize Firecrawl
-FIRECRAWL_API_KEY = "fc-c8fb95d8db884bd38ce266a30b0d11b4"
+FIRECRAWL_API_KEY = "fc-b69d6504ab0a42b79e87b7827a538199"
 firecrawl_app = FirecrawlApp(api_key=FIRECRAWL_API_KEY)
 logging.info("Firecrawl initialized")
 
-# Initialize Gemini if available
-if GEMINI_AVAILABLE:
-    GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY', '')
-    if GOOGLE_API_KEY:
-        genai.configure(api_key=GOOGLE_API_KEY)
-        model = genai.GenerativeModel('gemini-1.5-flash')
-        logging.info("Gemini initialized")
-    else:
-        logging.warning("No Gemini API key found")
+# Initialize Gemini
+GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY', '')
+if GOOGLE_API_KEY:
+    genai.configure(api_key=GOOGLE_API_KEY)
+    model = genai.GenerativeModel('gemini-1.5-flash')
+    logging.info("Gemini initialized")
+else:
+    logging.warning("No Gemini API key found")
 
 def extract_domain(url):
     """Extract domain name from URL"""
@@ -53,9 +34,7 @@ def extract_domain(url):
         return url
 
 def get_gap_data(business_query):
-    """
-    Get gap analysis data using search and Firecrawl
-    """
+    """Get gap analysis data using search and Firecrawl"""
     logging.info(f"\n{'='*50}\nGathering gap data for: {business_query}\n{'='*50}")
     
     result = {
@@ -75,7 +54,7 @@ def get_gap_data(business_query):
     ]
     
     scraped_content = []
-    max_attempts = 2  # Limit number of attempts per query
+    max_attempts = 2
     
     for query in search_queries:
         try:
@@ -104,23 +83,18 @@ def get_gap_data(business_query):
                                     'domain': extract_domain(url),
                                     'section': 'Gap Analysis',
                                     'date': datetime.now().strftime("%Y-%m-%d"),
-                                    'content': content[:1000]  # Limit content size
+                                    'content': content[:1000]
                                 })
-                                
-                                # Create a text file for the scraped content
-                                with open(f"{extract_domain(url)}_gap_analysis.txt", "w") as f:
-                                    f.write(content)
-                                
                                 break
                     except Exception as e:
-                        if "402" in str(e):  # Credit limit error
+                        if "402" in str(e):
                             logging.warning(f"Firecrawl credit limit reached for {url}")
                             scraped_content.append({
                                 'url': url,
                                 'domain': extract_domain(url),
                                 'section': 'Gap Analysis (Limited)',
                                 'date': datetime.now().strftime("%Y-%m-%d"),
-                                'content': f"Content from {extract_domain(url)} about {business_query}'s gap analysis"
+                                'content': f"Content from {extract_domain(url)} about {business_query}'s gaps"
                             })
                         else:
                             logging.error(f"Error scraping {url}: {str(e)}")
@@ -132,16 +106,7 @@ def get_gap_data(business_query):
         except Exception as e:
             logging.error(f"Error in search: {str(e)}")
             continue
-    
-    # Add sources to result
-    result["sources"] = [{
-        'url': item['url'],
-        'domain': item['domain'],
-        'section': item['section'],
-        'date': item['date']
-    } for item in scraped_content]
-    
-    # Generate analysis using available content
+
     if scraped_content:
         try:
             prompt = f"""
@@ -185,9 +150,13 @@ def get_gap_data(business_query):
             result["identified_gaps"] = extract_section(analysis, "IDENTIFIED GAPS")
             result["recommendations"] = extract_section(analysis, "RECOMMENDATIONS")
             
-            # Create a text file for the Gemini output
-            with open(f"{business_query}_gemini_analysis.txt", "w") as f:
-                f.write(analysis)
+            # Add sources
+            result["sources"] = [{
+                'url': item['url'],
+                'domain': item['domain'],
+                'section': item['section'],
+                'date': item['date']
+            } for item in scraped_content]
             
             return result
             
@@ -243,26 +212,4 @@ def generate_fallback_response(business_query):
             "Implementation timeline suggestions (Inferred)"
         ],
         "sources": []
-    }
-
-@app.route('/api/gap-analysis', methods=['POST', 'OPTIONS'])
-def analyze_gap():
-    if request.method == 'OPTIONS':
-        return '', 204
-        
-    try:
-        data = request.json
-        business_query = data.get('query')
-        
-        if not business_query:
-            return jsonify({'error': 'No business query provided'}), 400
-
-        gap_data = get_gap_data(business_query)
-        return jsonify(gap_data)
-
-    except Exception as e:
-        logging.error(f"Error during gap analysis: {str(e)}")
-        return jsonify({'error': str(e)}), 500
-
-if __name__ == '__main__':
-    app.run(port=5005, debug=True) 
+    } 

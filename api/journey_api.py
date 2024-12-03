@@ -106,16 +106,10 @@ def get_journey_data(business_query):
                                     'date': datetime.now().strftime("%Y-%m-%d"),
                                     'content': content[:1000]  # Limit content size
                                 })
-                                
-                                # Create a text file for the scraped content
-                                with open(f"{business_query}_scraped_content.txt", "w") as f:
-                                    f.write(content)
-                                
                                 break
                     except Exception as e:
                         if "402" in str(e):  # Credit limit error
                             logging.warning(f"Firecrawl credit limit reached for {url}")
-                            # Add URL as source even if we can't scrape it
                             scraped_content.append({
                                 'url': url,
                                 'domain': extract_domain(url),
@@ -134,66 +128,60 @@ def get_journey_data(business_query):
             logging.error(f"Error in search: {str(e)}")
             continue
     
-    # If no content was scraped, use fallback data
-    if not scraped_content:
-        logging.warning("No content scraped, using fallback journey data")
-        return generate_fallback_journey(business_query)
-    
-    # Add all sources to result
-    result["sources"] = [{
-        'url': item['url'],
-        'domain': item['domain'],
-        'section': item['section'],
-        'date': item['date']
-    } for item in scraped_content]
-    
     # Generate journey analysis using available content
-    try:
-        prompt = f"""
-        Create a detailed customer journey analysis for {business_query} with these exact sections:
-        
-        PRE-PURCHASE JOURNEY:
-        • Awareness phase
-        • Research phase
-        • Consideration phase
-        
-        PURCHASE EXPERIENCE:
-        • Decision making
-        • Checkout process
-        • Payment options
-        
-        POST-PURCHASE JOURNEY:
-        • Order confirmation
-        • Delivery experience
-        • Product usage
-        
-        OPTIMIZATION OPPORTUNITIES:
-        • Pain points
-        • Improvement areas
-        • Enhancement suggestions
-        
-        Use factual information where available, mark inferences with (Inferred).
-        Format each point as a clear, actionable item.
-        """
-        
-        response = model.generate_content(prompt)
-        analysis = response.text
-        
-        # Create a text file for the Gemini output
-        with open(f"{business_query}_gemini_output.txt", "w") as f:
-            f.write(analysis)
-        
-        # Extract sections
-        result["pre_purchase"] = extract_section(analysis, "PRE-PURCHASE JOURNEY")
-        result["purchase"] = extract_section(analysis, "PURCHASE EXPERIENCE")
-        result["post_purchase"] = extract_section(analysis, "POST-PURCHASE JOURNEY")
-        result["optimization"] = extract_section(analysis, "OPTIMIZATION OPPORTUNITIES")
-        
-        return result
-        
-    except Exception as e:
-        logging.error(f"Error generating analysis: {str(e)}")
-        return generate_fallback_journey(business_query)
+    if scraped_content:
+        try:
+            prompt = f"""
+            Create a detailed customer journey analysis for {business_query} with these exact sections:
+            
+            PRE-PURCHASE JOURNEY:
+            • Awareness phase
+            • Research phase
+            • Consideration phase
+            
+            PURCHASE EXPERIENCE:
+            • Decision making
+            • Checkout process
+            • Payment options
+            
+            POST-PURCHASE JOURNEY:
+            • Order confirmation
+            • Delivery experience
+            • Product usage
+            
+            OPTIMIZATION OPPORTUNITIES:
+            • Pain points
+            • Improvement areas
+            • Enhancement suggestions
+            
+            Use factual information where available, mark inferences with (Inferred).
+            Format each point as a clear, actionable item.
+            """
+            
+            response = model.generate_content(prompt)
+            analysis = response.text
+            
+            # Extract sections
+            result["pre_purchase"] = extract_section(analysis, "PRE-PURCHASE JOURNEY")
+            result["purchase"] = extract_section(analysis, "PURCHASE EXPERIENCE")
+            result["post_purchase"] = extract_section(analysis, "POST-PURCHASE JOURNEY")
+            result["optimization"] = extract_section(analysis, "OPTIMIZATION OPPORTUNITIES")
+            
+            # Add sources
+            result["sources"] = [{
+                'url': item['url'],
+                'domain': item['domain'],
+                'section': item['section'],
+                'date': item['date']
+            } for item in scraped_content]
+            
+            return result
+            
+        except Exception as e:
+            logging.error(f"Error generating analysis: {str(e)}")
+            return generate_fallback_journey(business_query)
+    
+    return generate_fallback_journey(business_query)
 
 def extract_section(text, section_name):
     """Extract content from a specific section"""

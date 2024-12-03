@@ -1,5 +1,3 @@
-from flask import Flask, request, jsonify
-from flask_cors import CORS
 import logging
 from datetime import datetime
 from firecrawl import FirecrawlApp
@@ -7,26 +5,9 @@ import json
 import os
 from googlesearch import search
 import time
-from dotenv import load_dotenv
+import google.generativeai as genai
 
-# Import Gemini with error handling
-try:
-    import google.generativeai as genai
-    GEMINI_AVAILABLE = True
-except ImportError:
-    GEMINI_AVAILABLE = False
-    logging.warning("Gemini API not available. Installing required package...")
-    os.system('pip install google-generativeai')
-    try:
-        import google.generativeai as genai
-        GEMINI_AVAILABLE = True
-    except ImportError:
-        logging.error("Failed to install google-generativeai package")
-        GEMINI_AVAILABLE = False
-
-app = Flask(__name__)
-CORS(app)
-
+# Initialize logging
 logging.basicConfig(level=logging.DEBUG)
 
 # Initialize Firecrawl
@@ -34,20 +15,26 @@ FIRECRAWL_API_KEY = "fc-b69d6504ab0a42b79e87b7827a538199"
 firecrawl_app = FirecrawlApp(api_key=FIRECRAWL_API_KEY)
 logging.info("Firecrawl initialized")
 
-# Initialize Gemini if available
-if GEMINI_AVAILABLE:
-    GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY', '')
-    if GOOGLE_API_KEY:
-        genai.configure(api_key=GOOGLE_API_KEY)
-        model = genai.GenerativeModel('gemini-1.5-flash')
-        logging.info("Gemini initialized")
-    else:
-        logging.warning("No Gemini API key found")
+# Initialize Gemini
+GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY', '')
+if GOOGLE_API_KEY:
+    genai.configure(api_key=GOOGLE_API_KEY)
+    model = genai.GenerativeModel('gemini-1.5-flash')
+    logging.info("Gemini initialized")
+else:
+    logging.warning("No Gemini API key found")
+
+def extract_domain(url):
+    """Extract domain name from URL"""
+    try:
+        from urllib.parse import urlparse
+        domain = urlparse(url).netloc
+        return domain.replace('www.', '')
+    except:
+        return url
 
 def get_feedback_data(business_query):
-    """
-    Get feedback analysis data using search and Firecrawl
-    """
+    """Get feedback analysis data using search and Firecrawl"""
     logging.info(f"\n{'='*50}\nGathering feedback data for: {business_query}\n{'='*50}")
     
     result = {
@@ -67,7 +54,7 @@ def get_feedback_data(business_query):
     ]
     
     scraped_content = []
-    max_attempts = 2  # Limit number of attempts per query
+    max_attempts = 2
     
     for query in search_queries:
         try:
@@ -96,23 +83,18 @@ def get_feedback_data(business_query):
                                     'domain': extract_domain(url),
                                     'section': 'Feedback Analysis',
                                     'date': datetime.now().strftime("%Y-%m-%d"),
-                                    'content': content[:1000]  # Limit content size
+                                    'content': content[:1000]
                                 })
-                                
-                                # Create a text file for the scraped content
-                                with open(f"{extract_domain(url)}_feedback.txt", "w") as f:
-                                    f.write(content)
-                                
                                 break
                     except Exception as e:
-                        if "402" in str(e):  # Credit limit error
+                        if "402" in str(e):
                             logging.warning(f"Firecrawl credit limit reached for {url}")
                             scraped_content.append({
                                 'url': url,
                                 'domain': extract_domain(url),
                                 'section': 'Feedback Analysis (Limited)',
                                 'date': datetime.now().strftime("%Y-%m-%d"),
-                                'content': f"Content from {extract_domain(url)} about {business_query}'s customer feedback"
+                                'content': f"Content from {extract_domain(url)} about {business_query}'s feedback"
                             })
                         else:
                             logging.error(f"Error scraping {url}: {str(e)}")
@@ -124,16 +106,7 @@ def get_feedback_data(business_query):
         except Exception as e:
             logging.error(f"Error in search: {str(e)}")
             continue
-    
-    # Add sources to result
-    result["sources"] = [{
-        'url': item['url'],
-        'domain': item['domain'],
-        'section': item['section'],
-        'date': item['date']
-    } for item in scraped_content]
-    
-    # Generate feedback analysis using scraped content
+
     if scraped_content:
         try:
             prompt = f"""
@@ -145,36 +118,24 @@ def get_feedback_data(business_query):
             Provide a structured analysis with these exact sections:
 
             SATISFACTION METRICS:
-            • Overall Rating:
-              - List satisfaction scores and ratings
-            • Key Drivers:
-              - List main factors affecting satisfaction
-            • Improvement Areas:
-              - List areas needing attention
+            • Overall Rating
+            • Key Drivers
+            • Improvement Areas
 
             PRODUCT FEEDBACK:
-            • Features:
-              - List feedback on specific features
-            • Quality:
-              - List quality-related feedback
-            • Usability:
-              - List ease-of-use feedback
+            • Features
+            • Quality
+            • Usability
 
             SERVICE FEEDBACK:
-            • Support Quality:
-              - List customer service experiences
-            • Response Time:
-              - List feedback on service speed
-            • Resolution Rate:
-              - List problem resolution effectiveness
+            • Support Quality
+            • Response Time
+            • Resolution Rate
 
             RECOMMENDATIONS:
-            • Quick Wins:
-              - List immediate improvement opportunities
-            • Long-term Goals:
-              - List strategic improvements needed
-            • Priority Actions:
-              - List high-priority fixes
+            • Quick Wins
+            • Long-term Goals
+            • Priority Actions
 
             Use factual information where available, mark inferences with (Inferred).
             Format each point as a clear, actionable item.
@@ -183,15 +144,19 @@ def get_feedback_data(business_query):
             response = model.generate_content(prompt)
             analysis = response.text
             
-            # Create a text file for the Gemini output
-            with open(f"{business_query.replace(' ', '_')}_gemini_analysis.txt", "w") as f:
-                f.write(analysis)
-            
             # Extract sections
             result["satisfaction_metrics"] = extract_section(analysis, "SATISFACTION METRICS")
             result["product_feedback"] = extract_section(analysis, "PRODUCT FEEDBACK")
             result["service_feedback"] = extract_section(analysis, "SERVICE FEEDBACK")
             result["recommendations"] = extract_section(analysis, "RECOMMENDATIONS")
+            
+            # Add sources
+            result["sources"] = [{
+                'url': item['url'],
+                'domain': item['domain'],
+                'section': item['section'],
+                'date': item['date']
+            } for item in scraped_content]
             
             return result
             
@@ -200,15 +165,6 @@ def get_feedback_data(business_query):
             return generate_fallback_response(business_query)
     
     return generate_fallback_response(business_query)
-
-def extract_domain(url):
-    """Extract domain name from URL"""
-    try:
-        from urllib.parse import urlparse
-        domain = urlparse(url).netloc
-        return domain.replace('www.', '')
-    except:
-        return url
 
 def extract_section(text, section_name):
     """Extract content from a specific section"""
@@ -236,52 +192,24 @@ def generate_fallback_response(business_query):
     """Generate basic feedback analysis when no data is found"""
     return {
         "satisfaction_metrics": [
-            "Overall satisfaction level needs assessment (Inferred)",
+            f"Overall satisfaction metrics for {business_query} pending (Inferred)",
             "Key satisfaction drivers to be identified (Inferred)",
-            "Areas for improvement pending analysis (Inferred)"
+            "Areas for improvement being assessed (Inferred)"
         ],
         "product_feedback": [
-            "Feature effectiveness to be evaluated (Inferred)",
-            "Quality metrics need assessment (Inferred)",
-            "Usability feedback pending collection (Inferred)"
+            "Feature effectiveness evaluation needed (Inferred)",
+            "Quality metrics assessment pending (Inferred)",
+            "Usability feedback to be collected (Inferred)"
         ],
         "service_feedback": [
-            "Customer service performance to be measured (Inferred)",
-            "Response time metrics needed (Inferred)",
-            "Support effectiveness to be evaluated (Inferred)"
+            "Support quality measurement needed (Inferred)",
+            "Response time analysis pending (Inferred)",
+            "Resolution rate to be evaluated (Inferred)"
         ],
         "recommendations": [
-            "Implement feedback collection system (Inferred)",
-            "Establish performance baselines (Inferred)",
-            "Develop improvement tracking (Inferred)"
+            "Quick win opportunities being identified (Inferred)",
+            "Long-term improvement goals pending (Inferred)",
+            "Priority actions to be determined (Inferred)"
         ],
         "sources": []
-    }
-
-@app.route('/api/feedback-analysis', methods=['POST', 'OPTIONS'])
-def analyze_feedback():
-    if request.method == 'OPTIONS':
-        return '', 204
-        
-    try:
-        # Check if Gemini is properly configured
-        if not GEMINI_AVAILABLE or not os.getenv('GOOGLE_API_KEY'):
-            return jsonify({
-                'error': 'Gemini API not properly configured. Please check your API key.'
-            }), 500
-
-        data = request.json
-        business_query = data.get('query')
-        
-        if not business_query:
-            return jsonify({'error': 'No business query provided'}), 400
-
-        feedback_data = get_feedback_data(business_query)
-        return jsonify(feedback_data)
-
-    except Exception as e:
-        logging.error(f"Error during feedback analysis: {str(e)}")
-        return jsonify({'error': str(e)}), 500
-
-if __name__ == '__main__':
-    app.run(port=5007, debug=True) 
+    } 

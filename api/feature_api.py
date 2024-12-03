@@ -1,5 +1,3 @@
-from flask import Flask, request, jsonify
-from flask_cors import CORS
 import logging
 from datetime import datetime
 from firecrawl import FirecrawlApp
@@ -7,25 +5,9 @@ import json
 import os
 from googlesearch import search
 import time
+import google.generativeai as genai
 
-# Import Gemini with error handling
-try:
-    import google.generativeai as genai
-    GEMINI_AVAILABLE = True
-except ImportError:
-    GEMINI_AVAILABLE = False
-    logging.warning("Gemini API not available. Installing required package...")
-    os.system('pip install google-generativeai')
-    try:
-        import google.generativeai as genai
-        GEMINI_AVAILABLE = True
-    except ImportError:
-        logging.error("Failed to install google-generativeai package")
-        GEMINI_AVAILABLE = False
-
-app = Flask(__name__)
-CORS(app)
-
+# Initialize logging
 logging.basicConfig(level=logging.DEBUG)
 
 # Initialize Firecrawl
@@ -33,20 +15,26 @@ FIRECRAWL_API_KEY = "fc-b69d6504ab0a42b79e87b7827a538199"
 firecrawl_app = FirecrawlApp(api_key=FIRECRAWL_API_KEY)
 logging.info("Firecrawl initialized")
 
-# Initialize Gemini if available
-if GEMINI_AVAILABLE:
-    GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY', '')
-    if GOOGLE_API_KEY:
-        genai.configure(api_key=GOOGLE_API_KEY)
-        model = genai.GenerativeModel('gemini-1.5-flash')
-        logging.info("Gemini initialized")
-    else:
-        logging.warning("No Gemini API key found")
+# Initialize Gemini
+GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY', '')
+if GOOGLE_API_KEY:
+    genai.configure(api_key=GOOGLE_API_KEY)
+    model = genai.GenerativeModel('gemini-1.5-flash')
+    logging.info("Gemini initialized")
+else:
+    logging.warning("No Gemini API key found")
+
+def extract_domain(url):
+    """Extract domain name from URL"""
+    try:
+        from urllib.parse import urlparse
+        domain = urlparse(url).netloc
+        return domain.replace('www.', '')
+    except:
+        return url
 
 def get_feature_data(business_query):
-    """
-    Get feature priority data using search and Firecrawl
-    """
+    """Get feature priority data using search and Firecrawl"""
     logging.info(f"\n{'='*50}\nGathering feature data for: {business_query}\n{'='*50}")
     
     result = {
@@ -66,7 +54,7 @@ def get_feature_data(business_query):
     ]
     
     scraped_content = []
-    max_attempts = 2  # Limit number of attempts per query
+    max_attempts = 2
     
     for query in search_queries:
         try:
@@ -95,16 +83,11 @@ def get_feature_data(business_query):
                                     'domain': extract_domain(url),
                                     'section': 'Feature Analysis',
                                     'date': datetime.now().strftime("%Y-%m-%d"),
-                                    'content': content[:1000]  # Limit content size
+                                    'content': content[:1000]
                                 })
-                                
-                                # Create a text file for the scraped content
-                                with open(f"{extract_domain(url)}_feature_analysis.txt", "w") as f:
-                                    f.write(content)
-                                
                                 break
                     except Exception as e:
-                        if "402" in str(e):  # Credit limit error
+                        if "402" in str(e):
                             logging.warning(f"Firecrawl credit limit reached for {url}")
                             scraped_content.append({
                                 'url': url,
@@ -123,16 +106,7 @@ def get_feature_data(business_query):
         except Exception as e:
             logging.error(f"Error in search: {str(e)}")
             continue
-    
-    # Add sources to result
-    result["sources"] = [{
-        'url': item['url'],
-        'domain': item['domain'],
-        'section': item['section'],
-        'date': item['date']
-    } for item in scraped_content]
-    
-    # Generate feature analysis using scraped content
+
     if scraped_content:
         try:
             prompt = f"""
@@ -144,36 +118,24 @@ def get_feature_data(business_query):
             Provide a structured analysis with these exact sections:
 
             SOCIAL IMPACT:
-            • Community Benefits:
-              - List positive community impacts
-            • Employment Impact:
-              - List job creation effects
-            • Social Value:
-              - List societal benefits
+            • Community Benefits
+            • Employment Impact
+            • Social Value
 
             ECONOMIC IMPACT:
-            • Revenue Potential:
-              - List revenue opportunities
-            • Market Growth:
-              - List expansion possibilities
-            • Cost Benefits:
-              - List efficiency gains
+            • Revenue Generation
+            • Market Growth
+            • Innovation Impact
 
             ENVIRONMENTAL IMPACT:
-            • Sustainability:
-              - List green initiatives
-            • Resource Usage:
-              - List optimization measures
-            • Environmental Benefits:
-              - List positive impacts
+            • Sustainability
+            • Resource Usage
+            • Carbon Footprint
 
             IMPLEMENTATION PRIORITY:
-            • Timeline:
-              - List implementation phases
-            • Resources:
-              - List required resources
-            • Success Metrics:
-              - List key indicators
+            • Timeline
+            • Resources
+            • Success Metrics
 
             Use factual information where available, mark inferences with (Inferred).
             Format each point as a clear, actionable item.
@@ -188,9 +150,13 @@ def get_feature_data(business_query):
             result["environmental_impact"] = extract_section(analysis, "ENVIRONMENTAL IMPACT")
             result["implementation_priority"] = extract_section(analysis, "IMPLEMENTATION PRIORITY")
             
-            # Create a text file for the Gemini output
-            with open(f"{business_query}_gemini_analysis.txt", "w") as f:
-                f.write(analysis)
+            # Add sources
+            result["sources"] = [{
+                'url': item['url'],
+                'domain': item['domain'],
+                'section': item['section'],
+                'date': item['date']
+            } for item in scraped_content]
             
             return result
             
@@ -199,15 +165,6 @@ def get_feature_data(business_query):
             return generate_fallback_response(business_query)
     
     return generate_fallback_response(business_query)
-
-def extract_domain(url):
-    """Extract domain name from URL"""
-    try:
-        from urllib.parse import urlparse
-        domain = urlparse(url).netloc
-        return domain.replace('www.', '')
-    except:
-        return url
 
 def extract_section(text, section_name):
     """Extract content from a specific section"""
@@ -235,46 +192,24 @@ def generate_fallback_response(business_query):
     """Generate basic feature priority analysis when no data is found"""
     return {
         "social_impact": [
-            "Community engagement opportunities (Inferred)",
-            "Job creation potential (Inferred)",
-            "Social value contribution (Inferred)"
+            f"Community impact assessment for {business_query} pending (Inferred)",
+            "Employment effects to be evaluated (Inferred)",
+            "Social value contribution potential (Inferred)"
         ],
         "economic_impact": [
-            "Revenue growth potential (Inferred)",
-            "Market expansion opportunities (Inferred)",
-            "Cost optimization possibilities (Inferred)"
+            "Revenue potential being assessed (Inferred)",
+            "Market growth opportunities pending analysis (Inferred)",
+            "Innovation impact to be determined (Inferred)"
         ],
         "environmental_impact": [
-            "Sustainability initiatives (Inferred)",
-            "Resource efficiency measures (Inferred)",
-            "Environmental protection efforts (Inferred)"
+            "Sustainability initiatives to be evaluated (Inferred)",
+            "Resource usage assessment pending (Inferred)",
+            "Carbon footprint analysis needed (Inferred)"
         ],
         "implementation_priority": [
-            "Phased implementation plan (Inferred)",
-            "Resource allocation strategy (Inferred)",
-            "Risk mitigation approach (Inferred)"
+            "Timeline development in progress (Inferred)",
+            "Resource requirements being assessed (Inferred)",
+            "Success metrics to be defined (Inferred)"
         ],
         "sources": []
-    }
-
-@app.route('/api/feature-priority', methods=['POST', 'OPTIONS'])
-def analyze_features():
-    if request.method == 'OPTIONS':
-        return '', 204
-        
-    try:
-        data = request.json
-        business_query = data.get('query')
-        
-        if not business_query:
-            return jsonify({'error': 'No business query provided'}), 400
-
-        feature_data = get_feature_data(business_query)
-        return jsonify(feature_data)
-
-    except Exception as e:
-        logging.error(f"Error during feature analysis: {str(e)}")
-        return jsonify({'error': str(e)}), 500
-
-if __name__ == '__main__':
-    app.run(port=5006, debug=True) 
+    } 
