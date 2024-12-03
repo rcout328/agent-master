@@ -1,16 +1,16 @@
-from flask import Flask, request, jsonify
-from flask_cors import CORS
 import logging
 from datetime import datetime
 from firecrawl import FirecrawlApp
 import google.generativeai as genai
 import os
-import json
 import time
+from googlesearch import search
+from flask import Flask, request, jsonify
+from flask_cors import CORS
+import requests
+import uuid  # Import uuid for unique file naming
 
-app = Flask(__name__)
-CORS(app)
-
+# Initialize logging
 logging.basicConfig(level=logging.DEBUG)
 
 # Initialize Firecrawl and Gemini
@@ -26,7 +26,7 @@ if GOOGLE_API_KEY:
 
 def get_competitor_data(query):
     """
-    Get competitor data in phases and send updates
+    Get competitor data with improved rate limit handling
     """
     logging.info(f"\n{'='*50}\nAnalyzing competitors for: {query}\n{'='*50}")
     
@@ -37,117 +37,139 @@ def get_competitor_data(query):
         "sources": []
     }
 
-    # Phase 1: Get Top Competitors
+    def scrape_with_retry(url, section):
+        """Helper function to scrape URL with retry logic"""
+        max_retries = 3
+        for attempt in range(max_retries):
+            try:
+                response = firecrawl_app.scrape_url(
+                    url=url,
+                    params={'formats': ['markdown']}
+                )
+                if response and response.get('markdown'):
+                    result["sources"].append({
+                        'url': url,
+                        'domain': extract_domain(url),
+                        'section': section,
+                        'date': datetime.now().strftime("%Y-%m-%d")
+                    })
+                    return response.get('markdown')
+            except Exception as e:
+                if "429" in str(e):
+                    wait_time = (attempt + 1) * 10  # Exponential backoff
+                    logging.info(f"Rate limit hit, waiting {wait_time} seconds...")
+                    time.sleep(wait_time)
+                    continue
+                logging.error(f"Error scraping {url}: {str(e)}")
+            time.sleep(2)  # Basic delay between attempts
+        return None
+
+    def search_with_retry(search_query):
+        """Helper function to perform search with retry logic"""
+        max_retries = 3
+        for attempt in range(max_retries):
+            try:
+                return list(search(
+                    search_query,
+                    num_results=2,  # Reduced number
+                    lang="en"
+                ))
+            except Exception as e:
+                if "429" in str(e):
+                    wait_time = (attempt + 1) * 10
+                    logging.info(f"Search rate limit hit, waiting {wait_time} seconds...")
+                    time.sleep(wait_time)
+                    continue
+                logging.error(f"Search error: {str(e)}")
+                break
+        return []
+
+    # Create directory for output files
+    output_dir = 'gemini_outputs'
+    os.makedirs(output_dir, exist_ok=True)
+
+    # Phase 1: Top Competitors
     logging.info("\nPhase 1: Getting Top Competitors")
     search_query = f"top competitors of {query} list"
-    try:
-        from googlesearch import search
-        urls = list(search(
-            search_query, 
-            num_results=10,
-            lang="en"
-        ))
-        
-        time.sleep(2)  # Add delay between searches
-        
-        competitor_url = urls[0] if urls else None
-        if competitor_url:
-            response = firecrawl_app.scrape_url(
-                url=competitor_url,
-                params={'formats': ['markdown']}
-            )
-            if response and response.get('markdown'):
-                result["sources"].append({
-                    'url': competitor_url,
-                    'domain': extract_domain(competitor_url),
-                    'section': 'Top Competitors',
-                    'date': datetime.now().strftime("%Y-%m-%d")
-                })
-                
-                prompt = f"""
-                Analyze this content and list the top 5 competitors of {query}.
-                Format each competitor as: [Name] - [Brief description]
-                Content: {response.get('markdown')}
-                """
+    urls = search_with_retry(search_query)
+    
+    if urls:
+        content = scrape_with_retry(urls[0], 'Top Competitors')
+        if content:
+            prompt = f"""
+            Analyze this content and list the top 5 competitors of {query}.
+            Format each competitor as: [Name] - [Brief description]
+            Content: {content}
+            """
+            try:
                 competitors = model.generate_content(prompt).text
                 result["main_competitors"] = extract_section(competitors, "")
                 logging.info(f"Found competitors: {result['main_competitors']}")
-    except Exception as e:
-        logging.error(f"Error in Phase 1: {str(e)}")
-
-    # Phase 2: Get Competitor Strengths
-    logging.info("\nPhase 2: Getting Competitor Strengths")
-    search_query = f"{query} competitors strengths advantages comparison"
-    try:
-        urls = list(search(
-            search_query, 
-            num_results=10,
-            lang="en"
-        ))
-        
-        time.sleep(2)  # Add delay between searches
-        
-        strengths_url = urls[0] if urls else None
-        if strengths_url:
-            response = firecrawl_app.scrape_url(
-                url=strengths_url,
-                params={'formats': ['markdown']}
-            )
-            if response and response.get('markdown'):
-                result["sources"].append({
-                    'url': strengths_url,
-                    'domain': extract_domain(strengths_url),
-                    'section': 'Competitor Strengths',
-                    'date': datetime.now().strftime("%Y-%m-%d")
-                })
                 
-                prompt = f"""
-                List the key strengths of {query}'s main competitors.
-                Format as: [Competitor Name]: [Key strength]
-                Content: {response.get('markdown')}
-                """
+                # Create output file for competitors
+                with open(os.path.join(output_dir, 'compitoone_competitors.txt'), 'w') as f:
+                    f.write(competitors)
+                    
+            except Exception as e:
+                logging.error(f"Error in Gemini analysis: {str(e)}")
+
+    time.sleep(5)  # Delay between phases
+
+    # Phase 2: Competitor Strengths
+    logging.info("\nPhase 2: Getting Competitor Strengths")
+    search_query = f"{query} competitors strengths advantages"
+    urls = search_with_retry(search_query)
+    
+    if urls:
+        content = scrape_with_retry(urls[0], 'Competitor Strengths')
+        if content:
+            prompt = f"""
+            List the key strengths of {query}'s main competitors.
+            Format as: [Competitor Name]: [Key strength]
+            Content: {content}
+            """
+            try:
                 strengths = model.generate_content(prompt).text
                 result["competitor_strengths"] = extract_section(strengths, "")
                 logging.info(f"Found strengths: {result['competitor_strengths']}")
-    except Exception as e:
-        logging.error(f"Error in Phase 2: {str(e)}")
-
-    # Phase 3: Get Key Findings
-    logging.info("\nPhase 3: Getting Key Findings")
-    search_query = f"{query} competitive landscape analysis insights"
-    try:
-        urls = list(search(
-            search_query, 
-            num_results=10,
-            lang="en"
-        ))
-        
-        time.sleep(2)  # Add delay between searches
-        
-        insights_url = urls[0] if urls else None
-        if insights_url:
-            response = firecrawl_app.scrape_url(
-                url=insights_url,
-                params={'formats': ['markdown']}
-            )
-            if response and response.get('markdown'):
-                result["sources"].append({
-                    'url': insights_url,
-                    'domain': extract_domain(insights_url),
-                    'section': 'Key Findings',
-                    'date': datetime.now().strftime("%Y-%m-%d")
-                })
                 
-                prompt = f"""
-                Provide 2-3 key insights about {query}'s competitive landscape.
-                Format as numbered points.
-                Content: {response.get('markdown')}
-                """
+                # Create output file for strengths
+                with open(os.path.join(output_dir, 'compitoone_strengths.txt'), 'w') as f:
+                    f.write(strengths)
+                    
+            except Exception as e:
+                logging.error(f"Error in Gemini analysis: {str(e)}")
+
+    time.sleep(5)  # Delay between phases
+
+    # Phase 3: Key Findings
+    logging.info("\nPhase 3: Getting Key Findings")
+    search_query = f"{query} competitive landscape analysis"
+    urls = search_with_retry(search_query)
+    
+    if urls:
+        content = scrape_with_retry(urls[0], 'Key Findings')
+        if content:
+            prompt = f"""
+            Provide 2-3 key insights about {query}'s competitive landscape.
+            Format as numbered points.
+            Content: {content}
+            """
+            try:
                 findings = model.generate_content(prompt).text
                 result["key_findings"] = extract_section(findings, "")
                 logging.info(f"Found key findings: {findings}")
-    except Exception as e:
-        logging.error(f"Error in Phase 3: {str(e)}")
+                
+                # Create output file for findings
+                with open(os.path.join(output_dir, 'compitoone_findings.txt'), 'w') as f:
+                    f.write(findings)
+                    
+            except Exception as e:
+                logging.error(f"Error in Gemini analysis: {str(e)}")
+
+    # Return fallback if no data found
+    if not any([result["main_competitors"], result["competitor_strengths"], result["key_findings"]]):
+        return create_empty_response()
 
     return result
 
@@ -192,25 +214,3 @@ def create_empty_response():
         "key_findings": [],
         "sources": []
     }
-
-@app.route('/api/competitor-analysis', methods=['POST', 'OPTIONS'])
-def analyze_competitors():
-    if request.method == 'OPTIONS':
-        return '', 204
-        
-    try:
-        data = request.json
-        query = data.get('query')
-        
-        if not query:
-            return jsonify({'error': 'No query provided'}), 400
-
-        competitor_info = get_competitor_data(query)
-        return jsonify(competitor_info)
-
-    except Exception as e:
-        logging.error(f"Error during analysis: {str(e)}")
-        return jsonify({'error': str(e)}), 500
-
-if __name__ == '__main__':
-    app.run(port=5001, debug=True)

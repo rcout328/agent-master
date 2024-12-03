@@ -1,17 +1,13 @@
-from flask import Flask, request, jsonify
-from flask_cors import CORS
 import logging
 from datetime import datetime
 from firecrawl import FirecrawlApp
-import json
 import os
 from googlesearch import search
 import time
 import google.generativeai as genai
+import uuid  # Import uuid for unique file naming
 
-app = Flask(__name__)
-CORS(app)
-
+# Initialize logging
 logging.basicConfig(level=logging.DEBUG)
 
 # Initialize Firecrawl
@@ -30,45 +26,17 @@ else:
 
 def get_trends_data(query):
     """
-    Get market trends data using search and Firecrawl
+    Get market trends data using search and Firecrawl with improved scraping
     """
     logging.info(f"\n{'='*50}\nGathering trends data for: {query}\n{'='*50}")
     
-    result = {
-        "market_size_growth": {
-            "total_market_value": [],
-            "market_segments": [],
-            "regional_distribution": []
-        },
-        "competitive_analysis": {
-            "market_leaders": [],
-            "competitive_advantages": [],
-            "market_concentration": []
-        },
-        "industry_trends": {
-            "current_trends": [],
-            "technology_impact": [],
-            "regulatory_environment": []
-        },
-        "growth_forecast": {
-            "short_term": [],
-            "long_term": [],
-            "growth_drivers": []
-        },
-        "risk_assessment": {
-            "market_challenges": [],
-            "economic_factors": [],
-            "competitive_threats": []
-        },
-        "sources": []
-    }
-    
+    # Define search queries
     search_queries = [
-        f"{query} market trends analysis",
-        f"{query} industry growth forecast",
-        f"{query} market size revenue",
-        f"{query} competitive landscape",
-        f"{query} market risks opportunities"
+        f"{query} market size revenue statistics",
+        f"{query} industry market share data",
+        f"{query} market growth forecast CAGR",
+        f"{query} competitive analysis market leaders",
+        f"{query} industry trends analysis report"
     ]
     
     scraped_content = []
@@ -78,11 +46,13 @@ def get_trends_data(query):
             logging.info(f"\nSearching for: {search_query}")
             urls = list(search(
                 search_query, 
-                lang="en", 
-                num=2, 
-                pause=2.0, 
-                stop=2
+                num=3,
+                lang="en"
             ))
+            
+            if not urls:
+                logging.warning(f"No URLs found for query: {search_query}")
+                continue
             
             for url in urls:
                 if not any(x in url.lower() for x in ['linkedin', 'facebook', 'twitter']):
@@ -102,224 +72,95 @@ def get_trends_data(query):
                                     'domain': extract_domain(url),
                                     'section': 'Market Trends',
                                     'date': datetime.now().strftime("%Y-%m-%d"),
-                                    'content': content[:1000]  # Limit content size
+                                    'content': content[:2000],  # Limit content size
                                 })
-                                # Save scraped content to a text file
-                                with open('scraped_sources.txt', 'a') as f:
-                                    f.write(f"URL: {url}\nContent: {content}\n\n")
                                 break
                     except Exception as e:
-                        if "429" in str(e):  # Rate limit error
-                            logging.warning(f"Rate limit reached, waiting...")
-                            time.sleep(10)  # Wait longer on rate limit
-                        else:
-                            logging.error(f"Error scraping {url}: {str(e)}")
+                        logging.error(f"Error scraping {url}: {str(e)}")
                         continue
             
-            time.sleep(2)  # Pause between search queries
+            time.sleep(2)
             
         except Exception as e:
             logging.error(f"Error in search: {str(e)}")
             continue
-    
-    # Add sources to result
-    result["sources"] = [{
-        'url': item['url'],
-        'domain': item['domain'],
-        'section': item['section'],
-        'date': item['date']
-    } for item in scraped_content]
-    
-    # Generate analysis using scraped content
+
+    if not scraped_content:
+        logging.warning("No content was scraped, returning fallback response")
+        return generate_fallback_response(query)
+
+    # Generate analysis using enhanced prompt
     if scraped_content:
         try:
-            # First prompt to extract and structure raw data
-            raw_data_prompt = f"""
-            Extract and structure key market data from this content about {query}.
+            analysis_prompt = f"""
+            Analyze this market data about {query} and provide a detailed trends analysis.
             
-            Content to analyze:
+            Raw Data:
             {[item['content'] for item in scraped_content]}
             
-            Extract specific data points in this format:
-            1. Market Size: Include exact numbers (billions/millions)
-            2. Growth Rates: CAGR, YoY growth percentages
-            3. Market Leaders: Company names with market share %
-            4. Regional Data: Geographic breakdown with percentages
-            5. Key Statistics: Any relevant numerical data
-            
-            Format as clear data points with numbers and percentages.
+            Create a comprehensive market trends report with these exact sections:
+
+            1. MARKET SIZE & GROWTH
+            • Total Market Value
+            • Market Segments
+            • Regional Distribution
+
+            2. COMPETITIVE LANDSCAPE
+            • Market Leaders
+            • Market Differentiators
+            • Industry Dynamics
+
+            3. INDUSTRY TRENDS
+            • Current Trends
+            • Technology Impact
+            • Regulatory Environment
+
+            4. GROWTH FORECAST
+            • Short-Term Outlook
+            • Long-Term Potential
+            • Growth Drivers
+
+            5. RISK ASSESSMENT
+            • Market Challenges
+            • Economic Factors
+            • Competitive Threats
+
+            Format each point with specific data where available.
             Mark estimates or inferences with (Inferred).
+            Include numerical data and percentages where possible.
             """
-            # Save the raw data prompt to a text file
-            with open('gemini_prompt.txt', 'a') as f:
-                f.write(raw_data_prompt + "\n")
-
-            raw_data_response = model.generate_content(raw_data_prompt)
-            structured_data = raw_data_response.text
-
-            # Second prompt for detailed analysis using structured data
-            analysis_prompt = f"""
-            Using this structured market data about {query}, provide a comprehensive analysis.
             
-            Data to analyze:
-            {structured_data}
-
-            Create a detailed report with these exact sections:
-
-            MARKET SIZE & GROWTH:
-            • Total Market Value:
-              - Exact current market size (use specific numbers)
-              - Historical growth trajectory
-              - YoY growth rate with percentages
-            • Market Segments:
-              - Segment sizes and percentages
-              - Growth rates by segment
-              - Key segment drivers
-            • Regional Distribution:
-              - Market share by region (%)
-              - Growth rates by region
-              - Regional market characteristics
-
-            COMPETITIVE ANALYSIS:
-            • Market Leaders:
-              - Top 5 companies with market share %
-              - Revenue figures where available
-              - YoY growth rates
-            • Competitive Advantages:
-              - Core differentiators
-              - Technology capabilities
-              - Market positioning
-            • Market Concentration:
-              - Concentration ratios
-              - Market power distribution
-              - Entry barrier analysis
-
-            INDUSTRY TRENDS:
-            • Current Trends:
-              - Consumer behavior shifts (with data)
-              - Technology adoption rates
-              - Market disruptions
-            • Technology Impact:
-              - Digital transformation metrics
-              - Innovation investment data
-              - Tech adoption rates
-            • Regulatory Environment:
-              - Key regulation impacts
-              - Compliance costs
-              - Future regulatory trends
-
-            GROWTH FORECAST:
-            • Short-term Outlook (1-2 years):
-              - Growth projections with CAGR
-              - Segment-wise forecasts
-              - Market size targets
-            • Long-term Potential (5 years):
-              - Market size projections
-              - Growth trajectories
-              - Segment evolution
-            • Growth Drivers:
-              - Primary catalysts with impact %
-              - Investment trends
-              - Innovation metrics
-
-            RISK ASSESSMENT:
-            • Market Challenges:
-              - Risk factors with impact ratings
-              - Mitigation strategies
-              - Cost implications
-            • Economic Factors:
-              - Economic sensitivity metrics
-              - Cost structure analysis
-              - Margin trends
-            • Competitive Threats:
-              - New entrant probability
-              - Substitution risks
-              - Market share threats
-
-            Requirements:
-            1. Use specific numbers and percentages
-            2. Include data sources where available
-            3. Mark estimates with (Inferred)
-            4. Prioritize actionable insights
-            5. Focus on quantifiable metrics
-            6. Include trend indicators (↑↓→)
-            7. Rate impacts (High/Medium/Low)
-            """
-            # Save the analysis prompt to a text file
-            with open('gemini_analysis_prompt.txt', 'a') as f:
-                f.write(analysis_prompt + "\n")
-
-            analysis_response = model.generate_content(analysis_prompt)
-            analysis = analysis_response.text
-
-            # Extract and structure the sections
-            result["market_size_growth"]["total_market_value"] = extract_section(analysis, "MARKET SIZE & GROWTH", "Total Market Value")
-            result["market_size_growth"]["market_segments"] = extract_section(analysis, "MARKET SIZE & GROWTH", "Market Segments")
-            result["market_size_growth"]["regional_distribution"] = extract_section(analysis, "MARKET SIZE & GROWTH", "Regional Distribution")
+            response = model.generate_content(analysis_prompt)
+            analysis = response.text
             
-            result["competitive_analysis"]["market_leaders"] = extract_section(analysis, "COMPETITIVE ANALYSIS", "Market Leaders")
-            result["competitive_analysis"]["competitive_advantages"] = extract_section(analysis, "COMPETITIVE ANALYSIS", "Competitive Advantages")
-            result["competitive_analysis"]["market_concentration"] = extract_section(analysis, "COMPETITIVE ANALYSIS", "Market Concentration")
+            # Create directory for storing Gemini output
+            output_dir = 'gemini_outputs'
+            os.makedirs(output_dir, exist_ok=True)
             
-            result["industry_trends"]["current_trends"] = extract_section(analysis, "INDUSTRY TRENDS", "Current Trends")
-            result["industry_trends"]["technology_impact"] = extract_section(analysis, "INDUSTRY TRENDS", "Technology Impact")
-            result["industry_trends"]["regulatory_environment"] = extract_section(analysis, "INDUSTRY TRENDS", "Regulatory Environment")
+            # Save Gemini output to a specific txt file
+            output_filename = os.path.join(output_dir, 'markettrand.txt')
+            with open(output_filename, 'w') as file:
+                file.write(analysis)
+            logging.info(f"Gemini output saved to {output_filename}")
             
-            result["growth_forecast"]["short_term"] = extract_section(analysis, "GROWTH FORECAST", "Short-term Outlook")
-            result["growth_forecast"]["long_term"] = extract_section(analysis, "GROWTH FORECAST", "Long-term Potential")
-            result["growth_forecast"]["growth_drivers"] = extract_section(analysis, "GROWTH FORECAST", "Growth Drivers")
+            # Process and structure the analysis
+            result = process_analysis(analysis, scraped_content)
             
-            result["risk_assessment"]["market_challenges"] = extract_section(analysis, "RISK ASSESSMENT", "Market Challenges")
-            result["risk_assessment"]["economic_factors"] = extract_section(analysis, "RISK ASSESSMENT", "Economic Factors")
-            result["risk_assessment"]["competitive_threats"] = extract_section(analysis, "RISK ASSESSMENT", "Competitive Threats")
-
-            # Add confidence scores
-            result["analysis_metadata"] = {
-                "confidence_score": "High" if len(scraped_content) >= 3 else "Medium",
-                "data_points": len(structured_data.split('\n')),
-                "analysis_date": datetime.now().strftime("%Y-%m-%d"),
-                "data_quality": "High" if any(x in structured_data.lower() for x in ['billion', 'million', '%', 'market share']) else "Medium"
-            }
+            # Add sources
+            result["sources"] = [{
+                'url': item['url'],
+                'domain': item['domain'],
+                'section': item['section'],
+                'date': item['date']
+            } for item in scraped_content]
 
             return result
-
-        except Exception as e:
-            logging.error(f"Error in Gemini analysis: {str(e)}")
-            return generate_fallback_response(query)
-    
-    return generate_fallback_response(query)
-
-def extract_section(text, section_name, subsection=None):
-    """Extract content from a specific section and subsection"""
-    try:
-        lines = []
-        in_section = False
-        in_subsection = not subsection
-        
-        for line in text.split('\n'):
-            line = line.strip()
             
-            if section_name + ":" in line:
-                in_section = True
-                continue
-            elif any(s + ":" in line for s in ["MARKET SIZE & GROWTH", "COMPETITIVE ANALYSIS", "INDUSTRY TRENDS", "GROWTH FORECAST", "RISK ASSESSMENT"]):
-                if section_name not in line:
-                    in_section = False
-                    in_subsection = not subsection
-            elif in_section and subsection and subsection + ":" in line:
-                in_subsection = True
-                continue
-            elif in_section and line.endswith(':'):
-                in_subsection = subsection in line if subsection else True
-            elif in_section and in_subsection and line and not line.endswith(':'):
-                cleaned_line = line.strip('- *•').strip()
-                if cleaned_line:
-                    lines.append(cleaned_line)
-        
-        return lines
-    except Exception as e:
-        logging.error(f"Error extracting section {section_name}: {str(e)}")
-        return []
+        except Exception as e:
+            logging.error(f"Error in analysis: {str(e)}")
+            return generate_fallback_response(query)
+
+    return generate_fallback_response(query)
 
 def extract_domain(url):
     """Extract domain name from URL"""
@@ -361,24 +202,135 @@ def generate_fallback_response(query):
         "sources": []
     }
 
-@app.route('/api/market-trends', methods=['POST', 'OPTIONS'])
-def analyze_trends():
-    if request.method == 'OPTIONS':
-        return '', 204
+def process_analysis(analysis, scraped_content):
+    """Process and structure the analysis for frontend consumption"""
+    result = {
+        "market_size_growth": {
+            "total_market_value": [],
+            "market_segments": [],
+            "regional_distribution": []
+        },
+        "competitive_landscape": {
+            "market_leaders": [],
+            "market_differentiators": [],
+            "industry_dynamics": []
+        },
+        "industry_trends": {
+            "current_trends": [],
+            "technology_impact": [],
+            "regulatory_environment": []
+        },
+        "growth_forecast": {
+            "short_term": [],
+            "long_term": [],
+            "growth_drivers": []
+        },
+        "risk_assessment": {
+            "market_challenges": [],
+            "economic_factors": [],
+            "competitive_threats": []
+        },
+        "metrics": extract_metrics(scraped_content),
+        "sources": []
+    }
+
+    # Extract sections
+    result["market_size_growth"]["total_market_value"] = extract_bullet_points(analysis, "Total Market Value")
+    result["market_size_growth"]["market_segments"] = extract_bullet_points(analysis, "Market Segments")
+    result["market_size_growth"]["regional_distribution"] = extract_bullet_points(analysis, "Regional Distribution")
+    
+    result["competitive_landscape"]["market_leaders"] = extract_bullet_points(analysis, "Top Market Players")
+    result["competitive_landscape"]["market_differentiators"] = extract_bullet_points(analysis, "Market Differentiators")
+    result["competitive_landscape"]["industry_dynamics"] = extract_bullet_points(analysis, "Industry Dynamics")
+    
+    result["industry_trends"]["current_trends"] = extract_bullet_points(analysis, "Current Trends")
+    result["industry_trends"]["technology_impact"] = extract_bullet_points(analysis, "Technology Impact")
+    result["industry_trends"]["regulatory_environment"] = extract_bullet_points(analysis, "Regulatory Environment")
+    
+    result["growth_forecast"]["short_term"] = extract_bullet_points(analysis, "Short-Term")
+    result["growth_forecast"]["long_term"] = extract_bullet_points(analysis, "Long-Term")
+    result["growth_forecast"]["growth_drivers"] = extract_bullet_points(analysis, "Growth Drivers")
+    
+    result["risk_assessment"]["market_challenges"] = extract_bullet_points(analysis, "Market Challenges")
+    result["risk_assessment"]["economic_factors"] = extract_bullet_points(analysis, "Economic Factors")
+    result["risk_assessment"]["competitive_threats"] = extract_bullet_points(analysis, "Competitive Threats")
+
+    # Add sources
+    result["sources"] = [{
+        'url': item['url'],
+        'domain': item['domain'],
+        'section': item['section'],
+        'date': item['date']
+    } for item in scraped_content]
+
+    return result
+
+def extract_metrics(scraped_content):
+    """Extract and structure metrics from scraped content"""
+    metrics = {
+        "market_share": {},
+        "growth_rates": {},
+        "revenue": {}
+    }
+    
+    for item in scraped_content:
+        if 'metrics' in item:
+            # Process market share
+            for i, share in enumerate(item['metrics'].get('market_share', [])):
+                try:
+                    value = float(share)
+                    metrics['market_share'][f'Company {i+1}'] = value
+                except ValueError:
+                    continue
+                    
+            # Process growth rates
+            for i, rate in enumerate(item['metrics'].get('growth_rates', [])):
+                try:
+                    value = float(rate)
+                    metrics['growth_rates'][f'Period {i+1}'] = value
+                except ValueError:
+                    continue
+                    
+            # Process revenue figures
+            for i, amount in enumerate(item['metrics'].get('money', [])):
+                try:
+                    value = float(amount)
+                    metrics['revenue'][f'Entity {i+1}'] = value
+                except ValueError:
+                    continue
+    
+    return metrics
+
+def extract_bullet_points(text, section_name):
+    """Extract bullet points from a section"""
+    points = []
+    in_section = False
+    
+    for line in text.split('\n'):
+        line = line.strip()
         
-    try:
-        data = request.json
-        query = data.get('query')
-        
-        if not query:
-            return jsonify({'error': 'No query provided'}), 400
-
-        trends_data = get_trends_data(query)
-        return jsonify(trends_data)
-
-    except Exception as e:
-        logging.error(f"Error during trends analysis: {str(e)}")
-        return jsonify({'error': str(e)}), 500
-
-if __name__ == '__main__':
-    app.run(port=5010, debug=True) 
+        # Check for section start
+        if section_name in line:
+            in_section = True
+            continue
+            
+        # Check for section end
+        if in_section:
+            # Check if we've hit another section
+            if any(s + ":" in line for s in ["Total Market Value", "Market Segments", "Regional Distribution", "Top Market Players", "Market Differentiators", "Industry Dynamics", "Current Trends", "Technology Impact", "Regulatory Environment", "Short-Term", "Long-Term", "Growth Drivers", "Market Challenges", "Economic Factors", "Competitive Threats"]):
+                in_section = False
+                continue
+            
+            # Extract bullet points
+            if line.startswith(('•', '-', '*', '○', '›', '»', '⁃')):
+                cleaned_line = line.lstrip('•-*○›»⁃ ').strip()
+                if cleaned_line and not cleaned_line.endswith(':'):
+                    points.append(cleaned_line)
+                    
+            # Extract numbered points
+            elif line.startswith(('1.', '2.', '3.', '4.', '5.')):
+                cleaned_line = ' '.join(line.split()[1:])
+                if cleaned_line:
+                    points.append(cleaned_line)
+    
+    return points 

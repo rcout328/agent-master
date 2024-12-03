@@ -1,12 +1,10 @@
-from flask import Flask, request, jsonify
-from flask_cors import CORS
-import logging
 from datetime import datetime
 from firecrawl import FirecrawlApp
 import json
 import os
 from googlesearch import search
 import time
+import logging
 
 # Import Gemini with error handling
 try:
@@ -22,9 +20,6 @@ except ImportError:
     except ImportError:
         logging.error("Failed to install google-generativeai package")
         GEMINI_AVAILABLE = False
-
-app = Flask(__name__)
-CORS(app)
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -43,6 +38,10 @@ if GEMINI_AVAILABLE:
     else:
         logging.warning("No Gemini API key found")
 
+# Create a folder to store Gemini outputs
+output_folder = 'gemini_outputs'
+os.makedirs(output_folder, exist_ok=True)
+
 def extract_domain(url):
     """Extract domain name from URL"""
     try:
@@ -54,7 +53,7 @@ def extract_domain(url):
 
 def get_icp_data(business_query):
     """
-    Get ICP data using search and Firecrawl
+    Get ICP data using search and Firecrawl with improved rate limiting
     """
     logging.info(f"\n{'='*50}\nGathering ICP data for: {business_query}\n{'='*50}")
     
@@ -70,122 +69,126 @@ def get_icp_data(business_query):
     search_queries = [
         f"{business_query} customer profile demographics",
         f"{business_query} target market analysis",
-        f"who buys from {business_query}",
-        f"{business_query} customer persona",
-        f"{business_query} market segmentation"
-    ]
+        f"{business_query} customer persona"
+    ]  # Reduced number of queries
     
     scraped_content = []
     
+    def scrape_with_retry(url, max_retries=3):
+        """Helper function to scrape URL with retry logic"""
+        for attempt in range(max_retries):
+            try:
+                response = firecrawl_app.scrape_url(
+                    url=url,
+                    params={'formats': ['markdown']}
+                )
+                if response and 'markdown' in response:
+                    return response['markdown']
+            except Exception as e:
+                if "429" in str(e):  # Rate limit error
+                    wait_time = (attempt + 1) * 10
+                    logging.info(f"Rate limit hit, waiting {wait_time} seconds...")
+                    time.sleep(wait_time)
+                    continue
+                logging.error(f"Error scraping {url}: {str(e)}")
+            time.sleep(2)  # Basic delay between attempts
+        return None
+
     for query in search_queries:
         try:
             logging.info(f"\nSearching for: {query}")
-            search_results = list(search(query, lang="en", num_results=2))
+            urls = list(search(
+                query,
+                num=3,  # Reduced number of results
+                stop=3,
+                lang="en"
+            ))
             
-            for url in search_results:
+            if not urls:
+                logging.warning(f"No URLs found for query: {query}")
+                continue
+                
+            for url in urls:
                 if not any(x in url.lower() for x in ['linkedin', 'facebook', 'twitter']):
-                    try:
-                        logging.info(f"Scraping: {url}")
-                        response = firecrawl_app.scrape_url(
-                            url=url,
-                            params={
-                                'formats': ['markdown']
-                            }
-                        )
+                    content = scrape_with_retry(url)
+                    if content and len(content) > 200:
+                        logging.info("Successfully scraped content")
+                        scraped_content.append({
+                            'url': url,
+                            'domain': extract_domain(url),
+                            'section': 'ICP Analysis',
+                            'date': datetime.now().strftime("%Y-%m-%d"),
+                            'content': content[:2000]  # Limit content size
+                        })
+                        break  # Break after successful scrape
                         
-                        if response and 'markdown' in response:
-                            content = response['markdown']
-                            if len(content) > 200:
-                                logging.info("Successfully scraped content")
-                                logging.info(f"Content preview:\n{content[:200]}...\n")
-                                scraped_content.append({
-                                    'url': url,
-                                    'domain': extract_domain(url),
-                                    'section': 'ICP Analysis',
-                                    'date': datetime.now().strftime("%Y-%m-%d")
-                                })
-                                
-                                # Create a text file for the scraped content
-                                with open(f"scraped_content_{datetime.now().strftime('%Y%m%d%H%M%S')}.txt", 'a') as f:
-                                    f.write(f"URL: {url}\nContent:\n{content}\n\n")
-                                
-                                break
-                    except Exception as e:
-                        logging.error(f"Error scraping {url}: {str(e)}")
-                        continue
-            
-            time.sleep(2)  # Be nice to servers
+            time.sleep(3)  # Delay between searches
             
         except Exception as e:
             logging.error(f"Error in search: {str(e)}")
+            time.sleep(5)  # Additional delay on error
             continue
     
     if scraped_content:
-        logging.info("\nPreparing Gemini analysis")
-        
-        # More detailed prompt for better analysis
-        prompt = f"""
-        Analyze this content about {business_query}'s customers and create a detailed ICP (Ideal Customer Profile).
-        If specific data isn't available, make logical inferences based on the industry and business type.
-        
-        Content to analyze:
-        {json.dumps(scraped_content, indent=2)}
-        
-        Provide a comprehensive analysis with these exact sections.
-        For each point, either extract information from the content or make a logical inference based on the business type.
-        Mark inferred information with "(Inferred)".
-
-        DEMOGRAPHICS:
-        - Age Range: [Specify typical age range of customers]
-        - Income Level: [Specify typical income brackets]
-        - Location: [Specify geographical focus]
-        - Education: [Specify typical education levels]
-
-        PSYCHOGRAPHICS:
-        - Values and Beliefs: [What matters to these customers]
-        - Lifestyle: [Daily habits and preferences]
-        - Interests: [Hobbies and activities]
-        - Behaviors: [Shopping and decision-making patterns]
-
-        PROFESSIONAL CHARACTERISTICS:
-        - Industry: [Primary industries]
-        - Company Size: [Typical organization size]
-        - Role/Position: [Common job roles]
-        - Decision Making Authority: [Level of authority]
-
-        PAIN POINTS & NEEDS:
-        - Key Challenges: [Main problems they face]
-        - Motivations: [What drives their decisions]
-        - Goals: [What they want to achieve]
-        - Purchase Triggers: [What prompts them to buy]
-
-        ADDITIONAL INSIGHTS:
-        [Provide 2-3 unique insights about the ideal customer]
-
-        Base your analysis on the provided content and make logical inferences where needed.
-        Ensure each section has meaningful content, even if inferred from the business context.
-        """
-        
         try:
+            prompt = f"""
+            Analyze this content about {business_query}'s customers and create a detailed ICP.
+            
+            Content to analyze:
+            {[item['content'] for item in scraped_content]}
+            
+            Provide a comprehensive analysis with these exact sections.
+            Mark inferred information with "(Inferred)".
+
+            DEMOGRAPHICS:
+            • Age Range
+            • Income Level
+            • Location
+            • Education
+
+            PSYCHOGRAPHICS:
+            • Values and Beliefs
+            • Lifestyle
+            • Interests
+            • Behaviors
+
+            PROFESSIONAL CHARACTERISTICS:
+            • Industry
+            • Company Size
+            • Role/Position
+            • Decision Making Authority
+
+            PAIN POINTS & NEEDS:
+            • Key Challenges
+            • Motivations
+            • Goals
+            • Purchase Triggers
+
+            ADDITIONAL INSIGHTS:
+            • Unique characteristics
+            • Special considerations
+            • Key differentiators
+            """
+            
             response = model.generate_content(prompt)
             analysis = response.text
             
-            logging.info("\nGemini Analysis Received:")
-            logging.info(f"\n{analysis}\n")
-            
-            # Create a text file for the Gemini analysis
-            with open(f"gemini_analysis_{datetime.now().strftime('%Y%m%d%H%M%S')}.txt", 'w') as f:
-                f.write(f"Business Query: {business_query}\nAnalysis:\n{analysis}\n")
+            # Save Gemini output to a text file
+            output_file_path = os.path.join(output_folder, 'compitoone.txt')
+            with open(output_file_path, 'w') as output_file:
+                output_file.write(analysis)
+                logging.info(f"Gemini output saved to {output_file_path}")
             
             # Process and structure the response
             sections = extract_meaningful_content(analysis)
             if sections:
                 processed_response = {
                     **sections,
-                    "sources": [{'url': item['url']} for item in scraped_content]
+                    "sources": [{'url': item['url'], 'domain': item['domain'], 
+                               'section': item['section'], 'date': item['date']} 
+                              for item in scraped_content]
                 }
                 
-                # Validate response has meaningful content
                 if is_valid_response(processed_response):
                     return processed_response
                     
@@ -305,28 +308,14 @@ def generate_fallback_response(business_query):
         "sources": []
     }
 
-@app.route('/api/icp-analysis', methods=['POST', 'OPTIONS'])
-def analyze_icp():
-    if request.method == 'OPTIONS':
-        return '', 204
-        
-    try:
-        data = request.json
-        business_query = data.get('query')
-        
-        if not business_query:
-            return jsonify({'error': 'No business query provided'}), 400
+def analyze_icp(business_query):
+    """Analyze ICP data for a given business query."""
+    if not business_query:
+        return {'error': 'No business query provided'}, 400
 
-        # Check for valid API key
-        if not os.getenv('GOOGLE_API_KEY'):
-            return jsonify({'error': 'Invalid API key. Please check your configuration.'}), 401
+    # Check for valid API key
+    if not os.getenv('GOOGLE_API_KEY'):
+        return {'error': 'Invalid API key. Please check your configuration.'}, 401
 
-        icp_data = get_icp_data(business_query)
-        return jsonify(icp_data)
-
-    except Exception as e:
-        logging.error(f"Error during ICP analysis: {str(e)}")
-        return jsonify({'error': str(e)}), 500
-
-if __name__ == '__main__':
-    app.run(port=5002, debug=True) 
+    icp_data = get_icp_data(business_query)
+    return icp_data, 200 

@@ -40,7 +40,7 @@ export default function ICPCreationContent() {
     setCurrentPhase(1);
 
     try {
-      const response = await fetch('http://127.0.0.1:5002/api/icp-analysis', {
+      const response = await fetch('http://127.0.0.1:5000/api/icp-analysis', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
