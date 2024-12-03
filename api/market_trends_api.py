@@ -2,10 +2,10 @@ import logging
 from datetime import datetime
 from firecrawl import FirecrawlApp
 import os
-from googlesearch import search
 import time
 import google.generativeai as genai
 import uuid  # Import uuid for unique file naming
+import requests  # Import requests for making API calls
 
 # Initialize logging
 logging.basicConfig(level=logging.DEBUG)
@@ -26,7 +26,7 @@ else:
 
 def get_trends_data(query):
     """
-    Get market trends data using search and Firecrawl with improved scraping
+    Get market trends data using custom search API and Firecrawl with improved scraping
     """
     logging.info(f"\n{'='*50}\nGathering trends data for: {query}\n{'='*50}")
     
@@ -40,44 +40,52 @@ def get_trends_data(query):
     ]
     
     scraped_content = []
-    
+
     for search_query in search_queries:
         try:
             logging.info(f"\nSearching for: {search_query}")
-            urls = list(search(
-                search_query, 
-                num_results=3,
-                lang="en"
-            ))
-            
+            # Custom Search API request
+            api_key = "AIzaSyAxeLlJ6vZxOl-TblUJg_dInBS3vNxaFVY"
+            search_engine_id = "37793b12975da4e35"
+            url = f"https://www.googleapis.com/customsearch/v1?q={search_query}&key={api_key}&cx={search_engine_id}&num=3"
+            response = requests.get(url)
+            response_data = response.json()
+            urls = [item['link'] for item in response_data.get('items', [])]
+
             if not urls:
                 logging.warning(f"No URLs found for query: {search_query}")
                 continue
             
             for url in urls:
                 if not any(x in url.lower() for x in ['linkedin', 'facebook', 'twitter']):
-                    try:
-                        logging.info(f"Scraping: {url}")
-                        response = firecrawl_app.scrape_url(
-                            url=url,
-                            params={'formats': ['markdown']}
-                        )
-                        
-                        if response and 'markdown' in response:
-                            content = response['markdown']
-                            if len(content) > 200:
-                                logging.info("Successfully scraped content")
-                                scraped_content.append({
-                                    'url': url,
-                                    'domain': extract_domain(url),
-                                    'section': 'Market Trends',
-                                    'date': datetime.now().strftime("%Y-%m-%d"),
-                                    'content': content[:2000],  # Limit content size
-                                })
-                                break
-                    except Exception as e:
-                        logging.error(f"Error scraping {url}: {str(e)}")
-                        continue
+                    attempt = 0
+                    while attempt < 5:  # Retry up to 5 times
+                        try:
+                            logging.info(f"Scraping: {url}")
+                            response = firecrawl_app.scrape_url(
+                                url=url,
+                                params={'formats': ['markdown']},
+                            )
+                            
+                            if response and 'markdown' in response:
+                                content = response['markdown']
+                                if len(content) > 200:
+                                    logging.info("Successfully scraped content")
+                                    scraped_content.append({
+                                        'url': url,
+                                        'domain': extract_domain(url),
+                                        'section': 'Market Trends',
+                                        'date': datetime.now().strftime("%Y-%m-%d"),
+                                        'content': content[:2000],  # Limit content size
+                                    })
+                                    break
+                            break  # Exit retry loop if successful
+                        except Exception as e:
+                            logging.error(f"Error scraping {url}: {str(e)}")
+                            attempt += 1
+                            time.sleep(2 ** attempt)  # Exponential backoff
+                    else:
+                        logging.warning(f"Failed to scrape {url} after multiple attempts.")
             
             time.sleep(2)
             

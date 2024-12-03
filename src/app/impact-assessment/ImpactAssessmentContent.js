@@ -42,7 +42,7 @@ export default function ImpactAssessmentContent() {
     setCurrentPhase(1);
 
     try {
-      const response = await fetch('http://127.0.0.1:5009/api/impact-assessment', {
+      const response = await fetch('http://127.0.0.1:5000/api/impact-assessment', { // Updated port to match combined_api.py
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

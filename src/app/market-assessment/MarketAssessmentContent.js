@@ -57,7 +57,7 @@ export default function MarketAssessmentContent() {
     setCurrentPhase(1);
 
     try {
-      const response = await fetch('http://127.0.0.1:5008/api/market-assessment', {
+      const response = await fetch('http://127.0.0.1:5000/api/market-assessment', { // Updated port to match combined_api.py
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

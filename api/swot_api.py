@@ -3,7 +3,7 @@ from datetime import datetime
 from firecrawl import FirecrawlApp
 import json
 import os
-from googlesearch import search
+import requests
 import time
 import google.generativeai as genai
 
@@ -24,6 +24,10 @@ if GOOGLE_API_KEY:
 else:
     logging.warning("No Gemini API key found")
 
+# Create a folder to store Gemini outputs
+output_folder = 'gemini_outputs'
+os.makedirs(output_folder, exist_ok=True)
+
 def extract_domain(url):
     """Extract domain name from URL"""
     try:
@@ -34,7 +38,7 @@ def extract_domain(url):
         return url
 
 def get_swot_data(business_query):
-    """Get SWOT analysis data using search and Firecrawl"""
+    """Get SWOT analysis data using custom search API and Firecrawl"""
     logging.info(f"\n{'='*50}\nGathering SWOT data for: {business_query}\n{'='*50}")
     
     result = {
@@ -59,7 +63,7 @@ def get_swot_data(business_query):
     for query in search_queries:
         try:
             logging.info(f"\nSearching for: {query}")
-            search_results = list(search(query, lang="en", num_results=2))
+            search_results = custom_search_api(query)
             attempts = 0
             
             for url in search_results:
@@ -150,6 +154,10 @@ def get_swot_data(business_query):
             result["opportunities"] = extract_section(analysis, "OPPORTUNITIES")
             result["threats"] = extract_section(analysis, "THREATS")
             
+            # Save Gemini output to a text file
+            with open(os.path.join(output_folder, 'compitoone.txt'), 'w') as f:
+                f.write(analysis)
+            
             # Add sources
             result["sources"] = [{
                 'url': item['url'],
@@ -165,6 +173,20 @@ def get_swot_data(business_query):
             return generate_fallback_response(business_query)
     
     return generate_fallback_response(business_query)
+
+def custom_search_api(query):
+    """Perform a custom search using the Google Custom Search API"""
+    api_key = "AIzaSyAxeLlJ6vZxOl-TblUJg_dInBS3vNxaFVY"
+    search_engine_id = "37793b12975da4e35"
+    url = f"https://www.googleapis.com/customsearch/v1?key={api_key}&cx={search_engine_id}&q={query}&num=2"
+    
+    response = requests.get(url)
+    if response.status_code == 200:
+        search_results = response.json().get('items', [])
+        return [item['link'] for item in search_results]
+    else:
+        logging.error(f"Error in custom search API: {response.status_code} - {response.text}")
+        return []
 
 def extract_section(text, section_name):
     """Extract content from a specific section"""

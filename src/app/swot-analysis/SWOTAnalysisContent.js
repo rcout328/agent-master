@@ -38,7 +38,7 @@ export default function SWOTAnalysisContent() {
     setCurrentPhase(1);
 
     try {
-      const response = await fetch('http://127.0.0.1:5004/api/swot-analysis', {
+      const response = await fetch('http://127.0.0.1:5000/api/swot-analysis', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

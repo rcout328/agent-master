@@ -3,7 +3,7 @@ from datetime import datetime
 from firecrawl import FirecrawlApp
 import json
 import os
-from googlesearch import search
+import requests  # Import requests for making API calls
 import time
 import google.generativeai as genai
 
@@ -24,6 +24,10 @@ if GOOGLE_API_KEY:
 else:
     logging.warning("No Gemini API key found")
 
+# Create a folder to store Gemini outputs
+output_folder = 'gemini_outputs'
+os.makedirs(output_folder, exist_ok=True)
+
 def extract_domain(url):
     """Extract domain name from URL"""
     try:
@@ -34,7 +38,7 @@ def extract_domain(url):
         return url
 
 def get_market_data(business_query):
-    """Get market assessment data using search and Firecrawl"""
+    """Get market assessment data using custom search API and Firecrawl"""
     logging.info(f"\n{'='*50}\nGathering market data for: {business_query}\n{'='*50}")
     
     result = {
@@ -59,10 +63,17 @@ def get_market_data(business_query):
     for query in search_queries:
         try:
             logging.info(f"\nSearching for: {query}")
-            search_results = list(search(query, lang="en", num_results=2))
+            # Custom Search API parameters
+            api_key = "AIzaSyAxeLlJ6vZxOl-TblUJg_dInBS3vNxaFVY"
+            search_engine_id = "37793b12975da4e35"
+            search_url = f"https://www.googleapis.com/customsearch/v1?key={api_key}&cx={search_engine_id}&q={query}&num=2"
+            
+            response = requests.get(search_url)
+            search_results = response.json().get('items', [])
             attempts = 0
             
-            for url in search_results:
+            for item in search_results:
+                url = item['link']
                 if attempts >= max_attempts:
                     break
                     
@@ -143,6 +154,12 @@ def get_market_data(business_query):
             
             response = model.generate_content(prompt)
             analysis = response.text
+            
+            # Save Gemini output to a text file
+            output_file_path = os.path.join(output_folder, 'compitoone.txt')
+            with open(output_file_path, 'w') as output_file:
+                output_file.write(analysis)
+                logging.info(f"Gemini output saved to {output_file_path}")
             
             # Extract sections
             result["market_overview"] = extract_section(analysis, "MARKET OVERVIEW")

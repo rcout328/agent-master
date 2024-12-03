@@ -23,7 +23,7 @@ export default function ComplianceCheckContent() {
       setLastAnalyzedInput(userInput);
     } else {
       setComplianceAnalysis('');
-      if (mounted && userInput && !isLoading && userInput !== lastAnalyzedInput) {
+      if (mounted && userInput && !isLoading) {
         handleSubmit(new Event('submit'));
         setLastAnalyzedInput(userInput);
       }

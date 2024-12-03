@@ -38,7 +38,7 @@ export default function GapAnalysisContent() {
     setCurrentPhase(1);
 
     try {
-      const response = await fetch('http://127.0.0.1:5005/api/gap-analysis', {
+      const response = await fetch('http://127.0.0.1:5000/api/gap-analysis', { // Updated URL to match the Flask API
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -24,11 +24,13 @@ export default function FeaturePriorityContent() {
     const storedAnalysis = localStorage.getItem(`featureAnalysis_${userInput}`);
     if (storedAnalysis) {
       setFeatureAnalysis(JSON.parse(storedAnalysis));
+    } else if (userInput.trim()) {
+      handleSubmit(); // Automatically submit if local storage is empty and input is filled
     }
   }, [userInput]);
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault(); // Prevent default only if event is provided
     if (!userInput.trim() || isLoading) return;
 
     setIsLoading(true);
@@ -36,7 +38,7 @@ export default function FeaturePriorityContent() {
     setCurrentPhase(1);
 
     try {
-      const response = await fetch('http://127.0.0.1:5006/api/feature-priority', {
+      const response = await fetch('http://127.0.0.1:5000/api/feature-priority', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

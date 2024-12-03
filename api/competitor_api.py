@@ -107,7 +107,7 @@ def get_competitor_data(query):
                 logging.info(f"Found competitors: {result['main_competitors']}")
                 
                 # Create output file for competitors
-                with open(os.path.join(output_dir, 'compitoone_competitors.txt'), 'w') as f:
+                with open(os.path.join(output_dir, 'compitoone.txt'), 'w') as f:
                     f.write(competitors)
                     
             except Exception as e:
@@ -134,7 +134,7 @@ def get_competitor_data(query):
                 logging.info(f"Found strengths: {result['competitor_strengths']}")
                 
                 # Create output file for strengths
-                with open(os.path.join(output_dir, 'compitoone_strengths.txt'), 'w') as f:
+                with open(os.path.join(output_dir, 'compitoone.txt'), 'a') as f:
                     f.write(strengths)
                     
             except Exception as e:
@@ -161,7 +161,7 @@ def get_competitor_data(query):
                 logging.info(f"Found key findings: {findings}")
                 
                 # Create output file for findings
-                with open(os.path.join(output_dir, 'compitoone_findings.txt'), 'w') as f:
+                with open(os.path.join(output_dir, 'compitoone.txt'), 'a') as f:
                     f.write(findings)
                     
             except Exception as e:

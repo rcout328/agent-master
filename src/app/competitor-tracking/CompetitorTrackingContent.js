@@ -28,6 +28,14 @@ export default function CompetitorTrackingContent() {
     }
   }, []);
 
+  // Check local storage and send request if empty and input is filled
+  useEffect(() => {
+    const storedData = localStorage.getItem('geminiApiResponse');
+    if (!storedData && searchQuery.trim()) {
+      handleSubmit(new Event('submit'));
+    }
+  }, [searchQuery]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!searchQuery.trim() || isLoading) return;

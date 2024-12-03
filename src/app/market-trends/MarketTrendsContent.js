@@ -171,6 +171,12 @@ export default function MarketTrendsContent() {
     }
   }, [apiResponse]);
 
+  useEffect(() => {
+    if (typeof window !== 'undefined' && !apiResponse && searchQuery.trim()) {
+      handleSubmit();
+    }
+  }, [apiResponse, searchQuery]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!searchQuery.trim() || isLoading) return;
