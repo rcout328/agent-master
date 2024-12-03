@@ -25,11 +25,13 @@ export default function FeedbackCollectionContent() {
     if (storedData) {
       setFeedbackAnalysis(JSON.parse(storedData));
       setCurrentPhase(6); // Assuming the last phase is reached if data is loaded from local storage
+    } else if (userInput.trim()) {
+      handleSubmit(); // Send request to API if local storage is empty and input is filled
     }
   }, [userInput]);
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
     if (!userInput.trim() || isLoading) return;
 
     setIsLoading(true);
@@ -37,7 +39,7 @@ export default function FeedbackCollectionContent() {
     setCurrentPhase(1);
 
     try {
-      const response = await fetch('http://127.0.0.1:5000/api/feedback-analysis', { // Updated URL to match combined_api.py
+      const response = await fetch('http://127.0.0.1:5000/api/feedback-analysis', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

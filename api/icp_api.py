@@ -99,9 +99,7 @@ def get_icp_data(business_query):
             logging.info(f"\nSearching for: {query}")
             urls = list(search(
                 query,
-                num=3,  # Reduced number of results
-                stop=3,
-                lang="en"
+                num_results=3  # Reduced number of results
             ))
             
             if not urls:
