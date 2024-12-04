@@ -1,406 +1,471 @@
 "use client";
 
-import { useState, useEffect, useRef } from 'react';
-import { useStoredInput } from '@/hooks/useStoredInput';
-import jsPDF from 'jspdf';
+import { useState, useEffect } from 'react';
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import Link from 'next/link';
+import jsPDF from 'jspdf';
+
+// Initialize Gemini
+const genAI = new GoogleGenerativeAI("AIzaSyAE2SKBA38bOktQBdXS6mTK5Y1a-nKB3Mo");
 
 export default function JourneyMappingContent() {
-  const [userInput, setUserInput] = useStoredInput();
-  const [journeyAnalysis, setJourneyAnalysis] = useState({
-    pre_purchase: [],
-    purchase: [],
-    post_purchase: [],
-    optimization: [],
-    sources: []
-  });
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [currentPhase, setCurrentPhase] = useState(0);
+  const [storedSnapshots, setStoredSnapshots] = useState([]);
+  const [selectedSnapshot, setSelectedSnapshot] = useState(null);
+  const [analysis, setAnalysis] = useState(null);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [processedData, setProcessedData] = useState(null);
+  const [isProcessing, setIsProcessing] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
-  const analysisRef = useRef(null);
 
-  // Load data from local storage on component mount
   useEffect(() => {
-    const storedData = localStorage.getItem(`journeyMapping_${userInput}`);
-    if (storedData) {
-      setJourneyAnalysis(JSON.parse(storedData));
-      setCurrentPhase(6); // Set to last phase if data is loaded
-    }
-  }, [userInput]);
+    loadAllSnapshots();
+  }, []);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!userInput.trim() || isLoading) return;
+  const loadAllSnapshots = () => {
+    const allKeys = Object.keys(localStorage);
+    const snapshots = allKeys
+      .filter(key => key.includes('snapshot_'))
+      .map(key => {
+        try {
+          const data = JSON.parse(localStorage.getItem(key));
+          return {
+            id: key.split('snapshot_')[1],
+            data: data,
+            timestamp: new Date().toISOString()
+          };
+        } catch (e) {
+          console.error(`Error parsing snapshot ${key}:`, e);
+          return null;
+        }
+      })
+      .filter(Boolean);
 
-    setIsLoading(true);
-    setError(null);
-    setCurrentPhase(1);
-
-    try {
-      const response = await fetch('http://127.0.0.1:5000/api/journey-analysis', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ query: userInput }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch data');
-      }
-
-      const data = await response.json();
-      console.log('Journey API Response:', data);
-      
-      // Update data progressively
-      if (data.pre_purchase?.length) {
-        setCurrentPhase(2);
-        setJourneyAnalysis(prev => ({ ...prev, pre_purchase: data.pre_purchase }));
-      }
-      if (data.purchase?.length) {
-        setCurrentPhase(3);
-        setJourneyAnalysis(prev => ({ ...prev, purchase: data.purchase }));
-      }
-      if (data.post_purchase?.length) {
-        setCurrentPhase(4);
-        setJourneyAnalysis(prev => ({ ...prev, post_purchase: data.post_purchase }));
-      }
-      if (data.optimization?.length) {
-        setCurrentPhase(5);
-        setJourneyAnalysis(prev => ({ ...prev, optimization: data.optimization }));
-      }
-      if (data.sources?.length) {
-        setCurrentPhase(6);
-        setJourneyAnalysis(prev => ({ ...prev, sources: data.sources }));
-      }
-      
-      localStorage.setItem(`journeyMapping_${userInput}`, JSON.stringify(data));
-
-    } catch (error) {
-      console.error('Error:', error);
-      setError('Failed to get journey analysis. Please try again.');
-    } finally {
-      setIsLoading(false);
-    }
+    setStoredSnapshots(snapshots);
   };
 
-  const exportToPDF = async () => {
-    if (!journeyAnalysis || Object.keys(journeyAnalysis).length === 0) return;
-
-    setIsExporting(true);
+  const processSnapshotData = async (snapshotData) => {
     try {
-      const pdf = new jsPDF({
-        orientation: 'portrait',
-        unit: 'mm',
-        format: 'a4'
-      });
+      setIsProcessing(true);
+      console.log('Processing snapshot data:', snapshotData.id);
+      
+      // Extract data array from the snapshot
+      let raw_data = [];
+      if (snapshotData && snapshotData.data) {
+        if (Array.isArray(snapshotData.data)) {
+          raw_data = snapshotData.data;
+        } else if (snapshotData.data.data && Array.isArray(snapshotData.data.data)) {
+          raw_data = snapshotData.data.data;
+        } else if (snapshotData.data.results && Array.isArray(snapshotData.data.results)) {
+          raw_data = snapshotData.data.results;
+        }
+      }
 
-      // Add header
-      pdf.setFillColor(48, 48, 51); // Dark background
-      pdf.rect(0, 0, pdf.internal.pageSize.getWidth(), 60, 'F'); // Increased header height
-      pdf.setTextColor(255, 255, 255);
-      pdf.setFont("helvetica", "bold");
-      pdf.setFontSize(26); // Increased font size
-      pdf.text("Customer Journey Mapping", 20, 40); // Adjusted position
-      pdf.setFontSize(14); // Increased font size
-      pdf.setFont("helvetica", "normal");
-      pdf.text(`Report for: ${userInput}`, 20, 50); // Adjusted position
-      pdf.text(`Generated: ${new Date().toLocaleDateString()}`, pdf.internal.pageSize.getWidth() - 60, 50);
+      if (!Array.isArray(raw_data) || raw_data.length === 0) {
+        throw new Error('No valid data array found in snapshot');
+      }
 
-      let yPos = 70; // Starting position after header
-
-      // Helper function to add section
-      const addSection = (title, data) => {
-        if (!data || data.length === 0) return yPos;
-
-        // Add section title
-        pdf.setFont("helvetica", "bold");
-        pdf.setFontSize(18); // Increased font size
-        pdf.setTextColor(128, 90, 213); // Purple color
-        pdf.text(title, 20, yPos);
-        yPos += 10;
-
-        // Add items
-        pdf.setFont("helvetica", "normal");
-        pdf.setFontSize(12); // Increased font size
-        pdf.setTextColor(60, 60, 60);
-        data.forEach(item => {
-          // Handle text wrapping
-          const lines = pdf.splitTextToSize(item, 180); // Adjusted width for wrapping
-          lines.forEach(line => {
-            if (yPos > 270) {
-              pdf.addPage();
-              yPos = 20;
-            }
-            pdf.text(line, 30, yPos);
-            yPos += 6; // Increased line spacing
-          });
-          yPos += 4; // Increased spacing between items
-        });
-
-        yPos += 10;
-        return yPos;
+      // Process journey data
+      const processed = {
+        pre_purchase: analyzePrePurchase(raw_data),
+        purchase: analyzePurchase(raw_data),
+        post_purchase: analyzePostPurchase(raw_data),
+        optimization: analyzeOptimization(raw_data),
+        metrics: analyzeMetrics(raw_data)
       };
 
-      // Add each section
-      addSection("Pre-Purchase Journey", journeyAnalysis.pre_purchase);
-      addSection("Purchase Experience", journeyAnalysis.purchase);
-      addSection("Post-Purchase Journey", journeyAnalysis.post_purchase);
-      addSection("Optimization Opportunities", journeyAnalysis.optimization);
+      console.log('Processed journey data:', processed);
+      setProcessedData(processed);
 
-      // Add sources section
-      if (journeyAnalysis.sources?.length) {
-        if (yPos > 250) {
-          pdf.addPage();
-          yPos = 20;
-        }
-
-        pdf.setFont("helvetica", "bold");
-        pdf.setFontSize(18); // Increased font size
-        pdf.setTextColor(128, 90, 213);
-        pdf.text("Data Sources", 20, yPos);
-        yPos += 10;
-
-        pdf.setFont("helvetica", "normal");
-        pdf.setFontSize(12); // Increased font size
-        pdf.setTextColor(60, 60, 60);
-
-        journeyAnalysis.sources.forEach((source, index) => {
-          if (yPos > 270) {
-            pdf.addPage();
-            yPos = 20;
-          }
-          pdf.text(`${index + 1}. ${source.domain}`, 25, yPos);
-          pdf.setTextColor(100, 100, 100);
-          pdf.text(`Accessed: ${source.date}`, 25, yPos + 5);
-          yPos += 10;
-        });
-      }
-
-      // Add footer to each page
-      const pageCount = pdf.internal.getNumberOfPages();
-      for (let i = 1; i <= pageCount; i++) {
-        pdf.setPage(i);
-        pdf.setFont("helvetica", "italic");
-        pdf.setFontSize(10); // Increased font size
-        pdf.setTextColor(150, 150, 150);
-        pdf.text(
-          `Generated by Journey Mapping Tool - Page ${i} of ${pageCount}`,
-          pdf.internal.pageSize.getWidth() / 2,
-          pdf.internal.pageSize.getHeight() - 15, // Adjusted position
-          { align: "center" }
-        );
-      }
-
-      // Save the PDF
-      pdf.save(`${userInput.replace(/\s+/g, '_')}_journey_analysis.pdf`);
     } catch (error) {
-      console.error('Error generating PDF:', error);
+      console.error('Error processing data:', error);
+      alert('Failed to process snapshot data: ' + error.message);
     } finally {
-      setIsExporting(false);
+      setIsProcessing(false);
     }
   };
 
-  const renderJourneySection = (title, data) => {
+  // Helper functions for journey analysis
+  const analyzePrePurchase = (data) => {
+    return data
+      .filter(company => company.web_traffic_by_semrush)
+      .map(company => ({
+        name: company.name,
+        traffic_rank: company.web_traffic_by_semrush.global_traffic_rank,
+        visit_duration: company.web_traffic_by_semrush.visit_duration,
+        bounce_rate: company.web_traffic_by_semrush.bounce_rate_pct,
+        page_views: company.web_traffic_by_semrush.page_views_per_visit,
+        monthly_visits: company.monthly_visits || 0
+      }))
+      .filter(item => item.traffic_rank || item.monthly_visits);
+  };
+
+  const analyzePurchase = (data) => {
+    return data
+      .filter(company => company.featured_list)
+      .map(company => ({
+        name: company.name,
+        funding_total: company.featured_list[0]?.org_funding_total?.value_usd || 0,
+        num_investors: company.featured_list[0]?.org_num_investors || 0,
+        org_count: company.featured_list[0]?.org_num || 0
+      }))
+      .filter(item => item.funding_total || item.num_investors);
+  };
+
+  const analyzePostPurchase = (data) => {
+    return data
+      .filter(company => company.social_media_links || company.num_contacts)
+      .map(company => ({
+        name: company.name,
+        social_presence: company.social_media_links?.length || 0,
+        contact_channels: company.num_contacts || 0,
+        engagement_score: calculateEngagementScore(company)
+      }))
+      .filter(item => item.social_presence || item.contact_channels);
+  };
+
+  const analyzeOptimization = (data) => {
+    return data
+      .filter(company => company.web_traffic_by_semrush)
+      .map(company => ({
+        name: company.name,
+        growth_opportunities: identifyGrowthOpportunities(company),
+        improvement_areas: findImprovementAreas(company)
+      }))
+      .filter(item => item.growth_opportunities.length || item.improvement_areas.length);
+  };
+
+  const analyzeMetrics = (data) => {
+    return {
+      total_monthly_visits: data.reduce((sum, company) => sum + (company.monthly_visits || 0), 0),
+      avg_bounce_rate: Math.round(data.reduce((sum, company) => sum + (company.web_traffic_by_semrush?.bounce_rate_pct || 0), 0) / data.filter(c => c.web_traffic_by_semrush?.bounce_rate_pct).length),
+      total_funding: data.reduce((sum, company) => sum + (company.featured_list?.[0]?.org_funding_total?.value_usd || 0), 0),
+      total_investors: data.reduce((sum, company) => sum + (company.featured_list?.[0]?.org_num_investors || 0), 0)
+    };
+  };
+
+  // Additional helper functions
+  const calculateEngagementScore = (company) => {
+    let score = 0;
+    if (company.monthly_visits) score += company.monthly_visits / 1000;
+    if (company.web_traffic_by_semrush?.visit_duration) score += company.web_traffic_by_semrush.visit_duration / 10;
+    if (company.web_traffic_by_semrush?.page_views_per_visit) score += company.web_traffic_by_semrush.page_views_per_visit * 20;
+    if (company.social_media_links) score += company.social_media_links.length * 10;
+    return Math.round(score);
+  };
+
+  const identifyGrowthOpportunities = (company) => {
+    const opportunities = [];
+    if (company.web_traffic_by_semrush?.bounce_rate_pct > 50) opportunities.push('Reduce bounce rate');
+    if (company.web_traffic_by_semrush?.visit_duration < 100) opportunities.push('Increase visit duration');
+    if (company.web_traffic_by_semrush?.page_views_per_visit < 2) opportunities.push('Improve page views');
+    if (!company.social_media_links?.length) opportunities.push('Expand social presence');
+    return opportunities;
+  };
+
+  const findImprovementAreas = (company) => {
+    const areas = [];
+    if (!company.featured_list?.length) areas.push('Expand market presence');
+    if (!company.num_contacts) areas.push('Increase contact channels');
+    if (company.web_traffic_by_semrush?.monthly_rank_growth_pct < 0) areas.push('Improve traffic ranking');
+    return areas;
+  };
+
+  const generateAIAnalysis = async () => {
+    try {
+      setIsAnalyzing(true);
+      
+      const prompt = `
+        Analyze this customer journey data and provide strategic insights:
+
+        Pre-Purchase Metrics:
+        ${JSON.stringify(processedData.pre_purchase, null, 2)}
+
+        Purchase Data:
+        ${JSON.stringify(processedData.purchase, null, 2)}
+
+        Post-Purchase Analysis:
+        ${JSON.stringify(processedData.post_purchase, null, 2)}
+
+        Key Metrics:
+        ${JSON.stringify(processedData.metrics, null, 2)}
+
+        Please provide:
+        1. Customer Journey Analysis
+        2. Key Touchpoints
+        3. Engagement Patterns
+        4. Optimization Recommendations
+        5. Growth Strategy
+
+        Format the analysis in clear sections with bullet points.
+      `;
+
+      const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
+      const result = await model.generateContent(prompt);
+      const response = await result.response;
+      const analysisText = response.text();
+
+      setAnalysis({
+        timestamp: new Date().toISOString(),
+        snapshotId: selectedSnapshot.id,
+        content: analysisText,
+        processedData: processedData
+      });
+
+    } catch (error) {
+      console.error('Error generating analysis:', error);
+      alert('Failed to generate analysis: ' + error.message);
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
+
+  const renderProcessedDataReview = () => {
+    if (!processedData) return null;
+
     return (
-      <div className="mb-6">
-        <h3 className="text-lg font-semibold text-purple-400 mb-2">{title}</h3>
-        <div className="bg-[#2D2D2F] p-4 rounded-xl">
-          {data.length > 0 ? (
-            <ul className="space-y-2">
-              {data.map((item, index) => (
-                <li key={index} className="text-gray-300">
-                  {item}
-                </li>
+      <div className="bg-[#1D1D1F]/90 p-6 rounded-xl backdrop-blur-xl border border-purple-500/20 mt-6">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-xl font-semibold text-purple-400">
+            Journey Analysis Results
+          </h3>
+          <div className="flex space-x-4">
+            <button
+              onClick={generateAIAnalysis}
+              disabled={isAnalyzing}
+              className={`px-4 py-2 rounded-lg transition-colors ${
+                isAnalyzing 
+                  ? 'bg-purple-600/50 cursor-not-allowed' 
+                  : 'bg-purple-600 hover:bg-purple-700'
+              }`}
+            >
+              {isAnalyzing ? 'Analyzing...' : 'Generate AI Analysis'}
+            </button>
+            <button
+              onClick={() => setProcessedData(null)}
+              className="text-gray-400 hover:text-gray-300"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+
+        <div className="space-y-6">
+          {/* Pre-Purchase Journey */}
+          <div className="bg-[#2D2D2F] p-4 rounded-lg">
+            <h4 className="text-lg font-semibold text-purple-400 mb-3">Pre-Purchase Journey</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {processedData.pre_purchase.map((item, index) => (
+                <div key={index} className="p-3 bg-[#1D1D1F] rounded-lg">
+                  <h5 className="font-semibold text-purple-300">{item.name}</h5>
+                  <div className="mt-2 space-y-1 text-sm">
+                    <p className="text-gray-300">Monthly Visits: {item.monthly_visits?.toLocaleString()}</p>
+                    <p className="text-gray-300">Traffic Rank: {item.traffic_rank}</p>
+                    <p className="text-gray-300">Visit Duration: {item.visit_duration} seconds</p>
+                    <p className="text-gray-300">Bounce Rate: {item.bounce_rate}%</p>
+                    <p className="text-gray-300">Page Views: {item.page_views}</p>
+                  </div>
+                </div>
               ))}
-            </ul>
-          ) : (
-            <p className="text-gray-400">No {title.toLowerCase()} data available.</p>
+            </div>
+          </div>
+
+          {/* Purchase Experience */}
+          <div className="bg-[#2D2D2F] p-4 rounded-lg">
+            <h4 className="text-lg font-semibold text-purple-400 mb-3">Purchase Experience</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {processedData.purchase.map((item, index) => (
+                <div key={index} className="p-3 bg-[#1D1D1F] rounded-lg">
+                  <h5 className="font-semibold text-purple-300">{item.name}</h5>
+                  <div className="mt-2 space-y-1 text-sm">
+                    <p className="text-gray-300">Funding Total: ${item.funding_total.toLocaleString()}</p>
+                    <p className="text-gray-300">Number of Investors: {item.num_investors}</p>
+                    <p className="text-gray-300">Organization Count: {item.org_count}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Post-Purchase Journey */}
+          <div className="bg-[#2D2D2F] p-4 rounded-lg">
+            <h4 className="text-lg font-semibold text-purple-400 mb-3">Post-Purchase Journey</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {processedData.post_purchase.map((item, index) => (
+                <div key={index} className="p-3 bg-[#1D1D1F] rounded-lg">
+                  <h5 className="font-semibold text-purple-300">{item.name}</h5>
+                  <div className="mt-2 space-y-1 text-sm">
+                    <p className="text-gray-300">Social Presence: {item.social_presence}</p>
+                    <p className="text-gray-300">Contact Channels: {item.contact_channels}</p>
+                    <p className="text-gray-300">Engagement Score: {item.engagement_score}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Optimization Opportunities */}
+          <div className="bg-[#2D2D2F] p-4 rounded-lg">
+            <h4 className="text-lg font-semibold text-purple-400 mb-3">Optimization Opportunities</h4>
+            <div className="grid grid-cols-1 gap-4">
+              {processedData.optimization.map((item, index) => (
+                <div key={index} className="p-3 bg-[#1D1D1F] rounded-lg">
+                  <h5 className="font-semibold text-purple-300">{item.name}</h5>
+                  <div className="mt-2">
+                    <div className="mb-2">
+                      <h6 className="text-sm font-semibold text-purple-300">Growth Opportunities:</h6>
+                      <ul className="list-disc list-inside text-sm text-gray-300">
+                        {item.growth_opportunities.map((opp, i) => (
+                          <li key={i}>{opp}</li>
+                        ))}
+                      </ul>
+                    </div>
+                    <div>
+                      <h6 className="text-sm font-semibold text-purple-300">Improvement Areas:</h6>
+                      <ul className="list-disc list-inside text-sm text-gray-300">
+                        {item.improvement_areas.map((area, i) => (
+                          <li key={i}>{area}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Key Metrics */}
+          <div className="bg-[#2D2D2F] p-4 rounded-lg">
+            <h4 className="text-lg font-semibold text-purple-400 mb-3">Key Metrics</h4>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="p-3 bg-[#1D1D1F] rounded-lg">
+                <p className="text-sm text-gray-400">Monthly Visits</p>
+                <p className="text-xl font-semibold text-purple-300">
+                  {processedData.metrics.total_monthly_visits.toLocaleString()}
+                </p>
+              </div>
+              <div className="p-3 bg-[#1D1D1F] rounded-lg">
+                <p className="text-sm text-gray-400">Avg Bounce Rate</p>
+                <p className="text-xl font-semibold text-purple-300">
+                  {processedData.metrics.avg_bounce_rate}
+                </p>
+              </div>
+              <div className="p-3 bg-[#1D1D1F] rounded-lg">
+                <p className="text-sm text-gray-400">Total Funding</p>
+                <p className="text-xl font-semibold text-purple-300">
+                  ${processedData.metrics.total_funding.toLocaleString()}
+                </p>
+              </div>
+              <div className="p-3 bg-[#1D1D1F] rounded-lg">
+                <p className="text-sm text-gray-400">Total Investors</p>
+                <p className="text-xl font-semibold text-purple-300">
+                  {processedData.metrics.total_investors.toLocaleString()}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* AI Analysis Results */}
+          {analysis && (
+            <div className="bg-[#2D2D2F] p-4 rounded-lg">
+              <h4 className="text-lg font-semibold text-purple-400 mb-3">AI Analysis</h4>
+              <div className="prose prose-invert max-w-none">
+                <pre className="whitespace-pre-wrap text-sm text-gray-300">
+                  {analysis.content}
+                </pre>
+              </div>
+              <div className="mt-2 text-xs text-gray-500">
+                Generated on: {new Date(analysis.timestamp).toLocaleString()}
+              </div>
+            </div>
           )}
         </div>
       </div>
     );
   };
 
-  const renderSourcesSection = (sources) => {
-    if (!sources || sources.length === 0) return null;
-
-    return (
-      <div className="mb-6">
-        <h3 className="text-lg font-semibold text-purple-400 mb-2">Data Sources</h3>
-        <div className="bg-[#2D2D2F] p-4 rounded-xl">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {sources.map((source, index) => (
-              <div key={index} className="flex items-start space-x-3">
-                <div className="flex-shrink-0 w-8 h-8 bg-purple-500/10 rounded-full flex items-center justify-center">
-                  <span className="text-purple-400 text-sm">{index + 1}</span>
+  return (
+    <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="mb-8">
+        <h2 className="text-2xl font-bold text-white mb-6">Stored Snapshots</h2>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {storedSnapshots.map((snapshot) => (
+            <div 
+              key={snapshot.id}
+              className="bg-[#1D1D1F]/90 p-6 rounded-xl backdrop-blur-xl border border-purple-500/20 hover:border-purple-500/40 transition-all cursor-pointer"
+              onClick={() => setSelectedSnapshot(snapshot)}
+            >
+              <div className="flex flex-col space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-200 font-mono text-sm">{snapshot.id}</span>
+                  <span className="text-xs text-gray-500">
+                    {new Date(snapshot.timestamp).toLocaleDateString()}
+                  </span>
                 </div>
-                <div className="flex-grow">
-                  <div className="flex justify-between items-start">
-                    <a 
-                      href={source.url} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="text-purple-400 hover:text-purple-300 transition-colors"
-                    >
-                      {source.domain}
-                    </a>
-                    <span className="text-xs text-gray-500 ml-2">
-                      {source.section}
-                    </span>
-                  </div>
-                  <p className="text-gray-400 text-sm mt-1">
-                    Accessed: {source.date}
-                  </p>
+                
+                {/* Preview of data */}
+                <div className="mt-2 text-sm text-gray-400">
+                  {snapshot.data && typeof snapshot.data === 'object' && (
+                    <div className="space-y-1">
+                      {Object.keys(snapshot.data).slice(0, 3).map(key => (
+                        <div key={key} className="truncate">
+                          {key}: {typeof snapshot.data[key] === 'object' ? '...' : snapshot.data[key]}
+                        </div>
+                      ))}
+                      {Object.keys(snapshot.data).length > 3 && (
+                        <div className="text-purple-400">+ more data...</div>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
-        <div className="text-sm text-gray-400 mt-2">
-          * Data compiled from {sources.length} trusted sources
-        </div>
-      </div>
-    );
-  };
-
-  const renderPhaseStatus = () => {
-    const phases = [
-      'Starting Analysis',
-      'Pre-Purchase Journey',
-      'Purchase Experience',
-      'Post-Purchase Journey',
-      'Optimization',
-      'Data Sources'
-    ];
-
-    return (
-      <div className="mb-6">
-        <div className="flex items-center space-x-2">
-          {phases.map((phase, index) => (
-            <div key={index} className="flex items-center">
-              <div className={`h-2 w-2 rounded-full ${
-                currentPhase > index ? 'bg-purple-500' : 'bg-gray-600'
-              }`} />
-              <span className={`text-sm ml-1 ${
-                currentPhase > index ? 'text-purple-400' : 'text-gray-500'
-              }`}>
-                {phase}
-              </span>
-              {index < phases.length - 1 && (
-                <div className={`h-0.5 w-4 mx-2 ${
-                  currentPhase > index ? 'bg-purple-500' : 'bg-gray-600'
-                }`} />
-              )}
             </div>
           ))}
         </div>
-      </div>
-    );
-  };
 
-  return (
-    <div className="min-h-screen bg-[#131314] text-white p-4 sm:p-6">
-      <div className="max-w-7xl mx-auto">
-        {/* Header Section */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 sm:mb-8 space-y-4 sm:space-y-0">
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-purple-400 via-purple-600 to-indigo-600 bg-clip-text text-transparent">
-              Customer Journey Mapping
-            </h1>
-            <p className="text-gray-400 mt-2">Map and analyze customer touchpoints</p>
-          </div>
-        </div>
-
-        {/* Navigation Tabs */}
-        <div className="bg-[#1D1D1F] p-1 rounded-xl mb-6 sm:mb-8 inline-flex w-full sm:w-auto overflow-x-auto">
-          <Link 
-            href="/icp-creation"
-            className="flex-1 sm:flex-none px-3 sm:px-4 py-2 rounded-lg text-gray-400 hover:text-white hover:bg-purple-600/50 transition-all duration-200 text-sm sm:text-base whitespace-nowrap"
-          >
-            ICP Creation
-          </Link>
-          <button 
-            className="flex-1 sm:flex-none px-3 sm:px-4 py-2 rounded-lg bg-purple-600 text-white text-sm sm:text-base whitespace-nowrap"
-          >
-            Journey Mapping
-          </button>
-        </div>
-
-        {/* Add phase status indicator */}
-        {isLoading && renderPhaseStatus()}
-
-        {/* Main Content */}
-        <div className="bg-[#1D1D1F] rounded-2xl border border-purple-500/10 p-4 sm:p-6">
-          <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
-            <div>
-              <textarea
-                value={userInput}
-                onChange={(e) => setUserInput(e.target.value)}
-                placeholder="Enter your business details for journey mapping..."
-                className="w-full h-32 sm:h-40 px-3 sm:px-4 py-2 sm:py-3 bg-[#131314] text-gray-200 rounded-xl border border-purple-500/20 
-                         placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50 resize-none text-sm sm:text-base"
-                disabled={isLoading}
-              />
-            </div>
-            <button
-              type="submit"
-              disabled={isLoading || !userInput.trim()}
-              className={`w-full py-3 sm:py-4 px-4 sm:px-6 rounded-xl font-medium transition-all duration-200 text-sm sm:text-base
-                        ${!isLoading && userInput.trim()
-                  ? 'bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white shadow-lg shadow-purple-500/25'
-                  : 'bg-gray-600 text-gray-300 cursor-not-allowed'}`}
-            >
-              {isLoading ? (
-                <div className="flex items-center justify-center space-x-2">
-                  <div className="w-4 sm:w-5 h-4 sm:h-5 border-t-2 border-b-2 border-white rounded-full animate-spin"></div>
-                  <span>Analyzing...</span>
+        {/* Selected Snapshot */}
+        {selectedSnapshot && (
+          <div className="mt-8 space-y-6">
+            <div className="bg-[#1D1D1F]/90 p-6 rounded-xl backdrop-blur-xl border border-purple-500/20">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-xl font-semibold text-purple-400">
+                  Snapshot Details: {selectedSnapshot.id}
+                </h3>
+                <div className="flex space-x-4">
+                  <button 
+                    onClick={() => processSnapshotData(selectedSnapshot)}
+                    disabled={isProcessing}
+                    className={`px-4 py-2 rounded-lg transition-colors ${
+                      isProcessing 
+                        ? 'bg-purple-600/50 cursor-not-allowed' 
+                        : 'bg-purple-600 hover:bg-purple-700'
+                    }`}
+                  >
+                    {isProcessing ? 'Processing...' : 'Process Data'}
+                  </button>
+                  <button 
+                    onClick={() => setSelectedSnapshot(null)}
+                    className="text-gray-400 hover:text-gray-300"
+                  >
+                    Close
+                  </button>
                 </div>
-              ) : (
-                'Create Journey Map'
-              )}
-            </button>
-          </form>
-
-          {/* Analysis Results */}
-          <div ref={analysisRef} className="mt-6">
-            {error ? (
-              <div className="text-red-500">{error}</div>
-            ) : (
-              <div className="space-y-6">
-                {renderJourneySection("Pre-Purchase Journey", journeyAnalysis.pre_purchase)}
-                {renderJourneySection("Purchase Experience", journeyAnalysis.purchase)}
-                {renderJourneySection("Post-Purchase Journey", journeyAnalysis.post_purchase)}
-                {renderJourneySection("Optimization Opportunities", journeyAnalysis.optimization)}
-                
-                {/* Add Sources Section */}
-                {renderSourcesSection(journeyAnalysis.sources)}
               </div>
-            )}
-          </div>
+              <pre className="bg-[#2D2D2F] p-4 rounded-lg overflow-auto max-h-96 text-sm text-gray-300">
+                {JSON.stringify(selectedSnapshot.data, null, 2)}
+              </pre>
+            </div>
 
-          {/* Export PDF Button */}
-          <div className="mt-6">
-            <button
-              onClick={exportToPDF}
-              disabled={isExporting || !journeyAnalysis || Object.keys(journeyAnalysis).length === 0}
-              className={`w-full py-3 sm:py-4 px-4 sm:px-6 rounded-xl font-medium transition-all duration-200 text-sm sm:text-base
-                          ${!isExporting && journeyAnalysis && Object.keys(journeyAnalysis).length > 0
-                ? 'bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white shadow-lg shadow-green-500/25'
-                : 'bg-gray-600 text-gray-300 cursor-not-allowed'}`}
-            >
-              {isExporting ? (
-                <div className="flex items-center justify-center space-x-2">
-                  <div className="w-4 sm:w-5 h-4 sm:h-5 border-t-2 border-b-2 border-white rounded-full animate-spin"></div>
-                  <span>Exporting...</span>
-                </div>
-              ) : (
-                'Export to PDF'
-              )}
-            </button>
+            {/* Processed Data Review */}
+            {renderProcessedDataReview()}
           </div>
-        </div>
+        )}
+
+        {storedSnapshots.length === 0 && (
+          <div className="text-center text-gray-400 py-12">
+            No stored snapshots found
+          </div>
+        )}
       </div>
     </div>
   );

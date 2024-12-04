@@ -1,344 +1,591 @@
 "use client";
 
-import { useState, useRef, useEffect } from 'react';
-import { useStoredInput } from '@/hooks/useStoredInput';
-import jsPDF from 'jspdf';
+import { useState, useEffect } from 'react';
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import Link from 'next/link';
+import jsPDF from 'jspdf';
+
+// Initialize Gemini
+const genAI = new GoogleGenerativeAI("AIzaSyAE2SKBA38bOktQBdXS6mTK5Y1a-nKB3Mo");
 
 export default function FeaturePriorityContent() {
-  const [userInput, setUserInput] = useStoredInput();
-  const [featureAnalysis, setFeatureAnalysis] = useState({
-    social_impact: [],
-    economic_impact: [],
-    environmental_impact: [],
-    implementation_priority: [],
-    sources: []
-  });
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [currentPhase, setCurrentPhase] = useState(0);
-  const analysisRef = useRef(null);
+  const [storedSnapshots, setStoredSnapshots] = useState([]);
+  const [selectedSnapshot, setSelectedSnapshot] = useState(null);
+  const [analysis, setAnalysis] = useState(null);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [processedData, setProcessedData] = useState(null);
+  const [isProcessing, setIsProcessing] = useState(false);
 
-  // Load feature analysis from local storage on component mount
   useEffect(() => {
-    const storedAnalysis = localStorage.getItem(`featureAnalysis_${userInput}`);
-    if (storedAnalysis) {
-      setFeatureAnalysis(JSON.parse(storedAnalysis));
-    } else if (userInput.trim()) {
-      handleSubmit(); // Automatically submit if local storage is empty and input is filled
-    }
-  }, [userInput]);
+    loadAllSnapshots();
+  }, []);
 
-  const handleSubmit = async (e) => {
-    if (e) e.preventDefault(); // Prevent default only if event is provided
-    if (!userInput.trim() || isLoading) return;
+  const loadAllSnapshots = () => {
+    const allKeys = Object.keys(localStorage);
+    const snapshots = allKeys
+      .filter(key => key.includes('snapshot_'))
+      .map(key => {
+        try {
+          const data = JSON.parse(localStorage.getItem(key));
+          return {
+            id: key.split('snapshot_')[1],
+            data: data,
+            timestamp: new Date().toISOString()
+          };
+        } catch (e) {
+          console.error(`Error parsing snapshot ${key}:`, e);
+          return null;
+        }
+      })
+      .filter(Boolean);
 
-    setIsLoading(true);
-    setError(null);
-    setCurrentPhase(1);
+    setStoredSnapshots(snapshots);
+  };
 
+  const processSnapshotData = async (snapshotData) => {
     try {
-      const response = await fetch('http://127.0.0.1:5000/api/feature-priority', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ query: userInput }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch data');
-      }
-
-      const data = await response.json();
-      console.log('Feature API Response:', data);
+      setIsProcessing(true);
+      console.log('Processing snapshot data:', snapshotData.id);
       
-      // Update data progressively
-      if (data.social_impact?.length) {
-        setCurrentPhase(2);
-        setFeatureAnalysis(prev => ({ ...prev, social_impact: data.social_impact }));
+      let raw_data = [];
+      if (snapshotData && snapshotData.data) {
+        if (Array.isArray(snapshotData.data)) {
+          raw_data = snapshotData.data;
+        } else if (snapshotData.data.data && Array.isArray(snapshotData.data.data)) {
+          raw_data = snapshotData.data.data;
+        } else if (snapshotData.data.results && Array.isArray(snapshotData.data.results)) {
+          raw_data = snapshotData.data.results;
+        }
       }
-      if (data.economic_impact?.length) {
-        setCurrentPhase(3);
-        setFeatureAnalysis(prev => ({ ...prev, economic_impact: data.economic_impact }));
+
+      if (!Array.isArray(raw_data) || raw_data.length === 0) {
+        throw new Error('No valid data array found in snapshot');
       }
-      if (data.environmental_impact?.length) {
-        setCurrentPhase(4);
-        setFeatureAnalysis(prev => ({ ...prev, environmental_impact: data.environmental_impact }));
-      }
-      if (data.implementation_priority?.length) {
-        setCurrentPhase(5);
-        setFeatureAnalysis(prev => ({ ...prev, implementation_priority: data.implementation_priority }));
-      }
-      if (data.sources?.length) {
-        setCurrentPhase(6);
-        setFeatureAnalysis(prev => ({ ...prev, sources: data.sources }));
-      }
-      
-      // Store the analysis in local storage
-      localStorage.setItem(`featureAnalysis_${userInput}`, JSON.stringify(data));
+
+      // Process feature priority data
+      const processed = {
+        social_impact: analyzeSocialImpact(raw_data),
+        economic_impact: analyzeEconomicImpact(raw_data),
+        environmental_impact: analyzeEnvironmentalImpact(raw_data),
+        implementation_priority: analyzeImplementationPriority(raw_data),
+        metrics: analyzeMetrics(raw_data)
+      };
+
+      console.log('Processed feature data:', processed);
+      setProcessedData(processed);
 
     } catch (error) {
-      console.error('Error:', error);
-      setError('Failed to get feature analysis. Please try again.');
+      console.error('Error processing data:', error);
+      alert('Failed to process snapshot data: ' + error.message);
     } finally {
-      setIsLoading(false);
+      setIsProcessing(false);
     }
   };
 
-  const exportToPDF = () => {
-    const doc = new jsPDF();
-    doc.setFontSize(16);
-    doc.text("Feature Priority Analysis", 10, 10);
-    
-    const sections = [
-      { title: "Social Impact", data: featureAnalysis.social_impact },
-      { title: "Economic Impact", data: featureAnalysis.economic_impact },
-      { title: "Environmental Impact", data: featureAnalysis.environmental_impact },
-      { title: "Implementation Priority", data: featureAnalysis.implementation_priority },
-      { title: "Data Sources", data: featureAnalysis.sources.map(source => source.domain || new URL(source.url).hostname.replace('www.', '')) }
-    ];
-
-    let y = 20;
-    sections.forEach(section => {
-      doc.setFontSize(14);
-      doc.text(section.title, 10, y);
-      y += 10;
-      section.data.forEach(item => {
-        doc.setFontSize(12);
-        doc.text(`- ${item}`, 10, y);
-        y += 5;
-      });
-      y += 10; // Add space between sections
-    });
-
-    doc.save('feature_priority_analysis.pdf');
+  const analyzeSocialImpact = (data) => {
+    return data
+      .filter(company => company.builtwith_tech || company.total_active_products)
+      .map(company => ({
+        name: company.name,
+        tech_adoption: company.builtwith_tech?.length || 0,
+        product_impact: company.total_active_products || 0,
+        market_reach: calculateMarketReach(company)
+      }))
+      .filter(item => item.tech_adoption > 0 || item.product_impact > 0);
   };
 
-  const renderFeatureSection = (title, data) => {
+  const analyzeEconomicImpact = (data) => {
+    return data
+      .filter(company => company.funding_rounds || company.similar_companies)
+      .map(company => ({
+        name: company.name,
+        funding_status: company.funding_rounds?.num_funding_rounds || 0,
+        funding_amount: company.funding_rounds?.value?.value_usd || 0,
+        market_competition: company.similar_companies?.length || 0,
+        growth_potential: calculateGrowthPotential(company)
+      }))
+      .filter(item => item.funding_status > 0 || item.market_competition > 0);
+  };
+
+  const analyzeEnvironmentalImpact = (data) => {
+    return data
+      .filter(company => company.builtwith_tech || company.industries)
+      .map(company => ({
+        name: company.name,
+        tech_efficiency: calculateTechEfficiency(company),
+        sustainability_score: calculateSustainabilityScore(company),
+        resource_optimization: analyzeResourceOptimization(company)
+      }))
+      .filter(item => item.tech_efficiency || item.sustainability_score);
+  };
+
+  const analyzeImplementationPriority = (data) => {
+    return data.map(company => ({
+      name: company.name,
+      tech_priorities: generateTechPriorities(company),
+      product_priorities: generateProductPriorities(company),
+      market_priorities: generateMarketPriorities(company),
+      timeline_estimate: estimateTimeline(company)
+    }));
+  };
+
+  const analyzeMetrics = (data) => {
+    return {
+      avg_tech_stack: Math.round(data.reduce((sum, company) => sum + (company.builtwith_tech?.length || 0), 0) / data.length),
+      avg_products: Math.round(data.reduce((sum, company) => sum + (company.total_active_products || 0), 0) / data.length),
+      avg_competitors: Math.round(data.reduce((sum, company) => sum + (company.similar_companies?.length || 0), 0) / data.length),
+      avg_funding_rounds: Math.round(data.reduce((sum, company) => sum + (company.funding_rounds?.num_funding_rounds || 0), 0) / data.length)
+    };
+  };
+
+  // Helper functions
+  const calculateMarketReach = (company) => {
+    const factors = [];
+    if (company.monthly_visits > 10000) factors.push('High web traffic');
+    if (company.social_media_links?.length > 2) factors.push('Strong social presence');
+    return factors;
+  };
+
+  const calculateGrowthPotential = (company) => {
+    const potential = [];
+    if (company.funding_rounds?.num_funding_rounds > 2) potential.push('Strong funding history');
+    if (company.similar_companies?.length < 5) potential.push('Low competition');
+    return potential;
+  };
+
+  const calculateTechEfficiency = (company) => {
+    return {
+      score: company.builtwith_tech?.length || 0,
+      factors: analyzeTechFactors(company)
+    };
+  };
+
+  const calculateSustainabilityScore = (company) => {
+    return {
+      score: Math.round(Math.random() * 100), // Replace with actual calculation
+      impact: ['Resource usage', 'Energy efficiency']
+    };
+  };
+
+  const analyzeResourceOptimization = (company) => {
+    return {
+      efficiency: company.builtwith_tech?.length > 10 ? 'High' : 'Low',
+      improvements: ['Resource allocation', 'Tech stack optimization']
+    };
+  };
+
+  const generateTechPriorities = (company) => {
+    const priorities = [];
+    if (company.builtwith_tech?.length < 10) priorities.push('Expand tech stack');
+    if (!company.active_tech_count) priorities.push('Modernize technology');
+    return priorities;
+  };
+
+  const generateProductPriorities = (company) => {
+    const priorities = [];
+    if (company.total_active_products < 5) priorities.push('Diversify product portfolio');
+    if (company.similar_companies?.length > 5) priorities.push('Differentiate offerings');
+    return priorities;
+  };
+
+  const generateMarketPriorities = (company) => {
+    const priorities = [];
+    if (company.funding_rounds?.num_funding_rounds < 2) priorities.push('Secure funding');
+    if (company.similar_companies?.length > 10) priorities.push('Market positioning');
+    return priorities;
+  };
+
+  const estimateTimeline = (company) => {
+    return {
+      short_term: ['Tech adoption', 'Product updates'],
+      mid_term: ['Market expansion', 'Feature development'],
+      long_term: ['Industry leadership', 'Innovation pipeline']
+    };
+  };
+
+  const analyzeTechFactors = (company) => {
+    const factors = [];
+    
+    if (company.builtwith_tech) {
+      // Analyze tech categories
+      const categories = new Set(company.builtwith_tech.flatMap(tech => tech.technology_category || []));
+      
+      // Add factors based on tech categories
+      if (categories.has('analytics')) factors.push('Analytics Integration');
+      if (categories.has('cdn')) factors.push('Content Delivery');
+      if (categories.has('widgets')) factors.push('UI Components');
+      if (categories.has('framework')) factors.push('Modern Framework');
+      if (categories.has('hosting')) factors.push('Cloud Infrastructure');
+      
+      // Add factors based on tech count
+      if (company.builtwith_tech.length > 20) {
+        factors.push('Advanced Tech Stack');
+      } else if (company.builtwith_tech.length > 10) {
+        factors.push('Moderate Tech Stack');
+      } else {
+        factors.push('Basic Tech Stack');
+      }
+
+      // Add adoption factors
+      const popularTechs = company.builtwith_tech.filter(tech => 
+        tech.num_companies_using && parseInt(tech.num_companies_using) > 100000
+      ).length;
+      
+      if (popularTechs > 5) {
+        factors.push('High Tech Adoption');
+      } else if (popularTechs > 2) {
+        factors.push('Medium Tech Adoption');
+      } else {
+        factors.push('Low Tech Adoption');
+      }
+    }
+
+    // Add default factor if no tech data
+    if (factors.length === 0) {
+      factors.push('Tech Stack Analysis Needed');
+    }
+
+    return factors;
+  };
+
+  const generateAIAnalysis = async () => {
+    try {
+      setIsAnalyzing(true);
+      
+      const prompt = `
+        Analyze this feature priority data and provide strategic insights:
+
+        Social Impact:
+        ${JSON.stringify(processedData.social_impact, null, 2)}
+
+        Economic Impact:
+        ${JSON.stringify(processedData.economic_impact, null, 2)}
+
+        Environmental Impact:
+        ${JSON.stringify(processedData.environmental_impact, null, 2)}
+
+        Implementation Priority:
+        ${JSON.stringify(processedData.implementation_priority, null, 2)}
+
+        Key Metrics:
+        ${JSON.stringify(processedData.metrics, null, 2)}
+
+        Please provide:
+        1. Feature Impact Analysis
+        2. Priority Rankings
+        3. Implementation Strategy
+        4. Timeline Recommendations
+        5. Success Metrics
+
+        Format the analysis in clear sections with bullet points.
+      `;
+
+      const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
+      const result = await model.generateContent(prompt);
+      const response = await result.response;
+      const analysisText = response.text();
+
+      setAnalysis({
+        timestamp: new Date().toISOString(),
+        snapshotId: selectedSnapshot.id,
+        content: analysisText,
+        processedData: processedData
+      });
+
+    } catch (error) {
+      console.error('Error generating analysis:', error);
+      alert('Failed to generate analysis: ' + error.message);
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
+
+  const renderProcessedDataReview = () => {
+    if (!processedData) return null;
+
     return (
-      <div className="mb-6">
-        <h3 className="text-lg font-semibold text-purple-400 mb-2">{title}</h3>
-        <div className="bg-[#2D2D2F] p-4 rounded-xl">
-          {data.length > 0 ? (
-            <ul className="space-y-2">
-              {data.map((item, index) => (
-                <li key={index} className="text-gray-300">
-                  {item}
-                </li>
+      <div className="bg-[#1D1D1F]/90 p-6 rounded-xl backdrop-blur-xl border border-purple-500/20 mt-6">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-xl font-semibold text-purple-400">
+            Feature Priority Analysis
+          </h3>
+          <div className="flex space-x-4">
+            <button
+              onClick={generateAIAnalysis}
+              disabled={isAnalyzing}
+              className={`px-4 py-2 rounded-lg transition-colors ${
+                isAnalyzing 
+                  ? 'bg-purple-600/50 cursor-not-allowed' 
+                  : 'bg-purple-600 hover:bg-purple-700'
+              }`}
+            >
+              {isAnalyzing ? 'Analyzing...' : 'Generate AI Analysis'}
+            </button>
+            <button
+              onClick={() => setProcessedData(null)}
+              className="text-gray-400 hover:text-gray-300"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+
+        <div className="space-y-6">
+          {/* Social Impact Section */}
+          <div className="bg-[#2D2D2F] p-4 rounded-lg">
+            <h4 className="text-lg font-semibold text-purple-400 mb-3">Social Impact</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {processedData.social_impact.map((item, index) => (
+                <div key={index} className="p-3 bg-[#1D1D1F] rounded-lg">
+                  <h5 className="font-semibold text-purple-300">{item.name}</h5>
+                  <div className="mt-2 space-y-1 text-sm">
+                    <p className="text-gray-300">Tech Adoption: {item.tech_adoption}</p>
+                    <p className="text-gray-300">Product Impact: {item.product_impact}</p>
+                    <div className="mt-2">
+                      <p className="text-gray-400 font-semibold">Market Reach:</p>
+                      <ul className="list-disc list-inside text-gray-300">
+                        {item.market_reach.map((reach, i) => <li key={i}>{reach}</li>)}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
               ))}
-            </ul>
-          ) : (
-            <p className="text-gray-400">No {title.toLowerCase()} data available.</p>
+            </div>
+          </div>
+
+          {/* Economic Impact Section */}
+          <div className="bg-[#2D2D2F] p-4 rounded-lg">
+            <h4 className="text-lg font-semibold text-purple-400 mb-3">Economic Impact</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {processedData.economic_impact.map((item, index) => (
+                <div key={index} className="p-3 bg-[#1D1D1F] rounded-lg">
+                  <h5 className="font-semibold text-purple-300">{item.name}</h5>
+                  <div className="mt-2 space-y-1 text-sm">
+                    <p className="text-gray-300">Funding Status: {item.funding_status} rounds</p>
+                    <p className="text-gray-300">Funding Amount: ${item.funding_amount.toLocaleString()}</p>
+                    <p className="text-gray-300">Market Competition: {item.market_competition} competitors</p>
+                    <div className="mt-2">
+                      <p className="text-gray-400 font-semibold">Growth Potential:</p>
+                      <ul className="list-disc list-inside text-gray-300">
+                        {item.growth_potential.map((potential, i) => <li key={i}>{potential}</li>)}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Environmental Impact Section */}
+          <div className="bg-[#2D2D2F] p-4 rounded-lg">
+            <h4 className="text-lg font-semibold text-purple-400 mb-3">Environmental Impact</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {processedData.environmental_impact.map((item, index) => (
+                <div key={index} className="p-3 bg-[#1D1D1F] rounded-lg">
+                  <h5 className="font-semibold text-purple-300">{item.name}</h5>
+                  <div className="mt-2 space-y-2">
+                    <div>
+                      <p className="text-gray-400 font-semibold">Tech Efficiency:</p>
+                      <p className="text-gray-300">Score: {item.tech_efficiency.score}</p>
+                      <ul className="list-disc list-inside text-gray-300">
+                        {item.tech_efficiency.factors.map((factor, i) => <li key={i}>{factor}</li>)}
+                      </ul>
+                    </div>
+                    <div>
+                      <p className="text-gray-400 font-semibold">Sustainability:</p>
+                      <p className="text-gray-300">Score: {item.sustainability_score.score}</p>
+                      <ul className="list-disc list-inside text-gray-300">
+                        {item.sustainability_score.impact.map((impact, i) => <li key={i}>{impact}</li>)}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Implementation Priority Section */}
+          <div className="bg-[#2D2D2F] p-4 rounded-lg">
+            <h4 className="text-lg font-semibold text-purple-400 mb-3">Implementation Priority</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {processedData.implementation_priority.map((item, index) => (
+                <div key={index} className="p-3 bg-[#1D1D1F] rounded-lg">
+                  <h5 className="font-semibold text-purple-300">{item.name}</h5>
+                  <div className="mt-2 space-y-2">
+                    <div>
+                      <p className="text-gray-400 font-semibold">Tech Priorities:</p>
+                      <ul className="list-disc list-inside text-gray-300">
+                        {item.tech_priorities.map((priority, i) => <li key={i}>{priority}</li>)}
+                      </ul>
+                    </div>
+                    <div>
+                      <p className="text-gray-400 font-semibold">Product Priorities:</p>
+                      <ul className="list-disc list-inside text-gray-300">
+                        {item.product_priorities.map((priority, i) => <li key={i}>{priority}</li>)}
+                      </ul>
+                    </div>
+                    <div>
+                      <p className="text-gray-400 font-semibold">Timeline:</p>
+                      <div className="grid grid-cols-3 gap-2 mt-1">
+                        <div>
+                          <p className="text-xs text-gray-400">Short Term</p>
+                          <ul className="list-disc list-inside text-gray-300 text-sm">
+                            {item.timeline_estimate.short_term.map((task, i) => <li key={i}>{task}</li>)}
+                          </ul>
+                        </div>
+                        <div>
+                          <p className="text-xs text-gray-400">Mid Term</p>
+                          <ul className="list-disc list-inside text-gray-300 text-sm">
+                            {item.timeline_estimate.mid_term.map((task, i) => <li key={i}>{task}</li>)}
+                          </ul>
+                        </div>
+                        <div>
+                          <p className="text-xs text-gray-400">Long Term</p>
+                          <ul className="list-disc list-inside text-gray-300 text-sm">
+                            {item.timeline_estimate.long_term.map((task, i) => <li key={i}>{task}</li>)}
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Key Metrics */}
+          <div className="bg-[#2D2D2F] p-4 rounded-lg">
+            <h4 className="text-lg font-semibold text-purple-400 mb-3">Key Metrics</h4>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="p-3 bg-[#1D1D1F] rounded-lg">
+                <p className="text-sm text-gray-400">Avg Tech Stack</p>
+                <p className="text-xl font-semibold text-purple-300">
+                  {processedData.metrics.avg_tech_stack}
+                </p>
+              </div>
+              <div className="p-3 bg-[#1D1D1F] rounded-lg">
+                <p className="text-sm text-gray-400">Avg Products</p>
+                <p className="text-xl font-semibold text-purple-300">
+                  {processedData.metrics.avg_products}
+                </p>
+              </div>
+              <div className="p-3 bg-[#1D1D1F] rounded-lg">
+                <p className="text-sm text-gray-400">Avg Competitors</p>
+                <p className="text-xl font-semibold text-purple-300">
+                  {processedData.metrics.avg_competitors}
+                </p>
+              </div>
+              <div className="p-3 bg-[#1D1D1F] rounded-lg">
+                <p className="text-sm text-gray-400">Avg Funding Rounds</p>
+                <p className="text-xl font-semibold text-purple-300">
+                  {processedData.metrics.avg_funding_rounds}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* AI Analysis Results */}
+          {analysis && (
+            <div className="bg-[#2D2D2F] p-4 rounded-lg">
+              <h4 className="text-lg font-semibold text-purple-400 mb-3">AI Analysis</h4>
+              <div className="prose prose-invert max-w-none">
+                <pre className="whitespace-pre-wrap text-sm text-gray-300">
+                  {analysis.content}
+                </pre>
+              </div>
+              <div className="mt-2 text-xs text-gray-500">
+                Generated on: {new Date(analysis.timestamp).toLocaleString()}
+              </div>
+            </div>
           )}
         </div>
       </div>
     );
   };
 
-  const renderSourcesSection = (sources) => {
-    if (!sources || sources.length === 0) return null;
-
-    return (
-      <div className="mb-6">
-        <h3 className="text-lg font-semibold text-purple-400 mb-2">Data Sources</h3>
-        <div className="bg-[#2D2D2F] p-4 rounded-xl">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {sources.map((source, index) => (
-              <div key={index} className="flex items-start space-x-3">
-                <div className="flex-shrink-0 w-8 h-8 bg-purple-500/10 rounded-full flex items-center justify-center">
-                  <span className="text-purple-400 text-sm">{index + 1}</span>
+  return (
+    <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="mb-8">
+        <h2 className="text-2xl font-bold text-white mb-6">Stored Snapshots</h2>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {storedSnapshots.map((snapshot) => (
+            <div 
+              key={snapshot.id}
+              className="bg-[#1D1D1F]/90 p-6 rounded-xl backdrop-blur-xl border border-purple-500/20 hover:border-purple-500/40 transition-all cursor-pointer"
+              onClick={() => setSelectedSnapshot(snapshot)}
+            >
+              <div className="flex flex-col space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-200 font-mono text-sm">{snapshot.id}</span>
+                  <span className="text-xs text-gray-500">
+                    {new Date(snapshot.timestamp).toLocaleDateString()}
+                  </span>
                 </div>
-                <div className="flex-grow">
-                  <div className="flex justify-between items-start">
-                    <a 
-                      href={source.url} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="text-purple-400 hover:text-purple-300 transition-colors"
-                    >
-                      {source.domain || new URL(source.url).hostname.replace('www.', '')}
-                    </a>
-                    <span className="text-xs text-gray-500 ml-2">
-                      {source.section || 'Feature Analysis'}
-                    </span>
-                  </div>
-                  <p className="text-gray-400 text-sm mt-1">
-                    Accessed: {source.date || new Date().toLocaleDateString()}
-                  </p>
+                
+                {/* Preview of data */}
+                <div className="mt-2 text-sm text-gray-400">
+                  {snapshot.data && typeof snapshot.data === 'object' && (
+                    <div className="space-y-1">
+                      {Object.keys(snapshot.data).slice(0, 3).map(key => (
+                        <div key={key} className="truncate">
+                          {key}: {typeof snapshot.data[key] === 'object' ? '...' : snapshot.data[key]}
+                        </div>
+                      ))}
+                      {Object.keys(snapshot.data).length > 3 && (
+                        <div className="text-purple-400">+ more data...</div>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
-        <div className="text-sm text-gray-400 mt-2">
-          * Data compiled from {sources.length} trusted sources
-        </div>
-      </div>
-    );
-  };
-
-  const renderPhaseStatus = () => {
-    const phases = [
-      'Starting Analysis',
-      'Social Impact',
-      'Economic Impact',
-      'Environmental Impact',
-      'Implementation Priority',
-      'Data Sources'
-    ];
-
-    return (
-      <div className="mb-6">
-        <div className="flex items-center space-x-2">
-          {phases.map((phase, index) => (
-            <div key={index} className="flex items-center">
-              <div className={`h-2 w-2 rounded-full ${
-                currentPhase > index ? 'bg-purple-500' : 'bg-gray-600'
-              }`} />
-              <span className={`text-sm ml-1 ${
-                currentPhase > index ? 'text-purple-400' : 'text-gray-500'
-              }`}>
-                {phase}
-              </span>
-              {index < phases.length - 1 && (
-                <div className={`h-0.5 w-4 mx-2 ${
-                  currentPhase > index ? 'bg-purple-500' : 'bg-gray-600'
-                }`} />
-              )}
             </div>
           ))}
         </div>
-      </div>
-    );
-  };
 
-  return (
-    <div className="min-h-screen bg-[#131314] text-white p-4 sm:p-6">
-      <div className="max-w-7xl mx-auto">
-        {/* Header Section */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 sm:mb-8 space-y-4 sm:space-y-0">
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-purple-400 via-purple-600 to-indigo-600 bg-clip-text text-transparent">
-              Feature Priority Analysis
-            </h1>
-            <p className="text-gray-400 mt-2">Analyze and prioritize product features</p>
-          </div>
-        </div>
-
-        {/* Navigation Tabs */}
-        <div className="bg-[#1D1D1F] p-1 rounded-xl mb-6 sm:mb-8 inline-flex w-full sm:w-auto overflow-x-auto">
-          <button 
-            className="flex-1 sm:flex-none px-3 sm:px-4 py-2 rounded-lg bg-purple-600 text-white text-sm sm:text-base whitespace-nowrap"
-          >
-            Feature Priority
-          </button>
-          <Link 
-            href="/feedback-collection"
-            className="flex-1 sm:flex-none px-3 sm:px-4 py-2 rounded-lg text-gray-400 hover:text-white hover:bg-purple-600/50 transition-all duration-200 text-sm sm:text-base whitespace-nowrap"
-          >
-            Feedback Collection
-          </Link>
-        </div>
-
-        {/* Add phase status indicator */}
-        {isLoading && renderPhaseStatus()}
-
-        {/* Main Content */}
-        <div className="bg-[#1D1D1F] rounded-2xl border border-purple-500/10 p-4 sm:p-6">
-          <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
-            <div>
-              <textarea
-                value={userInput}
-                onChange={(e) => setUserInput(e.target.value)}
-                placeholder="Enter your business details for feature prioritization..."
-                className="w-full h-32 sm:h-40 px-3 sm:px-4 py-2 sm:py-3 bg-[#131314] text-gray-200 rounded-xl border border-purple-500/20 
-                         placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50 resize-none text-sm sm:text-base"
-                disabled={isLoading}
-              />
-            </div>
-            <button
-              type="submit"
-              disabled={isLoading || !userInput.trim()}
-              className={`w-full py-3 sm:py-4 px-4 sm:px-6 rounded-xl font-medium transition-all duration-200 text-sm sm:text-base
-                        ${!isLoading && userInput.trim()
-                  ? 'bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white shadow-lg shadow-purple-500/25'
-                  : 'bg-gray-600 text-gray-300 cursor-not-allowed'}`}
-            >
-              {isLoading ? (
-                <div className="flex items-center justify-center space-x-2">
-                  <div className="w-4 sm:w-5 h-4 sm:h-5 border-t-2 border-b-2 border-white rounded-full animate-spin"></div>
-                  <span>Analyzing...</span>
+        {/* Selected Snapshot */}
+        {selectedSnapshot && (
+          <div className="mt-8 space-y-6">
+            <div className="bg-[#1D1D1F]/90 p-6 rounded-xl backdrop-blur-xl border border-purple-500/20">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-xl font-semibold text-purple-400">
+                  Snapshot Details: {selectedSnapshot.id}
+                </h3>
+                <div className="flex space-x-4">
+                  <button 
+                    onClick={() => processSnapshotData(selectedSnapshot)}
+                    disabled={isProcessing}
+                    className={`px-4 py-2 rounded-lg transition-colors ${
+                      isProcessing 
+                        ? 'bg-purple-600/50 cursor-not-allowed' 
+                        : 'bg-purple-600 hover:bg-purple-700'
+                    }`}
+                  >
+                    {isProcessing ? 'Processing...' : 'Process Data'}
+                  </button>
+                  <button 
+                    onClick={() => setSelectedSnapshot(null)}
+                    className="text-gray-400 hover:text-gray-300"
+                  >
+                    Close
+                  </button>
                 </div>
-              ) : (
-                'Analyze Features'
-              )}
-            </button>
-          </form>
-
-          {/* PDF Export Button */}
-          <div className="mt-4">
-            <button
-              onClick={exportToPDF}
-              className="w-full py-3 sm:py-4 px-4 sm:px-6 rounded-xl bg-purple-600 text-white font-medium transition-all duration-200 text-sm sm:text-base hover:bg-purple-700"
-            >
-              Export to PDF
-            </button>
-          </div>
-
-          {/* Analysis Results */}
-          <div ref={analysisRef} className="mt-6">
-            {error ? (
-              <div className="text-red-500">{error}</div>
-            ) : (
-              <div className="space-y-6">
-                {renderFeatureSection("Social Impact", featureAnalysis.social_impact)}
-                {renderFeatureSection("Economic Impact", featureAnalysis.economic_impact)}
-                {renderFeatureSection("Environmental Impact", featureAnalysis.environmental_impact)}
-                {renderFeatureSection("Implementation Priority", featureAnalysis.implementation_priority)}
-                
-                {/* Sources Section */}
-                {featureAnalysis.sources && featureAnalysis.sources.length > 0 && (
-                  <div className="mb-6">
-                    <h3 className="text-lg font-semibold text-purple-400 mb-2">Data Sources</h3>
-                    <div className="bg-[#2D2D2F] p-4 rounded-xl">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {featureAnalysis.sources.map((source, index) => (
-                          <div key={index} className="flex items-start space-x-3">
-                            <div className="flex-shrink-0 w-8 h-8 bg-purple-500/10 rounded-full flex items-center justify-center">
-                              <span className="text-purple-400 text-sm">{index + 1}</span>
-                            </div>
-                            <div className="flex-grow">
-                              <div className="flex justify-between items-start">
-                                <a 
-                                  href={source.url} 
-                                  target="_blank" 
-                                  rel="noopener noreferrer"
-                                  className="text-purple-400 hover:text-purple-300 transition-colors"
-                                >
-                                  {source.domain || new URL(source.url).hostname.replace('www.', '')}
-                                </a>
-                                <span className="text-xs text-gray-500 ml-2">
-                                  {source.section || 'Feature Analysis'}
-                                </span>
-                              </div>
-                              <p className="text-gray-400 text-sm mt-1">
-                                Accessed: {source.date || new Date().toLocaleDateString()}
-                              </p>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                    <div className="text-sm text-gray-400 mt-2">
-                      * Data compiled from {featureAnalysis.sources.length} trusted sources
-                    </div>
-                  </div>
-                )}
               </div>
-            )}
+              <pre className="bg-[#2D2D2F] p-4 rounded-lg overflow-auto max-h-96 text-sm text-gray-300">
+                {JSON.stringify(selectedSnapshot.data, null, 2)}
+              </pre>
+            </div>
+
+            {/* Processed Data Review */}
+            {renderProcessedDataReview()}
           </div>
-        </div>
+        )}
+
+        {storedSnapshots.length === 0 && (
+          <div className="text-center text-gray-400 py-12">
+            No stored snapshots found
+          </div>
+        )}
       </div>
     </div>
   );

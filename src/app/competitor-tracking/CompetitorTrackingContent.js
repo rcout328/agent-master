@@ -1,141 +1,297 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { Bar } from 'react-chartjs-2';
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-} from 'chart.js';
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend
-);
+// Initialize Gemini
+const genAI = new GoogleGenerativeAI("AIzaSyAE2SKBA38bOktQBdXS6mTK5Y1a-nKB3Mo");
 
 export default function CompetitorTrackingContent() {
-  const [snapshotId, setSnapshotId] = useState('');
-  const [targetCompany, setTargetCompany] = useState('');
-  const [apiResponse, setApiResponse] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [currentPhase, setCurrentPhase] = useState(0);
+  const [storedSnapshots, setStoredSnapshots] = useState([]);
+  const [selectedSnapshot, setSelectedSnapshot] = useState(null);
+  const [analysis, setAnalysis] = useState(null);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [processedData, setProcessedData] = useState(null);
+  const [isProcessing, setIsProcessing] = useState(false);
 
-  // Load cached data on mount
   useEffect(() => {
-    const storedData = localStorage.getItem(`competitorAnalysis_${targetCompany}`);
-    if (storedData) {
-      setApiResponse(JSON.parse(storedData));
-      setCurrentPhase(6);
-    }
-  }, [targetCompany]);
+    loadAllSnapshots();
+  }, []);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!snapshotId.trim() || !targetCompany.trim() || isLoading) return;
+  const loadAllSnapshots = () => {
+    const allKeys = Object.keys(localStorage);
+    const snapshots = allKeys
+      .filter(key => key.includes('snapshot_'))
+      .map(key => {
+        try {
+          const data = JSON.parse(localStorage.getItem(key));
+          return {
+            id: key.split('snapshot_')[1],
+            data: data,
+            timestamp: new Date().toISOString()
+          };
+        } catch (e) {
+          console.error(`Error parsing snapshot ${key}:`, e);
+          return null;
+        }
+      })
+      .filter(Boolean);
 
-    setIsLoading(true);
-    setError(null);
-    setCurrentPhase(1);
+    setStoredSnapshots(snapshots);
+  };
 
+  const processSnapshotData = async (snapshotData) => {
     try {
-      const response = await fetch('http://127.0.0.1:5002/api/competitor-analysis', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ 
-          snapshot_id: snapshotId,
-          target_company: targetCompany 
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch data');
+      setIsProcessing(true);
+      console.log('Processing snapshot data:', snapshotData.id);
+      
+      // Extract data array from the snapshot
+      let raw_data = [];
+      if (snapshotData && snapshotData.data) {
+        if (Array.isArray(snapshotData.data)) {
+          raw_data = snapshotData.data;
+        } else if (snapshotData.data.data && Array.isArray(snapshotData.data.data)) {
+          raw_data = snapshotData.data.data;
+        } else if (snapshotData.data.results && Array.isArray(snapshotData.data.results)) {
+          raw_data = snapshotData.data.results;
+        }
       }
 
-      const data = await response.json();
-      console.log('API Response:', data);
-
-      if (data.success && data.data) {
-        setCurrentPhase(2);
-        setApiResponse(data.data);
-        localStorage.setItem(`competitorAnalysis_${targetCompany}`, JSON.stringify(data.data));
-      } else {
-        throw new Error(data.error || 'Failed to analyze data');
+      if (!Array.isArray(raw_data) || raw_data.length === 0) {
+        throw new Error('No valid data array found in snapshot');
       }
+
+      // Process competitor data
+      const processed = {
+        target_company: raw_data[0], // Assuming first company is target
+        competitors: raw_data.slice(1, 6), // Take next 5 companies as competitors
+        metrics: {
+          market_presence: calculateMarketPresence(raw_data),
+          technology_stack: analyzeTechnologyStack(raw_data),
+          funding_comparison: compareFunding(raw_data),
+          growth_metrics: calculateGrowthMetrics(raw_data)
+        }
+      };
+
+      console.log('Processed competitor data:', processed);
+      setProcessedData(processed);
 
     } catch (error) {
-      console.error('Error:', error);
-      setError(error.message || 'Failed to get competitor analysis. Please try again.');
+      console.error('Error processing data:', error);
+      alert('Failed to process snapshot data: ' + error.message);
     } finally {
-      setIsLoading(false);
+      setIsProcessing(false);
     }
   };
 
-  const renderCompanyMetrics = (metrics) => {
-    return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <div className="bg-[#1D1D1F] p-4 rounded-lg">
-          <h4 className="font-medium text-white mb-2">Company Size</h4>
-          <p className="text-gray-300">{metrics.employees}</p>
-        </div>
-        <div className="bg-[#1D1D1F] p-4 rounded-lg">
-          <h4 className="font-medium text-white mb-2">Founded</h4>
-          <p className="text-gray-300">{metrics.founded}</p>
-        </div>
-        <div className="bg-[#1D1D1F] p-4 rounded-lg">
-          <h4 className="font-medium text-white mb-2">Region</h4>
-          <p className="text-gray-300">{metrics.region}</p>
-        </div>
-        <div className="bg-[#1D1D1F] p-4 rounded-lg">
-          <h4 className="font-medium text-white mb-2">Technologies</h4>
-          <p className="text-gray-300">{metrics.tech_count} technologies</p>
-        </div>
-        <div className="bg-[#1D1D1F] p-4 rounded-lg">
-          <h4 className="font-medium text-white mb-2">Monthly Visits</h4>
-          <p className="text-gray-300">{metrics.monthly_visits.toLocaleString()}</p>
-        </div>
-        <div className="bg-[#1D1D1F] p-4 rounded-lg">
-          <h4 className="font-medium text-white mb-2">Funding Rounds</h4>
-          <p className="text-gray-300">{metrics.funding_rounds}</p>
-        </div>
-      </div>
-    );
+  // Helper functions for competitor analysis
+  const calculateMarketPresence = (data) => {
+    return data.map(company => ({
+      name: company.name,
+      monthly_visits: company.monthly_visits || 0,
+      social_presence: (company.social_media_links || []).length,
+      regions: company.region || 'Unknown'
+    }));
   };
 
-  const renderCompetitorSection = (competitor) => {
-    return (
-      <div key={competitor.name} className="bg-[#2D2D2F] rounded-xl p-6 mb-6">
-        <h3 className="text-xl font-semibold text-purple-400 mb-4">{competitor.name}</h3>
-        <p className="text-gray-300 mb-4">{competitor.about}</p>
-        {renderCompanyMetrics(competitor.metrics)}
-      </div>
-    );
+  const analyzeTechnologyStack = (data) => {
+    return data.map(company => ({
+      name: company.name,
+      tech_count: company.active_tech_count || 0,
+      key_technologies: (company.builtwith_tech || [])
+        .slice(0, 5)
+        .map(tech => tech.name)
+    }));
   };
 
-  const renderAnalysisSection = (title, items) => {
-    if (!items || items.length === 0) return null;
+  const compareFunding = (data) => {
+    return data.map(company => ({
+      name: company.name,
+      funding_rounds: company.funding_rounds?.num_funding_rounds || 0,
+      total_funding: company.funding_rounds?.value?.value_usd || 0,
+      investors: company.num_investors || 0
+    }));
+  };
+
+  const calculateGrowthMetrics = (data) => {
+    return data.map(company => ({
+      name: company.name,
+      employee_growth: company.num_employees || 'Unknown',
+      monthly_growth: company.monthly_visits_growth || 0,
+      news_mentions: company.num_news || 0
+    }));
+  };
+
+  const generateCompetitorAnalysis = async () => {
+    try {
+      setIsAnalyzing(true);
+      
+      const prompt = `
+        Analyze this competitor data and provide strategic insights:
+
+        Target Company: ${processedData.target_company.name}
+        ${processedData.target_company.about}
+
+        Key Competitors:
+        ${processedData.competitors.map(c => `- ${c.name}: ${c.about}`).join('\n')}
+
+        Market Presence:
+        ${JSON.stringify(processedData.metrics.market_presence, null, 2)}
+
+        Technology Stack:
+        ${JSON.stringify(processedData.metrics.technology_stack, null, 2)}
+
+        Funding Comparison:
+        ${JSON.stringify(processedData.metrics.funding_comparison, null, 2)}
+
+        Growth Metrics:
+        ${JSON.stringify(processedData.metrics.growth_metrics, null, 2)}
+
+        Please provide:
+        1. Competitive Position Analysis
+        2. Strengths and Weaknesses vs Competitors
+        3. Market Share Analysis
+        4. Technology Stack Comparison
+        5. Growth Strategy Recommendations
+
+        Format the analysis in clear sections with bullet points.
+      `;
+
+      const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
+      const result = await model.generateContent(prompt);
+      const response = await result.response;
+      const analysisText = response.text();
+
+      setAnalysis({
+        timestamp: new Date().toISOString(),
+        snapshotId: selectedSnapshot.id,
+        content: analysisText,
+        processedData: processedData
+      });
+
+    } catch (error) {
+      console.error('Error generating analysis:', error);
+      if (error.message.includes('GoogleGenerativeAIFetchError')) {
+        alert('An internal error occurred while generating analysis. Please try again later.');
+      } else {
+        alert('Failed to generate competitor analysis: ' + error.message);
+      }
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
+
+  const viewSnapshotData = (snapshot) => {
+    setSelectedSnapshot(snapshot);
+    processSnapshotData(snapshot);
+  };
+
+  const renderProcessedDataReview = () => {
+    if (!processedData) return null;
 
     return (
-      <div className="bg-[#2D2D2F] rounded-xl p-6 mb-6">
-        <h3 className="text-xl font-semibold text-purple-400 mb-4">{title}</h3>
-        <ul className="space-y-2">
-          {items.map((item, index) => (
-            <li key={index} className="text-gray-300 flex items-start space-x-2">
-              <span className="text-purple-400">•</span>
-              <span>{item}</span>
-            </li>
-          ))}
-        </ul>
+      <div className="bg-[#1D1D1F]/90 p-6 rounded-xl backdrop-blur-xl border border-purple-500/20 mt-6">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-xl font-semibold text-purple-400">
+            Competitor Analysis Results
+          </h3>
+          <div className="flex space-x-4">
+            <button
+              onClick={generateCompetitorAnalysis}
+              disabled={isAnalyzing}
+              className={`px-4 py-2 rounded-lg transition-colors ${
+                isAnalyzing 
+                  ? 'bg-purple-600/50 cursor-not-allowed' 
+                  : 'bg-purple-600 hover:bg-purple-700'
+              }`}
+            >
+              {isAnalyzing ? 'Analyzing...' : 'Generate AI Analysis'}
+            </button>
+            <button
+              onClick={() => setProcessedData(null)}
+              className="text-gray-400 hover:text-gray-300"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+
+        <div className="space-y-6">
+          {/* Target Company */}
+          <div className="bg-[#2D2D2F] p-4 rounded-lg">
+            <h4 className="text-lg font-semibold text-purple-400 mb-3">Target Company</h4>
+            <div className="space-y-2">
+              <p className="text-gray-300">Name: {processedData.target_company.name}</p>
+              <p className="text-gray-300">About: {processedData.target_company.about}</p>
+              <p className="text-gray-300">Region: {processedData.target_company.region}</p>
+            </div>
+          </div>
+
+          {/* Key Competitors */}
+          <div className="bg-[#2D2D2F] p-4 rounded-lg">
+            <h4 className="text-lg font-semibold text-purple-400 mb-3">Key Competitors</h4>
+            <div className="space-y-4">
+              {processedData.competitors.map((competitor, index) => (
+                <div key={index} className="p-3 bg-[#1D1D1F] rounded-lg">
+                  <h5 className="font-semibold text-purple-300">{competitor.name}</h5>
+                  <p className="text-gray-400 text-sm mt-1">{competitor.about}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Market Presence */}
+          <div className="bg-[#2D2D2F] p-4 rounded-lg">
+            <h4 className="text-lg font-semibold text-purple-400 mb-3">Market Presence</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {processedData.metrics.market_presence.map((company, index) => (
+                <div key={index} className="p-3 bg-[#1D1D1F] rounded-lg">
+                  <h5 className="font-semibold text-purple-300">{company.name}</h5>
+                  <div className="mt-2 space-y-1 text-sm">
+                    <p className="text-gray-300">Monthly Visits: {company.monthly_visits.toLocaleString()}</p>
+                    <p className="text-gray-300">Social Presence: {company.social_presence}</p>
+                    <p className="text-gray-300">Regions: {company.regions}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Technology Stack */}
+          <div className="bg-[#2D2D2F] p-4 rounded-lg">
+            <h4 className="text-lg font-semibold text-purple-400 mb-3">Technology Stack</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {processedData.metrics.technology_stack.map((company, index) => (
+                <div key={index} className="p-3 bg-[#1D1D1F] rounded-lg">
+                  <h5 className="font-semibold text-purple-300">{company.name}</h5>
+                  <p className="text-gray-400 mt-1">Technologies: {company.tech_count}</p>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {company.key_technologies.map((tech, i) => (
+                      <span key={i} className="px-2 py-1 bg-purple-500/20 rounded-full text-xs text-purple-300">
+                        {tech}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* AI Analysis Results */}
+          {analysis && (
+            <div className="bg-[#2D2D2F] p-4 rounded-lg">
+              <h4 className="text-lg font-semibold text-purple-400 mb-3">AI Analysis</h4>
+              <div className="prose prose-invert max-w-none">
+                <pre className="whitespace-pre-wrap text-sm text-gray-300">
+                  {analysis.content}
+                </pre>
+              </div>
+              <div className="mt-2 text-xs text-gray-500">
+                Generated on: {new Date(analysis.timestamp).toLocaleString()}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     );
   };
@@ -143,119 +299,81 @@ export default function CompetitorTrackingContent() {
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
       <div className="mb-8">
-        <h2 className="text-2xl font-bold text-white mb-4">Competitor Analysis</h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <input
-              type="text"
-              value={snapshotId}
-              onChange={(e) => setSnapshotId(e.target.value)}
-              placeholder="Enter Brightdata snapshot ID..."
-              className="w-full px-4 py-2 rounded-lg bg-[#2D2D2F] text-white border border-gray-600 focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
-            />
-            <input
-              type="text"
-              value={targetCompany}
-              onChange={(e) => setTargetCompany(e.target.value)}
-              placeholder="Enter target company name..."
-              className="w-full px-4 py-2 rounded-lg bg-[#2D2D2F] text-white border border-gray-600 focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
-            />
-          </div>
-          <button
-            type="submit"
-            disabled={isLoading}
-            className={`w-full py-2 rounded-lg font-medium transition-all duration-200
-              ${isLoading 
-                ? 'bg-gray-600 cursor-not-allowed' 
-                : 'bg-purple-600 hover:bg-purple-700 text-white'
-              }`}
-          >
-            {isLoading ? 'Analyzing...' : 'Analyze Competitors'}
-          </button>
-        </form>
-      </div>
-
-      {isLoading && (
-        <div className="mb-6 p-4 bg-purple-500/10 border border-purple-500/30 rounded-xl">
-          <div className="flex items-center space-x-3">
-            <div className="w-4 h-4 border-2 border-purple-500 border-t-transparent rounded-full animate-spin"></div>
-            <span className="text-purple-400">
-              {currentPhase === 1 ? 'Fetching data...' : 'Analyzing competitors...'}
-            </span>
-          </div>
-        </div>
-      )}
-
-      {error && (
-        <div className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-xl">
-          <div className="flex items-center space-x-3">
-            <svg className="w-5 h-5 text-red-400" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
-              <path d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-            </svg>
-            <span className="text-red-400">{error}</span>
-          </div>
-        </div>
-      )}
-
-      {apiResponse && (
-        <div className="space-y-8">
-          {/* Target Company Section */}
-          <div className="bg-[#2D2D2F] rounded-xl p-6 mb-6">
-            <h3 className="text-xl font-semibold text-purple-400 mb-4">
-              {apiResponse.target_company.name}
-            </h3>
-            <p className="text-gray-300 mb-4">{apiResponse.target_company.about}</p>
-            {renderCompanyMetrics(apiResponse.target_company.metrics)}
-          </div>
-
-          {/* Competitors Section */}
-          <div>
-            <h3 className="text-xl font-semibold text-white mb-4">Top Competitors</h3>
-            {apiResponse.main_competitors.map(competitor => 
-              renderCompetitorSection(competitor)
-            )}
-          </div>
-
-          {/* SWOT Analysis */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {renderAnalysisSection("Strengths", apiResponse.competitive_analysis.strengths)}
-            {renderAnalysisSection("Weaknesses", apiResponse.competitive_analysis.weaknesses)}
-            {renderAnalysisSection("Opportunities", apiResponse.competitive_analysis.opportunities)}
-            {renderAnalysisSection("Threats", apiResponse.competitive_analysis.threats)}
-          </div>
-
-          {/* Detailed Analysis */}
-          {apiResponse.analysis_report && (
-            <div className="bg-[#2D2D2F] rounded-xl p-6 mb-6">
-              <h3 className="text-xl font-semibold text-purple-400 mb-4">Detailed Analysis</h3>
-              <div className="bg-[#1D1D1F] p-4 rounded-lg">
-                <div className="prose prose-invert max-w-none">
-                  <pre className="text-gray-300 whitespace-pre-wrap font-sans text-sm leading-relaxed">
-                    {apiResponse.analysis_report}
-                  </pre>
+        <h2 className="text-2xl font-bold text-white mb-6">Stored Snapshots</h2>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {storedSnapshots.map((snapshot) => (
+            <div 
+              key={snapshot.id}
+              className="bg-[#1D1D1F]/90 p-6 rounded-xl backdrop-blur-xl border border-purple-500/20 hover:border-purple-500/40 transition-all cursor-pointer"
+              onClick={() => viewSnapshotData(snapshot)}
+            >
+              <div className="flex flex-col space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-200 font-mono text-sm">{snapshot.id}</span>
+                  <span className="text-xs text-gray-500">
+                    {new Date(snapshot.timestamp).toLocaleDateString()}
+                  </span>
+                </div>
+                
+                {/* Preview of data */}
+                <div className="mt-2 text-sm text-gray-400">
+                  {snapshot.data && typeof snapshot.data === 'object' && (
+                    <div className="space-y-1">
+                      {Object.keys(snapshot.data).slice(0, 3).map(key => (
+                        <div key={key} className="truncate">
+                          {key}: {typeof snapshot.data[key] === 'object' ? '...' : snapshot.data[key]}
+                        </div>
+                      ))}
+                      {Object.keys(snapshot.data).length > 3 && (
+                        <div className="text-purple-400">+ more data...</div>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
-          )}
-
-          {/* Export Button */}
-          <button
-            onClick={() => {
-              const element = document.createElement("a");
-              const file = new Blob([JSON.stringify(apiResponse, null, 2)], {
-                type: "application/json",
-              });
-              element.href = URL.createObjectURL(file);
-              element.download = `competitor_analysis_${targetCompany}_${new Date().toISOString()}.json`;
-              document.body.appendChild(element);
-              element.click();
-            }}
-            className="w-full py-3 px-4 bg-purple-600 hover:bg-purple-700 text-white rounded-xl transition-colors"
-          >
-            Export Analysis
-          </button>
+          ))}
         </div>
-      )}
+
+        {/* Selected Snapshot */}
+        {selectedSnapshot && (
+          <div className="mt-8 space-y-6">
+            <div className="bg-[#1D1D1F]/90 p-6 rounded-xl backdrop-blur-xl border border-purple-500/20">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-xl font-semibold text-purple-400">
+                  Snapshot Details: {selectedSnapshot.id}
+                </h3>
+                <div className="flex space-x-4">
+                  <button 
+                    onClick={() => processSnapshotData(selectedSnapshot)}
+                    disabled={isProcessing}
+                    className={`px-4 py-2 rounded-lg transition-colors ${
+                      isProcessing 
+                        ? 'bg-purple-600/50 cursor-not-allowed' 
+                        : 'bg-purple-600 hover:bg-purple-700'
+                    }`}
+                  >
+                    {isProcessing ? 'Processing...' : 'Process Data'}
+                  </button>
+                  <button 
+                    onClick={() => setSelectedSnapshot(null)}
+                    className="text-gray-400 hover:text-gray-300"
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+              <pre className="bg-[#2D2D2F] p-4 rounded-lg overflow-auto max-h-96 text-sm text-gray-300">
+                {JSON.stringify(selectedSnapshot.data, null, 2)}
+              </pre>
+            </div>
+
+            {/* Processed Data Review */}
+            {renderProcessedDataReview()}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

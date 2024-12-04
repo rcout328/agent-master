@@ -1,311 +1,575 @@
 "use client";
 
-import { useState, useRef, useEffect } from 'react';
-import { useStoredInput } from '@/hooks/useStoredInput';
-import jsPDF from 'jspdf';
+import { useState, useEffect } from 'react';
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import Link from 'next/link';
+import jsPDF from 'jspdf';
+
+// Initialize Gemini
+const genAI = new GoogleGenerativeAI("AIzaSyAE2SKBA38bOktQBdXS6mTK5Y1a-nKB3Mo");
 
 export default function GapAnalysisContent() {
-  const [userInput, setUserInput] = useStoredInput();
-  const [gapAnalysis, setGapAnalysis] = useState({
-    current_state: [],
-    desired_state: [],
-    identified_gaps: [],
-    recommendations: [],
-    sources: []
-  });
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [currentPhase, setCurrentPhase] = useState(0);
-  const analysisRef = useRef(null);
+  const [storedSnapshots, setStoredSnapshots] = useState([]);
+  const [selectedSnapshot, setSelectedSnapshot] = useState(null);
+  const [analysis, setAnalysis] = useState(null);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [processedData, setProcessedData] = useState(null);
+  const [isProcessing, setIsProcessing] = useState(false);
 
-  // Load gap analysis data from local storage on component mount
   useEffect(() => {
-    const storedData = localStorage.getItem(`gapAnalysis_${userInput}`);
-    if (storedData) {
-      const data = JSON.parse(storedData);
-      setGapAnalysis(data);
-      setCurrentPhase(6); // Set to last phase if data is available
-    }
-  }, [userInput]);
+    loadAllSnapshots();
+  }, []);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!userInput.trim() || isLoading) return;
+  const loadAllSnapshots = () => {
+    const allKeys = Object.keys(localStorage);
+    const snapshots = allKeys
+      .filter(key => key.includes('snapshot_'))
+      .map(key => {
+        try {
+          const data = JSON.parse(localStorage.getItem(key));
+          return {
+            id: key.split('snapshot_')[1],
+            data: data,
+            timestamp: new Date().toISOString()
+          };
+        } catch (e) {
+          console.error(`Error parsing snapshot ${key}:`, e);
+          return null;
+        }
+      })
+      .filter(Boolean);
 
-    setIsLoading(true);
-    setError(null);
-    setCurrentPhase(1);
+    setStoredSnapshots(snapshots);
+  };
 
+  const processSnapshotData = async (snapshotData) => {
     try {
-      const response = await fetch('http://127.0.0.1:5000/api/gap-analysis', { // Updated URL to match the Flask API
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ query: userInput }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch data');
-      }
-
-      const data = await response.json();
-      console.log('Gap API Response:', data);
+      setIsProcessing(true);
+      console.log('Processing snapshot data:', snapshotData.id);
       
-      // Update data progressively
-      if (data.current_state?.length) {
-        setCurrentPhase(2);
-        setGapAnalysis(prev => ({ ...prev, current_state: data.current_state }));
+      let raw_data = [];
+      if (snapshotData && snapshotData.data) {
+        if (Array.isArray(snapshotData.data)) {
+          raw_data = snapshotData.data;
+        } else if (snapshotData.data.data && Array.isArray(snapshotData.data.data)) {
+          raw_data = snapshotData.data.data;
+        } else if (snapshotData.data.results && Array.isArray(snapshotData.data.results)) {
+          raw_data = snapshotData.data.results;
+        }
       }
-      if (data.desired_state?.length) {
-        setCurrentPhase(3);
-        setGapAnalysis(prev => ({ ...prev, desired_state: data.desired_state }));
+
+      if (!Array.isArray(raw_data) || raw_data.length === 0) {
+        throw new Error('No valid data array found in snapshot');
       }
-      if (data.identified_gaps?.length) {
-        setCurrentPhase(4);
-        setGapAnalysis(prev => ({ ...prev, identified_gaps: data.identified_gaps }));
-      }
-      if (data.recommendations?.length) {
-        setCurrentPhase(5);
-        setGapAnalysis(prev => ({ ...prev, recommendations: data.recommendations }));
-      }
-      if (data.sources?.length) {
-        setCurrentPhase(6);
-        setGapAnalysis(prev => ({ ...prev, sources: data.sources }));
-      }
-      
-      localStorage.setItem(`gapAnalysis_${userInput}`, JSON.stringify(data));
+
+      // Process gap analysis data
+      const processed = {
+        current_state: analyzeCurrentState(raw_data),
+        desired_state: analyzeDesiredState(raw_data),
+        identified_gaps: identifyGaps(raw_data),
+        recommendations: generateRecommendations(raw_data),
+        metrics: analyzeMetrics(raw_data)
+      };
+
+      console.log('Processed gap data:', processed);
+      setProcessedData(processed);
 
     } catch (error) {
-      console.error('Error:', error);
-      setError('Failed to get gap analysis. Please try again.');
+      console.error('Error processing data:', error);
+      alert('Failed to process snapshot data: ' + error.message);
     } finally {
-      setIsLoading(false);
+      setIsProcessing(false);
     }
   };
 
-  const exportToPDF = () => {
-    const doc = new jsPDF();
-    doc.setFontSize(16);
-    doc.text("Gap Analysis Report", 10, 10);
-    
-    const sections = [
-      { title: "Current State", data: gapAnalysis.current_state },
-      { title: "Desired State", data: gapAnalysis.desired_state },
-      { title: "Identified Gaps", data: gapAnalysis.identified_gaps },
-      { title: "Recommendations", data: gapAnalysis.recommendations },
-      { title: "Data Sources", data: gapAnalysis.sources.map(source => source.domain) }
-    ];
-
-    let y = 20;
-    sections.forEach(section => {
-      doc.setFontSize(14);
-      doc.text(section.title, 10, y);
-      y += 10;
-      doc.setFontSize(12);
-      section.data.forEach(item => {
-        doc.text(`- ${item}`, 10, y);
-        y += 5;
-      });
-      y += 5; // Add space between sections
-    });
-
-    doc.save("gap_analysis_report.pdf");
+  const analyzeCurrentState = (data) => {
+    return data
+      .filter(company => company.active_tech_count || company.total_active_products)
+      .map(company => ({
+        name: company.name,
+        tech_stack: company.active_tech_count || 0,
+        products: company.total_active_products || 0,
+        contact_channels: company.num_contacts || 0,
+        funding_status: company.funding_rounds?.num_funding_rounds || 0
+      }))
+      .filter(item => item.tech_stack > 0 || item.products > 0);
   };
 
-  const renderGapSection = (title, data) => {
+  const analyzeDesiredState = (data) => {
+    return data
+      .filter(company => company.similar_companies)
+      .map(company => {
+        const competitors = company.similar_companies || [];
+        const avgTechStack = competitors.reduce((sum, comp) => sum + (comp.active_tech_count || 0), 0) / competitors.length;
+        const avgProducts = competitors.reduce((sum, comp) => sum + (comp.total_active_products || 0), 0) / competitors.length;
+        
+        return {
+          name: company.name,
+          target_tech_stack: Math.round(avgTechStack),
+          target_products: Math.round(avgProducts),
+          market_benchmark: calculateMarketBenchmark(company, competitors)
+        };
+      })
+      .filter(item => item.target_tech_stack > 0 || item.target_products > 0);
+  };
+
+  const identifyGaps = (data) => {
+    return data
+      .filter(company => company.active_tech_count || company.total_active_products)
+      .map(company => ({
+        name: company.name,
+        tech_gap: calculateTechGap(company),
+        product_gap: calculateProductGap(company),
+        funding_gap: calculateFundingGap(company),
+        contact_gap: calculateContactGap(company)
+      }))
+      .filter(item => item.tech_gap || item.product_gap || item.funding_gap || item.contact_gap);
+  };
+
+  const generateRecommendations = (data) => {
+    return data.map(company => ({
+      name: company.name,
+      tech_recommendations: generateTechRecommendations(company),
+      product_recommendations: generateProductRecommendations(company),
+      funding_recommendations: generateFundingRecommendations(company),
+      contact_recommendations: generateContactRecommendations(company)
+    }));
+  };
+
+  const analyzeMetrics = (data) => {
+    return {
+      avg_tech_stack: Math.round(data.reduce((sum, company) => sum + (company.active_tech_count || 0), 0) / data.length),
+      avg_products: Math.round(data.reduce((sum, company) => sum + (company.total_active_products || 0), 0) / data.length),
+      avg_funding_rounds: Math.round(data.reduce((sum, company) => sum + (company.funding_rounds?.num_funding_rounds || 0), 0) / data.length),
+      avg_contacts: Math.round(data.reduce((sum, company) => sum + (company.num_contacts || 0), 0) / data.length)
+    };
+  };
+
+  // Helper functions
+  const calculateMarketBenchmark = (company, competitors) => {
+    return {
+      tech_level: 'Advanced',
+      product_maturity: 'High',
+      market_position: 'Leader',
+      funding_status: 'Well-funded'
+    };
+  };
+
+  const calculateTechGap = (company) => {
+    const gaps = [];
+    if (company.active_tech_count < 20) gaps.push('Limited tech stack');
+    if (!company.builtwith_tech?.length) gaps.push('Missing technology data');
+    return gaps;
+  };
+
+  const calculateProductGap = (company) => {
+    const gaps = [];
+    if (company.total_active_products < 5) gaps.push('Limited product portfolio');
+    if (!company.products_and_services?.length) gaps.push('Missing product data');
+    return gaps;
+  };
+
+  const calculateFundingGap = (company) => {
+    const gaps = [];
+    if (!company.funding_rounds?.num_funding_rounds) gaps.push('No funding history');
+    if (!company.funding_rounds?.value?.value_usd) gaps.push('Limited funding amount');
+    return gaps;
+  };
+
+  const calculateContactGap = (company) => {
+    const gaps = [];
+    if (!company.num_contacts) gaps.push('Limited contact channels');
+    if (!company.contact_email && !company.contact_phone) gaps.push('Missing contact information');
+    return gaps;
+  };
+
+  // Recommendation generators
+  const generateTechRecommendations = (company) => {
+    const recommendations = [];
+    if (company.active_tech_count < 20) {
+      recommendations.push('Expand technology stack');
+      recommendations.push('Adopt modern technologies');
+    }
+    return recommendations;
+  };
+
+  const generateProductRecommendations = (company) => {
+    const recommendations = [];
+    if (company.total_active_products < 5) {
+      recommendations.push('Diversify product portfolio');
+      recommendations.push('Develop new offerings');
+    }
+    return recommendations;
+  };
+
+  const generateFundingRecommendations = (company) => {
+    const recommendations = [];
+    if (!company.funding_rounds?.num_funding_rounds) {
+      recommendations.push('Seek funding opportunities');
+      recommendations.push('Develop funding strategy');
+    }
+    return recommendations;
+  };
+
+  const generateContactRecommendations = (company) => {
+    const recommendations = [];
+    if (!company.num_contacts) {
+      recommendations.push('Expand contact channels');
+      recommendations.push('Improve accessibility');
+    }
+    return recommendations;
+  };
+
+  const generateAIAnalysis = async () => {
+    try {
+      setIsAnalyzing(true);
+      
+      const prompt = `
+        Analyze this gap analysis data and provide strategic insights:
+
+        Current State:
+        ${JSON.stringify(processedData.current_state, null, 2)}
+
+        Desired State:
+        ${JSON.stringify(processedData.desired_state, null, 2)}
+
+        Identified Gaps:
+        ${JSON.stringify(processedData.identified_gaps, null, 2)}
+
+        Recommendations:
+        ${JSON.stringify(processedData.recommendations, null, 2)}
+
+        Key Metrics:
+        ${JSON.stringify(processedData.metrics, null, 2)}
+
+        Please provide:
+        1. Gap Analysis Summary
+        2. Critical Areas
+        3. Priority Actions
+        4. Implementation Timeline
+        5. Success Metrics
+
+        Format the analysis in clear sections with bullet points.
+      `;
+
+      const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
+      const result = await model.generateContent(prompt);
+      const response = await result.response;
+      const analysisText = response.text();
+
+      setAnalysis({
+        timestamp: new Date().toISOString(),
+        snapshotId: selectedSnapshot.id,
+        content: analysisText,
+        processedData: processedData
+      });
+
+    } catch (error) {
+      console.error('Error generating analysis:', error);
+      alert('Failed to generate analysis: ' + error.message);
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
+
+  const renderProcessedDataReview = () => {
+    if (!processedData) return null;
+
     return (
-      <div className="mb-6">
-        <h3 className="text-lg font-semibold text-purple-400 mb-2">{title}</h3>
-        <div className="bg-[#2D2D2F] p-4 rounded-xl">
-          {data.length > 0 ? (
-            <ul className="space-y-2">
-              {data.map((item, index) => (
-                <li key={index} className="text-gray-300">
-                  {item}
-                </li>
+      <div className="bg-[#1D1D1F]/90 p-6 rounded-xl backdrop-blur-xl border border-purple-500/20 mt-6">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-xl font-semibold text-purple-400">
+            Gap Analysis Results
+          </h3>
+          <div className="flex space-x-4">
+            <button
+              onClick={generateAIAnalysis}
+              disabled={isAnalyzing}
+              className={`px-4 py-2 rounded-lg transition-colors ${
+                isAnalyzing 
+                  ? 'bg-purple-600/50 cursor-not-allowed' 
+                  : 'bg-purple-600 hover:bg-purple-700'
+              }`}
+            >
+              {isAnalyzing ? 'Analyzing...' : 'Generate AI Analysis'}
+            </button>
+            <button
+              onClick={() => setProcessedData(null)}
+              className="text-gray-400 hover:text-gray-300"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+
+        <div className="space-y-6">
+          {/* Current State Section */}
+          <div className="bg-[#2D2D2F] p-4 rounded-lg">
+            <h4 className="text-lg font-semibold text-purple-400 mb-3">Current State</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {processedData.current_state.map((item, index) => (
+                <div key={index} className="p-3 bg-[#1D1D1F] rounded-lg">
+                  <h5 className="font-semibold text-purple-300">{item.name}</h5>
+                  <div className="mt-2 space-y-1 text-sm">
+                    <p className="text-gray-300">Tech Stack: {item.tech_stack}</p>
+                    <p className="text-gray-300">Products: {item.products}</p>
+                    <p className="text-gray-300">Contact Channels: {item.contact_channels}</p>
+                    <p className="text-gray-300">Funding Rounds: {item.funding_status}</p>
+                  </div>
+                </div>
               ))}
-            </ul>
-          ) : (
-            <p className="text-gray-400">No {title.toLowerCase()} data available.</p>
+            </div>
+          </div>
+
+          {/* Desired State Section */}
+          <div className="bg-[#2D2D2F] p-4 rounded-lg">
+            <h4 className="text-lg font-semibold text-purple-400 mb-3">Desired State</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {processedData.desired_state.map((item, index) => (
+                <div key={index} className="p-3 bg-[#1D1D1F] rounded-lg">
+                  <h5 className="font-semibold text-purple-300">{item.name}</h5>
+                  <div className="mt-2 space-y-1 text-sm">
+                    <p className="text-gray-300">Target Tech Stack: {item.target_tech_stack}</p>
+                    <p className="text-gray-300">Target Products: {item.target_products}</p>
+                    <div className="mt-2">
+                      <p className="text-gray-400 font-semibold">Market Benchmark:</p>
+                      <ul className="list-disc list-inside text-gray-300">
+                        <li>Tech Level: {item.market_benchmark.tech_level}</li>
+                        <li>Product Maturity: {item.market_benchmark.product_maturity}</li>
+                        <li>Market Position: {item.market_benchmark.market_position}</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Identified Gaps Section */}
+          <div className="bg-[#2D2D2F] p-4 rounded-lg">
+            <h4 className="text-lg font-semibold text-purple-400 mb-3">Identified Gaps</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {processedData.identified_gaps.map((item, index) => (
+                <div key={index} className="p-3 bg-[#1D1D1F] rounded-lg">
+                  <h5 className="font-semibold text-purple-300">{item.name}</h5>
+                  <div className="mt-2 space-y-2">
+                    {item.tech_gap?.length > 0 && (
+                      <div>
+                        <p className="text-gray-400 font-semibold">Tech Gaps:</p>
+                        <ul className="list-disc list-inside text-gray-300">
+                          {item.tech_gap.map((gap, i) => <li key={i}>{gap}</li>)}
+                        </ul>
+                      </div>
+                    )}
+                    {item.product_gap?.length > 0 && (
+                      <div>
+                        <p className="text-gray-400 font-semibold">Product Gaps:</p>
+                        <ul className="list-disc list-inside text-gray-300">
+                          {item.product_gap.map((gap, i) => <li key={i}>{gap}</li>)}
+                        </ul>
+                      </div>
+                    )}
+                    {item.funding_gap?.length > 0 && (
+                      <div>
+                        <p className="text-gray-400 font-semibold">Funding Gaps:</p>
+                        <ul className="list-disc list-inside text-gray-300">
+                          {item.funding_gap.map((gap, i) => <li key={i}>{gap}</li>)}
+                        </ul>
+                      </div>
+                    )}
+                    {item.contact_gap?.length > 0 && (
+                      <div>
+                        <p className="text-gray-400 font-semibold">Contact Gaps:</p>
+                        <ul className="list-disc list-inside text-gray-300">
+                          {item.contact_gap.map((gap, i) => <li key={i}>{gap}</li>)}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Recommendations Section */}
+          <div className="bg-[#2D2D2F] p-4 rounded-lg">
+            <h4 className="text-lg font-semibold text-purple-400 mb-3">Recommendations</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {processedData.recommendations.map((item, index) => (
+                <div key={index} className="p-3 bg-[#1D1D1F] rounded-lg">
+                  <h5 className="font-semibold text-purple-300">{item.name}</h5>
+                  <div className="mt-2 space-y-2">
+                    {item.tech_recommendations?.length > 0 && (
+                      <div>
+                        <p className="text-gray-400 font-semibold">Tech Recommendations:</p>
+                        <ul className="list-disc list-inside text-gray-300">
+                          {item.tech_recommendations.map((rec, i) => <li key={i}>{rec}</li>)}
+                        </ul>
+                      </div>
+                    )}
+                    {item.product_recommendations?.length > 0 && (
+                      <div>
+                        <p className="text-gray-400 font-semibold">Product Recommendations:</p>
+                        <ul className="list-disc list-inside text-gray-300">
+                          {item.product_recommendations.map((rec, i) => <li key={i}>{rec}</li>)}
+                        </ul>
+                      </div>
+                    )}
+                    {item.funding_recommendations?.length > 0 && (
+                      <div>
+                        <p className="text-gray-400 font-semibold">Funding Recommendations:</p>
+                        <ul className="list-disc list-inside text-gray-300">
+                          {item.funding_recommendations.map((rec, i) => <li key={i}>{rec}</li>)}
+                        </ul>
+                      </div>
+                    )}
+                    {item.contact_recommendations?.length > 0 && (
+                      <div>
+                        <p className="text-gray-400 font-semibold">Contact Recommendations:</p>
+                        <ul className="list-disc list-inside text-gray-300">
+                          {item.contact_recommendations.map((rec, i) => <li key={i}>{rec}</li>)}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Key Metrics */}
+          <div className="bg-[#2D2D2F] p-4 rounded-lg">
+            <h4 className="text-lg font-semibold text-purple-400 mb-3">Key Metrics</h4>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="p-3 bg-[#1D1D1F] rounded-lg">
+                <p className="text-sm text-gray-400">Avg Tech Stack</p>
+                <p className="text-xl font-semibold text-purple-300">
+                  {processedData.metrics.avg_tech_stack}
+                </p>
+              </div>
+              <div className="p-3 bg-[#1D1D1F] rounded-lg">
+                <p className="text-sm text-gray-400">Avg Products</p>
+                <p className="text-xl font-semibold text-purple-300">
+                  {processedData.metrics.avg_products}
+                </p>
+              </div>
+              <div className="p-3 bg-[#1D1D1F] rounded-lg">
+                <p className="text-sm text-gray-400">Avg Funding Rounds</p>
+                <p className="text-xl font-semibold text-purple-300">
+                  {processedData.metrics.avg_funding_rounds}
+                </p>
+              </div>
+              <div className="p-3 bg-[#1D1D1F] rounded-lg">
+                <p className="text-sm text-gray-400">Avg Contacts</p>
+                <p className="text-xl font-semibold text-purple-300">
+                  {processedData.metrics.avg_contacts}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* AI Analysis Results */}
+          {analysis && (
+            <div className="bg-[#2D2D2F] p-4 rounded-lg">
+              <h4 className="text-lg font-semibold text-purple-400 mb-3">AI Analysis</h4>
+              <div className="prose prose-invert max-w-none">
+                <pre className="whitespace-pre-wrap text-sm text-gray-300">
+                  {analysis.content}
+                </pre>
+              </div>
+              <div className="mt-2 text-xs text-gray-500">
+                Generated on: {new Date(analysis.timestamp).toLocaleString()}
+              </div>
+            </div>
           )}
         </div>
       </div>
     );
   };
 
-  const renderSourcesSection = (sources) => {
-    if (!sources || sources.length === 0) return null;
-
-    return (
-      <div className="mb-6">
-        <h3 className="text-lg font-semibold text-purple-400 mb-2">Data Sources</h3>
-        <div className="bg-[#2D2D2F] p-4 rounded-xl">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {sources.map((source, index) => (
-              <div key={index} className="flex items-start space-x-3">
-                <div className="flex-shrink-0 w-8 h-8 bg-purple-500/10 rounded-full flex items-center justify-center">
-                  <span className="text-purple-400 text-sm">{index + 1}</span>
+  return (
+    <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="mb-8">
+        <h2 className="text-2xl font-bold text-white mb-6">Stored Snapshots</h2>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {storedSnapshots.map((snapshot) => (
+            <div 
+              key={snapshot.id}
+              className="bg-[#1D1D1F]/90 p-6 rounded-xl backdrop-blur-xl border border-purple-500/20 hover:border-purple-500/40 transition-all cursor-pointer"
+              onClick={() => setSelectedSnapshot(snapshot)}
+            >
+              <div className="flex flex-col space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-200 font-mono text-sm">{snapshot.id}</span>
+                  <span className="text-xs text-gray-500">
+                    {new Date(snapshot.timestamp).toLocaleDateString()}
+                  </span>
                 </div>
-                <div className="flex-grow">
-                  <div className="flex justify-between items-start">
-                    <a 
-                      href={source.url} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="text-purple-400 hover:text-purple-300 transition-colors"
-                    >
-                      {source.domain}
-                    </a>
-                    <span className="text-xs text-gray-500 ml-2">
-                      {source.section}
-                    </span>
-                  </div>
-                  <p className="text-gray-400 text-sm mt-1">
-                    Accessed: {source.date}
-                  </p>
+                
+                {/* Preview of data */}
+                <div className="mt-2 text-sm text-gray-400">
+                  {snapshot.data && typeof snapshot.data === 'object' && (
+                    <div className="space-y-1">
+                      {Object.keys(snapshot.data).slice(0, 3).map(key => (
+                        <div key={key} className="truncate">
+                          {key}: {typeof snapshot.data[key] === 'object' ? '...' : snapshot.data[key]}
+                        </div>
+                      ))}
+                      {Object.keys(snapshot.data).length > 3 && (
+                        <div className="text-purple-400">+ more data...</div>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
-        <div className="text-sm text-gray-400 mt-2">
-          * Data compiled from {sources.length} trusted sources
-        </div>
-      </div>
-    );
-  };
-
-  const renderPhaseStatus = () => {
-    const phases = [
-      'Starting Analysis',
-      'Current State',
-      'Desired State',
-      'Identified Gaps',
-      'Recommendations',
-      'Data Sources'
-    ];
-
-    return (
-      <div className="mb-6">
-        <div className="flex items-center space-x-2">
-          {phases.map((phase, index) => (
-            <div key={index} className="flex items-center">
-              <div className={`h-2 w-2 rounded-full ${
-                currentPhase > index ? 'bg-purple-500' : 'bg-gray-600'
-              }`} />
-              <span className={`text-sm ml-1 ${
-                currentPhase > index ? 'text-purple-400' : 'text-gray-500'
-              }`}>
-                {phase}
-              </span>
-              {index < phases.length - 1 && (
-                <div className={`h-0.5 w-4 mx-2 ${
-                  currentPhase > index ? 'bg-purple-500' : 'bg-gray-600'
-                }`} />
-              )}
             </div>
           ))}
         </div>
-      </div>
-    );
-  };
 
-  return (
-    <div className="min-h-screen bg-[#131314] text-white p-4 sm:p-6">
-      <div className="max-w-7xl mx-auto">
-        {/* Header Section */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 sm:mb-8 space-y-4 sm:space-y-0">
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-purple-400 via-purple-600 to-indigo-600 bg-clip-text text-transparent">
-              Gap Analysis
-            </h1>
-            <p className="text-gray-400 mt-2">Analyze current vs desired state gaps</p>
-          </div>
-        </div>
-
-        {/* Navigation Tabs */}
-        <div className="bg-[#1D1D1F] p-1 rounded-xl mb-6 sm:mb-8 inline-flex w-full sm:w-auto overflow-x-auto">
-          <Link 
-            href="/swot-analysis"
-            className="flex-1 sm:flex-none px-3 sm:px-4 py-2 rounded-lg text-gray-400 hover:text-white hover:bg-purple-600/50 transition-all duration-200 text-sm sm:text-base whitespace-nowrap"
-          >
-            SWOT Analysis
-          </Link>
-          <button 
-            className="flex-1 sm:flex-none px-3 sm:px-4 py-2 rounded-lg bg-purple-600 text-white text-sm sm:text-base whitespace-nowrap"
-          >
-            Gap Analysis
-          </button>
-        </div>
-
-        {/* Add phase status indicator */}
-        {isLoading && renderPhaseStatus()}
-
-        {/* Main Content */}
-        <div className="bg-[#1D1D1F] rounded-2xl border border-purple-500/10 p-4 sm:p-6">
-          <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
-            <div>
-              <textarea
-                value={userInput}
-                onChange={(e) => setUserInput(e.target.value)}
-                placeholder="Enter your business details for gap analysis..."
-                className="w-full h-32 sm:h-40 px-3 sm:px-4 py-2 sm:py-3 bg-[#131314] text-gray-200 rounded-xl border border-purple-500/20 
-                         placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50 resize-none text-sm sm:text-base"
-                disabled={isLoading}
-              />
-            </div>
-            <button
-              type="submit"
-              disabled={isLoading || !userInput.trim()}
-              className={`w-full py-3 sm:py-4 px-4 sm:px-6 rounded-xl font-medium transition-all duration-200 text-sm sm:text-base
-                        ${!isLoading && userInput.trim()
-                  ? 'bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white shadow-lg shadow-purple-500/25'
-                  : 'bg-gray-600 text-gray-300 cursor-not-allowed'}`}
-            >
-              {isLoading ? (
-                <div className="flex items-center justify-center space-x-2">
-                  <div className="w-4 sm:w-5 h-4 sm:h-5 border-t-2 border-b-2 border-white rounded-full animate-spin"></div>
-                  <span>Analyzing...</span>
+        {/* Selected Snapshot */}
+        {selectedSnapshot && (
+          <div className="mt-8 space-y-6">
+            <div className="bg-[#1D1D1F]/90 p-6 rounded-xl backdrop-blur-xl border border-purple-500/20">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-xl font-semibold text-purple-400">
+                  Snapshot Details: {selectedSnapshot.id}
+                </h3>
+                <div className="flex space-x-4">
+                  <button 
+                    onClick={() => processSnapshotData(selectedSnapshot)}
+                    disabled={isProcessing}
+                    className={`px-4 py-2 rounded-lg transition-colors ${
+                      isProcessing 
+                        ? 'bg-purple-600/50 cursor-not-allowed' 
+                        : 'bg-purple-600 hover:bg-purple-700'
+                    }`}
+                  >
+                    {isProcessing ? 'Processing...' : 'Process Data'}
+                  </button>
+                  <button 
+                    onClick={() => setSelectedSnapshot(null)}
+                    className="text-gray-400 hover:text-gray-300"
+                  >
+                    Close
+                  </button>
                 </div>
-              ) : (
-                'Analyze Gaps'
-              )}
-            </button>
-          </form>
-
-          {/* Analysis Results */}
-          <div ref={analysisRef} className="mt-6">
-            {error ? (
-              <div className="text-red-500">{error}</div>
-            ) : (
-              <div className="space-y-6">
-                {renderGapSection("Current State", gapAnalysis.current_state)}
-                {renderGapSection("Desired State", gapAnalysis.desired_state)}
-                {renderGapSection("Identified Gaps", gapAnalysis.identified_gaps)}
-                {renderGapSection("Recommendations", gapAnalysis.recommendations)}
-                
-                {/* Add Sources Section */}
-                {renderSourcesSection(gapAnalysis.sources)}
               </div>
-            )}
-          </div>
+              <pre className="bg-[#2D2D2F] p-4 rounded-lg overflow-auto max-h-96 text-sm text-gray-300">
+                {JSON.stringify(selectedSnapshot.data, null, 2)}
+              </pre>
+            </div>
 
-          {/* Export PDF Button */}
-          <div className="mt-6">
-            <button
-              onClick={exportToPDF}
-              disabled={isLoading || !gapAnalysis || Object.keys(gapAnalysis).length === 0}
-              className={`w-full py-3 sm:py-4 px-4 sm:px-6 rounded-xl font-medium transition-all duration-200 text-sm sm:text-base
-                          ${!isLoading && gapAnalysis && Object.keys(gapAnalysis).length > 0
-                ? 'bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white shadow-lg shadow-green-500/25'
-                : 'bg-gray-600 text-gray-300 cursor-not-allowed'}`}
-            >
-              Export to PDF
-            </button>
+            {/* Processed Data Review */}
+            {renderProcessedDataReview()}
           </div>
-        </div>
+        )}
+
+        {storedSnapshots.length === 0 && (
+          <div className="text-center text-gray-400 py-12">
+            No stored snapshots found
+          </div>
+        )}
       </div>
     </div>
   );
