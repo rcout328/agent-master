@@ -1,0 +1,174 @@
+Company: Unknown
+CB Rank: Unknown
+Region: Unknown
+Industries: 
+Number of Employees: Unknown
+Technologies: 
+
+Company: AI
+CB Rank: 525958
+Region: Tokyo
+Industries: Graphic Design, Information Technology, Software
+Number of Employees: 11-50
+Technologies: SPF, Euro, DMARC, Apache, Apache 2.4, Japanese Yen, NTT Japan
+
+Company: Unknown
+CB Rank: Unknown
+Region: Unknown
+Industries: 
+Number of Employees: Unknown
+Technologies: 
+
+Company: Unknown
+CB Rank: Unknown
+Region: Unknown
+Industries: 
+Number of Employees: Unknown
+Technologies: 
+
+Company: Unknown
+CB Rank: Unknown
+Region: Unknown
+Industries: 
+Number of Employees: Unknown
+Technologies: 
+
+Company: AIG
+CB Rank: 10988
+Region: New York
+Industries: Commercial Insurance, Financial Services, Health Insurance, Insurance, Lending, Life Insurance, Property Insurance, Real Estate Investment, Retirement, Risk Management
+Number of Employees: 10001+
+Technologies: IPhone / Mobile Compatible, Viewport Meta, Domain Not Resolving, SSL by Default, Apple Mobile Web Clips Icon, HSTS, Google Font API, DNSSEC, Google Maps, Font Awesome
+
+Company: Aisin Seiki
+CB Rank: 334695
+Region: Tochigi
+Industries: Automotive, Hardware, Industrial, Manufacturing
+Number of Employees: 11-50
+Technologies: 
+
+Company: Airbnb
+CB Rank: 436
+Region: California
+Industries: Hospitality, Marketplace, Mobile Apps, PropTech, Travel, Travel Accommodations
+Number of Employees: 5001-10000
+Technologies: IPhone / Mobile Compatible, Viewport Meta, Domain Not Resolving, SSL by Default, Euro, Google Tag Manager, Apple Mobile Web Clips Icon, HSTS, Google Font API, DNSSEC
+
+Company: Ai Connects
+CB Rank: 1962225
+Region: Florida
+Industries: Aerospace, Information Services, Technical Support
+Number of Employees: 1-10
+Technologies: Person Schema, Apple Pay, Google Pay
+
+Company: Air BP
+CB Rank: 31048
+Region: England
+Industries: Air Transportation, Industrial, Oil and Gas
+Number of Employees: Unknown
+Technologies: 
+
+Company: Airbus
+CB Rank: 32558
+Region: Zuid-Holland
+Industries: Aerospace, Industrial, Manufacturing, Product Design, Product Research, Remote Sensing
+Number of Employees: 10001+
+Technologies: Domain Not Resolving, SSL by Default, HSTS, DNSSEC, Content Delivery Network, Amazon, Font Awesome, DoubleClick.Net, US Privacy User Signal Mechanism, YouTube
+
+Company: Airbus (Commercial Aircraft)
+CB Rank: 558811
+Region: Midi-Pyrenees
+Industries: Advanced Materials, Aerospace, Air Transportation, Hardware, Manufacturing
+Number of Employees: 10001+
+Technologies: IPhone / Mobile Compatible, Viewport Meta, Domain Not Resolving, SSL by Default, Apple Mobile Web Clips Icon, HSTS, Content Delivery Network, WordPress, Amazon, Font Awesome
+
+Company: Air Products and Chemicals
+CB Rank: 34274
+Region: Pennsylvania
+Industries: Chemical, Chemical Engineering, Energy, Industrial, Medical Device, Semiconductor, Transportation
+Number of Employees: 10001+
+Technologies: Domain Not Resolving, Google Font API, DNSSEC, Google Maps, Font Awesome, LetsEncrypt, Cloudflare CDN, Cloudflare Hosting, jsDelivr, Cloudflare Network Error Logging
+
+Company: Airtel
+CB Rank: 2932
+Region: Delhi
+Industries: Mobile, Public Relations, Telecommunications
+Number of Employees: 10001+
+Technologies: Domain Not Resolving, DNSSEC, Google Maps, WordPress, Font Awesome, nginx, reCAPTCHA, US Privacy User Signal Mechanism, Sitelinks Search Box, Google Analytics 4
+
+Company: Aimbridge Hospitality
+CB Rank: 179495
+Region: Texas
+Industries: Asset Management, Hospitality, Hotel
+Number of Employees: 10001+
+Technologies: IPhone / Mobile Compatible, Viewport Meta, SPF, SSL by Default, Google Tag Manager, Google Font API, DNSSEC, Google Analytics, Content Delivery Network, Global Site Tag
+
+Company: Air Methods
+CB Rank: 331953
+Region: Colorado
+Industries: Health Care, Hospitality
+Number of Employees: 1001-5000
+Technologies: Domain Not Resolving, HSTS, DNSSEC, Amazon, Mobile Non Scaleable Content, nginx, Apache, Apple Mobile Web App Capable, Amazon Virginia Region, HSTS IncludeSubdomains PreLoad
+
+Company: Air National Guard
+CB Rank: 447968
+Region: District of Columbia
+Industries: Communities, Cyber Security, Government, Information Technology, Law Enforcement, Legal, Military
+Number of Employees: 10001+
+Technologies: Domain Not Resolving, PHP, Tiny MCE, US Non Government Domain
+
+Company: Air India
+CB Rank: 4136
+Region: Maharashtra
+Industries: Aerospace, Air Transportation, In-Flight Entertainment, Logistics, Travel
+Number of Employees: 10001+
+Technologies: 
+
+Company: AIG
+CB Rank: 15502
+Region: New York
+Industries: Banking, Financial Services, Insurance
+Number of Employees: 10001+
+Technologies: 
+
+Company: Airbus Operations GmbH
+CB Rank: 289994
+Region: Hamburg
+Industries: Aerospace
+Number of Employees: 11-50
+Technologies: Domain Not Resolving, SSL by Default, Apache, Usercentrics
+
+Company: Air Canada
+CB Rank: 6902
+Region: Quebec
+Industries: Aerospace, Transportation, Travel
+Number of Employees: 10001+
+Technologies: IPhone / Mobile Compatible, Viewport Meta, Domain Not Resolving, SSL by Default, HSTS, Google Font API, DNSSEC, WordPress, Amazon, Font Awesome
+
+Company: AIA Group
+CB Rank: 68231
+Region: Hong Kong Island
+Industries: Financial Services, Health Insurance, Insurance, Wealth Management
+Number of Employees: 10001+
+Technologies: Domain Not Resolving, Google Tag Manager, Apple Mobile Web Clips Icon, HSTS, Google Font API, DNSSEC, Google Maps, Content Delivery Network, Amazon, Global Site Tag
+
+Company: Airtel Burkina Faso
+CB Rank: 255124
+Region: Kadiogo
+Industries: Mobile, Telecommunications
+Number of Employees: 251-500
+Technologies: IPhone / Mobile Compatible, Domain Not Resolving, Apple Mobile Web Clips Icon, HSTS, Google Font API, DNSSEC, Google Maps, Amazon, reCAPTCHA, Apache
+
+Company: Ai
+CB Rank: 349847
+Region: California
+Industries: UX Design, Web Design, Web Development
+Number of Employees: 11-50
+Technologies: Amazon
+
+Company: Air Force Civilian Service
+CB Rank: 1094413
+Region: Texas
+Industries: Aerospace
+Number of Employees: 10001+
+Technologies: Viewport Meta, IPhone / Mobile Compatible, SPF, Domain Not Resolving, SSL by Default, Euro, Google Tag Manager, Apple Mobile Web Clips Icon, HSTS, Google Font API

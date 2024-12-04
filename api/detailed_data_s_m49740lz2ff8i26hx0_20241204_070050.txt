@@ -1,0 +1,174 @@
+Company: Amazon Studios
+CB Rank: 105452
+Region: California
+Industries: Film Distribution, Film Production
+Number of Employees: Unknown
+Technologies: 
+
+Company: Amazon Logistics
+CB Rank: 276011
+Region: Unknown
+Industries: 
+Number of Employees: Unknown
+Technologies: 
+
+Company: Amazon Games
+CB Rank: 212242
+Region: California
+Industries: E-Commerce, Online Games, Software, Video Games
+Number of Employees: 1001-5000
+Technologies: IPhone / Mobile Compatible, Viewport Meta, Domain Not Resolving, SSL by Default, Apple Mobile Web Clips Icon, HSTS, DNSSEC, Mobile Non Scaleable Content, nginx, Cloudflare CDN
+
+Company: Amazon Pay
+CB Rank: 73840
+Region: Washington
+Industries: E-Commerce, Internet, Mobile Payments, Online Portals, Payments
+Number of Employees: 10001+
+Technologies: IPhone / Mobile Compatible, Viewport Meta, Apple Mobile Web Clips Icon, HSTS, Content Delivery Network, Organization Schema, CloudFront, Amazon S3, Amazon Payments, Marketo
+
+Company: Amazon
+CB Rank: 407
+Region: Washington
+Industries: Crowdsourcing, Delivery, E-Commerce, Retail
+Number of Employees: 10001+
+Technologies: HSTS, HSTS IncludeSubdomains PreLoad, COVID-19, Amazon CloudFront, Facebook Domain Insights, SEO_H2, Amazon Ad System, Amazon Associates, Amazon Webstore
+
+Company: AMAZONEN
+CB Rank: 477425
+Region: Niedersachsen
+Industries: Agriculture, Farming, Manufacturing
+Number of Employees: 1001-5000
+Technologies: IPhone / Mobile Compatible, Viewport Meta, Domain Not Resolving, Euro, Google Tag Manager, Apple Mobile Web Clips Icon, HSTS, DNSSEC, Google Maps, Content Delivery Network
+
+Company: Amazon Alexa Fund
+CB Rank: 39753
+Region: Washington
+Industries: Artificial Intelligence (AI), Consumer Electronics, Consumer Software, Enterprise Software, FinTech, Hardware, Information Technology, Internet of Things, Software
+Number of Employees: 1-10
+Technologies: IPhone / Mobile Compatible, Viewport Meta, Google Tag Manager, HSTS, Apache, CloudFront, Amazon CloudFront, Amazon API Gateway, Adobe Dynamic Tag Management, SEO_H2
+
+Company: Amazon Hose and Rubber
+CB Rank: 402004
+Region: Florida
+Industries: Building Material, Manufacturing
+Number of Employees: 51-100
+Technologies: Domain Not Resolving, HSTS, DNSSEC, Font Awesome, Cloudflare CDN, Cloudflare Hosting, Person Schema, Cloudflare, jsDelivr, U.S. Server Location
+
+Company: Amazon Services
+CB Rank: 294392
+Region: Washington
+Industries: E-Commerce, Information Technology
+Number of Employees: 10001+
+Technologies: HSTS, CloudFront, Amazon S3, SEO_H2, SEO_H1, Amazon Associates, Amazon Webstore
+
+Company: Amazon Cloud Drive
+CB Rank: 2459195
+Region: Washington
+Industries: Apps, Cloud Data Services, Information Technology, iOS, Video
+Number of Employees: Unknown
+Technologies: Domain Not Resolving
+
+Company: Amazon Robotics
+CB Rank: 169072
+Region: Massachusetts
+Industries: E-Commerce, Hardware, Mobile, Robotics, Software
+Number of Employees: 501-1000
+Technologies: Domain Not Resolving, SSL by Default, DNSSEC, Apple Whitelist, Amazon Ohio Region, GlobalSign Domain Verification, Level 3 Communications, Verizon, Verizon FIOS, Store Schema
+
+Company: Amazon Beauty
+CB Rank: 193076
+Region: New York
+Industries: Beauty, Customer Service, Health Care, Organic
+Number of Employees: 11-50
+Technologies: IPhone / Mobile Compatible, Viewport Meta, Domain Not Resolving, Euro, Google Tag Manager, Apple Mobile Web Clips Icon, DNSSEC, Content Delivery Network, Organization Schema, IPv6
+
+Company: Amazon Lab126
+CB Rank: 193912
+Region: California
+Industries: Consumer Electronics, Enterprise Software, Hardware, Software, Warehouse Automation
+Number of Employees: 5001-10000
+Technologies: Apple Whitelist
+
+Company: Amazon Business
+CB Rank: 19816
+Region: Washington
+Industries: B2B, E-Commerce, Internet
+Number of Employees: 1001-5000
+Technologies: 
+
+Company: Amazon Web Services
+CB Rank: 46995
+Region: Washington
+Industries: Computer, Consulting, DevOps, Information Services, Information Technology, Internet, Service Industry, Software, Web Development
+Number of Employees: 10001+
+Technologies: IPhone / Mobile Compatible, Viewport Meta, Apple Mobile Web Clips Icon, HSTS, Content Delivery Network, DoubleClick.Net, YouTube, Amazon S3, Amazon CloudFront, YouTube Privacy Enchanced
+
+Company: Amazon Conservation Team
+CB Rank: 310540
+Region: Virginia
+Industries: Communities, Environmental Consulting, Natural Resources, Non Profit
+Number of Employees: 11-50
+Technologies: Person Schema, jsDelivr, Gravatar Profiles, Facebook Sharer, Common Name Invalid, PayPal, Visa, CPanel, Site Kit, FLoC Opt-Out
+
+Company: Amazon Pharmacy
+CB Rank: 280514
+Region: Texas
+Industries: Medical, Pharmaceutical, Retail
+Number of Employees: 251-500
+Technologies: HSTS, CloudFront, HSTS IncludeSubdomains PreLoad, Amazon CloudFront, SEO_H2, SEO_H1, Amazon Associates, AWS Cloudfront Toronto ON Edge, OpenBadges.me
+
+Company: Amazon Data Services Sweden AB
+CB Rank: 1185282
+Region: Stockholms Lan
+Industries: E-Commerce, Online Portals
+Number of Employees: 51-100
+Technologies: Euro, HSTS, HSTS IncludeSubdomains PreLoad, COVID-19, Amazon CloudFront, Facebook Domain Insights, SEO_H2, Amazon Ad System, Amazon Associates, Amazon Webstore
+
+Company: Amazon Japan
+CB Rank: 223823
+Region: Tokyo
+Industries: E-Commerce, Retail
+Number of Employees: 10001+
+Technologies: Domain Not Resolving, SSL by Default, Apple Mobile Web Clips Icon, HSTS, DNSSEC, Font Awesome, IPv6, Person Schema, U.S. Server Location, CrUX Top 50m
+
+Company: Amazon Spain Services
+CB Rank: 335905
+Region: Madrid
+Industries: Marketing, Technical Support
+Number of Employees: 1001-5000
+Technologies: Euro, HSTS, HSTS IncludeSubdomains PreLoad, COVID-19, Facebook Domain Insights, SEO_H2, Amazon Ad System, Amazon Associates, Amazon Webstore
+
+Company: Amazon Music
+CB Rank: 153663
+Region: California
+Industries: Digital Media, Music, Music Streaming
+Number of Employees: 10001+
+Technologies: HSTS, HSTS IncludeSubdomains PreLoad, Amazon S3, Amazon CloudFront, Amazon API Gateway, SEO_H2
+
+Company: Amazon Seller Services
+CB Rank: 6320
+Region: Karnataka
+Industries: E-Commerce, Marketplace, Shopping
+Number of Employees: 5001-10000
+Technologies: HSTS, CloudFront, Amazon S3, SEO_H2, SEO_H1, Amazon Associates, Amazon Webstore
+
+Company: Amazon - UK
+CB Rank: 418031
+Region: District of Columbia
+Industries: E-Commerce, Internet, Retail, Software
+Number of Employees: 10001+
+Technologies: HSTS, Pound Sterling, HSTS IncludeSubdomains PreLoad, COVID-19, Facebook Domain Insights, SEO_H2, Amazon Ad System, Amazon Associates, Amazon Webstore
+
+Company: Amazon Conservation Association
+CB Rank: 818813
+Region: District of Columbia
+Industries: Association, Non Profit, Wildlife Conservation
+Number of Employees: 11-50
+Technologies: IPhone / Mobile Compatible, Viewport Meta, SSL by Default, Google Tag Manager, Apple Mobile Web Clips Icon, Google Analytics, Content Delivery Network, WordPress, Global Site Tag, Mobile Non Scaleable Content
+
+Company: Amazon Mechanical Turk
+CB Rank: 208999
+Region: Washington
+Industries: E-Commerce, Marketplace, Online Forums
+Number of Employees: 11-50
+Technologies: Apple Mobile Web Clips Icon, DNSSEC, Google Analytics, Content Delivery Network, Organization Schema, Person Schema, jsDelivr, Google Universal Analytics, YouTube, BootstrapCDN

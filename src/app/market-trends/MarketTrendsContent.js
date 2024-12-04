@@ -1,28 +1,21 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { Line, Bar } from 'react-chartjs-2';
+import { Bar } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
-  PointElement,
-  LineElement,
   BarElement,
   Title,
   Tooltip,
   Legend,
 } from 'chart.js';
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
 
 // Register ChartJS components
 ChartJS.register(
   CategoryScale,
   LinearScale,
-  PointElement,
-  LineElement,
   BarElement,
   Title,
   Tooltip,
@@ -32,8 +25,8 @@ ChartJS.register(
 const formatMetric = (value, type) => {
   if (type === 'percentage') return `${value}%`;
   if (type === 'money') {
-    if (value >= 1000000000) return `$${(value/1000000000).toFixed(1)}B`;
-    if (value >= 1000000) return `$${(value/1000000).toFixed(1)}M`;
+    if (value >= 1000000000) return `$${(value / 1000000000).toFixed(1)}B`;
+    if (value >= 1000000) return `$${(value / 1000000).toFixed(1)}M`;
     return `$${value.toLocaleString()}`;
   }
   return value;
@@ -81,21 +74,62 @@ const MarketShareChart = ({ data }) => {
       label: 'Market Share (%)',
       data: Object.values(data.market_share),
       backgroundColor: [
-        'rgba(147, 51, 234, 0.7)',
-        'rgba(168, 85, 247, 0.7)',
-        'rgba(192, 132, 252, 0.7)',
-        'rgba(216, 180, 254, 0.7)',
-        'rgba(233, 213, 255, 0.7)',
+        'rgba(147, 51, 234, 0.5)',  // purple
+        'rgba(59, 130, 246, 0.5)',  // blue
+        'rgba(16, 185, 129, 0.5)',  // green
+        'rgba(245, 158, 11, 0.5)',  // yellow
+        'rgba(239, 68, 68, 0.5)',   // red
       ],
+      borderColor: [
+        'rgb(147, 51, 234)',
+        'rgb(59, 130, 246)',
+        'rgb(16, 185, 129)',
+        'rgb(245, 158, 11)',
+        'rgb(239, 68, 68)',
+      ],
+      borderWidth: 1
     }]
   };
 
+  const options = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top',
+        labels: {
+          color: 'rgb(156, 163, 175)'  // gray-400
+        }
+      },
+      title: {
+        display: true,
+        text: 'Market Share Distribution',
+        color: 'rgb(156, 163, 175)'
+      }
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        ticks: {
+          color: 'rgb(156, 163, 175)'
+        },
+        grid: {
+          color: 'rgba(31, 41, 55, 0.2)'  // gray-800 with opacity
+        }
+      },
+      x: {
+        ticks: {
+          color: 'rgb(156, 163, 175)'
+        },
+        grid: {
+          color: 'rgba(31, 41, 55, 0.2)'
+        }
+      }
+    }
+  };
+
   return (
-    <div className="bg-[#2D2D2F] rounded-xl p-6 mb-6">
-      <h4 className="font-medium text-white mb-4">Market Share Distribution</h4>
-      <div className="h-64">
-        <Bar data={chartData} options={{ maintainAspectRatio: false }} />
-      </div>
+    <div className="bg-[#2D2D2F] rounded-xl p-6 mb-8">
+      <Bar data={chartData} options={options} />
     </div>
   );
 };
@@ -109,9 +143,7 @@ const AnalysisMetadata = ({ metadata }) => {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div>
           <p className="text-gray-400 text-sm">Confidence Score</p>
-          <p className={`text-lg font-medium ${
-            metadata.confidence_score === 'High' ? 'text-green-400' : 'text-yellow-400'
-          }`}>
+          <p className={`text-lg font-medium ${metadata.confidence_score === 'High' ? 'text-green-400' : 'text-yellow-400'}`}>
             {metadata.confidence_score}
           </p>
         </div>
@@ -121,9 +153,7 @@ const AnalysisMetadata = ({ metadata }) => {
         </div>
         <div>
           <p className="text-gray-400 text-sm">Data Quality</p>
-          <p className={`text-lg font-medium ${
-            metadata.data_quality === 'High' ? 'text-green-400' : 'text-yellow-400'
-          }`}>
+          <p className={`text-lg font-medium ${metadata.data_quality === 'High' ? 'text-green-400' : 'text-yellow-400'}`}>
             {metadata.data_quality}
           </p>
         </div>
@@ -131,15 +161,33 @@ const AnalysisMetadata = ({ metadata }) => {
           <p className="text-gray-400 text-sm">Coverage</p>
           <div className="flex space-x-2">
             {Object.entries(metadata.coverage).map(([key, value]) => (
-              <span key={key} className={`px-2 py-1 rounded text-xs ${
-                value ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'
-              }`}>
+              <span key={key} className={`px-2 py-1 rounded text-xs ${value ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
                 {key.split('_').map(word => word.charAt(0).toUpperCase()).join('')}
               </span>
             ))}
           </div>
         </div>
       </div>
+    </div>
+  );
+};
+
+// Added renderSourcesSection function to resolve ReferenceError
+const renderSourcesSection = (sources) => {
+  if (!sources || sources.length === 0) return null;
+
+  return (
+    <div className="bg-[#2D2D2F] rounded-xl p-6 mb-6">
+      <h4 className="font-medium text-white mb-4">Sources</h4>
+      <ul className="space-y-2">
+        {sources.map((source, index) => (
+          <li key={index} className="text-gray-300">
+            <a href={source.url} target="_blank" rel="noopener noreferrer" className="text-purple-400 hover:underline">
+              {source.domain} - {source.section} (Date: {source.date})
+            </a>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 };
@@ -157,7 +205,6 @@ export default function MarketTrendsContent() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [currentPhase, setCurrentPhase] = useState(0);
-  const [isExporting, setIsExporting] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -165,17 +212,9 @@ export default function MarketTrendsContent() {
 
   useEffect(() => {
     if (typeof window !== 'undefined' && apiResponse) {
-      // Clear previous data from localStorage before storing new data
-      localStorage.removeItem('marketTrendsData');
       localStorage.setItem('marketTrendsData', JSON.stringify(apiResponse));
     }
   }, [apiResponse]);
-
-  useEffect(() => {
-    if (typeof window !== 'undefined' && !apiResponse && searchQuery.trim()) {
-      handleSubmit();
-    }
-  }, [apiResponse, searchQuery]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -186,397 +225,367 @@ export default function MarketTrendsContent() {
     setCurrentPhase(1);
 
     try {
-      const response = await fetch('http://127.0.0.1:5000/api/market-trends', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ query: searchQuery }),
-      });
+        console.log('Starting market analysis for:', searchQuery);
 
-      if (!response.ok) {
-        throw new Error('Failed to fetch data');
-      }
-
-      const data = await response.json();
-      console.log('Market Trends API Response:', data);
-      
-      // Update data progressively
-      if (data.market_size_growth?.total_market_value?.length) {
-        setCurrentPhase(2);
-        setApiResponse(prev => ({ ...prev, market_size_growth: data.market_size_growth }));
-      }
-      if (data.competitive_landscape?.market_leaders?.length) {
-        setCurrentPhase(3);
-        setApiResponse(prev => ({ ...prev, competitive_landscape: data.competitive_landscape }));
-      }
-      if (data.industry_trends?.current_trends?.length) {
-        setCurrentPhase(4);
-        setApiResponse(prev => ({ ...prev, industry_trends: data.industry_trends }));
-      }
-      if (data.growth_forecast?.short_term?.length) {
-        setCurrentPhase(5);
-        setApiResponse(prev => ({ ...prev, growth_forecast: data.growth_forecast }));
-      }
-      if (data.risk_assessment?.market_challenges?.length) {
-        setCurrentPhase(6);
-        setApiResponse(prev => ({ ...prev, risk_assessment: data.risk_assessment }));
-      }
-      if (data.metrics) {
-        setCurrentPhase(7);
-        setApiResponse(prev => ({ ...prev, metrics: data.metrics }));
-      }
-      if (data.sources?.length) {
-        setCurrentPhase(8);
-        setApiResponse(prev => ({ ...prev, sources: data.sources }));
-      }
-
-      // Store in localStorage
-      if (typeof window !== 'undefined') {
-        // Clear previous data from localStorage before storing new data
-        localStorage.removeItem('marketTrendsData');
-        localStorage.setItem('marketTrendsData', JSON.stringify(data));
-      }
-
-    } catch (error) {
-      console.error('Error:', error);
-      setError('Failed to get market trends data. Please try again.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const renderPhaseStatus = () => {
-    const phases = [
-      'Starting Analysis',
-      'Market Size & Growth',
-      'Competitive Analysis',
-      'Industry Trends',
-      'Growth Forecast',
-      'Risk Assessment',
-      'Data Sources'
-    ];
-
-    return (
-      <div className="mb-6">
-        <div className="flex items-center space-x-2">
-          {phases.map((phase, index) => (
-            <div key={index} className="flex items-center">
-              <div className={`h-2 w-2 rounded-full ${
-                currentPhase > index ? 'bg-purple-500' : 'bg-gray-600'
-              }`} />
-              <span className={`text-sm ml-1 ${
-                currentPhase > index ? 'text-purple-400' : 'text-gray-500'
-              }`}>
-                {phase}
-              </span>
-              {index < phases.length - 1 && (
-                <div className={`h-0.5 w-4 mx-2 ${
-                  currentPhase > index ? 'bg-purple-500' : 'bg-gray-600'
-                }`} />
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-  };
-
-  const renderSourcesSection = (sources) => {
-    if (!sources?.length) return null;
-
-    return (
-      <div className="mb-6">
-        <h3 className="text-lg font-semibold text-purple-400 mb-2">Data Sources</h3>
-        <div className="bg-[#2D2D2F] p-4 rounded-xl">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {sources.map((source, index) => (
-              <div key={index} className="flex items-start space-x-3">
-                <div className="flex-shrink-0 w-8 h-8 bg-purple-500/10 rounded-full flex items-center justify-center">
-                  <span className="text-purple-400 text-sm">{index + 1}</span>
-                </div>
-                <div className="flex-grow">
-                  <div className="flex justify-between items-start">
-                    <a 
-                      href={source.url} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="text-purple-400 hover:text-purple-300 transition-colors"
-                    >
-                      {source.domain}
-                    </a>
-                    <span className="text-xs text-gray-500 ml-2">
-                      {source.section}
-                    </span>
-                  </div>
-                  <p className="text-gray-400 text-sm mt-1">
-                    Accessed: {source.date}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  const exportToPDF = async () => {
-    if (!apiResponse || Object.keys(apiResponse).length === 0) return;
-    
-    setIsExporting(true);
-    try {
-      const pdf = new jsPDF({
-        orientation: 'portrait',
-        unit: 'mm',
-        format: 'a4'
-      });
-
-      // Add header
-      pdf.setFillColor(48, 48, 51); // Dark background
-      pdf.rect(0, 0, pdf.internal.pageSize.getWidth(), 40, 'F');
-      pdf.setTextColor(255, 255, 255);
-      pdf.setFont("helvetica", "bold");
-      pdf.setFontSize(24);
-      pdf.text("Market Trends Analysis", 20, 25);
-      pdf.setFontSize(12);
-      pdf.setFont("helvetica", "normal");
-      pdf.text(`Report for: ${searchQuery}`, 20, 35);
-      pdf.text(`Generated: ${new Date().toLocaleDateString()}`, pdf.internal.pageSize.getWidth() - 60, 35);
-
-      let yPos = 50; // Starting position after header
-
-      // Helper function to add section
-      const addSection = (title, data, subsections) => {
-        if (!data) return yPos;
-
-        // Add section title
-        pdf.setFont("helvetica", "bold");
-        pdf.setFontSize(16);
-        pdf.setTextColor(128, 90, 213); // Purple color
-        pdf.text(title, 20, yPos);
-        yPos += 10;
-
-        // Add subsections
-        Object.entries(subsections).forEach(([key, label]) => {
-          // Check if we need a new page
-          if (yPos > 250) {
-            pdf.addPage();
-            yPos = 20;
-          }
-
-          pdf.setFont("helvetica", "bold");
-          pdf.setFontSize(12);
-          pdf.setTextColor(80, 80, 80);
-          pdf.text(label, 25, yPos);
-          yPos += 7;
-
-          // Add items
-          pdf.setFont("helvetica", "normal");
-          pdf.setFontSize(10);
-          pdf.setTextColor(60, 60, 60);
-          data[key]?.forEach(item => {
-            // Handle text wrapping
-            const lines = pdf.splitTextToSize(item, 160);
-            lines.forEach(line => {
-              if (yPos > 270) {
-                pdf.addPage();
-                yPos = 20;
-              }
-              pdf.text(line, 30, yPos);
-              yPos += 5;
-            });
-            yPos += 2;
-          });
-          yPos += 5;
+        // Call our backend API instead of Brightdata directly
+        const response = await fetch('http://localhost:5000/api/market-trends', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ query: searchQuery })
         });
 
-        yPos += 10;
-        return yPos;
-      };
-
-      // Add each section
-      addSection("Market Size & Growth", apiResponse.market_size_growth, {
-        total_market_value: "Total Market Value",
-        market_segments: "Market Segments",
-        regional_distribution: "Regional Distribution"
-      });
-
-      addSection("Competitive Analysis", apiResponse.competitive_analysis, {
-        market_leaders: "Market Leaders",
-        competitive_advantages: "Competitive Advantages",
-        market_concentration: "Market Concentration"
-      });
-
-      addSection("Industry Trends", apiResponse.industry_trends, {
-        current_trends: "Current Trends",
-        technology_impact: "Technology Impact",
-        regulatory_environment: "Regulatory Environment"
-      });
-
-      addSection("Growth Forecast", apiResponse.growth_forecast, {
-        short_term: "Short-term Outlook",
-        long_term: "Long-term Potential",
-        growth_drivers: "Growth Drivers"
-      });
-
-      addSection("Risk Assessment", apiResponse.risk_assessment, {
-        market_challenges: "Market Challenges",
-        economic_factors: "Economic Factors",
-        competitive_threats: "Competitive Threats"
-      });
-
-      // Add sources section
-      if (apiResponse.sources?.length) {
-        if (yPos > 250) {
-          pdf.addPage();
-          yPos = 20;
+        if (!response.ok) {
+            throw new Error('Failed to fetch data');
         }
 
-        pdf.setFont("helvetica", "bold");
-        pdf.setFontSize(16);
-        pdf.setTextColor(128, 90, 213);
-        pdf.text("Data Sources", 20, yPos);
-        yPos += 10;
+        const data = await response.json();
+        console.log('API Response:', data);
 
-        pdf.setFont("helvetica", "normal");
-        pdf.setFontSize(10);
-        pdf.setTextColor(60, 60, 60);
+        // Process the data into our format
+        const processedData = {
+            market_size_growth: {
+                total_market_value: [
+                    `Total Companies: ${data.length} companies`,
+                    `Market Leader: ${data[0]?.name || 'N/A'}`,
+                    `Industry Size: ${calculateMarketSize(data)}`
+                ],
+                market_segments: extractIndustries(data),
+                regional_distribution: extractRegions(data)
+            },
+            competitive_landscape: {
+                market_leaders: extractTopCompanies(data),
+                market_differentiators: extractDifferentiators(data),
+                industry_dynamics: extractDynamics(data)
+            },
+            industry_trends: {
+                current_trends: extractTrends(data),
+                technology_impact: extractTechImpact(data),
+                regulatory_environment: extractRegulations(data)
+            },
+            growth_forecast: {
+                short_term: extractShortTermGrowth(data),
+                long_term: extractLongTermGrowth(data)
+            },
+            metrics: {
+                market_share: calculateMarketShare(data),
+                growth_rates: calculateGrowthRates(data),
+                revenue: extractRevenue(data)
+            },
+            sources: extractSources(data)
+        };
 
-        apiResponse.sources.forEach((source, index) => {
-          if (yPos > 270) {
-            pdf.addPage();
-            yPos = 20;
-          }
-          pdf.text(`${index + 1}. ${source.domain}`, 25, yPos);
-          pdf.setTextColor(100, 100, 100);
-          pdf.text(`Accessed: ${source.date}`, 25, yPos + 4);
-          yPos += 10;
-        });
-      }
+        setApiResponse(processedData);
+        localStorage.setItem('marketTrendsData', JSON.stringify(processedData));
 
-      // Add footer to each page
-      const pageCount = pdf.internal.getNumberOfPages();
-      for (let i = 1; i <= pageCount; i++) {
-        pdf.setPage(i);
-        pdf.setFont("helvetica", "italic");
-        pdf.setFontSize(8);
-        pdf.setTextColor(150, 150, 150);
-        pdf.text(
-          `Generated by Market Trends Analysis Tool - Page ${i} of ${pageCount}`,
-          pdf.internal.pageSize.getWidth() / 2,
-          pdf.internal.pageSize.getHeight() - 10,
-          { align: "center" }
-        );
-      }
-
-      // Save the PDF
-      pdf.save(`${searchQuery.replace(/\s+/g, '_')}_market_trends.pdf`);
     } catch (error) {
-      console.error('Error generating PDF:', error);
+        console.error('API Error:', error);
+        setError(`Failed to get market trends data: ${error.message}`);
     } finally {
-      setIsExporting(false);
+        setIsLoading(false);
     }
   };
 
-  if (!mounted) {
-    return null;
-  }
+  // Helper functions to process Crunchbase data
+  const calculateAverageEmployees = (data) => {
+    const employeeRanges = data.map(company => company.num_employees).filter(Boolean);
+    // Convert ranges like "1-10" to average numbers
+    const averages = employeeRanges.map(range => {
+        const [min, max] = range.split('-').map(Number);
+        return (min + max) / 2;
+    });
+    const average = averages.reduce((a, b) => a + b, 0) / averages.length;
+    return `${Math.round(average)} employees average`;
+  };
+
+  const extractIndustries = (data) => {
+    const industries = new Set();
+    data.forEach(company => {
+        company.industries?.forEach(industry => industries.add(industry.value));
+    });
+    return Array.from(industries).map(industry => `${industry} Sector`);
+  };
+
+  const extractRegions = (data) => {
+    const regions = new Set();
+    data.forEach(company => {
+        if (company.region) regions.add(company.region);
+    });
+    return Array.from(regions).map(region => `${region} Market`);
+  };
+
+  const extractTopCompanies = (data) => {
+    return data.slice(0, 5).map(company => 
+        `${company.name}: ${company.about || 'No description available'}`
+    );
+  };
+
+  const extractDifferentiators = (data) => {
+    return data.slice(0, 3).map(company => 
+        `${company.name}: ${company.industries?.map(i => i.value).join(', ')}`
+    );
+  };
+
+  const extractDynamics = (data) => {
+    return [
+        `Market Leaders: ${data.filter(c => c.cb_rank < 1000).length} companies`,
+        `Emerging Players: ${data.filter(c => c.cb_rank >= 1000).length} companies`,
+        `Average Company Age: ${calculateAverageAge(data)} years`
+    ];
+  };
+
+  const calculateAverageAge = (data) => {
+    const currentYear = new Date().getFullYear();
+    const foundingYears = data
+        .map(company => company.founded_date?.split('-')[0])
+        .filter(Boolean)
+        .map(Number);
+    
+    const average = foundingYears.reduce((a, b) => a + (currentYear - b), 0) / foundingYears.length;
+    return Math.round(average);
+  };
+
+  const extractTrends = (data) => {
+    const trends = new Set();
+    data.forEach(company => {
+        if (company.full_description) {
+            // Extract key phrases that might indicate trends
+            const description = company.full_description.toLowerCase();
+            if (description.includes('ai')) trends.add('AI Integration');
+            if (description.includes('machine learning')) trends.add('Machine Learning Adoption');
+            if (description.includes('cloud')) trends.add('Cloud Computing');
+        }
+    });
+    return Array.from(trends);
+  };
+
+  const calculateMarketShare = (data) => {
+    const total = data.length;
+    return data.slice(0, 5).reduce((acc, company) => {
+        acc[company.name] = (1 / total) * 100;
+        return acc;
+    }, {});
+  };
+
+  const extractSources = (data) => {
+    return data.slice(0, 5).map(company => ({
+        url: company.url || '',
+        domain: 'crunchbase.com',
+        section: 'Market Analysis',
+        date: new Date().toISOString().split('T')[0]
+    }));
+  };
+
+  // Add these missing helper functions
+  const extractTechImpact = (data) => {
+    const techImpacts = new Set();
+    data.forEach(company => {
+        if (company.builtwith_tech) {
+            techImpacts.add('Technology Stack Integration');
+        }
+        if (company.active_tech_count > 20) {
+            techImpacts.add('High Tech Adoption');
+        }
+        if (company.monthly_visits_growth > 0) {
+            techImpacts.add('Growing Online Presence');
+        }
+    });
+    return Array.from(techImpacts);
+  };
+
+  const extractShortTermGrowth = (data) => {
+    return [
+        `Monthly Traffic Growth: ${calculateAverageGrowth(data)}%`,
+        `New Market Entrants: ${countRecentCompanies(data)} companies`,
+        `Technology Adoption Rate: ${calculateTechAdoption(data)}%`
+    ];
+  };
+
+  const extractLongTermGrowth = (data) => {
+    return [
+        `Market Maturity: ${calculateMarketMaturity(data)}`,
+        `Industry Consolidation: ${calculateConsolidation(data)}`,
+        `Innovation Index: ${calculateInnovationIndex(data)}`
+    ];
+  };
+
+  const calculateGrowthRates = (data) => {
+    const growthRates = {};
+    data.slice(0, 5).forEach(company => {
+        if (company.monthly_visits_growth) {
+            growthRates[company.name] = company.monthly_visits_growth * 100;
+        }
+    });
+    return growthRates;
+  };
+
+  // Helper calculation functions
+  const calculateAverageGrowth = (data) => {
+    const growthRates = data
+        .map(company => company.monthly_visits_growth)
+        .filter(rate => rate !== undefined && rate !== null);
+    if (growthRates.length === 0) return 0;
+    const average = growthRates.reduce((a, b) => a + b, 0) / growthRates.length;
+    return Math.round(average * 100);
+  };
+
+  const countRecentCompanies = (data) => {
+    const currentYear = new Date().getFullYear();
+    return data.filter(company => {
+        const foundedYear = company.founded_date?.split('-')[0];
+        return foundedYear && (currentYear - parseInt(foundedYear)) <= 2;
+    }).length;
+  };
+
+  const calculateTechAdoption = (data) => {
+    const companiesWithTech = data.filter(company => 
+        company.active_tech_count > 0 || company.builtwith_tech?.length > 0
+    ).length;
+    return Math.round((companiesWithTech / data.length) * 100);
+  };
+
+  const calculateMarketMaturity = (data) => {
+    const avgAge = calculateAverageAge(data);
+    if (avgAge < 5) return "Emerging Market";
+    if (avgAge < 10) return "Growth Phase";
+    return "Mature Market";
+  };
+
+  const calculateConsolidation = (data) => {
+    const leaders = data.filter(c => c.cb_rank < 1000).length;
+    const total = data.length;
+    const ratio = leaders / total;
+    if (ratio > 0.3) return "High Consolidation";
+    if (ratio > 0.1) return "Moderate Consolidation";
+    return "Fragmented Market";
+  };
+
+  const calculateInnovationIndex = (data) => {
+    const score = data.reduce((acc, company) => {
+        let points = 0;
+        if (company.active_tech_count > 20) points += 2;
+        if (company.monthly_visits_growth > 0) points += 1;
+        if (company.industries?.some(i => 
+            i.value.toLowerCase().includes('ai') || 
+            i.value.toLowerCase().includes('tech')
+        )) points += 2;
+        return acc + points;
+    }, 0);
+    
+    const maxScore = data.length * 5;
+    const index = (score / maxScore) * 100;
+    return `${Math.round(index)}% Innovation Score`;
+  };
+
+  // Add new helper functions for Brightdata data
+  const calculateMarketSize = (data) => {
+    console.log('Calculating market size from:', data);
+    const totalFunding = data.reduce((sum, company) => {
+        const funding = company.funding_rounds?.value?.value_usd || 0;
+        return sum + funding;
+    }, 0);
+    return `$${(totalFunding / 1000000000).toFixed(2)}B Total Funding`;
+  };
+
+  const extractRegulations = (data) => {
+    console.log('Extracting regulations from:', data);
+    const regulations = new Set();
+    data.forEach(company => {
+        if (company.legal_name) regulations.add('Company Registration Required');
+        if (company.industries?.some(i => i.value.includes('Financial'))) {
+            regulations.add('Financial Regulations Apply');
+        }
+        if (company.industries?.some(i => i.value.includes('Health'))) {
+            regulations.add('Healthcare Compliance Required');
+        }
+    });
+    return Array.from(regulations);
+  };
+
+  const extractRevenue = (data) => {
+    console.log('Extracting revenue data from:', data);
+    return data.slice(0, 5).reduce((acc, company) => {
+        if (company.aberdeen_it_spend?.value) {
+            acc[company.name] = company.aberdeen_it_spend.value;
+        }
+        return acc;
+    }, {});
+  };
 
   return (
-    <div className="min-h-screen bg-[#131314] text-white p-4 sm:p-6">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 sm:mb-8 space-y-4 sm:space-y-0">
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-purple-400 via-purple-600 to-indigo-600 bg-clip-text text-transparent">
-              Market Trends Analysis
-            </h1>
-            <p className="text-gray-400 mt-2">Analyze market trends, growth, and opportunities</p>
-          </div>
-          {apiResponse && (
-            <button
-              onClick={exportToPDF}
-              disabled={isExporting}
-              className={`px-4 py-2 rounded-xl font-medium flex items-center space-x-2 transition-all duration-200 
-                ${isExporting ? 'bg-gray-600 cursor-not-allowed' : 'bg-purple-600 hover:bg-purple-700'}`}
-            >
-              {isExporting ? (
-                <>
-                  <div className="w-4 h-4 border-t-2 border-white rounded-full animate-spin"></div>
-                  <span>Exporting...</span>
-                </>
-              ) : (
-                <>
-                  <span role="img" aria-label="download">📥</span>
-                  <span>Export PDF</span>
-                </>
-              )}
-            </button>
-          )}
+    <div className="max-w-7xl mx-auto px-4 py-8">
+        <div className="mb-8">
+            <h2 className="text-2xl font-bold text-white mb-4">Market Trends Analysis</h2>
+            <form onSubmit={handleSubmit} className="space-y-4">
+                <div>
+                    <input
+                        type="text"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        placeholder="Enter company or industry name (e.g., OpenAI, AI Technology)"
+                        className="w-full px-4 py-2 rounded-lg bg-[#2D2D2F] text-white border border-gray-600 focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
+                    />
+                </div>
+                <button
+                    type="submit"
+                    disabled={isLoading}
+                    className={`w-full py-2 rounded-lg font-medium transition-all duration-200
+                        ${isLoading 
+                            ? 'bg-gray-600 cursor-not-allowed' 
+                            : 'bg-purple-600 hover:bg-purple-700 text-white'
+                        }`}
+                >
+                    {isLoading ? 'Analyzing...' : 'Analyze Market'}
+                </button>
+            </form>
         </div>
 
-        {/* Search Form */}
-        <form onSubmit={handleSubmit} className="mb-6">
-          <div className="flex flex-col sm:flex-row gap-3">
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Enter business or market to analyze..."
-              className="flex-grow px-4 py-2 bg-[#1D1D1F] border border-purple-500/30 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-purple-500"
-            />
-            <button
-              type="submit"
-              disabled={isLoading || !searchQuery.trim()}
-              className={`px-6 py-2 rounded-xl font-medium transition-all duration-200 ${
-                isLoading || !searchQuery.trim()
-                  ? 'bg-purple-600/50 cursor-not-allowed'
-                  : 'bg-purple-600 hover:bg-purple-700'
-              }`}
-            >
-              {isLoading ? (
-                <div className="flex items-center justify-center">
-                  <div className="w-5 h-5 border-t-2 border-white rounded-full animate-spin"></div>
+        {isLoading && (
+            <div className="mb-6 p-4 bg-purple-500/10 border border-purple-500/30 rounded-xl">
+                <div className="flex items-center space-x-3">
+                    <div className="w-4 h-4 border-2 border-purple-500 border-t-transparent rounded-full animate-spin"></div>
+                    <span className="text-purple-400">
+                        {currentPhase === 1 ? 'Triggering data collection...' :
+                         currentPhase === 2 ? 'Waiting for data processing...' :
+                         'Analyzing market data...'}
+                    </span>
                 </div>
-              ) : (
-                'Analyze'
-              )}
-            </button>
-          </div>
-        </form>
+            </div>
+        )}
 
-        {/* Phase Status */}
-        {isLoading && renderPhaseStatus()}
-
-        {/* Error Message */}
         {error && (
-          <div className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400">
-            {error}
-          </div>
+            <div className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-xl">
+                <div className="flex items-center space-x-3">
+                    <svg className="w-5 h-5 text-red-400" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
+                        <path d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span className="text-red-400">{error}</span>
+                </div>
+            </div>
         )}
 
-        {/* Results */}
         {apiResponse && (
-          <div id="market-trends-content" className="space-y-8">
-            {/* Analysis Metadata */}
-            <AnalysisMetadata metadata={apiResponse.analysis_metadata} />
-
-            {/* Market Share Visualization */}
-            <MarketShareChart data={apiResponse.metrics} />
-
-            {/* Market Analysis Sections */}
-            {renderSection("Market Size & Growth", apiResponse.market_size_growth, apiResponse.metrics)}
-            {renderSection("Competitive Landscape", apiResponse.competitive_landscape, apiResponse.metrics)}
-            {renderSection("Industry Trends", apiResponse.industry_trends, apiResponse.metrics)}
-            {renderSection("Growth Forecast", apiResponse.growth_forecast, apiResponse.metrics)}
-            {renderSection("Risk Assessment", apiResponse.risk_assessment, apiResponse.metrics)}
-            
-            {/* Sources Section */}
-            {renderSourcesSection(apiResponse.sources)}
-          </div>
+            <div className="space-y-8">
+                {/* Market Size & Growth */}
+                {renderSection("Market Size & Growth", apiResponse.market_size_growth)}
+                
+                {/* Market Share Visualization */}
+                <MarketShareChart data={apiResponse.metrics} />
+                
+                {/* Competitive Landscape */}
+                {renderSection("Competitive Landscape", apiResponse.competitive_landscape)}
+                
+                {/* Industry Trends */}
+                {renderSection("Industry Trends", apiResponse.industry_trends)}
+                
+                {/* Growth Forecast */}
+                {renderSection("Growth Forecast", apiResponse.growth_forecast)}
+                
+                {/* Sources */}
+                {renderSourcesSection(apiResponse.sources)}
+            </div>
         )}
-      </div>
     </div>
   );
 }
