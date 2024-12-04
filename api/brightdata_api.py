@@ -32,8 +32,10 @@ async def process_keywords(request: KeywordRequest):
         
         # Format keywords for Brightdata
         keyword_payload = [{"keyword": k} for k in request.keywords]
+        logger.debug(f"Formatted keyword payload: {keyword_payload}")
         
         # Call Brightdata API
+        logger.info("Calling Brightdata API...")
         response = requests.post(
             'https://api.brightdata.com/datasets/v3/trigger',
             headers={
@@ -66,6 +68,44 @@ async def process_keywords(request: KeywordRequest):
         logger.error(f"Error processing keywords: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# Add new endpoint for fetching snapshot data
+@app.get("/api/snapshot-data/{snapshot_id}")
+async def get_snapshot_data(snapshot_id: str):
+    """Get data for a specific snapshot ID"""
+    try:
+        logger.info(f"Fetching data for snapshot: {snapshot_id}")
+        
+        response = requests.get(
+            f'https://api.brightdata.com/datasets/v3/snapshot/{snapshot_id}',
+            headers={
+                'Authorization': f'Bearer {BRIGHTDATA_API_KEY}',
+                'Content-Type': 'application/json'
+            },
+            params={'format': 'json'}
+        )
+
+        if not response.ok:
+            logger.error(f"Brightdata API error: {response.status_code} - {response.text}")
+            raise HTTPException(
+                status_code=response.status_code, 
+                detail="Failed to fetch snapshot data"
+            )
+
+        data = response.json()
+        logger.info(f"Successfully fetched data for snapshot: {snapshot_id}")
+        logger.debug(f"Snapshot data: {data}")  # More detailed logging of the snapshot data
+
+        return {
+            "success": True,
+            "data": data
+        }
+
+    except Exception as e:
+        logger.error(f"Error fetching snapshot data: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 if __name__ == "__main__":
     import uvicorn
+    logger.info("Starting FastAPI application...")
+    print("This console must show in terminal")  # Added print statement
     uvicorn.run(app, host="0.0.0.0", port=5002)

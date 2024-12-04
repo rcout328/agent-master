@@ -19,7 +19,7 @@ export default function RootLayout({ children }) {
         <div className="flex">
           {/* Sidebar - Hidden on screens < 760px */}
           <div className="hidden md:block">
-            
+            <Sidebar />
           </div>
           
           {/* Main Content */}

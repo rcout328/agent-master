@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Bar } from 'react-chartjs-2';
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -12,163 +13,350 @@ import {
   Legend,
 } from 'chart.js';
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend
-);
+// Initialize Gemini
+const genAI = new GoogleGenerativeAI("AIzaSyAE2SKBA38bOktQBdXS6mTK5Y1a-nKB3Mo");
+
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 export default function MarketTrendsContent() {
-  const [snapshotId, setSnapshotId] = useState('');
-  const [apiResponse, setApiResponse] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [currentPhase, setCurrentPhase] = useState(0);
+  const [storedSnapshots, setStoredSnapshots] = useState([]);
+  const [selectedSnapshot, setSelectedSnapshot] = useState(null);
+  const [analysis, setAnalysis] = useState(null);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [processedData, setProcessedData] = useState(null);
+  const [isProcessing, setIsProcessing] = useState(false);
 
-  // Load cached data on mount
   useEffect(() => {
-    const storedData = localStorage.getItem('marketTrendsData');
-    if (storedData) {
-      setApiResponse(JSON.parse(storedData));
-      setCurrentPhase(6);
-    }
+    loadAllSnapshots();
   }, []);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!snapshotId.trim() || isLoading) return;
+  const loadAllSnapshots = () => {
+    const allKeys = Object.keys(localStorage);
+    const snapshots = allKeys
+      .filter(key => key.includes('snapshot_'))
+      .map(key => {
+        try {
+          const data = JSON.parse(localStorage.getItem(key));
+          return {
+            id: key.split('snapshot_')[1],
+            data: data,
+            timestamp: new Date().toISOString()
+          };
+        } catch (e) {
+          console.error(`Error parsing snapshot ${key}:`, e);
+          return null;
+        }
+      })
+      .filter(Boolean);
 
-    setIsLoading(true);
-    setError(null);
-    setCurrentPhase(1);
+    setStoredSnapshots(snapshots);
+  };
 
+  const processSnapshotData = async (snapshotData) => {
     try {
-      const response = await fetch('http://127.0.0.1:5002/api/market-trends', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      setIsProcessing(true);
+      console.log('Processing snapshot data:', snapshotData.id);
+      
+      // Extract data array from the snapshot - handle the nested structure
+      let raw_data = [];
+      if (snapshotData && snapshotData.data) {
+        // Handle different possible data structures
+        if (Array.isArray(snapshotData.data)) {
+          raw_data = snapshotData.data;
+        } else if (snapshotData.data.data && Array.isArray(snapshotData.data.data)) {
+          raw_data = snapshotData.data.data;
+        } else if (snapshotData.data.results && Array.isArray(snapshotData.data.results)) {
+          raw_data = snapshotData.data.results;
+        }
+      }
+
+      console.log('Raw data records:', raw_data.length);
+
+      if (!Array.isArray(raw_data) || raw_data.length === 0) {
+        throw new Error('No valid data array found in snapshot');
+      }
+
+      // Helper functions for market analysis
+      const calculateCompanySize = (data) => {
+        const sizes = data
+          .filter(company => company.num_employees)
+          .map(company => {
+            try {
+              const size = company.num_employees.split('-')[0].replace('+', '');
+              return parseInt(size);
+            } catch {
+              return 0;
+            }
+          });
+        return `${sizes.length > 0 ? Math.round(sizes.reduce((a, b) => a + b) / sizes.length) : 0} employees`;
+      };
+
+      const determineMarketStage = (data) => {
+        const foundedYears = [];
+        const currentYear = new Date().getFullYear();
+        data.forEach(company => {
+          if (company.founded_date) {
+            try {
+              const year = parseInt(company.founded_date.slice(0, 4));
+              foundedYears.push(currentYear - year);
+            } catch {
+              // Skip invalid dates
+            }
+          }
+        });
+        const avgAge = foundedYears.length > 0 ? 
+          foundedYears.reduce((a, b) => a + b) / foundedYears.length : 0;
+        return avgAge < 5 ? "Emerging Market" : avgAge < 10 ? "Growth Market" : "Mature Market";
+      };
+
+      const getMarketSegments = (data) => {
+        const segments = {};
+        data.forEach(company => {
+          (company.industries || []).forEach(industry => {
+            if (industry.value) {
+              segments[industry.value] = (segments[industry.value] || 0) + 1;
+            }
+          });
+        });
+        return Object.entries(segments)
+          .sort(([, a], [, b]) => b - a)
+          .slice(0, 5)
+          .map(([k, v]) => `${k}: ${v}`);
+      };
+
+      const getRegionalDistribution = (data) => {
+        const regions = {};
+        data.forEach(company => {
+          if (company.region) {
+            regions[company.region] = (regions[company.region] || 0) + 1;
+          }
+        });
+        return Object.entries(regions)
+          .sort(([, a], [, b]) => b - a)
+          .map(([k, v]) => `${k}: ${v}`);
+      };
+
+      const getMarketLeaders = (data) => {
+        return data
+          .sort((a, b) => (b.cb_rank || 0) - (a.cb_rank || 0))
+          .slice(0, 5)
+          .map(company => `${company.name}: ${company.about?.slice(0, 100)}...`);
+      };
+
+      const calculateMarketShare = (data) => {
+        const totalVisits = data.reduce((sum, c) => sum + (c.monthly_visits || 0), 0);
+        if (totalVisits === 0) return {};
+        
+        return Object.fromEntries(
+          data
+            .sort((a, b) => (b.monthly_visits || 0) - (a.monthly_visits || 0))
+            .slice(0, 5)
+            .map(company => [
+              company.name,
+              ((company.monthly_visits || 0) / totalVisits * 100).toFixed(2) + '%'
+            ])
+        );
+      };
+
+      // Process the data
+      const processed = {
+        market_size_growth: {
+          total_market_value: [
+            `Total Companies: ${raw_data.length}`,
+            `Average Size: ${calculateCompanySize(raw_data)}`,
+            `Market Stage: ${determineMarketStage(raw_data)}`
+          ],
+          market_segments: getMarketSegments(raw_data),
+          regional_distribution: getRegionalDistribution(raw_data)
         },
-        body: JSON.stringify({ snapshot_id: snapshotId }),
-      });
+        competitive_landscape: {
+          market_leaders: getMarketLeaders(raw_data),
+          industry_dynamics: [
+            `Total Companies: ${raw_data.length}`,
+            `Funded Companies: ${raw_data.filter(c => c.funding_rounds).length}`,
+            `Public Companies: ${raw_data.filter(c => c.ipo_status === 'public').length}`
+          ]
+        },
+        metrics: {
+          market_share: calculateMarketShare(raw_data)
+        }
+      };
 
-      if (!response.ok) {
-        throw new Error('Failed to fetch data');
-      }
-
-      const data = await response.json();
-      console.log('API Response:', data);
-
-      if (data.success && data.data) {
-        // Update data progressively
-        setCurrentPhase(2);
-        setApiResponse(data.data);
-        localStorage.setItem('marketTrendsData', JSON.stringify(data.data));
-      } else {
-        throw new Error(data.error || 'Failed to analyze data');
-      }
+      console.log('Processed data:', processed);
+      setProcessedData(processed);
 
     } catch (error) {
-      console.error('Error:', error);
-      setError(error.message || 'Failed to get market trends data. Please try again.');
+      console.error('Error processing data:', error);
+      alert('Failed to process snapshot data: ' + error.message);
     } finally {
-      setIsLoading(false);
+      setIsProcessing(false);
     }
   };
 
-  const renderMarketSection = (title, data) => {
-    if (!data) return null;
+  const generateMarketAnalysis = async () => {
+    try {
+      setIsAnalyzing(true);
+      console.log('Starting Gemini analysis...');
 
-    return (
-      <div className="bg-[#2D2D2F] rounded-xl p-6 mb-6">
-        <h3 className="text-xl font-semibold text-purple-400 mb-4">{title}</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {Object.entries(data).map(([key, value], index) => (
-            <div key={index} className="bg-[#1D1D1F] p-4 rounded-lg">
-              <h4 className="font-medium text-white mb-2">
-                {key.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
-              </h4>
-              {Array.isArray(value) ? (
-                <ul className="space-y-2">
-                  {value.map((item, i) => (
-                    <li key={i} className="text-gray-300">{item}</li>
-                  ))}
-                </ul>
-              ) : typeof value === 'object' ? (
-                <ul className="space-y-2">
-                  {Object.entries(value).map(([k, v], i) => (
-                    <li key={i} className="text-gray-300">
-                      {k}: {typeof v === 'number' ? v.toFixed(2) : v}
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="text-gray-300">{value}</p>
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
-    );
+      const prompt = `
+        Analyze this market data and provide a comprehensive market trends report.
+        
+        Market Size & Growth:
+        ${processedData.market_size_growth.total_market_value.join('\n')}
+        
+        Market Segments:
+        ${processedData.market_size_growth.market_segments.join('\n')}
+        
+        Regional Distribution:
+        ${processedData.market_size_growth.regional_distribution.join('\n')}
+        
+        Market Leaders:
+        ${processedData.competitive_landscape.market_leaders.join('\n')}
+        
+        Industry Dynamics:
+        ${processedData.competitive_landscape.industry_dynamics.join('\n')}
+        
+        Market Share:
+        ${Object.entries(processedData.metrics.market_share)
+          .map(([company, share]) => `${company}: ${share}`)
+          .join('\n')}
+        
+        Please provide:
+        1. Key Market Trends
+        2. Growth Opportunities
+        3. Competitive Analysis
+        4. Market Challenges
+        5. Strategic Recommendations
+        
+        Format the analysis in clear sections with bullet points.
+      `;
+
+      const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+      const result = await model.generateContent(prompt);
+      const response = await result.response;
+      const analysisText = response.text();
+
+      setAnalysis({
+        timestamp: new Date().toISOString(),
+        snapshotId: selectedSnapshot.id,
+        content: analysisText,
+        processedData: processedData
+      });
+
+    } catch (error) {
+      console.error('Error during Gemini analysis:', error);
+      alert('Failed to generate analysis');
+    } finally {
+      setIsAnalyzing(false);
+    }
   };
 
-  const renderMarketShareChart = (metrics) => {
-    if (!metrics?.market_share) return null;
+  const viewSnapshotData = (snapshot) => {
+    setSelectedSnapshot(snapshot);
+    setAnalysis(null); // Clear previous analysis
+  };
 
-    const data = {
-      labels: Object.keys(metrics.market_share),
-      datasets: [{
-        label: 'Market Share (%)',
-        data: Object.values(metrics.market_share),
-        backgroundColor: [
-          'rgba(147, 51, 234, 0.5)',
-          'rgba(59, 130, 246, 0.5)',
-          'rgba(16, 185, 129, 0.5)',
-          'rgba(245, 158, 11, 0.5)',
-          'rgba(239, 68, 68, 0.5)',
-        ],
-        borderColor: [
-          'rgb(147, 51, 234)',
-          'rgb(59, 130, 246)',
-          'rgb(16, 185, 129)',
-          'rgb(245, 158, 11)',
-          'rgb(239, 68, 68)',
-        ],
-        borderWidth: 1
-      }]
-    };
-
-    const options = {
-      responsive: true,
-      plugins: {
-        legend: {
-          position: 'top',
-          labels: { color: 'rgb(156, 163, 175)' }
-        },
-        title: {
-          display: true,
-          text: 'Market Share Distribution',
-          color: 'rgb(156, 163, 175)'
-        }
-      },
-      scales: {
-        y: {
-          beginAtZero: true,
-          ticks: { color: 'rgb(156, 163, 175)' },
-          grid: { color: 'rgba(31, 41, 55, 0.2)' }
-        },
-        x: {
-          ticks: { color: 'rgb(156, 163, 175)' },
-          grid: { color: 'rgba(31, 41, 55, 0.2)' }
-        }
-      }
-    };
+  const renderProcessedDataReview = () => {
+    if (!processedData) return null;
 
     return (
-      <div className="bg-[#2D2D2F] rounded-xl p-6 mb-6">
-        <Bar data={data} options={options} />
+      <div className="bg-[#1D1D1F]/90 p-6 rounded-xl backdrop-blur-xl border border-purple-500/20 mt-6">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-xl font-semibold text-purple-400">
+            Market Analysis Results
+          </h3>
+          <div className="flex space-x-4">
+            <button
+              onClick={generateMarketAnalysis}
+              disabled={isAnalyzing}
+              className={`px-4 py-2 rounded-lg transition-colors ${
+                isAnalyzing 
+                  ? 'bg-purple-600/50 cursor-not-allowed' 
+                  : 'bg-purple-600 hover:bg-purple-700'
+              }`}
+            >
+              {isAnalyzing ? 'Analyzing...' : 'Generate AI Analysis'}
+            </button>
+            <button
+              onClick={() => setProcessedData(null)}
+              className="text-gray-400 hover:text-gray-300"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+
+        <div className="space-y-6">
+          {/* Market Size & Growth */}
+          <div className="bg-[#2D2D2F] p-4 rounded-lg">
+            <h4 className="text-lg font-semibold text-purple-400 mb-3">Market Size & Growth</h4>
+            <div className="space-y-2">
+              {processedData.market_size_growth.total_market_value.map((item, index) => (
+                <p key={index} className="text-gray-300">{item}</p>
+              ))}
+            </div>
+            
+            <h5 className="text-md font-semibold text-purple-400 mt-4 mb-2">Market Segments</h5>
+            <div className="space-y-1">
+              {processedData.market_size_growth.market_segments.map((segment, index) => (
+                <p key={index} className="text-gray-300">{segment}</p>
+              ))}
+            </div>
+
+            <h5 className="text-md font-semibold text-purple-400 mt-4 mb-2">Regional Distribution</h5>
+            <div className="space-y-1">
+              {processedData.market_size_growth.regional_distribution.map((region, index) => (
+                <p key={index} className="text-gray-300">{region}</p>
+              ))}
+            </div>
+          </div>
+
+          {/* Competitive Landscape */}
+          <div className="bg-[#2D2D2F] p-4 rounded-lg">
+            <h4 className="text-lg font-semibold text-purple-400 mb-3">Competitive Landscape</h4>
+            
+            <h5 className="text-md font-semibold text-purple-400 mb-2">Market Leaders</h5>
+            <div className="space-y-2">
+              {processedData.competitive_landscape.market_leaders.map((leader, index) => (
+                <p key={index} className="text-gray-300">{leader}</p>
+              ))}
+            </div>
+
+            <h5 className="text-md font-semibold text-purple-400 mt-4 mb-2">Industry Dynamics</h5>
+            <div className="space-y-1">
+              {processedData.competitive_landscape.industry_dynamics.map((dynamic, index) => (
+                <p key={index} className="text-gray-300">{dynamic}</p>
+              ))}
+            </div>
+          </div>
+
+          {/* Market Share */}
+          <div className="bg-[#2D2D2F] p-4 rounded-lg">
+            <h4 className="text-lg font-semibold text-purple-400 mb-3">Market Share</h4>
+            <div className="space-y-1">
+              {Object.entries(processedData.metrics.market_share).map(([company, share], index) => (
+                <p key={index} className="text-gray-300">
+                  {company}: {share}
+                </p>
+              ))}
+            </div>
+          </div>
+
+          {/* AI Analysis Results */}
+          {analysis && (
+            <div className="mt-6 bg-[#2D2D2F] p-4 rounded-lg">
+              <h4 className="text-lg font-semibold text-purple-400 mb-3">AI Analysis</h4>
+              <div className="prose prose-invert max-w-none">
+                <pre className="whitespace-pre-wrap text-sm text-gray-300">
+                  {analysis.content}
+                </pre>
+              </div>
+              <div className="mt-2 text-xs text-gray-500">
+                Generated on: {new Date(analysis.timestamp).toLocaleString()}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     );
   };
@@ -176,92 +364,108 @@ export default function MarketTrendsContent() {
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
       <div className="mb-8">
-        <h2 className="text-2xl font-bold text-white mb-4">Market Trends Analysis</h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <input
-              type="text"
-              value={snapshotId}
-              onChange={(e) => setSnapshotId(e.target.value)}
-              placeholder="Enter Brightdata snapshot ID..."
-              className="w-full px-4 py-2 rounded-lg bg-[#2D2D2F] text-white border border-gray-600 focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
-            />
-          </div>
-          <button
-            type="submit"
-            disabled={isLoading}
-            className={`w-full py-2 rounded-lg font-medium transition-all duration-200
-              ${isLoading 
-                ? 'bg-gray-600 cursor-not-allowed' 
-                : 'bg-purple-600 hover:bg-purple-700 text-white'
-              }`}
-          >
-            {isLoading ? 'Analyzing...' : 'Analyze Market'}
-          </button>
-        </form>
-      </div>
-
-      {isLoading && (
-        <div className="mb-6 p-4 bg-purple-500/10 border border-purple-500/30 rounded-xl">
-          <div className="flex items-center space-x-3">
-            <div className="w-4 h-4 border-2 border-purple-500 border-t-transparent rounded-full animate-spin"></div>
-            <span className="text-purple-400">
-              {currentPhase === 1 ? 'Fetching data...' : 'Analyzing market data...'}
-            </span>
-          </div>
-        </div>
-      )}
-
-      {error && (
-        <div className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-xl">
-          <div className="flex items-center space-x-3">
-            <svg className="w-5 h-5 text-red-400" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
-              <path d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-            </svg>
-            <span className="text-red-400">{error}</span>
-          </div>
-        </div>
-      )}
-
-      {apiResponse && (
-        <div className="space-y-8">
-          {renderMarketSection("Market Size & Growth", apiResponse.market_size_growth)}
-          {renderMarketShareChart(apiResponse.metrics)}
-          {renderMarketSection("Competitive Landscape", apiResponse.competitive_landscape)}
-          {renderMarketSection("Industry Trends", apiResponse.industry_trends)}
-          
-          {/* Gemini Analysis Report Section */}
-          {apiResponse.analysis_report && (
-            <div className="bg-[#2D2D2F] rounded-xl p-6 mb-6">
-              <h3 className="text-xl font-semibold text-purple-400 mb-4">Market Analysis Report</h3>
-              <div className="bg-[#1D1D1F] p-4 rounded-lg">
-                <div className="prose prose-invert max-w-none">
-                  <pre className="text-gray-300 whitespace-pre-wrap font-sans text-sm leading-relaxed">
-                    {apiResponse.analysis_report}
-                  </pre>
+        <h2 className="text-2xl font-bold text-white mb-6">Stored Snapshots</h2>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {storedSnapshots.map((snapshot) => (
+            <div 
+              key={snapshot.id}
+              className="bg-[#1D1D1F]/90 p-6 rounded-xl backdrop-blur-xl border border-purple-500/20 hover:border-purple-500/40 transition-all cursor-pointer"
+              onClick={() => viewSnapshotData(snapshot)}
+            >
+              <div className="flex flex-col space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-200 font-mono text-sm">{snapshot.id}</span>
+                  <span className="text-xs text-gray-500">
+                    {new Date(snapshot.timestamp).toLocaleDateString('en-US', {
+                      day: '2-digit',
+                      month: '2-digit',
+                      year: 'numeric'
+                    })}
+                  </span>
+                </div>
+                
+                {/* Preview of data */}
+                <div className="mt-2 text-sm text-gray-400">
+                  {snapshot.data && typeof snapshot.data === 'object' && (
+                    <div className="space-y-1">
+                      {Object.keys(snapshot.data).slice(0, 3).map(key => (
+                        <div key={key} className="truncate">
+                          {key}: {typeof snapshot.data[key] === 'object' ? '...' : snapshot.data[key]}
+                        </div>
+                      ))}
+                      {Object.keys(snapshot.data).length > 3 && (
+                        <div className="text-purple-400">+ more data...</div>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
-          )}
-
-          {/* Export Button */}
-          <button
-            onClick={() => {
-              const element = document.createElement("a");
-              const file = new Blob([JSON.stringify(apiResponse, null, 2)], {
-                type: "application/json",
-              });
-              element.href = URL.createObjectURL(file);
-              element.download = `market_analysis_${snapshotId}_${new Date().toISOString()}.json`;
-              document.body.appendChild(element);
-              element.click();
-            }}
-            className="w-full py-3 px-4 bg-purple-600 hover:bg-purple-700 text-white rounded-xl transition-colors"
-          >
-            Export Analysis
-          </button>
+          ))}
         </div>
-      )}
+
+        {/* Selected Snapshot */}
+        {selectedSnapshot && (
+          <div className="mt-8 space-y-6">
+            <div className="bg-[#1D1D1F]/90 p-6 rounded-xl backdrop-blur-xl border border-purple-500/20">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-xl font-semibold text-purple-400">
+                  Snapshot Details: {selectedSnapshot.id}
+                </h3>
+                <div className="flex space-x-4">
+                  <button 
+                    onClick={() => processSnapshotData(selectedSnapshot)}
+                    disabled={isProcessing}
+                    className={`px-4 py-2 rounded-lg transition-colors ${
+                      isProcessing 
+                        ? 'bg-purple-600/50 cursor-not-allowed' 
+                        : 'bg-purple-600 hover:bg-purple-700'
+                    }`}
+                  >
+                    {isProcessing ? 'Processing...' : 'Process Data'}
+                  </button>
+                  <button 
+                    onClick={() => setSelectedSnapshot(null)}
+                    className="text-gray-400 hover:text-gray-300"
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+              <pre className="bg-[#2D2D2F] p-4 rounded-lg overflow-auto max-h-96 text-sm text-gray-300">
+                {JSON.stringify(selectedSnapshot.data, null, 2)}
+              </pre>
+            </div>
+
+            {/* Processed Data Review */}
+            {renderProcessedDataReview()}
+
+            {/* Analysis Report */}
+            {analysis && (
+              <div className="bg-[#1D1D1F]/90 p-6 rounded-xl backdrop-blur-xl border border-purple-500/20">
+                <h3 className="text-xl font-semibold text-purple-400 mb-4">
+                  Market Analysis Report
+                </h3>
+                <div className="prose prose-invert max-w-none">
+                  <pre className="bg-[#2D2D2F] p-4 rounded-lg overflow-auto max-h-[600px] text-sm text-gray-300 whitespace-pre-wrap">
+                    {analysis.content}
+                  </pre>
+                </div>
+                <div className="mt-4 text-sm text-gray-500">
+                  Generated on: {new Date(analysis.timestamp).toLocaleString()}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {storedSnapshots.length === 0 && (
+          <div className="text-center text-gray-400 py-12">
+            No stored snapshots found
+          </div>
+        )}
+      </div>
     </div>
   );
 }
