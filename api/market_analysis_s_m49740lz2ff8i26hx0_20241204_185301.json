@@ -1,0 +1,54 @@
+{
+  "market_size_growth": {
+    "total_market_value": [
+      "Total Companies: 25",
+      "Average Size: 3859 employees",
+      "Market Stage: Mature Market"
+    ],
+    "market_segments": [
+      "E-Commerce: 11",
+      "Software: 6",
+      "Internet: 4",
+      "Retail: 4",
+      "Information Technology: 4"
+    ],
+    "regional_distribution": [
+      "Washington: 8",
+      "California: 4",
+      "District of Columbia: 2",
+      "Niedersachsen: 1",
+      "Florida: 1",
+      "Massachusetts: 1",
+      "New York: 1",
+      "Virginia: 1",
+      "Texas: 1",
+      "Stockholms Lan: 1",
+      "Tokyo: 1",
+      "Madrid: 1",
+      "Karnataka: 1"
+    ]
+  },
+  "competitive_landscape": {
+    "market_leaders": [
+      "Amazon: Amazon is a tech firm with a focus on e-commerce, cloud computing, digital streaming, and artificial...",
+      "Amazon Seller Services: Amazon Seller Services operates a marketplace that helps sellers to sell their products online in In...",
+      "Amazon Business: Amazon Business is a B2B marketplace for small businesses....",
+      "Amazon Alexa Fund: Amazon Alexa Fund provides up to $200 million in venture capital funding to fuel voice technology in...",
+      "Amazon Web Services: Amazon Web Services provides information technology infrastructure services to businesses in the for..."
+    ],
+    "industry_dynamics": [
+      "Total Companies: 25",
+      "Funded Companies: 5",
+      "Public Companies: 1"
+    ]
+  },
+  "metrics": {
+    "market_share": {
+      "Amazon": 62.35046282735362,
+      "Amazon Japan": 12.585589951435619,
+      "Amazon Data Services Sweden AB": 11.620539835156517,
+      "Amazon - UK": 9.001075245997182,
+      "Amazon Spain Services": 3.8159924886491328
+    }
+  }
+}

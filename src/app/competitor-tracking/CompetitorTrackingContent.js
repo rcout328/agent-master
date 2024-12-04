@@ -1,56 +1,61 @@
 "use client";
 
-import { useState, useEffect, useRef } from 'react';
-import Link from 'next/link';
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
+import { useState, useEffect } from 'react';
+import { Bar } from 'react-chartjs-2';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+} from 'chart.js';
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 export default function CompetitorTrackingContent() {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [apiResponse, setApiResponse] = useState({
-    main_competitors: [],
-    competitor_strengths: [],
-    key_findings: [],
-    sources: []
-  });
+  const [snapshotId, setSnapshotId] = useState('');
+  const [targetCompany, setTargetCompany] = useState('');
+  const [apiResponse, setApiResponse] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [currentPhase, setCurrentPhase] = useState(0);
-  const [isExporting, setIsExporting] = useState(false);
-  const analysisRef = useRef(null);
 
-  // Load data from local storage on component mount
+  // Load cached data on mount
   useEffect(() => {
-    const storedData = localStorage.getItem('geminiApiResponse');
+    const storedData = localStorage.getItem(`competitorAnalysis_${targetCompany}`);
     if (storedData) {
       setApiResponse(JSON.parse(storedData));
-      setCurrentPhase(6); // Assuming the last phase is reached if data is loaded from local storage
+      setCurrentPhase(6);
     }
-  }, []);
-
-  // Check local storage and send request if empty and input is filled
-  useEffect(() => {
-    const storedData = localStorage.getItem('geminiApiResponse');
-    if (!storedData && searchQuery.trim()) {
-      handleSubmit(new Event('submit'));
-    }
-  }, [searchQuery]);
+  }, [targetCompany]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!searchQuery.trim() || isLoading) return;
+    if (!snapshotId.trim() || !targetCompany.trim() || isLoading) return;
 
     setIsLoading(true);
     setError(null);
     setCurrentPhase(1);
 
     try {
-      const response = await fetch('http://127.0.0.1:5000/api/competitor-analysis', {
+      const response = await fetch('http://127.0.0.1:5002/api/competitor-analysis', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ query: searchQuery }),
+        body: JSON.stringify({ 
+          snapshot_id: snapshotId,
+          target_company: targetCompany 
+        }),
       });
 
       if (!response.ok) {
@@ -59,222 +64,198 @@ export default function CompetitorTrackingContent() {
 
       const data = await response.json();
       console.log('API Response:', data);
-      
-      // Update data progressively
-      if (data.main_competitors?.length) {
+
+      if (data.success && data.data) {
         setCurrentPhase(2);
-        setApiResponse(prev => ({ ...prev, main_competitors: data.main_competitors }));
-      }
-      if (data.competitor_strengths?.length) {
-        setCurrentPhase(3);
-        setApiResponse(prev => ({ ...prev, competitor_strengths: data.competitor_strengths }));
-      }
-      if (data.key_findings?.length) {
-        setCurrentPhase(4);
-        setApiResponse(prev => ({ ...prev, key_findings: data.key_findings }));
-      }
-      if (data.sources?.length) {
-        setCurrentPhase(5);
-        setApiResponse(prev => ({ ...prev, sources: data.sources }));
+        setApiResponse(data.data);
+        localStorage.setItem(`competitorAnalysis_${targetCompany}`, JSON.stringify(data.data));
+      } else {
+        throw new Error(data.error || 'Failed to analyze data');
       }
 
-      // Store the API response in local storage
-      localStorage.setItem('geminiApiResponse', JSON.stringify(data));
     } catch (error) {
       console.error('Error:', error);
-      setError('Failed to get competitor data. Please try again.');
+      setError(error.message || 'Failed to get competitor analysis. Please try again.');
     } finally {
       setIsLoading(false);
     }
   };
 
-  const renderPhaseStatus = () => {
+  const renderCompanyMetrics = (metrics) => {
     return (
-      <div className="mb-6 p-4 bg-blue-500/10 border border-blue-500/30 rounded-xl text-blue-400">
-        <p>Loading phase {currentPhase}...</p>
-      </div>
-    );
-  };
-
-  const exportToPDF = async () => {
-    if (!apiResponse || Object.keys(apiResponse).length === 0) return;
-
-    setIsExporting(true);
-    try {
-      const pdf = new jsPDF({
-        orientation: 'portrait',
-        unit: 'mm',
-        format: 'a4'
-      });
-
-      // Add header
-      pdf.setFillColor(48, 48, 51); // Dark background
-      pdf.rect(0, 0, pdf.internal.pageSize.getWidth(), 40, 'F');
-      pdf.setTextColor(255, 255, 255);
-      pdf.setFont("helvetica", "bold");
-      pdf.setFontSize(24);
-      pdf.text("Competitor Analysis", 20, 25);
-      pdf.setFontSize(12);
-      pdf.setFont("helvetica", "normal");
-      pdf.text(`Report for: ${searchQuery}`, 20, 35);
-      pdf.text(`Generated: ${new Date().toLocaleDateString()}`, pdf.internal.pageSize.getWidth() - 60, 35);
-
-      let yPos = 50; // Starting position after header
-
-      // Helper function to add section
-      const addSection = (title, data) => {
-        if (!data || data.length === 0) return yPos;
-
-        // Add section title
-        pdf.setFont("helvetica", "bold");
-        pdf.setFontSize(16);
-        pdf.setTextColor(128, 90, 213); // Purple color
-        pdf.text(title, 20, yPos);
-        yPos += 10;
-
-        // Add items
-        pdf.setFont("helvetica", "normal");
-        pdf.setFontSize(10);
-        pdf.setTextColor(60, 60, 60);
-        data.forEach((item, index) => {
-          pdf.text(`${index + 1}. ${item}`, 20, yPos);
-          yPos += 5;
-        });
-        return yPos;
-      };
-
-      // Add sections to PDF
-      yPos = addSection("Main Competitors", apiResponse.main_competitors);
-      yPos = addSection("Competitor Strengths", apiResponse.competitor_strengths);
-      yPos = addSection("Key Findings", apiResponse.key_findings);
-      yPos = addSection("Data Sources", apiResponse.sources.map(source => source.domain));
-
-      // Save the PDF
-      pdf.save(`Competitor_Analysis_${searchQuery}.pdf`);
-    } catch (error) {
-      console.error('Error exporting to PDF:', error);
-    } finally {
-      setIsExporting(false);
-    }
-  };
-
-  // Define renderSection function
-  const renderSection = (title, data, subsections) => {
-    return (
-      <div className="mb-6">
-        <h3 className="text-lg font-semibold text-purple-400 mb-4">{title}</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {data.map((item, index) => (
-            <div key={index} className="bg-[#1D1D1F] p-4 rounded-lg">
-              <p className="text-gray-300">{item}</p>
-            </div>
-          ))}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="bg-[#1D1D1F] p-4 rounded-lg">
+          <h4 className="font-medium text-white mb-2">Company Size</h4>
+          <p className="text-gray-300">{metrics.employees}</p>
+        </div>
+        <div className="bg-[#1D1D1F] p-4 rounded-lg">
+          <h4 className="font-medium text-white mb-2">Founded</h4>
+          <p className="text-gray-300">{metrics.founded}</p>
+        </div>
+        <div className="bg-[#1D1D1F] p-4 rounded-lg">
+          <h4 className="font-medium text-white mb-2">Region</h4>
+          <p className="text-gray-300">{metrics.region}</p>
+        </div>
+        <div className="bg-[#1D1D1F] p-4 rounded-lg">
+          <h4 className="font-medium text-white mb-2">Technologies</h4>
+          <p className="text-gray-300">{metrics.tech_count} technologies</p>
+        </div>
+        <div className="bg-[#1D1D1F] p-4 rounded-lg">
+          <h4 className="font-medium text-white mb-2">Monthly Visits</h4>
+          <p className="text-gray-300">{metrics.monthly_visits.toLocaleString()}</p>
+        </div>
+        <div className="bg-[#1D1D1F] p-4 rounded-lg">
+          <h4 className="font-medium text-white mb-2">Funding Rounds</h4>
+          <p className="text-gray-300">{metrics.funding_rounds}</p>
         </div>
       </div>
     );
   };
 
-  // Define renderSourcesSection function
-  const renderSourcesSection = (sources) => {
+  const renderCompetitorSection = (competitor) => {
     return (
-      <div className="mb-6">
-        <h3 className="text-lg font-semibold text-purple-400 mb-4">Data Sources</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {sources.map((source, index) => (
-            <div key={index} className="bg-[#1D1D1F] p-4 rounded-lg">
-              <p className="text-gray-300">{source.domain}</p>
-              <p className="text-gray-400">Accessed: {source.date}</p>
-            </div>
+      <div key={competitor.name} className="bg-[#2D2D2F] rounded-xl p-6 mb-6">
+        <h3 className="text-xl font-semibold text-purple-400 mb-4">{competitor.name}</h3>
+        <p className="text-gray-300 mb-4">{competitor.about}</p>
+        {renderCompanyMetrics(competitor.metrics)}
+      </div>
+    );
+  };
+
+  const renderAnalysisSection = (title, items) => {
+    if (!items || items.length === 0) return null;
+
+    return (
+      <div className="bg-[#2D2D2F] rounded-xl p-6 mb-6">
+        <h3 className="text-xl font-semibold text-purple-400 mb-4">{title}</h3>
+        <ul className="space-y-2">
+          {items.map((item, index) => (
+            <li key={index} className="text-gray-300 flex items-start space-x-2">
+              <span className="text-purple-400">•</span>
+              <span>{item}</span>
+            </li>
           ))}
-        </div>
+        </ul>
       </div>
     );
   };
 
   return (
-    <div className="min-h-screen bg-[#131314] text-white p-4 sm:p-6">
-      <div className="max-w-7xl mx-auto">
-        {/* Header Section */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 sm:mb-8 space-y-4 sm:space-y-0">
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-purple-400 via-purple-600 to-indigo-600 bg-clip-text text-transparent">
-              Competitor Tracking
-            </h1>
-            <p className="text-gray-400 mt-2">Analyze competitors and their strengths</p>
-          </div>
-          <button
-            onClick={exportToPDF}
-            disabled={!apiResponse || Object.keys(apiResponse).length === 0 || isExporting}
-            className={`px-4 py-2 rounded-xl font-medium flex items-center space-x-2 transition-all duration-200 ${
-              apiResponse && Object.keys(apiResponse).length > 0 && !isExporting
-                ? 'bg-purple-600 hover:bg-purple-700 text-white cursor-pointer'
-                : 'bg-gray-600 text-gray-400 cursor-not-allowed'
-            }`}
-          >
-            {isExporting ? (
-              <>
-                <div className="w-4 h-4 border-t-2 border-white rounded-full animate-spin"></div>
-                <span>Exporting...</span>
-              </>
-            ) : (
-              <>
-                <span role="img" aria-label="download"></span>
-                <span>Export PDF</span>
-              </>
-            )}
-          </button>
-        </div>
-
-        {/* Search Form */}
-        <form onSubmit={handleSubmit} className="mb-6">
-          <div className="flex flex-col sm:flex-row gap-3">
+    <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="mb-8">
+        <h2 className="text-2xl font-bold text-white mb-4">Competitor Analysis</h2>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <input
               type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Enter business name for competitor analysis..."
-              className="flex-grow px-4 py-2 bg-[#1D1D1F] border border-purple-500/30 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-purple-500"
+              value={snapshotId}
+              onChange={(e) => setSnapshotId(e.target.value)}
+              placeholder="Enter Brightdata snapshot ID..."
+              className="w-full px-4 py-2 rounded-lg bg-[#2D2D2F] text-white border border-gray-600 focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
             />
-            <button
-              type="submit"
-              disabled={isLoading || !searchQuery.trim()}
-              className={`px-6 py-2 rounded-xl font-medium transition-all duration-200 ${
-                isLoading || !searchQuery.trim()
-                  ? 'bg-purple-600/50 cursor-not-allowed'
-                  : 'bg-purple-600 hover:bg-purple-700'
+            <input
+              type="text"
+              value={targetCompany}
+              onChange={(e) => setTargetCompany(e.target.value)}
+              placeholder="Enter target company name..."
+              className="w-full px-4 py-2 rounded-lg bg-[#2D2D2F] text-white border border-gray-600 focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
+            />
+          </div>
+          <button
+            type="submit"
+            disabled={isLoading}
+            className={`w-full py-2 rounded-lg font-medium transition-all duration-200
+              ${isLoading 
+                ? 'bg-gray-600 cursor-not-allowed' 
+                : 'bg-purple-600 hover:bg-purple-700 text-white'
               }`}
-            >
-              {isLoading ? (
-                <div className="flex items-center justify-center">
-                  <div className="w-5 h-5 border-t-2 border-white rounded-full animate-spin"></div>
-                </div>
-              ) : (
-                'Analyze'
-              )}
-            </button>
-          </div>
+          >
+            {isLoading ? 'Analyzing...' : 'Analyze Competitors'}
+          </button>
         </form>
-
-        {/* Phase Status */}
-        {isLoading && renderPhaseStatus()}
-
-        {/* Error Message */}
-        {error && (
-          <div className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400">
-            {error}
-          </div>
-        )}
-
-        {/* Results */}
-        {apiResponse && (
-          <div id="competitor-tracking-content" className="space-y-8">
-            {renderSection("Main Competitors", apiResponse.main_competitors, {})}
-            {renderSection("Competitor Strengths", apiResponse.competitor_strengths, {})}
-            {renderSection("Key Findings", apiResponse.key_findings, {})}
-            {renderSourcesSection(apiResponse.sources)}
-          </div>
-        )}
       </div>
+
+      {isLoading && (
+        <div className="mb-6 p-4 bg-purple-500/10 border border-purple-500/30 rounded-xl">
+          <div className="flex items-center space-x-3">
+            <div className="w-4 h-4 border-2 border-purple-500 border-t-transparent rounded-full animate-spin"></div>
+            <span className="text-purple-400">
+              {currentPhase === 1 ? 'Fetching data...' : 'Analyzing competitors...'}
+            </span>
+          </div>
+        </div>
+      )}
+
+      {error && (
+        <div className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-xl">
+          <div className="flex items-center space-x-3">
+            <svg className="w-5 h-5 text-red-400" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
+              <path d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <span className="text-red-400">{error}</span>
+          </div>
+        </div>
+      )}
+
+      {apiResponse && (
+        <div className="space-y-8">
+          {/* Target Company Section */}
+          <div className="bg-[#2D2D2F] rounded-xl p-6 mb-6">
+            <h3 className="text-xl font-semibold text-purple-400 mb-4">
+              {apiResponse.target_company.name}
+            </h3>
+            <p className="text-gray-300 mb-4">{apiResponse.target_company.about}</p>
+            {renderCompanyMetrics(apiResponse.target_company.metrics)}
+          </div>
+
+          {/* Competitors Section */}
+          <div>
+            <h3 className="text-xl font-semibold text-white mb-4">Top Competitors</h3>
+            {apiResponse.main_competitors.map(competitor => 
+              renderCompetitorSection(competitor)
+            )}
+          </div>
+
+          {/* SWOT Analysis */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {renderAnalysisSection("Strengths", apiResponse.competitive_analysis.strengths)}
+            {renderAnalysisSection("Weaknesses", apiResponse.competitive_analysis.weaknesses)}
+            {renderAnalysisSection("Opportunities", apiResponse.competitive_analysis.opportunities)}
+            {renderAnalysisSection("Threats", apiResponse.competitive_analysis.threats)}
+          </div>
+
+          {/* Detailed Analysis */}
+          {apiResponse.analysis_report && (
+            <div className="bg-[#2D2D2F] rounded-xl p-6 mb-6">
+              <h3 className="text-xl font-semibold text-purple-400 mb-4">Detailed Analysis</h3>
+              <div className="bg-[#1D1D1F] p-4 rounded-lg">
+                <div className="prose prose-invert max-w-none">
+                  <pre className="text-gray-300 whitespace-pre-wrap font-sans text-sm leading-relaxed">
+                    {apiResponse.analysis_report}
+                  </pre>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Export Button */}
+          <button
+            onClick={() => {
+              const element = document.createElement("a");
+              const file = new Blob([JSON.stringify(apiResponse, null, 2)], {
+                type: "application/json",
+              });
+              element.href = URL.createObjectURL(file);
+              element.download = `competitor_analysis_${targetCompany}_${new Date().toISOString()}.json`;
+              document.body.appendChild(element);
+              element.click();
+            }}
+            className="w-full py-3 px-4 bg-purple-600 hover:bg-purple-700 text-white rounded-xl transition-colors"
+          >
+            Export Analysis
+          </button>
+        </div>
+      )}
     </div>
   );
 }
