@@ -1,14 +1,15 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import jsPDF from 'jspdf';
+import Link from 'next/link';
+import Impact from './Impact';
 
 // Initialize Gemini
 const genAI = new GoogleGenerativeAI("AIzaSyAE2SKBA38bOktQBdXS6mTK5Y1a-nKB3Mo");
 
 export default function ImpactAssessmentContent() {
+  const [viewMode, setViewMode] = useState('api'); // 'api' or 'web'
   const [storedSnapshots, setStoredSnapshots] = useState([]);
   const [selectedSnapshot, setSelectedSnapshot] = useState(null);
   const [analysis, setAnalysis] = useState(null);
@@ -779,72 +780,106 @@ export default function ImpactAssessmentContent() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="mb-8">
-        <h2 className="text-2xl font-bold text-purple-400 mb-4">Impact Assessment</h2>
-        <p className="text-gray-300">
-          View and analyze impact assessment data from your research snapshots.
-        </p>
-      </div>
+    <div className="min-h-screen bg-[#131314] text-white">
+      <div className="max-w-7xl mx-auto px-4 py-6">
+        {/* Navigation and View Toggle */}
+        <div className="flex items-center justify-between mb-8">
+          <div className="bg-[#1D1D1F] p-1 rounded-xl inline-flex">
+            <Link 
+              href="/market-assessment"
+              className="px-4 py-2 rounded-lg text-gray-400 hover:text-white hover:bg-purple-600/50 transition-all duration-200"
+            >
+              Market Assessment
+            </Link>
+            <button 
+              className="px-4 py-2 rounded-lg bg-purple-600 text-white"
+            >
+              Impact Assessment
+            </button>
+          </div>
 
-      {/* Snapshot Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-        {storedSnapshots.map((snapshot) => (
-          <div
-            key={snapshot.id}
-            className="bg-[#1D1D1F]/90 p-6 rounded-xl backdrop-blur-xl border border-purple-500/20 
-                     hover:border-purple-500/40 transition-all cursor-pointer"
-            onClick={() => {
-              setSelectedSnapshot(snapshot);
-              processSnapshotData(snapshot);
-            }}
-          >
-            <div className="flex justify-between items-start mb-4">
-              <h3 className="text-lg font-semibold text-purple-400">
-                Snapshot #{snapshot.id}
-              </h3>
-              <span className="text-sm text-gray-400">
-                {new Date(snapshot.timestamp).toLocaleDateString()}
-              </span>
-            </div>
-            <div className="text-gray-300 text-sm">
-              <p>Companies analyzed: {
-                Array.isArray(snapshot.data) ? snapshot.data.length : 0
-              }</p>
-              <p>Data points collected: {
-                Array.isArray(snapshot.data) ? 
-                  snapshot.data.reduce((sum, company) => 
-                    sum + (company ? Object.keys(company).length : 0), 0
-                  ) : 0
-              }</p>
+          <div className="flex items-center space-x-4">
+            <button
+              onClick={() => setViewMode('api')}
+              className={`px-6 py-2 rounded-xl font-medium transition-colors ${
+                viewMode === 'api'
+                  ? 'bg-purple-600 text-white'
+                  : 'bg-[#2D2D2F] text-gray-400 hover:text-white'
+              }`}
+            >
+              API View
+            </button>
+            <button
+              onClick={() => setViewMode('web')}
+              className={`px-6 py-2 rounded-xl font-medium transition-colors ${
+                viewMode === 'web'
+                  ? 'bg-purple-600 text-white'
+                  : 'bg-[#2D2D2F] text-gray-400 hover:text-white'
+              }`}
+            >
+              Web View
+            </button>
+          </div>
+        </div>
+
+        {/* Render content based on view mode */}
+        {viewMode === 'web' ? (
+          // Web View - Impact Component
+          <Impact />
+        ) : (
+          // API View - Snapshot List
+          <div className="max-w-7xl mx-auto">
+            <div className="mb-8">
+              <h2 className="text-2xl font-bold text-white mb-6">Stored Snapshots</h2>
+              
+              {/* Snapshot Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {storedSnapshots.map((snapshot) => (
+                  <div 
+                    key={snapshot.id}
+                    className="bg-[#1D1D1F]/90 p-6 rounded-xl backdrop-blur-xl border border-purple-500/20 hover:border-purple-500/40 transition-all cursor-pointer"
+                    onClick={() => setSelectedSnapshot(snapshot)}
+                  >
+                    <div className="flex justify-between items-start mb-4">
+                      <h3 className="text-lg font-semibold text-purple-400">
+                        Snapshot #{snapshot.id}
+                      </h3>
+                      <span className="text-sm text-gray-400">
+                        {new Date(snapshot.timestamp).toLocaleDateString()}
+                      </span>
+                    </div>
+                    <div className="text-gray-300 text-sm">
+                      <p>Companies analyzed: {
+                        Array.isArray(snapshot.data) ? snapshot.data.length : 0
+                      }</p>
+                      <p>Data points collected: {
+                        Array.isArray(snapshot.data) ? 
+                          snapshot.data.reduce((sum, company) => 
+                            sum + (company ? Object.keys(company).length : 0), 0
+                          ) : 0
+                      }</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Selected Snapshot Details */}
+              {selectedSnapshot && (
+                <div className="mt-8 space-y-6">
+                  {/* ... keep existing selected snapshot content ... */}
+                </div>
+              )}
+
+              {/* Empty State */}
+              {storedSnapshots.length === 0 && (
+                <div className="text-center text-gray-400 py-12">
+                  No stored snapshots found
+                </div>
+              )}
             </div>
           </div>
-        ))}
+        )}
       </div>
-
-      {/* No Snapshots Message */}
-      {storedSnapshots.length === 0 && (
-        <div className="text-center py-12">
-          <p className="text-gray-400 mb-4">No snapshots found.</p>
-          <Link 
-            href="/competitor-tracking"
-            className="text-purple-400 hover:text-purple-300 underline"
-          >
-            Start by collecting competitor data
-          </Link>
-        </div>
-      )}
-
-      {/* Processing State */}
-      {isProcessing && (
-        <div className="text-center py-8">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500 mx-auto mb-4"></div>
-          <p className="text-purple-400">Processing snapshot data...</p>
-        </div>
-      )}
-
-      {/* Processed Data Review */}
-      {renderProcessedDataReview()}
     </div>
   );
 }

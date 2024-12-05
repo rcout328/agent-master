@@ -3,12 +3,13 @@
 import { useState, useEffect } from 'react';
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import Icp from './Icp';
 
 // Initialize Gemini
 const genAI = new GoogleGenerativeAI("AIzaSyAE2SKBA38bOktQBdXS6mTK5Y1a-nKB3Mo");
 
 export default function ICPCreationContent() {
+  const [viewMode, setViewMode] = useState('api'); // 'api' or 'web'
   const [storedSnapshots, setStoredSnapshots] = useState([]);
   const [selectedSnapshot, setSelectedSnapshot] = useState(null);
   const [analysis, setAnalysis] = useState(null);
@@ -386,80 +387,130 @@ export default function ICPCreationContent() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
-      <div className="mb-8">
-        <h2 className="text-2xl font-bold text-white mb-6">Stored Snapshots</h2>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {storedSnapshots.map((snapshot) => (
-            <div 
-              key={snapshot.id}
-              className="bg-[#1D1D1F]/90 p-6 rounded-xl backdrop-blur-xl border border-purple-500/20 hover:border-purple-500/40 transition-all cursor-pointer"
-              onClick={() => viewSnapshotData(snapshot)}
+    <div className="min-h-screen bg-[#131314] text-white">
+      {/* View Toggle */}
+      <div className="max-w-7xl mx-auto px-4 py-6">
+        {/* Navigation Tabs */}
+        <div className="flex items-center justify-between mb-8">
+          <div className="bg-[#1D1D1F] p-1 rounded-xl inline-flex">
+            <button 
+              className="px-4 py-2 rounded-lg bg-purple-600 text-white"
             >
-              <div className="flex flex-col space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-200 font-mono text-sm">{snapshot.id}</span>
-                  <span className="text-xs text-gray-500">
-                    {new Date(snapshot.timestamp).toLocaleDateString()}
-                  </span>
-                </div>
-                
-                {/* Preview of data */}
-                <div className="mt-2 text-sm text-gray-400">
-                  {snapshot.data && typeof snapshot.data === 'object' && (
-                    <div className="space-y-1">
-                      {Object.keys(snapshot.data).slice(0, 3).map(key => (
-                        <div key={key} className="truncate">
-                          {key}: {typeof snapshot.data[key] === 'object' ? '...' : snapshot.data[key]}
-                        </div>
-                      ))}
-                      {Object.keys(snapshot.data).length > 3 && (
-                        <div className="text-purple-400">+ more data...</div>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          ))}
+              ICP Creation
+            </button>
+            <Link 
+              href="/journey-mapping"
+              className="px-4 py-2 rounded-lg text-gray-400 hover:text-white hover:bg-purple-600/50 transition-all duration-200"
+            >
+              Journey Mapping
+            </Link>
+          </div>
+
+          <div className="flex items-center space-x-4">
+            <button
+              onClick={() => setViewMode('api')}
+              className={`px-6 py-2 rounded-xl font-medium transition-colors ${
+                viewMode === 'api'
+                  ? 'bg-purple-600 text-white'
+                  : 'bg-[#2D2D2F] text-gray-400 hover:text-white'
+              }`}
+            >
+              API View
+            </button>
+            <button
+              onClick={() => setViewMode('web')}
+              className={`px-6 py-2 rounded-xl font-medium transition-colors ${
+                viewMode === 'web'
+                  ? 'bg-purple-600 text-white'
+                  : 'bg-[#2D2D2F] text-gray-400 hover:text-white'
+              }`}
+            >
+              Web View
+            </button>
+          </div>
         </div>
 
-        {/* Selected Snapshot */}
-        {selectedSnapshot && (
-          <div className="mt-8 space-y-6">
-            <div className="bg-[#1D1D1F]/90 p-6 rounded-xl backdrop-blur-xl border border-purple-500/20">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-xl font-semibold text-purple-400">
-                  Snapshot Details: {selectedSnapshot.id}
-                </h3>
-                <div className="flex space-x-4">
-                  <button 
-                    onClick={() => processSnapshotData(selectedSnapshot)}
-                    disabled={isProcessing}
-                    className={`px-4 py-2 rounded-lg transition-colors ${
-                      isProcessing 
-                        ? 'bg-purple-600/50 cursor-not-allowed' 
-                        : 'bg-purple-600 hover:bg-purple-700'
-                    }`}
+        {/* Content based on view mode */}
+        {viewMode === 'web' ? (
+          <Icp />
+        ) : (
+          <div className="max-w-7xl mx-auto">
+            <div className="mb-8">
+              <h2 className="text-2xl font-bold text-white mb-6">Stored Snapshots</h2>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {storedSnapshots.map((snapshot) => (
+                  <div 
+                    key={snapshot.id}
+                    className="bg-[#1D1D1F]/90 p-6 rounded-xl backdrop-blur-xl border border-purple-500/20 hover:border-purple-500/40 transition-all cursor-pointer"
+                    onClick={() => viewSnapshotData(snapshot)}
                   >
-                    {isProcessing ? 'Processing...' : 'Process Data'}
-                  </button>
-                  <button 
-                    onClick={() => setSelectedSnapshot(null)}
-                    className="text-gray-400 hover:text-gray-300"
-                  >
-                    Close
-                  </button>
-                </div>
+                    <div className="flex flex-col space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-gray-200 font-mono text-sm">{snapshot.id}</span>
+                        <span className="text-xs text-gray-500">
+                          {new Date(snapshot.timestamp).toLocaleDateString()}
+                        </span>
+                      </div>
+                      
+                      {/* Preview of data */}
+                      <div className="mt-2 text-sm text-gray-400">
+                        {snapshot.data && typeof snapshot.data === 'object' && (
+                          <div className="space-y-1">
+                            {Object.keys(snapshot.data).slice(0, 3).map(key => (
+                              <div key={key} className="truncate">
+                                {key}: {typeof snapshot.data[key] === 'object' ? '...' : snapshot.data[key]}
+                              </div>
+                            ))}
+                            {Object.keys(snapshot.data).length > 3 && (
+                              <div className="text-purple-400">+ more data...</div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
-              <pre className="bg-[#2D2D2F] p-4 rounded-lg overflow-auto max-h-96 text-sm text-gray-300">
-                {JSON.stringify(selectedSnapshot.data, null, 2)}
-              </pre>
-            </div>
 
-            {/* Processed Data Review */}
-            {renderProcessedDataReview()}
+              {/* Selected Snapshot */}
+              {selectedSnapshot && (
+                <div className="mt-8 space-y-6">
+                  <div className="bg-[#1D1D1F]/90 p-6 rounded-xl backdrop-blur-xl border border-purple-500/20">
+                    <div className="flex justify-between items-center mb-4">
+                      <h3 className="text-xl font-semibold text-purple-400">
+                        Snapshot Details: {selectedSnapshot.id}
+                      </h3>
+                      <div className="flex space-x-4">
+                        <button 
+                          onClick={() => processSnapshotData(selectedSnapshot)}
+                          disabled={isProcessing}
+                          className={`px-4 py-2 rounded-lg transition-colors ${
+                            isProcessing 
+                              ? 'bg-purple-600/50 cursor-not-allowed' 
+                              : 'bg-purple-600 hover:bg-purple-700'
+                          }`}
+                        >
+                          {isProcessing ? 'Processing...' : 'Process Data'}
+                        </button>
+                        <button 
+                          onClick={() => setSelectedSnapshot(null)}
+                          className="text-gray-400 hover:text-gray-300"
+                        >
+                          Close
+                        </button>
+                      </div>
+                    </div>
+                    <pre className="bg-[#2D2D2F] p-4 rounded-lg overflow-auto max-h-96 text-sm text-gray-300">
+                      {JSON.stringify(selectedSnapshot.data, null, 2)}
+                    </pre>
+                  </div>
+
+                  {/* Processed Data Review */}
+                  {renderProcessedDataReview()}
+                </div>
+              )}
+            </div>
           </div>
         )}
       </div>
