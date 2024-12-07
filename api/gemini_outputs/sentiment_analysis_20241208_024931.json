@@ -1,0 +1,21 @@
+{
+  "query": "Google",
+  "timestamp": "20241208_024931",
+  "execution_time": 6.667638063430786,
+  "results": {
+    "sentiment_analysis": [
+      {
+        "company": "Google",
+        "overall_sentiment": "neutral",
+        "sentiment_score": 0,
+        "key_themes": [
+          "No recent news available"
+        ],
+        "notable_developments": [
+          "No recent developments found"
+        ],
+        "news_sources": []
+      }
+    ]
+  }
+}

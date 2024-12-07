@@ -22,30 +22,55 @@ export default function ImpactAssessmentContent() {
   }, []);
 
   const loadAllSnapshots = () => {
-    const allKeys = Object.keys(localStorage);
-    const snapshots = allKeys
-      .filter(key => key.includes('snapshot_'))
-      .map(key => {
-        try {
-          const rawData = JSON.parse(localStorage.getItem(key));
-          // Handle different data structures
-          let processedData = Array.isArray(rawData) ? rawData : 
-                          rawData?.data ? rawData.data :
-                          rawData?.results ? rawData.results : [];
-          
-          return {
-            id: key.split('snapshot_')[1],
-            data: processedData,
-            timestamp: new Date().toISOString()
-          };
-        } catch (e) {
-          console.error(`Error parsing snapshot ${key}:`, e);
-          return null;
-        }
-      })
-      .filter(Boolean);
+    try {
+      const allKeys = Object.keys(localStorage);
+      const snapshots = allKeys
+        .filter(key => key.includes('snapshot_'))
+        .map(key => {
+          try {
+            const rawData = JSON.parse(localStorage.getItem(key));
+            return {
+              id: key.split('snapshot_')[1],
+              data: rawData,
+              timestamp: new Date().toISOString()
+            };
+          } catch (e) {
+            console.error(`Error parsing snapshot ${key}:`, e);
+            return null;
+          }
+        })
+        .filter(Boolean);
 
-    setStoredSnapshots(snapshots);
+      console.log('Loaded snapshots:', snapshots);
+      setStoredSnapshots(snapshots);
+    } catch (error) {
+      console.error('Error loading snapshots:', error);
+    }
+  };
+
+  const viewSnapshotData = (snapshot) => {
+    try {
+      console.log('Viewing snapshot:', snapshot.id);
+      
+      // Get fresh data from localStorage
+      const storageKey = `snapshot_${snapshot.id}`;
+      const rawData = localStorage.getItem(storageKey);
+      
+      if (!rawData) {
+        throw new Error('Snapshot data not found in localStorage');
+      }
+
+      const parsedData = JSON.parse(rawData);
+      setSelectedSnapshot({
+        ...snapshot,
+        data: parsedData
+      });
+      setProcessedData(null); // Reset processed data
+      
+    } catch (error) {
+      console.error('Error viewing snapshot:', error);
+      alert('Failed to load snapshot data');
+    }
   };
 
   const processSnapshotData = async (snapshotData) => {
@@ -838,7 +863,7 @@ export default function ImpactAssessmentContent() {
                   <div 
                     key={snapshot.id}
                     className="bg-[#1D1D1F]/90 p-6 rounded-xl backdrop-blur-xl border border-purple-500/20 hover:border-purple-500/40 transition-all cursor-pointer"
-                    onClick={() => setSelectedSnapshot(snapshot)}
+                    onClick={() => viewSnapshotData(snapshot)}
                   >
                     <div className="flex justify-between items-start mb-4">
                       <h3 className="text-lg font-semibold text-purple-400">
@@ -849,15 +874,16 @@ export default function ImpactAssessmentContent() {
                       </span>
                     </div>
                     <div className="text-gray-300 text-sm">
-                      <p>Companies analyzed: {
-                        Array.isArray(snapshot.data) ? snapshot.data.length : 0
+                      <p>Data points: {
+                        snapshot.data ? 
+                          typeof snapshot.data === 'object' ? 
+                            Object.keys(snapshot.data).length : 
+                            Array.isArray(snapshot.data) ? 
+                              snapshot.data.length : 
+                              0
+                          : 0
                       }</p>
-                      <p>Data points collected: {
-                        Array.isArray(snapshot.data) ? 
-                          snapshot.data.reduce((sum, company) => 
-                            sum + (company ? Object.keys(company).length : 0), 0
-                          ) : 0
-                      }</p>
+                      <p className="mt-1 text-gray-400">Click to view details</p>
                     </div>
                   </div>
                 ))}
@@ -866,7 +892,48 @@ export default function ImpactAssessmentContent() {
               {/* Selected Snapshot Details */}
               {selectedSnapshot && (
                 <div className="mt-8 space-y-6">
-                  {/* ... keep existing selected snapshot content ... */}
+                  <div className="bg-[#1D1D1F]/90 p-6 rounded-xl backdrop-blur-xl border border-purple-500/20">
+                    <div className="flex justify-between items-center mb-4">
+                      <h3 className="text-xl font-semibold text-purple-400">
+                        Snapshot Details: {selectedSnapshot.id}
+                      </h3>
+                      <div className="flex space-x-4">
+                        <button 
+                          onClick={() => processSnapshotData(selectedSnapshot)}
+                          disabled={isProcessing}
+                          className={`px-4 py-2 rounded-lg transition-colors ${
+                            isProcessing 
+                              ? 'bg-purple-600/50 cursor-not-allowed' 
+                              : 'bg-purple-600 hover:bg-purple-700'
+                          }`}
+                        >
+                          {isProcessing ? 'Processing...' : 'Process Data'}
+                        </button>
+                        <button 
+                          onClick={() => setSelectedSnapshot(null)}
+                          className="text-gray-400 hover:text-gray-300"
+                        >
+                          Close
+                        </button>
+                      </div>
+                    </div>
+                    
+                    {/* Raw Data Preview */}
+                    <div className="mb-4">
+                      <h4 className="text-sm font-medium text-gray-400 mb-2">Raw Data Preview</h4>
+                      <pre className="bg-[#2D2D2F] p-4 rounded-lg overflow-auto max-h-96 text-sm text-gray-300">
+                        {JSON.stringify(selectedSnapshot.data, null, 2)}
+                      </pre>
+                    </div>
+
+                    {/* Processed Data */}
+                    {processedData && (
+                      <div className="mt-6">
+                        <h4 className="text-sm font-medium text-gray-400 mb-2">Processed Analysis</h4>
+                        {renderProcessedDataReview()}
+                      </div>
+                    )}
+                  </div>
                 </div>
               )}
 

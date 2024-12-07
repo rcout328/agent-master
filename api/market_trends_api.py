@@ -5,6 +5,8 @@ import os
 import time
 import google.generativeai as genai
 import requests  # Import requests for making API calls
+from googlesearch import search  # Add this import at the top
+import json
 
 # Initialize logging
 logging.basicConfig(level=logging.DEBUG)
@@ -23,79 +25,200 @@ if GOOGLE_API_KEY:
 else:
     logging.warning("No Gemini API key found")
 
-def get_trends_data(query):
-    company_name = "100xEngineers"
-    logging.info(f"\n{'='*50}\nGathering trends data for: {query}\n{'='*50}")
-    
-    # Define search queries with better error handling
-    search_queries = [
-        f"{company_name} overview",
-        f"{query} market size revenue statistics",
-        f"{query} industry market share data",
-        f"{query} market growth forecast CAGR",
-        f"{query} competitive analysis market leaders",
-        f"{query} industry trends analysis report"
+def perform_search(query, use_custom_api=True):
+    """
+    Perform search with fallback mechanism
+    First tries Custom Search API, then falls back to googlesearch package
+    """
+    try:
+        if use_custom_api:
+            # Try Custom Search API first
+            api_key = "AIzaSyAxeLlJ6vZxOl-TblUJg_dInBS3vNxaFVY"
+            search_engine_id = "37793b12975da4e35"
+            url = f"https://www.googleapis.com/customsearch/v1?key={api_key}&cx={search_engine_id}&q={query}&num=2"
+            
+            response = requests.get(url)
+            if response.status_code == 200:
+                search_results = response.json().get('items', [])
+                if search_results:
+                    return [item['link'] for item in search_results]
+            logging.warning("Custom Search API failed, falling back to googlesearch")
+        
+        # Fallback to googlesearch package
+        logging.info("Using googlesearch package")
+        return list(search(query, num_results=2, lang="en"))
+        
+    except Exception as e:
+        logging.error(f"Search error: {str(e)}")
+        return []
+
+def scrape_with_retry(url, max_retries=3, timeout=15):
+    """Helper function to scrape URL with retry logic and improved timeout handling"""
+    # List of problematic domains that often timeout
+    problematic_domains = [
+        'sparktoro.com',
+        'j-jdis.com',
+        'linkedin.com',
+        'facebook.com', 
+        'twitter.com',
+        'reddit.com',
+        '.pdf'
     ]
     
-    scraped_content = []
+    # Skip problematic URLs immediately
+    if any(domain in url.lower() for domain in problematic_domains):
+        logging.info(f"Skipping known problematic URL: {url}")
+        return None
 
+    for attempt in range(max_retries):
+        try:
+            # Use shorter timeout for initial attempts
+            current_timeout = timeout * (attempt + 1)  # Increase timeout with each retry
+            
+            logging.info(f"Attempting to scrape {url} (timeout: {current_timeout}s)")
+            
+            # Add timeout and rate limiting parameters
+            response = firecrawl_app.scrape_url(
+                url=url,
+                params={
+                    'formats': ['markdown'],
+                    'timeout': current_timeout,
+                    'wait': True,  # Enable rate limiting
+                    'max_retries': 2  # Internal retries
+                }
+            )
+            
+            if response and response.get('markdown'):
+                content = response.get('markdown')
+                if len(content.strip()) > 200:  # Verify content quality
+                    logging.info(f"Successfully scraped {url}")
+                    return content
+                else:
+                    logging.warning(f"Content too short from {url}")
+                    return None
+                    
+        except Exception as e:
+            error_msg = str(e).lower()
+            wait_time = (attempt + 1) * 5  # Reduced wait times
+            
+            if "timeout" in error_msg or "408" in error_msg:
+                if attempt < max_retries - 1:
+                    logging.warning(f"Timeout error for {url}, attempt {attempt + 1}")
+                    logging.info(f"Waiting {wait_time}s before retry...")
+                    time.sleep(wait_time)
+                    continue
+                else:
+                    logging.error(f"Final timeout for {url} after {max_retries} attempts")
+                    break
+                    
+            elif "429" in error_msg:  # Rate limit
+                logging.info(f"Rate limit hit, waiting {wait_time}s...")
+                time.sleep(wait_time)
+                continue
+                
+            else:
+                logging.error(f"Error scraping {url}: {error_msg}")
+                break
+            
+        time.sleep(1)  # Reduced basic delay
+        
+    return None
+
+def get_trends_data(query):
+    """Get market trends data with improved error handling"""
     try:
+        if not query:
+            logging.error("No query provided")
+            return generate_fallback_response("Unknown Business")
+            
+        logging.info(f"\n{'='*50}\nGathering trends data for: {query}\n{'='*50}")
+        
+        # Define search queries
+        search_queries = [
+            # Market Overview
+            f"{query} market size revenue statistics analysis",
+            
+            # Industry Trends
+            f"{query} industry trends growth forecast analysis",
+            
+            # Competition Analysis
+            f"{query} market share competitive landscape analysis",
+            
+            # Technology & Innovation
+            f"{query} technology innovation disruption analysis",
+            
+            # Future Outlook
+            f"{query} market future outlook predictions analysis"
+        ]
+        
+        scraped_content = []
+        use_custom_api = True
+        successful_scrapes = 0
+        min_required_content = 2
+        max_attempts_per_url = 2
+        
         for search_query in search_queries:
+            if successful_scrapes >= min_required_content:
+                break
+                
             try:
                 logging.info(f"\nSearching for: {search_query}")
-                # Custom Search API request with error handling
-                api_key = "AIzaSyAxeLlJ6vZxOl-TblUJg_dInBS3vNxaFVY"
-                search_engine_id = "37793b12975da4e35"
-                url = f"https://www.googleapis.com/customsearch/v1?q={search_query}&key={api_key}&cx={search_engine_id}&num=3"
+                search_results = perform_search(search_query, use_custom_api)
                 
-                response = requests.get(url, timeout=10)  # Add timeout
-                if not response.ok:
-                    logging.error(f"Search API error: {response.status_code}")
-                    continue
-                    
-                response_data = response.json()
-                if 'items' not in response_data:
-                    logging.warning(f"No search results for: {search_query}")
-                    continue
-                    
-                urls = [item['link'] for item in response_data.get('items', [])]
-
-                for url in urls:
-                    if not any(x in url.lower() for x in ['linkedin', 'facebook', 'twitter', 'reddit']):
-                        try:
-                            logging.info(f"Scraping: {url}")
-                            response = firecrawl_app.scrape_url(
-                                url=url,
-                                params={'formats': ['markdown']},
-                            )
+                if not search_results and use_custom_api:
+                    use_custom_api = False
+                    search_results = perform_search(search_query, use_custom_api=False)
+                
+                if search_results:
+                    attempts = 0
+                    for url in search_results:
+                        if successful_scrapes >= min_required_content or attempts >= max_attempts_per_url:
+                            break
                             
-                            if response and 'markdown' in response:
-                                content = response['markdown']
-                                if len(content) > 200:
-                                    scraped_content.append({
-                                        'url': url,
-                                        'domain': extract_domain(url),
-                                        'section': 'Market Trends',
-                                        'date': datetime.now().strftime("%Y-%m-%d"),
-                                        'content': content[:2000]
-                                    })
-                        except Exception as e:
-                            logging.error(f"Scraping error for {url}: {str(e)}")
-                            continue
+                        content = scrape_with_retry(url, timeout=15)  # Reduced initial timeout
+                        if content:
+                            scraped_content.append({
+                                'url': url,
+                                'domain': extract_domain(url),
+                                'section': 'Market Trends',
+                                'date': datetime.now().strftime("%Y-%m-%d"),
+                                'content': content[:2000]
+                            })
+                            successful_scrapes += 1
+                        attempts += 1
                             
-                time.sleep(2)  # Rate limiting
+                time.sleep(1)  # Reduced delay between queries
                 
             except Exception as e:
-                logging.error(f"Error in search query {search_query}: {str(e)}")
+                logging.error(f"Error in search for query '{search_query}': {str(e)}")
                 continue
 
         if not scraped_content:
-            logging.warning("No content was scraped, returning fallback response")
+            logging.warning("No content scraped, returning fallback response")
             return generate_fallback_response(query)
 
-        # Process the scraped content
-        return process_scraped_content(scraped_content, query)
-
+        try:
+            result = process_scraped_content(scraped_content, query)
+            
+            # Save analysis to file
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            output_file = os.path.join('gemini_outputs', f'market_trends_{timestamp}.txt')
+            
+            with open(output_file, 'w', encoding='utf-8') as f:
+                f.write(f"Market Trends Analysis for: {query}\n")
+                f.write(f"Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+                f.write("="*50 + "\n\n")
+                f.write(json.dumps(result, indent=2))
+                f.write("\n\nData Sources:\n")
+                for source in scraped_content:
+                    f.write(f"- {source['domain']} ({source['date']})\n")
+            
+            return result
+            
+        except Exception as e:
+            logging.error(f"Error processing content: {str(e)}")
+            return generate_fallback_response(query)
+            
     except Exception as e:
         logging.error(f"Error during market trends analysis: {str(e)}")
         return generate_fallback_response(query)
@@ -146,33 +269,24 @@ def extract_domain(url):
         return url
 
 def generate_fallback_response(query):
-    """Generate basic trends analysis when no data is found"""
+    """Generate fallback response when analysis fails"""
     return {
         "market_size_growth": {
-            "total_market_value": [f"Market size for {query} pending analysis (Inferred)"],
-            "market_segments": ["Segment analysis in progress (Inferred)"],
-            "regional_distribution": ["Regional data being collected (Inferred)"]
+            "total_market_value": [f"Market size analysis for {query} pending (Inferred)"],
+            "market_segments": ["Market segmentation analysis needed (Inferred)"],
+            "regional_distribution": ["Regional analysis to be conducted (Inferred)"]
         },
-        "competitive_analysis": {
-            "market_leaders": ["Leader analysis pending (Inferred)"],
-            "competitive_advantages": ["Advantage assessment in progress (Inferred)"],
-            "market_concentration": ["Concentration analysis pending (Inferred)"]
+        "competitive_landscape": {
+            "market_leaders": ["Market leader analysis pending (Inferred)"],
+            "market_differentiators": ["Differentiator analysis needed (Inferred)"],
+            "industry_dynamics": ["Industry dynamics to be evaluated (Inferred)"]
         },
-        "industry_trends": {
-            "current_trends": ["Trend analysis in progress (Inferred)"],
-            "technology_impact": ["Tech impact being evaluated (Inferred)"],
-            "regulatory_environment": ["Regulatory review pending (Inferred)"]
+        "consumer_analysis": {
+            "segments": ["Consumer segmentation pending (Inferred)"],
+            "behavior_patterns": ["Behavior analysis needed (Inferred)"],
+            "pain_points": ["Pain point identification required (Inferred)"]
         },
-        "growth_forecast": {
-            "short_term": ["Short-term projections pending (Inferred)"],
-            "long_term": ["Long-term analysis in progress (Inferred)"],
-            "growth_drivers": ["Driver analysis pending (Inferred)"]
-        },
-        "risk_assessment": {
-            "market_challenges": ["Challenge assessment pending (Inferred)"],
-            "economic_factors": ["Economic analysis in progress (Inferred)"],
-            "competitive_threats": ["Threat analysis pending (Inferred)"]
-        },
+        "metrics": {},
         "sources": []
     }
 
@@ -270,35 +384,139 @@ def extract_metrics(scraped_content):
     return metrics
 
 def extract_bullet_points(text, section_name):
-    """Extract bullet points from a section"""
-    points = []
-    in_section = False
-    
-    for line in text.split('\n'):
-        line = line.strip()
+    """Extract bullet points from a specific section"""
+    try:
+        lines = []
+        in_section = False
         
-        # Check for section start
-        if section_name in line:
-            in_section = True
-            continue
-            
-        # Check for section end
-        if in_section:
-            # Check if we've hit another section
-            if any(s + ":" in line for s in ["Total Market Value", "Market Segments", "Regional Distribution", "Top Market Players", "Market Differentiators", "Industry Dynamics", "Current Trends", "Technology Impact", "Regulatory Environment", "Short-Term", "Long-Term", "Growth Drivers", "Market Challenges", "Economic Factors", "Competitive Threats"]):
-                in_section = False
+        for line in text.split('\n'):
+            if section_name in line:
+                in_section = True
                 continue
-            
-            # Extract bullet points
-            if line.startswith(('•', '-', '*', '○', '›', '»', '⁃')):
-                cleaned_line = line.lstrip('•-*○›»⁃ ').strip()
+            elif any(s in line for s in [
+                "Market Size", "Market Segments", "Regional Distribution",
+                "Market Leaders", "Market Differentiators", "Industry Dynamics",
+                "Consumer Segments", "Behavior Patterns", "Pain Points",
+                "Current Trends", "Emerging Technologies", "Growth Forecast",
+                "Opportunities", "Challenges"
+            ]):
+                in_section = False
+            elif in_section and line.strip().startswith('•'):
+                cleaned_line = line.strip('• ').strip()
                 if cleaned_line and not cleaned_line.endswith(':'):
-                    points.append(cleaned_line)
-                    
-            # Extract numbered points
-            elif line.startswith(('1.', '2.', '3.', '4.', '5.')):
-                cleaned_line = ' '.join(line.split()[1:])
-                if cleaned_line:
-                    points.append(cleaned_line)
-    
-    return points 
+                    lines.append(cleaned_line)
+        
+        return lines if lines else [f"Analysis for {section_name} pending (Inferred)"]
+        
+    except Exception as e:
+        logging.error(f"Error extracting bullet points for {section_name}: {str(e)}")
+        return [f"Error extracting {section_name} data (Inferred)"]
+
+def generate_analysis(scraped_content, query):
+    """Generate market trends analysis using Gemini"""
+    try:
+        # Prepare content for analysis
+        content_text = "\n\n".join([item['content'] for item in scraped_content])
+        
+        # Create the analysis prompt
+        analysis_prompt = f"""
+        Task: Analyze the provided content to create a detailed market trends analysis for {query}.
+
+        Content to analyze:
+        {content_text}
+
+        Please provide a structured analysis covering these exact sections:
+
+        Market Size & Growth:
+        Market Size:
+        • [Provide market size estimates with specific numbers where available]
+        • [Include year-over-year growth rates]
+
+        Market Segments:
+        • [Identify key market segments]
+        • [Provide segment-wise breakdown]
+
+        Regional Distribution:
+        • [Analyze geographical distribution]
+        • [Identify key markets and growth regions]
+
+        Competitive Landscape:
+        Market Leaders:
+        • [List top companies and their market positions]
+        • [Include market share data where available]
+
+        Market Differentiators:
+        • [Identify key competitive advantages]
+        • [Analyze unique selling propositions]
+
+        Industry Dynamics:
+        • [Analyze industry trends and changes]
+        • [Identify market drivers and challenges]
+
+        Consumer Analysis:
+        Consumer Segments:
+        • [Identify key customer segments]
+        • [Analyze segment characteristics]
+
+        Behavior Patterns:
+        • [Analyze purchasing patterns]
+        • [Identify decision factors]
+
+        Pain Points:
+        • [List key customer challenges]
+        • [Identify unmet needs]
+
+        Technology & Innovation:
+        Current Trends:
+        • [Identify current technology trends]
+        • [Analyze adoption rates]
+
+        Emerging Technologies:
+        • [List emerging technologies]
+        • [Assess potential impact]
+
+        Future Outlook:
+        Growth Forecast:
+        • [Provide growth projections]
+        • [Identify growth drivers]
+
+        Opportunities:
+        • [List market opportunities]
+        • [Identify potential areas for expansion]
+
+        Challenges:
+        • [Identify market challenges]
+        • [List potential risks]
+
+        Format each point with specific data where available.
+        Mark inferences with (Inferred).
+        Prioritize insights based on confidence and impact.
+        """
+        
+        # Generate analysis using Gemini
+        response = model.generate_content(analysis_prompt)
+        if not response or not response.text:
+            raise Exception("No response from Gemini")
+            
+        analysis = response.text
+        
+        # Save raw analysis to file
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        raw_output_file = os.path.join('gemini_outputs', f'market_trends_raw_{timestamp}.txt')
+        
+        with open(raw_output_file, 'w', encoding='utf-8') as f:
+            f.write(f"Raw Market Trends Analysis for: {query}\n")
+            f.write(f"Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+            f.write("="*50 + "\n\n")
+            f.write("Input Content:\n")
+            f.write("-"*30 + "\n")
+            f.write(content_text[:1000] + "...\n\n")
+            f.write("Generated Analysis:\n")
+            f.write("-"*30 + "\n")
+            f.write(analysis)
+        
+        return analysis
+        
+    except Exception as e:
+        logging.error(f"Error generating analysis: {str(e)}")
+        raise

@@ -4,11 +4,33 @@ import logging
 import os
 from dotenv import load_dotenv
 from concurrent.futures import ThreadPoolExecutor
+import json
+import google.generativeai as genai
+import time
+from datetime import datetime
+from googlesearch import search
+import requests
+from bs4 import BeautifulSoup
+from urllib.parse import urlparse
+from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
+from competitor_news_api import get_competitor_insights
+
+# Initialize Gemini
+GOOGLE_API_KEY = "AIzaSyAE2SKBA38bOktQBdXS6mTK5Y1a-nKB3Mo"
+genai.configure(api_key=GOOGLE_API_KEY)
 
 # Initialize Flask app
 app = Flask(__name__)
 # Configure CORS to allow all origins and methods
-CORS(app, resources={r"/api/*": {"origins": "*", "methods": ["GET", "POST", "OPTIONS"]}})
+CORS(app, resources={
+    r"/api/*": {
+        "origins": "*",
+        "methods": ["GET", "POST", "OPTIONS"],
+        "allow_headers": ["Content-Type"],
+        "expose_headers": ["Content-Type"]
+    }
+})
 
 # Logging configuration
 logging.basicConfig(level=logging.DEBUG)
@@ -31,6 +53,161 @@ from gap_api import get_gap_data
 from impact_api import get_impact_data
 from market_assessment_api import get_market_data
 from swot_api import get_swot_data
+from competitor_sentiment_api import analyze_competitor_sentiment
+
+# Add a custom logger setup
+def setup_logging():
+    logger = logging.getLogger('competitor_analysis')
+    logger.setLevel(logging.DEBUG)
+    
+    # Create file handler
+    fh = logging.FileHandler('competitor_analysis.log')
+    fh.setLevel(logging.DEBUG)
+    
+    # Create console handler
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.INFO)
+    
+    # Create formatter
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    fh.setFormatter(formatter)
+    ch.setFormatter(formatter)
+    
+    # Add handlers
+    logger.addHandler(fh)
+    logger.addHandler(ch)
+    
+    return logger
+
+logger = setup_logging()
+
+# Add Google Custom Search API credentials
+GOOGLE_API_KEY = "YOUR_GOOGLE_API_KEY"
+CUSTOM_SEARCH_ENGINE_ID = "YOUR_SEARCH_ENGINE_ID"
+
+def get_competitor_news_from_google(competitor_name):
+    """Get latest news about competitor using Google Custom Search"""
+    try:
+        # Build the Google Custom Search API service
+        service = build("customsearch", "v1", developerKey=GOOGLE_API_KEY)
+
+        # Execute the search
+        result = service.cse().list(
+            q=f"{competitor_name} company news",
+            cx=CUSTOM_SEARCH_ENGINE_ID,
+            num=4,  # Get 4 news items
+            dateRestrict='m1',  # Last month
+            sort='date'  # Sort by date
+        ).execute()
+
+        news_items = []
+        if 'items' in result:
+            for item in result['items']:
+                try:
+                    # Get article content using BeautifulSoup
+                    headers = {
+                        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+                    }
+                    response = requests.get(item['link'], headers=headers, timeout=10)
+                    soup = BeautifulSoup(response.text, 'html.parser')
+                    
+                    # Extract article content
+                    article_text = ""
+                    article = soup.find('article') or soup.find('main') or soup.find('body')
+                    if article:
+                        paragraphs = article.find_all('p')
+                        article_text = ' '.join([p.get_text().strip() for p in paragraphs])
+                    
+                    news_items.append({
+                        'title': item.get('title', ''),
+                        'link': item.get('link', ''),
+                        'snippet': item.get('snippet', ''),
+                        'date': item.get('pagemap', {}).get('metatags', [{}])[0].get('article:published_time', ''),
+                        'source': item.get('displayLink', ''),
+                        'content': article_text[:1000]  # Limit content length
+                    })
+                except Exception as e:
+                    logger.error(f"Error processing news item: {str(e)}")
+                    continue
+
+        return news_items
+    except HttpError as e:
+        logger.error(f"Error searching Google News: {str(e)}")
+        return []
+    except Exception as e:
+        logger.error(f"Error in get_competitor_news: {str(e)}")
+        return []
+
+def analyze_news_with_gemini(competitor_name, news_items):
+    """Analyze news items using Gemini"""
+    try:
+        if not news_items:
+            return None
+
+        news_prompt = f"""
+        Analyze these recent news items about {competitor_name}:
+
+        {json.dumps(news_items, indent=2)}
+
+        Provide analysis in this JSON format:
+        {{
+            "key_developments": [
+                {{
+                    "title": "Development title",
+                    "description": "Brief description",
+                    "impact": "Potential market impact"
+                }}
+            ],
+            "market_trends": ["trend1", "trend2"],
+            "competitive_moves": ["move1", "move2"],
+            "overall_sentiment": "positive/negative/neutral",
+            "summary": "Brief analysis summary"
+        }}
+        """
+
+        model = genai.GenerativeModel('gemini-pro')
+        response = model.generate_content(news_prompt)
+        
+        if response.parts and response.parts[0].text:
+            analysis = json.loads(response.parts[0].text)
+            return analysis
+        
+        return None
+    except Exception as e:
+        logger.error(f"Error analyzing news with Gemini: {str(e)}")
+        return None
+
+def get_competitor_prompt(query):
+    return f"""
+    Analyze and provide detailed information about the top 5 direct competitors for {query}.
+    Return the response in valid JSON format without any markdown formatting.
+    
+    For each competitor, provide:
+    1. Company Name: Full official name
+    2. Brief Description: 2-3 sentences about their main business
+    3. Key Strengths: 3-4 main competitive advantages
+    4. Market Position: Their position in the market relative to {query}
+    5. Target Market: Their primary customer segments
+    6. Unique Features: What distinguishes them from others
+
+    The response must be a JSON object with this exact structure:
+    {{
+        "competitors": [
+            {{
+                "name": "Company Name",
+                "description": "Detailed description",
+                "strengths": ["Strength 1", "Strength 2", "Strength 3"],
+                "market_position": "Market position details",
+                "target_market": "Primary customer segments",
+                "unique_features": ["Feature 1", "Feature 2"]
+            }}
+        ],
+        "analysis_summary": "Brief overview of competitive landscape"
+    }}
+
+    Focus on direct competitors in the same market segment as {query}.
+    Ensure all arrays are properly formatted with square brackets and all strings are properly quoted.
+    """
 
 @app.route('/api/competitor-analysis', methods=['POST', 'OPTIONS'])
 def analyze_competitors():
@@ -343,10 +520,251 @@ def analyze_swot():
         logging.error(f"Error during SWOT analysis: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
+@app.route('/api/competitor-sentiment', methods=['POST', 'OPTIONS'])
+def competitor_sentiment():
+    """Endpoint for competitor sentiment analysis"""
+    if request.method == 'OPTIONS':
+        logger.debug('Handling OPTIONS request for sentiment analysis')
+        response = jsonify({})
+        response.headers['Access-Control-Allow-Origin'] = '*'
+        response.headers['Access-Control-Allow-Methods'] = 'POST'
+        response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
+        return response, 204
+        
+    try:
+        start_time = time.time()
+        logger.info('Starting sentiment analysis process')
+        
+        data = request.get_json()
+        if not data:
+            logger.error('No data provided in request')
+            return jsonify({'error': 'No data provided'}), 400
+            
+        query = data.get('query')
+        if not query:
+            logger.error('No query provided in request data')
+            return jsonify({'error': 'No query provided'}), 400
+
+        logger.info(f'Analyzing sentiment for: {query}')
+
+        # Run sentiment analysis
+        result = analyze_competitor_sentiment(query)
+        if not result:
+            logger.error('Sentiment analysis failed to produce results')
+            return jsonify({'error': 'Failed to analyze sentiment'}), 500
+
+        # Save sentiment analysis to file
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        sentiment_file = f'sentiment_analysis_{timestamp}.json'
+        with open(os.path.join(output_dir, sentiment_file), 'w') as f:
+            json.dump({
+                'query': query,
+                'timestamp': timestamp,
+                'execution_time': time.time() - start_time,
+                'results': result
+            }, f, indent=2)
+        
+        logger.info(f'Sentiment analysis saved to {sentiment_file}')
+        logger.info(f'Sentiment analysis completed in {time.time() - start_time:.2f} seconds')
+
+        response = jsonify(result)
+        response.headers['Access-Control-Allow-Origin'] = '*'
+        return response
+
+    except Exception as e:
+        logger.error(f'Error during sentiment analysis: {str(e)}', exc_info=True)
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/health', methods=['GET'])
+def health_check():
+    response = jsonify({'status': 'healthy'})
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    return response
+
+# Add error handling middleware
+@app.errorhandler(404)
+def not_found(error):
+    return jsonify({'error': 'Not found'}), 404
+
+@app.errorhandler(500)
+def internal_error(error):
+    return jsonify({'error': 'Internal server error'}), 500
+
+# Add request logging middleware
+@app.before_request
+def log_request_info():
+    logging.info('Headers: %s', request.headers)
+    logging.info('Body: %s', request.get_data())
+
+@app.route('/api/search-competitors', methods=['POST', 'OPTIONS'])
+def search_competitors():
+    """Endpoint to search for competitors"""
+    if request.method == 'OPTIONS':
+        logger.debug('Handling OPTIONS request')
+        response = jsonify({})
+        response.headers['Access-Control-Allow-Origin'] = '*'
+        response.headers['Access-Control-Allow-Methods'] = 'POST'
+        response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
+        return response, 204
+
+    try:
+        start_time = time.time()
+        logger.info('Starting competitor search process')
+        
+        data = request.get_json()
+        if not data or 'query' not in data:
+            return jsonify({'error': 'No query provided'}), 400
+            
+        query = data['query']
+        logger.info(f'Analyzing competitors for: {query}')
+
+        # First, get competitor list from Gemini
+        competitor_prompt = f"""
+        Analyze and list exactly 5 main competitors for {query}.
+        Return only a JSON object in this exact format:
+        {{
+            "competitors": [
+                {{
+                    "name": "Competitor Name",
+                    "description": "2-3 sentence description",
+                    "strengths": ["strength1", "strength2", "strength3"],
+                    "market_position": "Brief market position",
+                    "target_market": "Target audience",
+                    "unique_features": ["feature1", "feature2"]
+                }}
+            ],
+            "analysis_summary": "Brief market overview"
+        }}
+        """
+
+        # Get competitors from Gemini
+        model = genai.GenerativeModel('gemini-pro')
+        response = model.generate_content(
+            contents=competitor_prompt,
+            generation_config={
+                "temperature": 0.7,
+                "top_p": 1,
+                "max_output_tokens": 2048,
+            }
+        )
+
+        if not response.parts or not response.parts[0].text:
+            return jsonify({'error': 'Failed to generate competitor list'}), 500
+
+        # Parse competitor data
+        try:
+            text = response.parts[0].text.strip()
+            if '```' in text:
+                text = text.split('```')[1].strip()
+            result = json.loads(text)
+        except Exception as e:
+            logger.error(f'Error parsing competitor data: {e}')
+            return jsonify({'error': 'Failed to parse competitor data'}), 500
+
+        # For each competitor, get recent news and analyze
+        for competitor in result['competitors']:
+            try:
+                # Get recent news
+                news_prompt = f"""
+                Analyze recent developments and news for {competitor['name']}.
+                Focus on:
+                1. Recent business developments
+                2. Market performance
+                3. New initiatives
+                4. Industry impact
+                
+                Return a JSON object with:
+                {{
+                    "recent_developments": ["development1", "development2"],
+                    "market_updates": ["update1", "update2"],
+                    "key_initiatives": ["initiative1", "initiative2"]
+                }}
+                """
+                
+                news_response = model.generate_content(
+                    contents=news_prompt,
+                    generation_config={"temperature": 0.7, "top_p": 1}
+                )
+                
+                if news_response.parts and news_response.parts[0].text:
+                    try:
+                        news_text = news_response.parts[0].text.strip()
+                        if '```' in news_text:
+                            news_text = news_text.split('```')[1].strip()
+                        news_data = json.loads(news_text)
+                        competitor['news'] = news_data
+                    except:
+                        competitor['news'] = {
+                            "recent_developments": [],
+                            "market_updates": [],
+                            "key_initiatives": []
+                        }
+                
+            except Exception as e:
+                logger.error(f'Error getting news for {competitor["name"]}: {e}')
+                competitor['news'] = {
+                    "recent_developments": [],
+                    "market_updates": [],
+                    "key_initiatives": []
+                }
+
+        # Save complete analysis
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        analysis_file = f'competitor_analysis_{timestamp}.json'
+        with open(os.path.join(output_dir, analysis_file), 'w') as f:
+            json.dump({
+                'query': query,
+                'timestamp': timestamp,
+                'execution_time': time.time() - start_time,
+                'results': result
+            }, f, indent=2)
+        
+        logger.info(f'Analysis completed in {time.time() - start_time:.2f} seconds')
+        return jsonify(result)
+
+    except Exception as e:
+        logger.error(f'Error in competitor search: {str(e)}')
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/competitor-news', methods=['POST', 'OPTIONS'])
+def get_competitor_news_endpoint():
+    """Endpoint to get competitor news and analysis"""
+    if request.method == 'OPTIONS':
+        response = jsonify({})
+        response.headers['Access-Control-Allow-Origin'] = '*'
+        response.headers['Access-Control-Allow-Methods'] = 'POST'
+        response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
+        return response, 204
+
+    try:
+        data = request.get_json()
+        competitor_name = data.get('competitor')
+        
+        if not competitor_name:
+            return jsonify({'error': 'No competitor name provided'}), 400
+
+        # Get complete competitor insights
+        insights = get_competitor_insights(competitor_name)
+        
+        if not insights:
+            return jsonify({'error': 'Failed to get competitor insights'}), 500
+
+        # Save analysis to file
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        filename = f'competitor_news_{timestamp}.json'
+        with open(os.path.join(output_dir, filename), 'w') as f:
+            json.dump(insights, f, indent=2)
+
+        return jsonify(insights)
+
+    except Exception as e:
+        logger.error(f"Error getting competitor news: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
 if __name__ == '__main__':
     try:
-        # Start the Flask app
-        app.run(port=5000, debug=True)
+        # Use port 5001 instead of 5000
+        app.run(host='0.0.0.0', port=5001, debug=True)
     finally:
         # Clean up resources
         executor.shutdown(wait=True) 

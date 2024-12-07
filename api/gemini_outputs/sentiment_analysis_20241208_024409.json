@@ -1,0 +1,21 @@
+{
+  "query": "Apple",
+  "timestamp": "20241208_024409",
+  "execution_time": 5.979269027709961,
+  "results": {
+    "sentiment_analysis": [
+      {
+        "company": "Apple",
+        "overall_sentiment": "neutral",
+        "sentiment_score": 0,
+        "key_themes": [
+          "No recent news available"
+        ],
+        "notable_developments": [
+          "No recent developments found"
+        ],
+        "news_sources": []
+      }
+    ]
+  }
+}

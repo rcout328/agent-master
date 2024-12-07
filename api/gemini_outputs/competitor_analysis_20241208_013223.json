@@ -1,0 +1,15 @@
+{
+  "query": "amazon",
+  "timestamp": "20241208_013223",
+  "execution_time": 7.4602580070495605,
+  "results": {
+    "competitors": [
+      {
+        "name": "```json",
+        "description": "{",
+        "strengths": [],
+        "market_position": ""
+      }
+    ]
+  }
+}

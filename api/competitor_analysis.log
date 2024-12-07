@@ -1,0 +1,948 @@
+2024-12-08 01:32:16,097 - competitor_analysis - DEBUG - Handling OPTIONS request for competitor search
+2024-12-08 01:32:16,102 - competitor_analysis - INFO - Starting competitor search process
+2024-12-08 01:32:16,102 - competitor_analysis - INFO - Searching competitors for: amazon
+2024-12-08 01:32:16,102 - competitor_analysis - INFO - Sending request to Gemini API
+2024-12-08 01:32:23,561 - competitor_analysis - INFO - Received response from Gemini API
+2024-12-08 01:32:23,561 - competitor_analysis - DEBUG - Attempting to parse JSON response
+2024-12-08 01:32:23,561 - competitor_analysis - WARNING - JSON parsing failed, attempting manual parsing
+2024-12-08 01:32:23,561 - competitor_analysis - DEBUG - Found 1 sections to parse
+2024-12-08 01:32:23,561 - competitor_analysis - DEBUG - Parsing section 1
+2024-12-08 01:32:23,561 - competitor_analysis - INFO - Successfully parsed competitor: ```json
+2024-12-08 01:32:23,562 - competitor_analysis - INFO - Manually parsed 1 competitors
+2024-12-08 01:32:23,562 - competitor_analysis - INFO - Analysis saved to competitor_analysis_20241208_013223.json
+2024-12-08 01:32:23,562 - competitor_analysis - INFO - Competitor search completed in 7.46 seconds
+2024-12-08 01:35:06,428 - competitor_analysis - DEBUG - Handling OPTIONS request for competitor search
+2024-12-08 01:35:06,432 - competitor_analysis - INFO - Starting competitor search process
+2024-12-08 01:35:06,432 - competitor_analysis - INFO - Searching competitors for: amazon
+2024-12-08 01:35:06,432 - competitor_analysis - INFO - Sending request to Gemini API
+2024-12-08 01:35:22,920 - competitor_analysis - INFO - Received response from Gemini API
+2024-12-08 01:35:22,921 - competitor_analysis - DEBUG - Raw Gemini response: ```json
+{
+  "competitors": [
+    {
+      "name": "Walmart",
+      "description": "An American multinational retail corporation that operates a chain of hypermarkets, discount stores, and grocery stores. It is the world's second-largest retailer (behind Amazon) and the largest private employer in the United States.",
+      "strengths": [
+        "Extensive brick-and-mortar presence with over 10,000 stores globally",
+        "Strong grocery business with a focus on fresh produce and meat",
+        "Competitive pricing and a value-oriented brand image"
+      ],
+      "market_position": "Tier-1 competitor with a strong presence in both online and offline retail, particularly in the United States",
+      "target_market": "Mass-market consumers, particularly families and budget-conscious shoppers",
+      "unique_features": [
+        "Walmart+ membership program offering unlimited free delivery and other perks",
+        "Pickup and delivery options to bridge the gap between online and offline shopping"
+      ]
+    },
+    {
+      "name": "Target",
+      "description": "An American big box retailer with over 1,800 stores in the United States. It offers a wide range of products, including apparel, home goods, electronics, and groceries.",
+      "strengths": [
+        "Focus on style, design, and exclusive brands",
+        "Strong omnichannel strategy connecting its physical and online presence",
+        "Target Circle loyalty program with personalized offers and rewards"
+      ],
+      "market_position": "Tier-2 competitor with a focus on mid-tier and upscale consumers",
+      "target_market": "Millennials, Gen Z, and families with young children",
+      "unique_features": [
+        "RedCard credit and debit card offering additional discounts and other benefits",
+        "In-store experience featuring curated displays and interactive elements"
+      ]
+    },
+    {
+      "name": "eBay",
+      "description": "An American multinational e-commerce company that facilitates consumer-to-consumer and business-to-consumer sales through its website.",
+      "strengths": [
+        "Vast marketplace with a wide selection of products from various sellers",
+        "Flexibility and ease for individuals and small businesses to sell their products",
+        "Strong brand recognition and global reach"
+      ],
+      "market_position": "Tier-2 competitor with a focus on online marketplaces and collectibles",
+      "target_market": "Online shoppers looking for niche products, vintage items, or used goods",
+      "unique_features": [
+        "Auction format for certain items, providing the opportunity for buyers to negotiate prices",
+        "Community aspect with seller ratings and feedback systems"
+      ]
+    },
+    {
+      "name": "Best Buy",
+      "description": "An American multinational consumer electronics retailer with over 1,000 stores in the United States and Canada. It offers a wide range of electronics, appliances, and entertainment products.",
+      "strengths": [
+        "Expertise and specialization in electronics and appliances",
+        "In-store experience with knowledgeable staff and interactive displays",
+        "Geek Squad technical support services for product installation and maintenance"
+      ],
+      "market_position": "Tier-2 competitor with a focus on consumer electronics",
+      "target_market": "Tech enthusiasts, gamers, and anyone looking for high-quality electronics",
+      "unique_features": [
+        "Reward Zone loyalty program offering discounts, exclusive deals, and extended warranties",
+        "Price match guarantee to ensure customers get the best price"
+      ]
+    },
+    {
+      "name": "Costco",
+      "description": "An American multinational corporation that operates a chain of membership-only warehouse clubs. It offers a wide range of products, including groceries, electronics, apparel, and home goods.",
+      "strengths": [
+        "Bulk purchasing and low prices for members",
+        "Private label products (Kirkland Signature) known for their quality and value",
+        "Exclusive deals and promotions for members only"
+      ],
+      "market_position": "Tier-2 competitor with a focus on bulk purchases and exclusive offerings",
+      "target_market": "Families, small businesses, and individuals looking for value and convenience",
+      "unique_features": [
+        "Membership-based model that fosters a sense of community and loyalty",
+        "In-store sampling and demonstration programs to promote products and engage customers"
+      ]
+    }
+  ],
+  "analysis_summary": "Amazon faces competition from various players in the e-commerce, retail, and consumer electronics markets. Walmart and Target are strong competitors in the mass-market retail space, while eBay and Best Buy focus on specialized niches. Costco offers a unique membership-based model with bulk purchasing options. These competitors have their own strengths and target markets, influencing Amazon's competitive landscape."
+}
+```
+2024-12-08 01:35:22,921 - competitor_analysis - DEBUG - Attempting to parse JSON response
+2024-12-08 01:35:22,921 - competitor_analysis - WARNING - JSON parsing failed: Expecting value: line 1 column 1 (char 0), attempting manual parsing
+2024-12-08 01:35:22,921 - competitor_analysis - DEBUG - Found 1 sections to parse
+2024-12-08 01:35:22,921 - competitor_analysis - DEBUG - Parsing section 1: ```json
+{
+  "competitors": [
+    {
+      "name": "Walmart",
+      "description": "An American multinational retail corporation that operates a chain of hypermarkets, discount stores, and grocery stores. It is the world's second-largest retailer (behind Amazon) and the largest private employer in the United States.",
+      "strengths": [
+        "Extensive brick-and-mortar presence with over 10,000 stores globally",
+        "Strong grocery business with a focus on fresh produce and meat",
+        "Competitive pricing and a value-oriented brand image"
+      ],
+      "market_position": "Tier-1 competitor with a strong presence in both online and offline retail, particularly in the United States",
+      "target_market": "Mass-market consumers, particularly families and budget-conscious shoppers",
+      "unique_features": [
+        "Walmart+ membership program offering unlimited free delivery and other perks",
+        "Pickup and delivery options to bridge the gap between online and offline shopping"
+      ]
+    },
+    {
+      "name": "Target",
+      "description": "An American big box retailer with over 1,800 stores in the United States. It offers a wide range of products, including apparel, home goods, electronics, and groceries.",
+      "strengths": [
+        "Focus on style, design, and exclusive brands",
+        "Strong omnichannel strategy connecting its physical and online presence",
+        "Target Circle loyalty program with personalized offers and rewards"
+      ],
+      "market_position": "Tier-2 competitor with a focus on mid-tier and upscale consumers",
+      "target_market": "Millennials, Gen Z, and families with young children",
+      "unique_features": [
+        "RedCard credit and debit card offering additional discounts and other benefits",
+        "In-store experience featuring curated displays and interactive elements"
+      ]
+    },
+    {
+      "name": "eBay",
+      "description": "An American multinational e-commerce company that facilitates consumer-to-consumer and business-to-consumer sales through its website.",
+      "strengths": [
+        "Vast marketplace with a wide selection of products from various sellers",
+        "Flexibility and ease for individuals and small businesses to sell their products",
+        "Strong brand recognition and global reach"
+      ],
+      "market_position": "Tier-2 competitor with a focus on online marketplaces and collectibles",
+      "target_market": "Online shoppers looking for niche products, vintage items, or used goods",
+      "unique_features": [
+        "Auction format for certain items, providing the opportunity for buyers to negotiate prices",
+        "Community aspect with seller ratings and feedback systems"
+      ]
+    },
+    {
+      "name": "Best Buy",
+      "description": "An American multinational consumer electronics retailer with over 1,000 stores in the United States and Canada. It offers a wide range of electronics, appliances, and entertainment products.",
+      "strengths": [
+        "Expertise and specialization in electronics and appliances",
+        "In-store experience with knowledgeable staff and interactive displays",
+        "Geek Squad technical support services for product installation and maintenance"
+      ],
+      "market_position": "Tier-2 competitor with a focus on consumer electronics",
+      "target_market": "Tech enthusiasts, gamers, and anyone looking for high-quality electronics",
+      "unique_features": [
+        "Reward Zone loyalty program offering discounts, exclusive deals, and extended warranties",
+        "Price match guarantee to ensure customers get the best price"
+      ]
+    },
+    {
+      "name": "Costco",
+      "description": "An American multinational corporation that operates a chain of membership-only warehouse clubs. It offers a wide range of products, including groceries, electronics, apparel, and home goods.",
+      "strengths": [
+        "Bulk purchasing and low prices for members",
+        "Private label products (Kirkland Signature) known for their quality and value",
+        "Exclusive deals and promotions for members only"
+      ],
+      "market_position": "Tier-2 competitor with a focus on bulk purchases and exclusive offerings",
+      "target_market": "Families, small businesses, and individuals looking for value and convenience",
+      "unique_features": [
+        "Membership-based model that fosters a sense of community and loyalty",
+        "In-store sampling and demonstration programs to promote products and engage customers"
+      ]
+    }
+  ],
+  "analysis_summary": "Amazon faces competition from various players in the e-commerce, retail, and consumer electronics markets. Walmart and Target are strong competitors in the mass-market retail space, while eBay and Best Buy focus on specialized niches. Costco offers a unique membership-based model with bulk purchasing options. These competitors have their own strengths and target markets, influencing Amazon's competitive landscape."
+}
+```
+2024-12-08 01:35:22,922 - competitor_analysis - INFO - Manually parsed 0 competitors
+2024-12-08 01:35:22,923 - competitor_analysis - INFO - Analysis saved to competitor_analysis_20241208_013522.json
+2024-12-08 01:35:22,923 - competitor_analysis - INFO - Competitor search completed in 16.49 seconds
+2024-12-08 01:37:31,405 - competitor_analysis - DEBUG - Handling OPTIONS request for competitor search
+2024-12-08 01:37:31,407 - competitor_analysis - INFO - Starting competitor search process
+2024-12-08 01:37:31,407 - competitor_analysis - INFO - Searching competitors for: amazon
+2024-12-08 01:37:31,407 - competitor_analysis - INFO - Sending request to Gemini API
+2024-12-08 01:37:45,191 - competitor_analysis - INFO - Received response from Gemini API
+2024-12-08 01:37:45,192 - competitor_analysis - DEBUG - Raw Gemini response: ```json
+{
+    "competitors": [
+        {
+            "name": "Walmart",
+            "description": "Walmart Inc. is an American multinational retail corporation that operates a chain of hypermarkets, discount department stores, and grocery stores. It is the world's largest company by revenue and the largest private employer in the United States.",
+            "strengths": [
+                "Extensive store network with a wide product selection",
+                "Strong brand recognition and customer loyalty",
+                "Competitive pricing and value-based offerings"
+            ],
+            "market_position": "Walmart is a major competitor to Amazon in the retail sector, particularly in the grocery and consumer goods categories.",
+            "target_market": "Mass market consumers, particularly families and price-conscious shoppers",
+            "unique_features": [
+                "In-store pickup and delivery services",
+                "Walmart+ membership program with exclusive benefits"
+            ]
+        },
+        {
+            "name": "Target",
+            "description": "Target Corporation is an American big box retailer that operates general merchandise stores in the United States. It offers a wide range of products including clothing, home goods, electronics, and groceries.",
+            "strengths": [
+                "Well-curated product selection with a focus on design and value",
+                "Strong brand image and customer loyalty",
+                "Omnichannel capabilities with seamless online and in-store experiences"
+            ],
+            "market_position": "Target competes with Amazon in the retail sector, targeting a similar customer base but focusing on a more differentiated and upmarket product selection.",
+            "target_market": "Families, millennials, and style-conscious consumers",
+            "unique_features": [
+                "Exclusive private label brands",
+                "Community-oriented stores with a focus on local partnerships"
+            ]
+        },
+        {
+            "name": "eBay",
+            "description": "eBay Inc. is an American multinational e-commerce corporation that facilitates consumer-to-consumer and business-to-consumer sales through its online auction platform.",
+            "strengths": [
+                "Global reach and vast marketplace",
+                "Established online presence and brand trust",
+                "Flexibility for both buyers and sellers"
+            ],
+            "market_position": "eBay is a direct competitor to Amazon in the e-commerce sector, offering a complementary platform for online shopping.",
+            "target_market": "Individual sellers, small businesses, and collectors",
+            "unique_features": [
+                "Auction-based pricing model",
+                "Large community of buyers and sellers"
+            ]
+        },
+        {
+            "name": "Best Buy",
+            "description": "Best Buy Co., Inc. is an American multinational consumer electronics retailer. It offers a wide range of products including computers, appliances, TVs, and home entertainment systems.",
+            "strengths": [
+                "Expertise in consumer electronics and appliances",
+                "Dedicated sales staff with product knowledge",
+                "In-store demonstrations and interactive experiences"
+            ],
+            "market_position": "Best Buy competes with Amazon in the consumer electronics and appliances market, focusing on a wider selection and specialized services.",
+            "target_market": "Tech-savvy consumers, homeowners, and entertainment enthusiasts",
+            "unique_features": [
+                "Geek Squad technical support and installation services",
+                "Large showrooms with hands-on product displays"
+            ]
+        },
+        {
+            "name": "Alibaba Group",
+            "description": "Alibaba Group Holding Limited is a Chinese multinational technology company specializing in e-commerce, cloud computing, digital media, and fintech. It operates a wide range of businesses including online marketplaces, payment platforms, and logistics services.",
+            "strengths": [
+                "Dominant position in the Chinese e-commerce market",
+                "Extensive ecosystem of businesses and services",
+                "Global presence and expansion into international markets"
+            ],
+            "market_position": "Alibaba Group is a global competitor to Amazon, particularly in the e-commerce sector. Its focus on the Asian market differentiates it from Amazon's core markets.",
+            "target_market": "Chinese consumers, businesses, and international buyers",
+            "unique_features": [
+                "Alipay mobile payment platform",
+                "Cainiao logistics network"
+            ]
+        }
+    ],
+    "analysis_summary": "The retail and e-commerce landscape is highly competitive, with Amazon holding a dominant position in many markets. Its direct competitors, including Walmart, Target, eBay, Best Buy, and Alibaba Group, offer a range of strengths and target specific customer segments. These competitors focus on providing value, differentiation, and omnichannel experiences to capture market share and customer loyalty."
+}
+```
+2024-12-08 01:37:45,193 - competitor_analysis - DEBUG - Attempting to parse JSON response
+2024-12-08 01:37:45,193 - competitor_analysis - WARNING - JSON parsing failed: Expecting value: line 1 column 1 (char 0), attempting manual parsing
+2024-12-08 01:37:45,193 - competitor_analysis - DEBUG - Found 1 sections to parse
+2024-12-08 01:37:45,193 - competitor_analysis - DEBUG - Parsing section 1: ```json
+{
+    "competitors": [
+        {
+            "name": "Walmart",
+            "description": "Walmart Inc. is an American multinational retail corporation that operates a chain of hypermarkets, discount department stores, and grocery stores. It is the world's largest company by revenue and the largest private employer in the United States.",
+            "strengths": [
+                "Extensive store network with a wide product selection",
+                "Strong brand recognition and customer loyalty",
+                "Competitive pricing and value-based offerings"
+            ],
+            "market_position": "Walmart is a major competitor to Amazon in the retail sector, particularly in the grocery and consumer goods categories.",
+            "target_market": "Mass market consumers, particularly families and price-conscious shoppers",
+            "unique_features": [
+                "In-store pickup and delivery services",
+                "Walmart+ membership program with exclusive benefits"
+            ]
+        },
+        {
+            "name": "Target",
+            "description": "Target Corporation is an American big box retailer that operates general merchandise stores in the United States. It offers a wide range of products including clothing, home goods, electronics, and groceries.",
+            "strengths": [
+                "Well-curated product selection with a focus on design and value",
+                "Strong brand image and customer loyalty",
+                "Omnichannel capabilities with seamless online and in-store experiences"
+            ],
+            "market_position": "Target competes with Amazon in the retail sector, targeting a similar customer base but focusing on a more differentiated and upmarket product selection.",
+            "target_market": "Families, millennials, and style-conscious consumers",
+            "unique_features": [
+                "Exclusive private label brands",
+                "Community-oriented stores with a focus on local partnerships"
+            ]
+        },
+        {
+            "name": "eBay",
+            "description": "eBay Inc. is an American multinational e-commerce corporation that facilitates consumer-to-consumer and business-to-consumer sales through its online auction platform.",
+            "strengths": [
+                "Global reach and vast marketplace",
+                "Established online presence and brand trust",
+                "Flexibility for both buyers and sellers"
+            ],
+            "market_position": "eBay is a direct competitor to Amazon in the e-commerce sector, offering a complementary platform for online shopping.",
+            "target_market": "Individual sellers, small businesses, and collectors",
+            "unique_features": [
+                "Auction-based pricing model",
+                "Large community of buyers and sellers"
+            ]
+        },
+        {
+            "name": "Best Buy",
+            "description": "Best Buy Co., Inc. is an American multinational consumer electronics retailer. It offers a wide range of products including computers, appliances, TVs, and home entertainment systems.",
+            "strengths": [
+                "Expertise in consumer electronics and appliances",
+                "Dedicated sales staff with product knowledge",
+                "In-store demonstrations and interactive experiences"
+            ],
+            "market_position": "Best Buy competes with Amazon in the consumer electronics and appliances market, focusing on a wider selection and specialized services.",
+            "target_market": "Tech-savvy consumers, homeowners, and entertainment enthusiasts",
+            "unique_features": [
+                "Geek Squad technical support and installation services",
+                "Large showrooms with hands-on product displays"
+            ]
+        },
+        {
+            "name": "Alibaba Group",
+            "description": "Alibaba Group Holding Limited is a Chinese multinational technology company specializing in e-commerce, cloud computing, digital media, and fintech. It operates a wide range of businesses including online marketplaces, payment platforms, and logistics services.",
+            "strengths": [
+                "Dominant position in the Chinese e-commerce market",
+                "Extensive ecosystem of businesses and services",
+                "Global presence and expansion into international markets"
+            ],
+            "market_position": "Alibaba Group is a global competitor to Amazon, particularly in the e-commerce sector. Its focus on the Asian market differentiates it from Amazon's core markets.",
+            "target_market": "Chinese consumers, businesses, and international buyers",
+            "unique_features": [
+                "Alipay mobile payment platform",
+                "Cainiao logistics network"
+            ]
+        }
+    ],
+    "analysis_summary": "The retail and e-commerce landscape is highly competitive, with Amazon holding a dominant position in many markets. Its direct competitors, including Walmart, Target, eBay, Best Buy, and Alibaba Group, offer a range of strengths and target specific customer segments. These competitors focus on providing value, differentiation, and omnichannel experiences to capture market share and customer loyalty."
+}
+```
+2024-12-08 01:37:45,194 - competitor_analysis - INFO - Manually parsed 0 competitors
+2024-12-08 01:37:45,195 - competitor_analysis - INFO - Analysis saved to competitor_analysis_20241208_013745.json
+2024-12-08 01:37:45,195 - competitor_analysis - INFO - Competitor search completed in 13.79 seconds
+2024-12-08 01:39:39,388 - competitor_analysis - DEBUG - Handling OPTIONS request for competitor search
+2024-12-08 01:39:39,395 - competitor_analysis - INFO - Starting competitor search process
+2024-12-08 01:39:39,396 - competitor_analysis - INFO - Searching competitors for: amazon
+2024-12-08 01:39:39,397 - competitor_analysis - INFO - Sending request to Gemini API
+2024-12-08 01:39:50,529 - competitor_analysis - INFO - Received response from Gemini API
+2024-12-08 01:39:50,530 - competitor_analysis - DEBUG - Raw Gemini response: ```JSON
+{
+    "competitors": [
+        {
+            "name": "Walmart",
+            "description": "Multinational retail corporation operating a chain of hypermarkets, discount department stores, and grocery stores.",
+            "strengths": ["Extensive physical store network", "Low prices and bulk discounts", " Strong private label offerings"],
+            "market_position": "Strong challenger, comparable market share to Amazon in some categories",
+            "target_market": "Value-conscious shoppers, families, and rural areas",
+            "unique_features": ["In-store pickup and delivery options", "Grocery pickup and delivery services"]
+        },
+        {
+            "name": "Target",
+            "description": "Retail corporation operating a chain of discount department stores.",
+            "strengths": ["Stylish and curated product selection", "Exclusive partnerships with brands", "Mobile app and omnichannel shopping experience"],
+            "market_position": "Established player, specializing in home goods, apparel, and lifestyle products",
+            "target_market": "Style-conscious shoppers, millennials, and urban areas",
+            "unique_features": ["Designer collaborations and limited-edition products", "Emphasis on sustainability and ethical sourcing"]
+        },
+        {
+            "name": "Best Buy",
+            "description": "Electronics retailer specializing in consumer electronics, appliances, and entertainment products.",
+            "strengths": ["Expert staff and dedicated showrooms", "Wide range of tech products and services", "Strong loyalty program"],
+            "market_position": "Leading electronics retailer, focusing on customer service and product knowledge",
+            "target_market": "Tech enthusiasts, gadget buyers, and home appliance shoppers",
+            "unique_features": ["Geek Squad technical support and installation services", "Exclusive product launches and early access"]
+        },
+        {
+            "name": "eBay",
+            "description": "Online marketplace and auction website where users can buy and sell a wide variety of products.",
+            "strengths": ["Massive product selection and variety", "Global reach and established customer base", "E-commerce platform and payment processing"],
+            "market_position": "Strong player in online marketplaces, competing with Amazon on price and niche categories",
+            "target_market": "Bargain hunters, collectors, and small businesses",
+            "unique_features": ["Auction format and "Buy It Now" options", "eBay Motors for automotive sales"]
+        },
+        {
+            "name": "AliExpress",
+            "description": "Online retail platform owned by Alibaba Group, offering a wide range of products from Chinese sellers.",
+            "strengths": ["Low prices due to direct sourcing", "Massive selection of products, including unique and hard-to-find items", "Cross-border shipping and payment processing"],
+            "market_position": "Growing competitor in cross-border e-commerce, targeting global markets",
+            "target_market": "Price-sensitive shoppers, bulk buyers, and small businesses",
+            "unique_features": ["Dropshipping options and wholesale pricing", "AliExpress Standard Shipping for cost-effective delivery"]
+        }
+    ],
+    "analysis_summary": "Amazon faces strong competition from established retailers and specialized players in the e-commerce and retail markets. Walmart and Target offer strong physical store presence and cater to value-conscious shoppers. Best Buy focuses on electronics and provides expert advice. eBay offers a unique marketplace model with a vast product selection. AliExpress leverages its global reach and low prices to attract budget-conscious consumers. Each competitor has its own strengths and target market, but Amazon's size, innovation, and customer-centric approach make it a formidable leader in the industry."
+}
+```
+2024-12-08 01:39:50,530 - competitor_analysis - DEBUG - Attempting to parse JSON response
+2024-12-08 01:39:50,530 - competitor_analysis - WARNING - JSON parsing failed: Expecting value: line 1 column 1 (char 0), attempting manual parsing
+2024-12-08 01:39:50,530 - competitor_analysis - DEBUG - Found 1 sections to parse
+2024-12-08 01:39:50,530 - competitor_analysis - DEBUG - Parsing section 1: ```JSON
+{
+    "competitors": [
+        {
+            "name": "Walmart",
+            "description": "Multinational retail corporation operating a chain of hypermarkets, discount department stores, and grocery stores.",
+            "strengths": ["Extensive physical store network", "Low prices and bulk discounts", " Strong private label offerings"],
+            "market_position": "Strong challenger, comparable market share to Amazon in some categories",
+            "target_market": "Value-conscious shoppers, families, and rural areas",
+            "unique_features": ["In-store pickup and delivery options", "Grocery pickup and delivery services"]
+        },
+        {
+            "name": "Target",
+            "description": "Retail corporation operating a chain of discount department stores.",
+            "strengths": ["Stylish and curated product selection", "Exclusive partnerships with brands", "Mobile app and omnichannel shopping experience"],
+            "market_position": "Established player, specializing in home goods, apparel, and lifestyle products",
+            "target_market": "Style-conscious shoppers, millennials, and urban areas",
+            "unique_features": ["Designer collaborations and limited-edition products", "Emphasis on sustainability and ethical sourcing"]
+        },
+        {
+            "name": "Best Buy",
+            "description": "Electronics retailer specializing in consumer electronics, appliances, and entertainment products.",
+            "strengths": ["Expert staff and dedicated showrooms", "Wide range of tech products and services", "Strong loyalty program"],
+            "market_position": "Leading electronics retailer, focusing on customer service and product knowledge",
+            "target_market": "Tech enthusiasts, gadget buyers, and home appliance shoppers",
+            "unique_features": ["Geek Squad technical support and installation services", "Exclusive product launches and early access"]
+        },
+        {
+            "name": "eBay",
+            "description": "Online marketplace and auction website where users can buy and sell a wide variety of products.",
+            "strengths": ["Massive product selection and variety", "Global reach and established customer base", "E-commerce platform and payment processing"],
+            "market_position": "Strong player in online marketplaces, competing with Amazon on price and niche categories",
+            "target_market": "Bargain hunters, collectors, and small businesses",
+            "unique_features": ["Auction format and "Buy It Now" options", "eBay Motors for automotive sales"]
+        },
+        {
+            "name": "AliExpress",
+            "description": "Online retail platform owned by Alibaba Group, offering a wide range of products from Chinese sellers.",
+            "strengths": ["Low prices due to direct sourcing", "Massive selection of products, including unique and hard-to-find items", "Cross-border shipping and payment processing"],
+            "market_position": "Growing competitor in cross-border e-commerce, targeting global markets",
+            "target_market": "Price-sensitive shoppers, bulk buyers, and small businesses",
+            "unique_features": ["Dropshipping options and wholesale pricing", "AliExpress Standard Shipping for cost-effective delivery"]
+        }
+    ],
+    "analysis_summary": "Amazon faces strong competition from established retailers and specialized players in the e-commerce and retail markets. Walmart and Target offer strong physical store presence and cater to value-conscious shoppers. Best Buy focuses on electronics and provides expert advice. eBay offers a unique marketplace model with a vast product selection. AliExpress leverages its global reach and low prices to attract budget-conscious consumers. Each competitor has its own strengths and target market, but Amazon's size, innovation, and customer-centric approach make it a formidable leader in the industry."
+}
+```
+2024-12-08 01:39:50,530 - competitor_analysis - INFO - Manually parsed 0 competitors
+2024-12-08 01:39:50,531 - competitor_analysis - INFO - Analysis saved to competitor_analysis_20241208_013950.json
+2024-12-08 01:39:50,531 - competitor_analysis - INFO - Competitor search completed in 11.14 seconds
+2024-12-08 01:43:08,898 - competitor_analysis - DEBUG - Handling OPTIONS request for competitor search
+2024-12-08 01:43:08,901 - competitor_analysis - INFO - Starting competitor search process
+2024-12-08 01:43:08,901 - competitor_analysis - INFO - Searching competitors for: amazon
+2024-12-08 01:43:08,902 - competitor_analysis - ERROR - Error during competitor search: name 'competitor_prompt' is not defined
+Traceback (most recent call last):
+  File "/Users/varunisrani/Downloads/agent-master/api/combined_api.py", line 493, in search_competitors
+    response = model.generate_content(competitor_prompt)
+                                      ^^^^^^^^^^^^^^^^^
+NameError: name 'competitor_prompt' is not defined
+2024-12-08 01:43:59,716 - competitor_analysis - DEBUG - Handling OPTIONS request for competitor search
+2024-12-08 01:43:59,722 - competitor_analysis - INFO - Starting competitor search process
+2024-12-08 01:43:59,722 - competitor_analysis - INFO - Searching competitors for: amazon
+2024-12-08 01:43:59,723 - competitor_analysis - DEBUG - Generated prompt: 
+    Analyze and provide detailed information about the top 5 direct competitors for amazon.
+    
+    For each competitor, provide:
+    1. Company Name: Full official name
+    2. Brief Description: 2-3 sentences about their main business
+    3. Key Strengths: 3-4 main competitive advantages
+    4. Market Position: Their position in the market relative to amazon
+    5. Target Market: Their primary customer segments
+    6. Unique Features: What distinguishes them from others
+
+    Format the response as JSON:
+    {
+        "competitors": [
+            {
+                "name": "Company Name",
+                "description": "Detailed description",
+                "strengths": ["Strength 1", "Strength 2", "Strength 3"],
+                "market_position": "Market position details",
+                "target_market": "Primary customer segments",
+                "unique_features": ["Feature 1", "Feature 2"]
+            }
+        ],
+        "analysis_summary": "Brief overview of competitive landscape"
+    }
+
+    Focus on direct competitors in the same market segment as amazon.
+    
+2024-12-08 01:44:12,263 - competitor_analysis - INFO - Received response from Gemini
+2024-12-08 01:44:12,264 - competitor_analysis - DEBUG - Cleaned response text: json
+{
+    "competitors": [
+        {
+            "name": "Walmart",
+            "description": "Walmart is the world's largest retailer, with over 10,500 stores in 24 countries. They sell a wide range of products, including groceries, electronics, clothing, and home goods.",
+            "strengths": ["Vast network of physical stores", "Strong brand recognition", "Competitive pricing"],
+            "market_position": "Closest competitor to Amazon in terms of size and revenue",
+            "target_market": "Value-oriented shoppers, families, and small businesses",
+            "unique_features": ["In-store pickup and delivery", "Walmart+ membership program"]
+        },
+        {
+            "name": "Target",
+            "description": "Target is a major American retailer with over 1,800 stores in the United States. They focus on selling a curated selection of products, including home goods, clothing, electronics, and groceries.",
+            "strengths": ["Strong brand reputation", "Focus on style and design", "Loyalty program with exclusive benefits"],
+            "market_position": "Competes with Amazon in the mid-tier retail market",
+            "target_market": "Families, young adults, and style-conscious shoppers",
+            "unique_features": ["In-house brands like Threshold and Cat & Jack", "Target Circle rewards program"]
+        },
+        {
+            "name": "eBay",
+            "description": "eBay is a global online marketplace where individuals and businesses can buy and sell a wide variety of products. They facilitate transactions between buyers and sellers, providing a platform for e-commerce.",
+            "strengths": ["庞大的卖家网络", "全球覆盖面", "广泛的产品品类"],
+            "market_position": "Major player in the online marketplace segment",
+            "target_market": "Small businesses, collectors, and bargain hunters",
+            "unique_features": ["Auction-style bidding", "PayPal integration"]
+        },
+        {
+            "name": "Best Buy",
+            "description": "Best Buy is a leading American retailer specializing in consumer electronics, appliances, and entertainment products. They have over 1,000 stores in the United States and Canada.",
+            "strengths": ["Expertise in electronics", "Strong physical presence", "Customer service and support"],
+            "market_position": "Primary competitor to Amazon in the electronics and appliance market",
+            "target_market": "Tech enthusiasts, gadget lovers, and home appliance buyers",
+            "unique_features": ["Geek Squad tech support", "Price matching guarantee"]
+        },
+        {
+            "name": "Apple",
+            "description": "Apple is a multinational technology company known for its innovative products, including the iPhone, iPad, and Mac computers. They also operate a digital distribution platform, the App Store.",
+            "strengths": ["Strong brand loyalty", "Premium product offerings", "Closed ecosystem"],
+            "market_position": "Competes with Amazon in the high-end consumer electronics market",
+            "target_market": "Tech-savvy consumers, creative professionals, and early adopters",
+            "unique_features": ["iOS operating system", "Apple ecosystem integration"]
+        }
+    ],
+    "analysis_summary": "The competitive landscape for Amazon is highly dynamic, with each competitor offering unique strengths and targeting specific market segments. Walmart remains the closest rival due to its vast physical presence and value-oriented approach. Target competes in the mid-tier retail market with a focus on style and design. eBay caters to a global audience with its online marketplace platform. Best Buy holds a strong position in the electronics and appliance market with its expertise and customer service. Apple differentiates itself with its premium products and closed ecosystem, targeting tech-savvy consumers."
+}
+2024-12-08 01:44:12,264 - competitor_analysis - ERROR - JSON parsing failed: Expecting value: line 1 column 1 (char 0)
+2024-12-08 01:45:17,170 - competitor_analysis - DEBUG - Handling OPTIONS request for competitor search
+2024-12-08 01:45:17,172 - competitor_analysis - INFO - Starting competitor search process
+2024-12-08 01:45:17,172 - competitor_analysis - INFO - Searching competitors for: amazon
+2024-12-08 01:45:17,172 - competitor_analysis - DEBUG - Generated prompt: 
+    Analyze and provide detailed information about the top 5 direct competitors for amazon.
+    Return the response in valid JSON format without any markdown formatting.
+    
+    For each competitor, provide:
+    1. Company Name: Full official name
+    2. Brief Description: 2-3 sentences about their main business
+    3. Key Strengths: 3-4 main competitive advantages
+    4. Market Position: Their position in the market relative to amazon
+    5. Target Market: Their primary customer segments
+    6. Unique Features: What distinguishes them from others
+
+    The response must be a JSON object with this exact structure:
+    {
+        "competitors": [
+            {
+                "name": "Company Name",
+                "description": "Detailed description",
+                "strengths": ["Strength 1", "Strength 2", "Strength 3"],
+                "market_position": "Market position details",
+                "target_market": "Primary customer segments",
+                "unique_features": ["Feature 1", "Feature 2"]
+            }
+        ],
+        "analysis_summary": "Brief overview of competitive landscape"
+    }
+
+    Focus on direct competitors in the same market segment as amazon.
+    Ensure all arrays are properly formatted with square brackets and all strings are properly quoted.
+    
+2024-12-08 01:45:31,023 - competitor_analysis - INFO - Received response from Gemini
+2024-12-08 01:45:31,024 - competitor_analysis - DEBUG - Cleaned response text: {
+    "competitors": [
+        {
+            "name": "Walmart Inc.",
+            "description": "An American multinational retail corporation that operates a chain of hypermarkets, discount department stores, and grocery stores. It is the world's largest company by revenue and the largest private employer in the United States.",
+            "strengths": ["Extensive physical retail presence", "Strong logistics and distribution network", "Broad product assortment"],
+            "market_position": "Closest direct competitor to Amazon in terms of size and revenue, but trails significantly in online market share.",
+            "target_market": "Value-conscious consumers and shoppers across a wide range of demographics and locations",
+            "unique_features": ["Warehouse Clubs offering exclusive memberships", "Sam's Club brand for premium products and services"]
+        },
+        {
+            "name": "Target Corporation",
+            "description": "An American big box retailer headquartered in Minneapolis, Minnesota. It is the eighth-largest retailer in the United States and a component of the S&P 500 Index.",
+            "strengths": ["Strong brand recognition and loyalty", "Focus on style and design", "Exclusive partnerships with popular brands"],
+            "market_position": "Direct competitor to Amazon in the general merchandise category, with a focus on fashion and home goods.",
+            "target_market": "Families and young adults, particularly those who value style and quality",
+            "unique_features": ["RedCard loyalty program", "Exclusive collaborations with designers and influencers"]
+        },
+        {
+            "name": "Costco Wholesale Corporation",
+            "description": "An American multinational corporation that operates a chain of membership-only warehouse clubs. It is the world's largest retailer and the second-largest retailer in the United States by revenue.",
+            "strengths": ["Wholesale pricing model", "Limited product selection with high volume", "Emphasis on value and quality"],
+            "market_position": "Direct competitor to Amazon in the bulk and warehouse club segment, targeting value-conscious consumers.",
+            "target_market": "Families, small businesses, and individuals seeking bulk purchases and savings",
+            "unique_features": ["Kirkland Signature brand for exclusive products", "Focus on sustainability and environmental initiatives"]
+        },
+        {
+            "name": "eBay Inc.",
+            "description": "An American multinational e-commerce corporation based in San Jose, California. It provides a platform for online auctions and fixed-price sales.",
+            "strengths": ["Large marketplace with a wide variety of products", "Strong brand recognition", "Focus on collectibles and unique items"],
+            "market_position": "Direct competitor to Amazon in the online marketplace segment, with a focus on used and collectible goods.",
+            "target_market": "Collectors, bargain hunters, and those seeking unique and hard-to-find items",
+            "unique_features": ["Auction format", "Extensive community of sellers and buyers"]
+        },
+        {
+            "name": "Best Buy Co., Inc.",
+            "description": "An American multinational consumer electronics retailer headquartered in Richfield, Minnesota. It is the largest specialty retailer of consumer electronics in the United States and Canada.",
+            "strengths": ["Expertise in consumer electronics", "In-store and online sales channels", "Strong loyalty program"],
+            "market_position": "Direct competitor to Amazon in the consumer electronics segment, with a focus on physical retail.",
+            "target_market": "Tech enthusiasts, gadget lovers, and those seeking expert advice and support",
+            "unique_features": ["Geek Squad technical support services", "Exclusive partnerships with tech brands"]
+        }
+    ],
+    "analysis_summary": "Amazon faces competition from a variety of direct competitors, each with its own unique strengths and target markets. Walmart and Target are the closest competitors in terms of size and overall product offerings, while Costco focuses on wholesale pricing and bulk purchases. eBay competes in the online marketplace segment with a focus on unique and collectible items, and Best Buy specializes in consumer electronics with a strong physical retail presence. Amazon's dominance lies in its vast product selection, convenience, and Prime membership program, but these competitors provide alternative options for consumers seeking value, specific product categories, or in-store experiences."
+}
+2024-12-08 01:45:31,025 - competitor_analysis - INFO - Successfully parsed JSON response
+2024-12-08 01:45:31,025 - competitor_analysis - DEBUG - Validated result: {'competitors': [{'name': 'Walmart Inc.', 'description': "An American multinational retail corporation that operates a chain of hypermarkets, discount department stores, and grocery stores. It is the world's largest company by revenue and the largest private employer in the United States.", 'strengths': ['Extensive physical retail presence', 'Strong logistics and distribution network', 'Broad product assortment'], 'market_position': 'Closest direct competitor to Amazon in terms of size and revenue, but trails significantly in online market share.', 'target_market': 'Value-conscious consumers and shoppers across a wide range of demographics and locations', 'unique_features': ['Warehouse Clubs offering exclusive memberships', "Sam's Club brand for premium products and services"]}, {'name': 'Target Corporation', 'description': 'An American big box retailer headquartered in Minneapolis, Minnesota. It is the eighth-largest retailer in the United States and a component of the S&P 500 Index.', 'strengths': ['Strong brand recognition and loyalty', 'Focus on style and design', 'Exclusive partnerships with popular brands'], 'market_position': 'Direct competitor to Amazon in the general merchandise category, with a focus on fashion and home goods.', 'target_market': 'Families and young adults, particularly those who value style and quality', 'unique_features': ['RedCard loyalty program', 'Exclusive collaborations with designers and influencers']}, {'name': 'Costco Wholesale Corporation', 'description': "An American multinational corporation that operates a chain of membership-only warehouse clubs. It is the world's largest retailer and the second-largest retailer in the United States by revenue.", 'strengths': ['Wholesale pricing model', 'Limited product selection with high volume', 'Emphasis on value and quality'], 'market_position': 'Direct competitor to Amazon in the bulk and warehouse club segment, targeting value-conscious consumers.', 'target_market': 'Families, small businesses, and individuals seeking bulk purchases and savings', 'unique_features': ['Kirkland Signature brand for exclusive products', 'Focus on sustainability and environmental initiatives']}, {'name': 'eBay Inc.', 'description': 'An American multinational e-commerce corporation based in San Jose, California. It provides a platform for online auctions and fixed-price sales.', 'strengths': ['Large marketplace with a wide variety of products', 'Strong brand recognition', 'Focus on collectibles and unique items'], 'market_position': 'Direct competitor to Amazon in the online marketplace segment, with a focus on used and collectible goods.', 'target_market': 'Collectors, bargain hunters, and those seeking unique and hard-to-find items', 'unique_features': ['Auction format', 'Extensive community of sellers and buyers']}, {'name': 'Best Buy Co., Inc.', 'description': 'An American multinational consumer electronics retailer headquartered in Richfield, Minnesota. It is the largest specialty retailer of consumer electronics in the United States and Canada.', 'strengths': ['Expertise in consumer electronics', 'In-store and online sales channels', 'Strong loyalty program'], 'market_position': 'Direct competitor to Amazon in the consumer electronics segment, with a focus on physical retail.', 'target_market': 'Tech enthusiasts, gadget lovers, and those seeking expert advice and support', 'unique_features': ['Geek Squad technical support services', 'Exclusive partnerships with tech brands']}], 'analysis_summary': "Amazon faces competition from a variety of direct competitors, each with its own unique strengths and target markets. Walmart and Target are the closest competitors in terms of size and overall product offerings, while Costco focuses on wholesale pricing and bulk purchases. eBay competes in the online marketplace segment with a focus on unique and collectible items, and Best Buy specializes in consumer electronics with a strong physical retail presence. Amazon's dominance lies in its vast product selection, convenience, and Prime membership program, but these competitors provide alternative options for consumers seeking value, specific product categories, or in-store experiences."}
+2024-12-08 01:45:31,028 - competitor_analysis - INFO - Analysis saved to competitor_analysis_20241208_014531.json
+2024-12-08 01:45:31,028 - competitor_analysis - INFO - Competitor search completed in 13.86 seconds
+2024-12-08 01:45:37,991 - competitor_analysis - DEBUG - Handling OPTIONS request for sentiment analysis
+2024-12-08 01:45:37,994 - competitor_analysis - INFO - Starting sentiment analysis process
+2024-12-08 01:45:37,994 - competitor_analysis - INFO - Analyzing sentiment for: amazon
+2024-12-08 01:45:50,157 - competitor_analysis - ERROR - Sentiment analysis failed to produce results
+2024-12-08 01:49:15,371 - competitor_analysis - DEBUG - Handling OPTIONS request for competitor search
+2024-12-08 01:49:15,376 - competitor_analysis - INFO - Starting competitor search process
+2024-12-08 01:49:15,377 - competitor_analysis - INFO - Searching competitors for: amazon
+2024-12-08 01:49:29,322 - competitor_analysis - ERROR - Error during competitor search: Invalid operation: The `response.text` quick accessor requires the response to contain a valid `Part`, but none were returned. The candidate's [finish_reason](https://ai.google.dev/api/generate-content#finishreason) is 4. Meaning that the model was reciting from copyrighted material.
+Traceback (most recent call last):
+  File "/Users/varunisrani/Downloads/agent-master/api/combined_api.py", line 594, in search_competitors
+    response_text = response.text.split('```')[1] if '```' in response.text else response.text
+                                                              ^^^^^^^^^^^^^
+  File "/Users/varunisrani/Downloads/agent-master/api/.venv/lib/python3.13/site-packages/google/generativeai/types/generation_types.py", line 489, in text
+    raise ValueError(
+        msg + " Meaning that the model was reciting from copyrighted material."
+    )
+ValueError: Invalid operation: The `response.text` quick accessor requires the response to contain a valid `Part`, but none were returned. The candidate's [finish_reason](https://ai.google.dev/api/generate-content#finishreason) is 4. Meaning that the model was reciting from copyrighted material.
+2024-12-08 01:50:37,459 - competitor_analysis - DEBUG - Handling OPTIONS request for competitor search
+2024-12-08 01:50:37,461 - competitor_analysis - INFO - Starting competitor search process
+2024-12-08 01:50:37,461 - competitor_analysis - INFO - Searching competitors for: amazon
+2024-12-08 01:50:50,899 - competitor_analysis - ERROR - Generation error: Unknown field for Content: text
+2024-12-08 01:51:59,196 - competitor_analysis - DEBUG - Handling OPTIONS request for competitor search
+2024-12-08 01:51:59,200 - competitor_analysis - INFO - Starting competitor search process
+2024-12-08 01:51:59,200 - competitor_analysis - INFO - Searching competitors for: amazon
+2024-12-08 01:52:09,344 - competitor_analysis - DEBUG - Raw response: ```json
+{
+    "competitors": [
+        {
+            "name": "Walmart",
+            "description": "A multinational retail corporation that operates a chain of hypermarkets, discount department stores, and grocery stores.",
+            "strengths": ["Extensive physical store network", "Strong brand recognition", "Low prices"],
+            "market_position": "Leading brick-and-mortar retailer",
+            "target_market": "Value-conscious consumers",
+            "unique_features": ["Walmart+ membership program", "Curbside pickup and delivery options"]
+        },
+        {
+            "name": "eBay",
+            "description": "An online marketplace where users can buy and sell a wide range of products.",
+            "strengths": ["Large seller base", "Global reach", "Auction-based pricing"],
+            "market_position": "Major player in online retail",
+            "target_market": "Bargain hunters and collectors",
+            "unique_features": ["eBay Money Back Guarantee", "eBay Motors for vehicle sales"]
+        },
+        {
+            "name": "Target",
+            "description": "A retail corporation that operates a chain of department stores and discount stores.",
+            "strengths": ["Stylish and affordable products", "Strong in-store experience", "Target Circle loyalty program"],
+            "market_position": "Leading retailer in home goods and apparel",
+            "target_market": "Middle-income families",
+            "unique_features": ["Target RedCard credit card", "Drive-up and order pickup"]
+        },
+        {
+            "name": "Alibaba Group",
+            "description": "A Chinese e-commerce company that operates a wide range of online marketplaces and other businesses.",
+            "strengths": ["Dominant position in China", "Strong logistics network", "Diverse product offerings"],
+            "market_position": "Global e-commerce giant",
+            "target_market": "Consumers and businesses worldwide",
+            "unique_features": ["AliExpress marketplace", "Alibaba Cloud computing services"]
+        },
+        {
+            "name": "Shopify",
+            "description": "A Canadian e-commerce platform that allows businesses to create their own online stores.",
+            "strengths": ["Easy-to-use platform", "Large app ecosystem", "Strong support for small businesses"],
+            "market_position": "Leading provider of e-commerce software",
+            "target_market": "Entrepreneurs and small businesses",
+            "unique_features": ["Shopify Payments gateway", "Shopify Shipping discounts"]
+        }
+    ],
+    "analysis_summary": "Amazon faces significant competition from a diverse range of players, including established brick-and-mortar retailers, online marketplaces, and specialized e-commerce platforms. Each competitor has its own strengths and target market, creating a dynamic and challenging competitive landscape."
+}
+```
+2024-12-08 01:52:09,347 - competitor_analysis - ERROR - JSON parsing error: Expecting value: line 1 column 1 (char 0)
+2024-12-08 01:52:09,347 - competitor_analysis - ERROR - Raw text: ```json
+{
+    "competitors": [
+        {
+            "name": "Walmart",
+            "description": "A multinational retail corporation that operates a chain of hypermarkets, discount department stores, and grocery stores.",
+            "strengths": ["Extensive physical store network", "Strong brand recognition", "Low prices"],
+            "market_position": "Leading brick-and-mortar retailer",
+            "target_market": "Value-conscious consumers",
+            "unique_features": ["Walmart+ membership program", "Curbside pickup and delivery options"]
+        },
+        {
+            "name": "eBay",
+            "description": "An online marketplace where users can buy and sell a wide range of products.",
+            "strengths": ["Large seller base", "Global reach", "Auction-based pricing"],
+            "market_position": "Major player in online retail",
+            "target_market": "Bargain hunters and collectors",
+            "unique_features": ["eBay Money Back Guarantee", "eBay Motors for vehicle sales"]
+        },
+        {
+            "name": "Target",
+            "description": "A retail corporation that operates a chain of department stores and discount stores.",
+            "strengths": ["Stylish and affordable products", "Strong in-store experience", "Target Circle loyalty program"],
+            "market_position": "Leading retailer in home goods and apparel",
+            "target_market": "Middle-income families",
+            "unique_features": ["Target RedCard credit card", "Drive-up and order pickup"]
+        },
+        {
+            "name": "Alibaba Group",
+            "description": "A Chinese e-commerce company that operates a wide range of online marketplaces and other businesses.",
+            "strengths": ["Dominant position in China", "Strong logistics network", "Diverse product offerings"],
+            "market_position": "Global e-commerce giant",
+            "target_market": "Consumers and businesses worldwide",
+            "unique_features": ["AliExpress marketplace", "Alibaba Cloud computing services"]
+        },
+        {
+            "name": "Shopify",
+            "description": "A Canadian e-commerce platform that allows businesses to create their own online stores.",
+            "strengths": ["Easy-to-use platform", "Large app ecosystem", "Strong support for small businesses"],
+            "market_position": "Leading provider of e-commerce software",
+            "target_market": "Entrepreneurs and small businesses",
+            "unique_features": ["Shopify Payments gateway", "Shopify Shipping discounts"]
+        }
+    ],
+    "analysis_summary": "Amazon faces significant competition from a diverse range of players, including established brick-and-mortar retailers, online marketplaces, and specialized e-commerce platforms. Each competitor has its own strengths and target market, creating a dynamic and challenging competitive landscape."
+}
+```
+2024-12-08 01:53:26,551 - competitor_analysis - DEBUG - Handling OPTIONS request for competitor search
+2024-12-08 01:53:26,554 - competitor_analysis - INFO - Starting competitor search process
+2024-12-08 01:53:26,554 - competitor_analysis - INFO - Searching competitors for: amazon
+2024-12-08 01:53:40,196 - competitor_analysis - DEBUG - Raw response: {
+    "competitors": [
+        {
+            "name": "Walmart",
+            "description": "A multinational retail corporation that operates a chain of hypermarkets, discount stores, and grocery stores.",
+            "strengths": ["Strong physical presence with over 10,000 stores worldwide", "Competitive pricing and value-oriented offerings", "Established brand recognition and customer loyalty"],
+            "market_position": "Leading brick-and-mortar retailer with a significant online presence",
+            "target_market": "Broad consumer base, including value-conscious shoppers and families",
+            "unique_features": ["In-store pickup and delivery options", "Private label brands offering affordable alternatives", "Grocery pickup and delivery services"]
+        },
+        {
+            "name": "Target",
+            "description": "An American big box retailer that sells a wide range of products, including clothing, home goods, electronics, and groceries.",
+            "strengths": ["Strong brand image and reputation for quality", "Exclusive partnerships with popular brands and designers", "Well-curated product selection and private label offerings"],
+            "market_position": "Mid-tier retailer with a focus on style and design",
+            "target_market": "Style-conscious consumers and families looking for affordable yet trendy items",
+            "unique_features": ["In-store Starbucks locations", "Drive-up pickup option", "RedCard loyalty program with exclusive discounts"]
+        },
+        {
+            "name": "eBay",
+            "description": "An online marketplace where individuals and businesses can buy and sell a wide range of goods.",
+            "strengths": ["Vast selection of products from a wide range of sellers", "Auction format allows for competitive pricing", "Global reach with operations in over 190 countries"],
+            "market_position": "Leading online marketplace for used and unique items",
+            "target_market": "Bargain hunters, collectors, and individuals seeking hard-to-find items",
+            "unique_features": ["PayPal integration for secure payments", "Seller feedback system to ensure trust", "eBay Motors for automotive sales"]
+        },
+        {
+            "name": "Costco",
+            "description": "A membership-based warehouse club that offers a limited selection of products in bulk at discounted prices.",
+            "strengths": ["Low prices on bulk purchases", "Exclusive product offerings and private label brands", "Strong customer loyalty and membership benefits"],
+            "market_position": "Leading warehouse club with a focus on value and convenience",
+            "target_market": "Families, businesses, and individuals seeking bulk purchases at wholesale prices",
+            "unique_features": ["In-store sampling and demonstrations", "Kirkland Signature brand offering high-quality products at competitive prices", "Gas stations and optical centers within stores"]
+        },
+        {
+            "name": "Etsy",
+            "description": "An online marketplace specializing in handmade, vintage, and unique items.",
+            "strengths": ["Platform for small businesses and artisans to sell their unique creations", "Wide selection of handcrafted and personalized items", "Community-driven marketplace with a focus on sustainability"],
+            "market_position": "Leading online marketplace for handmade and vintage goods",
+            "target_market": "Creative consumers, gift-givers, and individuals seeking one-of-a-kind items",
+            "unique_features": ["Etsy Payments for secure transactions", "Handmade Seller Program to support artisans", "Community forums and events for sellers and buyers"]
+        }
+    ],
+    "analysis_summary": "Amazon faces competition from a diverse range of retailers, including traditional brick-and-mortar stores, online marketplaces, and specialty retailers. Walmart poses a significant threat with its vast physical presence, competitive pricing, and established customer base. Target competes with Amazon in the mid-tier market, offering a curated selection of stylish and affordable products. eBay provides a platform for individuals and businesses to sell a wide range of goods, appealing to bargain hunters and collectors. Costco targets value-conscious consumers with its bulk purchases and exclusive offerings. Etsy caters to a niche market of creative consumers seeking handmade and unique items. Amazon must continue to innovate and differentiate itself through its extensive product selection, customer-centric approach, and technological advancements to maintain its competitive edge."
+}
+2024-12-08 01:53:40,198 - competitor_analysis - INFO - Successfully parsed JSON response
+2024-12-08 02:01:26,152 - competitor_analysis - DEBUG - Handling OPTIONS request
+2024-12-08 02:01:26,158 - competitor_analysis - INFO - Starting competitor search process
+2024-12-08 02:01:26,158 - competitor_analysis - INFO - Analyzing competitors for: amazon
+2024-12-08 02:01:57,424 - competitor_analysis - INFO - Analysis completed in 31.27 seconds
+2024-12-08 02:02:18,142 - competitor_analysis - DEBUG - Handling OPTIONS request for sentiment analysis
+2024-12-08 02:02:18,146 - competitor_analysis - INFO - Starting sentiment analysis process
+2024-12-08 02:02:18,146 - competitor_analysis - INFO - Analyzing sentiment for: amazon
+2024-12-08 02:02:31,651 - competitor_analysis - ERROR - Sentiment analysis failed to produce results
+2024-12-08 02:09:26,206 - competitor_analysis - DEBUG - Handling OPTIONS request
+2024-12-08 02:09:26,213 - competitor_analysis - INFO - Starting competitor search process
+2024-12-08 02:09:26,213 - competitor_analysis - INFO - Analyzing competitors for: amazon
+2024-12-08 02:10:03,414 - competitor_analysis - INFO - Analysis completed in 37.20 seconds
+2024-12-08 02:10:13,594 - competitor_analysis - DEBUG - Handling OPTIONS request for sentiment analysis
+2024-12-08 02:10:13,600 - competitor_analysis - INFO - Starting sentiment analysis process
+2024-12-08 02:10:13,600 - competitor_analysis - INFO - Analyzing sentiment for: amazon
+2024-12-08 02:10:28,294 - competitor_analysis - ERROR - Sentiment analysis failed to produce results
+2024-12-08 02:12:08,521 - competitor_analysis - DEBUG - Handling OPTIONS request for sentiment analysis
+2024-12-08 02:12:08,523 - competitor_analysis - INFO - Starting sentiment analysis process
+2024-12-08 02:12:08,523 - competitor_analysis - INFO - Analyzing sentiment for: amazon
+2024-12-08 02:12:23,188 - competitor_analysis - ERROR - Sentiment analysis failed to produce results
+2024-12-08 02:15:11,648 - competitor_analysis - DEBUG - Handling OPTIONS request
+2024-12-08 02:15:11,651 - competitor_analysis - INFO - Starting competitor search process
+2024-12-08 02:15:11,652 - competitor_analysis - INFO - Analyzing competitors for: 100xEngineers
+2024-12-08 02:15:41,695 - competitor_analysis - INFO - Analysis completed in 30.04 seconds
+2024-12-08 02:18:42,685 - competitor_analysis - DEBUG - Handling OPTIONS request
+2024-12-08 02:18:42,688 - competitor_analysis - INFO - Starting competitor search process
+2024-12-08 02:18:42,688 - competitor_analysis - INFO - Analyzing competitors for: 100xEngineers
+2024-12-08 02:19:14,273 - competitor_analysis - INFO - Analysis completed in 31.59 seconds
+2024-12-08 02:19:26,197 - competitor_analysis - DEBUG - Handling OPTIONS request for sentiment analysis
+2024-12-08 02:19:26,199 - competitor_analysis - INFO - Starting sentiment analysis process
+2024-12-08 02:19:26,199 - competitor_analysis - INFO - Analyzing sentiment for: 100xEngineers
+2024-12-08 02:19:40,386 - competitor_analysis - ERROR - Sentiment analysis failed to produce results
+2024-12-08 02:23:25,943 - competitor_analysis - DEBUG - Handling OPTIONS request
+2024-12-08 02:23:25,948 - competitor_analysis - INFO - Starting competitor search process
+2024-12-08 02:23:25,948 - competitor_analysis - INFO - Analyzing competitors for: 100xEngineers
+2024-12-08 02:23:52,695 - competitor_analysis - INFO - Analysis completed in 26.75 seconds
+2024-12-08 02:24:43,037 - competitor_analysis - DEBUG - Handling OPTIONS request for sentiment analysis
+2024-12-08 02:24:43,041 - competitor_analysis - INFO - Starting sentiment analysis process
+2024-12-08 02:24:43,041 - competitor_analysis - INFO - Analyzing sentiment for: 100xEngineers
+2024-12-08 02:24:54,034 - competitor_analysis - ERROR - Sentiment analysis failed to produce results
+2024-12-08 02:26:50,336 - competitor_analysis - DEBUG - Handling OPTIONS request for sentiment analysis
+2024-12-08 02:26:50,340 - competitor_analysis - INFO - Starting sentiment analysis process
+2024-12-08 02:26:50,340 - competitor_analysis - INFO - Analyzing sentiment for: 100xEngineers
+2024-12-08 02:27:03,327 - competitor_analysis - ERROR - Sentiment analysis failed to produce results
+2024-12-08 02:28:31,858 - competitor_analysis - DEBUG - Handling OPTIONS request for sentiment analysis
+2024-12-08 02:28:31,861 - competitor_analysis - INFO - Starting sentiment analysis process
+2024-12-08 02:28:31,862 - competitor_analysis - INFO - Analyzing sentiment for: 100xEngineers
+2024-12-08 02:28:35,011 - competitor_analysis - ERROR - Sentiment analysis failed to produce results
+2024-12-08 02:30:57,378 - competitor_analysis - DEBUG - Handling OPTIONS request for sentiment analysis
+2024-12-08 02:30:57,381 - competitor_analysis - INFO - Starting sentiment analysis process
+2024-12-08 02:30:57,381 - competitor_analysis - INFO - Analyzing sentiment for: 100xEngineers
+2024-12-08 02:31:13,333 - competitor_analysis - INFO - Sentiment analysis saved to sentiment_analysis_20241208_023113.json
+2024-12-08 02:31:13,333 - competitor_analysis - INFO - Sentiment analysis completed in 15.95 seconds
+2024-12-08 02:32:57,447 - competitor_analysis - DEBUG - Handling OPTIONS request for sentiment analysis
+2024-12-08 02:32:57,450 - competitor_analysis - INFO - Starting sentiment analysis process
+2024-12-08 02:32:57,451 - competitor_analysis - INFO - Analyzing sentiment for: 100xEngineers
+2024-12-08 02:33:08,429 - competitor_analysis - INFO - Sentiment analysis saved to sentiment_analysis_20241208_023308.json
+2024-12-08 02:33:08,429 - competitor_analysis - INFO - Sentiment analysis completed in 10.98 seconds
+2024-12-08 02:34:57,450 - competitor_analysis - DEBUG - Handling OPTIONS request for sentiment analysis
+2024-12-08 02:34:57,453 - competitor_analysis - INFO - Starting sentiment analysis process
+2024-12-08 02:34:57,453 - competitor_analysis - INFO - Analyzing sentiment for: Fiverr
+2024-12-08 02:35:18,167 - competitor_analysis - INFO - Sentiment analysis saved to sentiment_analysis_20241208_023518.json
+2024-12-08 02:35:18,167 - competitor_analysis - INFO - Sentiment analysis completed in 20.71 seconds
+2024-12-08 02:35:33,459 - competitor_analysis - DEBUG - Handling OPTIONS request for sentiment analysis
+2024-12-08 02:35:33,461 - competitor_analysis - INFO - Starting sentiment analysis process
+2024-12-08 02:35:33,462 - competitor_analysis - INFO - Analyzing sentiment for: Upwork
+2024-12-08 02:35:43,238 - competitor_analysis - INFO - Sentiment analysis saved to sentiment_analysis_20241208_023543.json
+2024-12-08 02:35:43,238 - competitor_analysis - INFO - Sentiment analysis completed in 9.78 seconds
+2024-12-08 02:36:00,784 - competitor_analysis - DEBUG - Handling OPTIONS request for sentiment analysis
+2024-12-08 02:36:00,786 - competitor_analysis - INFO - Starting sentiment analysis process
+2024-12-08 02:36:00,786 - competitor_analysis - INFO - Analyzing sentiment for: Upwork
+2024-12-08 02:36:13,360 - competitor_analysis - INFO - Sentiment analysis saved to sentiment_analysis_20241208_023613.json
+2024-12-08 02:36:13,360 - competitor_analysis - INFO - Sentiment analysis completed in 12.57 seconds
+2024-12-08 02:36:27,853 - competitor_analysis - DEBUG - Handling OPTIONS request for sentiment analysis
+2024-12-08 02:36:27,857 - competitor_analysis - INFO - Starting sentiment analysis process
+2024-12-08 02:36:27,857 - competitor_analysis - INFO - Analyzing sentiment for: Gigster
+2024-12-08 02:36:47,803 - competitor_analysis - INFO - Sentiment analysis saved to sentiment_analysis_20241208_023647.json
+2024-12-08 02:36:47,803 - competitor_analysis - INFO - Sentiment analysis completed in 19.95 seconds
+2024-12-08 02:37:09,841 - competitor_analysis - DEBUG - Handling OPTIONS request for sentiment analysis
+2024-12-08 02:37:09,849 - competitor_analysis - INFO - Starting sentiment analysis process
+2024-12-08 02:37:09,850 - competitor_analysis - INFO - Analyzing sentiment for: Gigster
+2024-12-08 02:37:34,215 - competitor_analysis - INFO - Sentiment analysis saved to sentiment_analysis_20241208_023734.json
+2024-12-08 02:37:34,215 - competitor_analysis - INFO - Sentiment analysis completed in 24.37 seconds
+2024-12-08 02:40:18,155 - competitor_analysis - DEBUG - Handling OPTIONS request
+2024-12-08 02:40:18,159 - competitor_analysis - INFO - Starting competitor search process
+2024-12-08 02:40:18,161 - competitor_analysis - INFO - Analyzing competitors for: openAI
+2024-12-08 02:40:29,660 - competitor_analysis - ERROR - Error parsing competitor data: Expecting value: line 1 column 1 (char 0)
+2024-12-08 02:41:41,340 - competitor_analysis - DEBUG - Handling OPTIONS request
+2024-12-08 02:41:41,343 - competitor_analysis - INFO - Starting competitor search process
+2024-12-08 02:41:41,343 - competitor_analysis - INFO - Analyzing competitors for: openAI
+2024-12-08 02:41:54,559 - competitor_analysis - ERROR - Error parsing competitor data: Expecting value: line 1 column 1 (char 0)
+2024-12-08 02:42:20,345 - competitor_analysis - DEBUG - Handling OPTIONS request
+2024-12-08 02:42:20,351 - competitor_analysis - INFO - Starting competitor search process
+2024-12-08 02:42:20,352 - competitor_analysis - INFO - Analyzing competitors for: openAI
+2024-12-08 02:42:52,146 - competitor_analysis - INFO - Analysis completed in 31.79 seconds
+2024-12-08 02:43:10,414 - competitor_analysis - DEBUG - Handling OPTIONS request
+2024-12-08 02:43:10,417 - competitor_analysis - INFO - Starting competitor search process
+2024-12-08 02:43:10,418 - competitor_analysis - INFO - Analyzing competitors for: x
+2024-12-08 02:43:44,291 - competitor_analysis - INFO - Analysis completed in 33.87 seconds
+2024-12-08 02:44:03,921 - competitor_analysis - DEBUG - Handling OPTIONS request for sentiment analysis
+2024-12-08 02:44:03,924 - competitor_analysis - INFO - Starting sentiment analysis process
+2024-12-08 02:44:03,924 - competitor_analysis - INFO - Analyzing sentiment for: Apple
+2024-12-08 02:44:09,904 - competitor_analysis - INFO - Sentiment analysis saved to sentiment_analysis_20241208_024409.json
+2024-12-08 02:44:09,904 - competitor_analysis - INFO - Sentiment analysis completed in 5.98 seconds
+2024-12-08 02:44:38,110 - competitor_analysis - DEBUG - Handling OPTIONS request for sentiment analysis
+2024-12-08 02:44:38,116 - competitor_analysis - INFO - Starting sentiment analysis process
+2024-12-08 02:44:38,117 - competitor_analysis - INFO - Analyzing sentiment for: Google
+2024-12-08 02:44:43,656 - competitor_analysis - INFO - Sentiment analysis saved to sentiment_analysis_20241208_024443.json
+2024-12-08 02:44:43,656 - competitor_analysis - INFO - Sentiment analysis completed in 5.54 seconds
+2024-12-08 02:46:19,706 - competitor_analysis - DEBUG - Handling OPTIONS request for sentiment analysis
+2024-12-08 02:46:19,708 - competitor_analysis - INFO - Starting sentiment analysis process
+2024-12-08 02:46:19,709 - competitor_analysis - INFO - Analyzing sentiment for: Google
+2024-12-08 02:46:23,859 - competitor_analysis - ERROR - Sentiment analysis failed to produce results
+2024-12-08 02:47:33,441 - competitor_analysis - DEBUG - Handling OPTIONS request for sentiment analysis
+2024-12-08 02:47:33,444 - competitor_analysis - INFO - Starting sentiment analysis process
+2024-12-08 02:47:33,444 - competitor_analysis - INFO - Analyzing sentiment for: Google
+2024-12-08 02:47:39,670 - competitor_analysis - INFO - Sentiment analysis saved to sentiment_analysis_20241208_024739.json
+2024-12-08 02:47:39,670 - competitor_analysis - INFO - Sentiment analysis completed in 6.23 seconds
+2024-12-08 02:49:11,905 - competitor_analysis - DEBUG - Handling OPTIONS request for sentiment analysis
+2024-12-08 02:49:11,907 - competitor_analysis - INFO - Starting sentiment analysis process
+2024-12-08 02:49:11,907 - competitor_analysis - INFO - Analyzing sentiment for: Google
+2024-12-08 02:49:18,420 - competitor_analysis - INFO - Sentiment analysis saved to sentiment_analysis_20241208_024918.json
+2024-12-08 02:49:18,420 - competitor_analysis - INFO - Sentiment analysis completed in 6.51 seconds
+2024-12-08 02:49:25,247 - competitor_analysis - DEBUG - Handling OPTIONS request for sentiment analysis
+2024-12-08 02:49:25,249 - competitor_analysis - INFO - Starting sentiment analysis process
+2024-12-08 02:49:25,249 - competitor_analysis - INFO - Analyzing sentiment for: Google
+2024-12-08 02:49:31,916 - competitor_analysis - INFO - Sentiment analysis saved to sentiment_analysis_20241208_024931.json
+2024-12-08 02:49:31,916 - competitor_analysis - INFO - Sentiment analysis completed in 6.67 seconds
+2024-12-08 02:49:57,298 - competitor_analysis - DEBUG - Handling OPTIONS request
+2024-12-08 02:49:57,407 - competitor_analysis - INFO - Starting competitor search process
+2024-12-08 02:49:57,432 - competitor_analysis - INFO - Analyzing competitors for: x
+2024-12-08 02:49:59,705 - competitor_analysis - DEBUG - Handling OPTIONS request for sentiment analysis
+2024-12-08 02:49:59,707 - competitor_analysis - INFO - Starting sentiment analysis process
+2024-12-08 02:49:59,707 - competitor_analysis - INFO - Analyzing sentiment for: Google
+2024-12-08 02:50:05,194 - competitor_analysis - INFO - Sentiment analysis saved to sentiment_analysis_20241208_025005.json
+2024-12-08 02:50:05,194 - competitor_analysis - INFO - Sentiment analysis completed in 5.49 seconds
+2024-12-08 02:50:12,615 - competitor_analysis - DEBUG - Handling OPTIONS request for sentiment analysis
+2024-12-08 02:50:12,617 - competitor_analysis - INFO - Starting sentiment analysis process
+2024-12-08 02:50:12,617 - competitor_analysis - INFO - Analyzing sentiment for: Google
+2024-12-08 02:50:34,363 - competitor_analysis - INFO - Sentiment analysis saved to sentiment_analysis_20241208_025034.json
+2024-12-08 02:50:34,363 - competitor_analysis - INFO - Sentiment analysis completed in 21.75 seconds

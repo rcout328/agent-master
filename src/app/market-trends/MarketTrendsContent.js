@@ -32,6 +32,65 @@ ChartJS.register(
 // Initialize Gemini
 const genAI = new GoogleGenerativeAI("AIzaSyAE2SKBA38bOktQBdXS6mTK5Y1a-nKB3Mo");
 
+// Add this before the component definition
+const fundingChartOptions = {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    legend: {
+      position: 'top',
+      labels: { color: '#fff' }
+    },
+    tooltip: {
+      backgroundColor: 'rgba(0,0,0,0.8)',
+      titleColor: '#fff',
+      bodyColor: '#fff',
+      callbacks: {
+        label: (context) => {
+          const value = context.raw;
+          if (context.dataset.yAxisID === 'y') {
+            return `Funding: $${(value/1000000000).toFixed(2)}B`;
+          }
+          return `Investors: ${value.toLocaleString()}`;
+        }
+      }
+    }
+  },
+  scales: {
+    y: {
+      type: 'linear',
+      position: 'left',
+      grid: { color: 'rgba(255,255,255,0.1)' },
+      ticks: { 
+        color: '#fff',
+        callback: (value) => `$${(value/1000000000).toFixed(1)}B`
+      }
+    },
+    investors: {
+      type: 'linear',
+      position: 'right',
+      grid: { display: false },
+      ticks: { 
+        color: '#fff',
+        callback: (value) => value.toLocaleString()
+      }
+    },
+    x: {
+      grid: { display: false },
+      ticks: { 
+        color: '#fff',
+        maxRotation: 45,
+        minRotation: 45,
+        callback: (value) => {
+          // Truncate long names
+          const label = value.toString();
+          return label.length > 20 ? label.substring(0, 18) + '...' : label;
+        }
+      }
+    }
+  }
+};
+
 export default function MarketTrendsContent() {
   const [viewMode, setViewMode] = useState('api'); // 'api' or 'web'
   const [storedSnapshots, setStoredSnapshots] = useState([]);
@@ -41,6 +100,11 @@ export default function MarketTrendsContent() {
   const [processedData, setProcessedData] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [showMarkComponent, setShowMarkComponent] = useState(false);
+  const [showDataOptions, setShowDataOptions] = useState(false);
+  const [marketData, setMarketData] = useState(null);
+  const [selectedGraph, setSelectedGraph] = useState(null);
+  const [chartData, setChartData] = useState(null);
+  const [showGraphs, setShowGraphs] = useState(false);
 
   useEffect(() => {
     loadAllSnapshots();
@@ -378,6 +442,194 @@ export default function MarketTrendsContent() {
     );
   };
 
+  const fetchMarketData = async () => {
+    try {
+      if (!selectedSnapshot) {
+        alert('Please select a snapshot first');
+        return;
+      }
+
+      let processedData = [];
+      if (selectedSnapshot.data?.results) {
+        processedData = selectedSnapshot.data.results;
+      } else if (selectedSnapshot.data?.data) {
+        processedData = selectedSnapshot.data.data;
+      } else if (Array.isArray(selectedSnapshot.data)) {
+        processedData = selectedSnapshot.data;
+      }
+
+      console.log('Processing snapshot data:', processedData);
+      setMarketData(processedData);
+      setShowDataOptions(true);
+      setShowGraphs(true);
+    } catch (error) {
+      console.error('Error processing snapshot data:', error);
+      alert('Error processing snapshot data');
+    }
+  };
+
+  const generateFundingTrendsChart = () => {
+    if (!marketData || !marketData.length) return null;
+
+    console.log('Raw market data:', marketData);
+
+    // Process data for funding trends
+    const fundingByCompany = marketData.reduce((acc, company) => {
+      try {
+        // Extract company name
+        const title = company.title || company.name || 'Unknown';
+        let fundingValue = 0;
+        let numFundingRounds = 0;
+
+        // Try different funding data paths
+        if (company.funding_total?.value_usd) {
+          // Primary funding path
+          fundingValue = parseFloat(company.funding_total.value_usd);
+          numFundingRounds = company.funding_total.num_funding_rounds || 0;
+        } else if (company.financials_highlights?.funding_total?.value_usd) {
+          // Secondary funding path
+          fundingValue = parseFloat(company.financials_highlights.funding_total.value_usd);
+          numFundingRounds = company.financials_highlights.funding_total.num_funding_rounds || 0;
+        } else if (company.overview_highlights?.funding_total?.value_usd) {
+          // Tertiary funding path
+          fundingValue = parseFloat(company.overview_highlights.funding_total.value_usd);
+          numFundingRounds = company.overview_highlights.funding_total.num_funding_rounds || 0;
+        }
+
+        // Get number of investors from funding_rounds if available
+        const numInvestors = company.funding_rounds?.length || 0;
+        
+        // Only include if funding value exists and is greater than 0
+        if (fundingValue > 0) {
+          const cleanTitle = title.replace(/\s*\([^)]*\)/g, '').trim();
+          
+          // Check if we already have this company
+          if (acc[cleanTitle]) {
+            // Update if new value is higher
+            if (fundingValue > acc[cleanTitle].funding) {
+              acc[cleanTitle] = {
+                funding: fundingValue,
+                numFundingRounds: numFundingRounds,
+                numInvestors: numInvestors
+              };
+            }
+          } else {
+            acc[cleanTitle] = {
+              funding: fundingValue,
+              numFundingRounds: numFundingRounds,
+              numInvestors: numInvestors
+            };
+          }
+        }
+
+      } catch (e) {
+        console.error('Error processing company funding data:', e);
+        console.error('Problematic company data:', company);
+      }
+      return acc;
+    }, {});
+
+    // Sort companies by funding amount and take top 10
+    const topCompanies = Object.entries(fundingByCompany)
+      .sort(([, a], [, b]) => b.funding - a.funding)
+      .slice(0, 10);
+
+    console.log('Processed funding data:', topCompanies);
+
+    // Format data for chart
+    const chartData = {
+      labels: topCompanies.map(([name]) => name),
+      datasets: [
+        {
+          label: 'Total Funding (USD)',
+          data: topCompanies.map(([, data]) => data.funding),
+          backgroundColor: 'rgba(65, 105, 225, 0.6)',
+          borderColor: '#4169E1',
+          borderWidth: 1,
+          yAxisID: 'y'
+        },
+        {
+          label: 'Number of Funding Rounds',
+          data: topCompanies.map(([, data]) => data.numFundingRounds),
+          backgroundColor: 'rgba(144, 238, 144, 0.6)',
+          borderColor: '#4CAF50',
+          borderWidth: 1,
+          yAxisID: 'rounds'
+        }
+      ]
+    };
+
+    return chartData;
+  };
+
+  const generateVisitGrowthChart = () => {
+    if (!marketData || !marketData.length) return null;
+
+    // Process data for visit growth
+    const growthByRegion = marketData.reduce((acc, company) => {
+      try {
+        const region = company.region || company.location || 'Unknown';
+        const visits = parseFloat(company.monthly_visits || company.visits || 0);
+        const growth = parseFloat(company.monthly_visits_growth || company.growth || 0);
+
+        if (!acc[region]) {
+          acc[region] = {
+            totalVisits: 0,
+            totalGrowth: 0,
+            count: 0
+          };
+        }
+
+        if (!isNaN(visits)) acc[region].totalVisits += visits;
+        if (!isNaN(growth)) acc[region].totalGrowth += growth;
+        acc[region].count++;
+      } catch (e) {
+        console.error('Error processing company data:', e);
+      }
+      return acc;
+    }, {});
+
+    // Filter and sort regions by total visits
+    const regions = Object.entries(growthByRegion)
+      .filter(([region, data]) => data.count > 0 && region !== 'Unknown')
+      .sort((a, b) => b[1].totalVisits - a[1].totalVisits)
+      .slice(0, 10); // Top 10 regions
+
+    console.log('Visit growth data:', regions);
+
+    return {
+      labels: regions.map(([region]) => region),
+      datasets: [{
+        label: 'Average Monthly Visits',
+        data: regions.map(([, data]) => data.totalVisits / data.count),
+        backgroundColor: '#90EE90',
+        borderColor: '#4CAF50',
+        borderWidth: 1
+      }, {
+        label: 'Growth Rate (%)',
+        data: regions.map(([, data]) => data.totalGrowth / data.count),
+        backgroundColor: '#FFB6C1',
+        borderColor: '#FF69B4',
+        borderWidth: 1
+      }]
+    };
+  };
+
+  const handleCreateGraph = (type) => {
+    setSelectedGraph(type);
+    const data = type === 'funding' ? 
+      generateFundingTrendsChart() : 
+      generateVisitGrowthChart();
+    setChartData(data);
+  };
+
+  const handleCloseGraphs = () => {
+    setShowGraphs(false);
+    setShowDataOptions(false);
+    setChartData(null);
+    setSelectedGraph(null);
+  };
+
   if (showMarkComponent) {
     return <Mark onClose={() => setShowMarkComponent(false)} />;
   }
@@ -527,6 +779,155 @@ export default function MarketTrendsContent() {
                   No stored snapshots found
                 </div>
               )}
+            </div>
+          </div>
+        )}
+
+        {/* Data Options Button */}
+        <div className="mb-6">
+          <button
+            onClick={fetchMarketData}
+            className="px-6 py-3 bg-purple-600 rounded-xl hover:bg-purple-700 transition-colors"
+          >
+            Show Data Options
+          </button>
+        </div>
+
+        {/* Data Options Panel */}
+        {showDataOptions && (
+          <div className="bg-[#1D1D1F] p-6 rounded-xl mb-6">
+            <h3 className="text-xl font-semibold text-purple-400 mb-4">
+              Data Visualization Options
+            </h3>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <button
+                onClick={() => handleCreateGraph('funding')}
+                className="p-4 bg-[#2D2D2F] rounded-xl hover:bg-purple-600/20 transition-colors"
+              >
+                <h4 className="text-lg font-medium mb-2">Funding Trends</h4>
+                <p className="text-sm text-gray-400">
+                  Analyze funding activity over time across industries
+                </p>
+              </button>
+
+              <button
+                onClick={() => handleCreateGraph('visits')}
+                className="p-4 bg-[#2D2D2F] rounded-xl hover:bg-purple-600/20 transition-colors"
+              >
+                <h4 className="text-lg font-medium mb-2">Visit Growth</h4>
+                <p className="text-sm text-gray-400">
+                  Compare website visit growth across regions
+                </p>
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Chart Display */}
+        {showGraphs && (
+          <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 overflow-y-auto">
+            <div className="max-w-7xl mx-auto p-6">
+              <div className="bg-[#1D1D1F] rounded-xl shadow-xl">
+                {/* Header */}
+                <div className="p-6 border-b border-gray-800 flex justify-between items-center">
+                  <h3 className="text-xl font-semibold text-purple-400">
+                    Market Data Visualization
+                  </h3>
+                  <button 
+                    onClick={handleCloseGraphs}
+                    className="text-gray-400 hover:text-white transition-colors"
+                  >
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+
+                {/* Graph Options */}
+                <div className="p-6 border-b border-gray-800">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <button
+                      onClick={() => handleCreateGraph('funding')}
+                      className={`p-4 rounded-xl transition-colors ${
+                        selectedGraph === 'funding' 
+                          ? 'bg-purple-600 text-white' 
+                          : 'bg-[#2D2D2F] hover:bg-purple-600/20'
+                      }`}
+                    >
+                      <h4 className="text-lg font-medium mb-2">Funding Trends</h4>
+                      <p className="text-sm text-gray-400">
+                        Analyze funding activity over time
+                      </p>
+                    </button>
+
+                    <button
+                      onClick={() => handleCreateGraph('visits')}
+                      className={`p-4 rounded-xl transition-colors ${
+                        selectedGraph === 'visits' 
+                          ? 'bg-purple-600 text-white' 
+                          : 'bg-[#2D2D2F] hover:bg-purple-600/20'
+                      }`}
+                    >
+                      <h4 className="text-lg font-medium mb-2">Visit Growth</h4>
+                      <p className="text-sm text-gray-400">
+                        Compare website visit growth
+                      </p>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Chart Display */}
+                <div className="p-6">
+                  {chartData ? (
+                    <div className="h-[500px]">
+                      {selectedGraph === 'funding' ? (
+                        <Bar 
+                          data={chartData}
+                          options={fundingChartOptions}
+                        />
+                      ) : (
+                        <Bar 
+                          data={chartData}
+                          options={{
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                              legend: {
+                                position: 'top',
+                                labels: { color: '#fff' }
+                              },
+                              tooltip: {
+                                backgroundColor: 'rgba(0,0,0,0.8)',
+                                titleColor: '#fff',
+                                bodyColor: '#fff'
+                              }
+                            },
+                            scales: {
+                              y: {
+                                grid: { color: 'rgba(255,255,255,0.1)' },
+                                ticks: { color: '#fff' }
+                              },
+                              x: {
+                                grid: { display: false },
+                                ticks: { 
+                                  color: '#fff',
+                                  maxRotation: 45,
+                                  minRotation: 45
+                                }
+                              }
+                            }
+                          }}
+                        />
+                      )}
+                    </div>
+                  ) : (
+                    <div className="text-center text-gray-400 py-12">
+                      Select a visualization type above to generate the graph
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
         )}

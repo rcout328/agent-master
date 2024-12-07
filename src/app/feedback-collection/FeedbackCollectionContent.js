@@ -28,7 +28,7 @@ export default function FeedbackCollectionContent() {
       .map(key => {
         try {
           const rawData = JSON.parse(localStorage.getItem(key));
-          // Handle different data structures
+          // Better data structure handling
           let processedData = Array.isArray(rawData) ? rawData : 
                             rawData?.data ? rawData.data :
                             rawData?.results ? rawData.results : [];
@@ -46,6 +46,11 @@ export default function FeedbackCollectionContent() {
       .filter(Boolean);
 
     setStoredSnapshots(snapshots);
+  };
+
+  const viewSnapshotData = (snapshot) => {
+    setSelectedSnapshot(snapshot);
+    setProcessedData(null); // Reset processed data when selecting new snapshot
   };
 
   const processSnapshotData = async (snapshotData) => {
@@ -563,7 +568,7 @@ export default function FeedbackCollectionContent() {
                   <div 
                     key={snapshot.id}
                     className="bg-[#1D1D1F]/90 p-6 rounded-xl backdrop-blur-xl border border-purple-500/20 hover:border-purple-500/40 transition-all cursor-pointer"
-                    onClick={() => setSelectedSnapshot(snapshot)}
+                    onClick={() => viewSnapshotData(snapshot)}
                   >
                     <div className="flex justify-between items-start mb-4">
                       <h3 className="text-lg font-semibold text-purple-400">
@@ -591,7 +596,38 @@ export default function FeedbackCollectionContent() {
               {/* Selected Snapshot Details */}
               {selectedSnapshot && (
                 <div className="mt-8 space-y-6">
-                  {/* ... keep existing selected snapshot content ... */}
+                  <div className="bg-[#1D1D1F]/90 p-6 rounded-xl backdrop-blur-xl border border-purple-500/20">
+                    <div className="flex justify-between items-center mb-4">
+                      <h3 className="text-xl font-semibold text-purple-400">
+                        Snapshot Details: {selectedSnapshot.id}
+                      </h3>
+                      <div className="flex space-x-4">
+                        <button 
+                          onClick={() => processSnapshotData(selectedSnapshot)}
+                          disabled={isProcessing}
+                          className={`px-4 py-2 rounded-lg transition-colors ${
+                            isProcessing 
+                              ? 'bg-purple-600/50 cursor-not-allowed' 
+                              : 'bg-purple-600 hover:bg-purple-700'
+                          }`}
+                        >
+                          {isProcessing ? 'Processing...' : 'Process Data'}
+                        </button>
+                        <button 
+                          onClick={() => setSelectedSnapshot(null)}
+                          className="text-gray-400 hover:text-gray-300"
+                        >
+                          Close
+                        </button>
+                      </div>
+                    </div>
+                    <pre className="bg-[#2D2D2F] p-4 rounded-lg overflow-auto max-h-96 text-sm text-gray-300">
+                      {JSON.stringify(selectedSnapshot.data, null, 2)}
+                    </pre>
+                  </div>
+
+                  {/* Processed Data Review */}
+                  {processedData && renderProcessedDataReview()}
                 </div>
               )}
 

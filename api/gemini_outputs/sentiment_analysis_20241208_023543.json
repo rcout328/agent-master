@@ -1,0 +1,21 @@
+{
+  "query": "Upwork",
+  "timestamp": "20241208_023543",
+  "execution_time": 9.775943994522095,
+  "results": {
+    "sentiment_analysis": [
+      {
+        "company": "Upwork",
+        "overall_sentiment": "neutral",
+        "sentiment_score": 0,
+        "key_themes": [
+          "No recent news available"
+        ],
+        "notable_developments": [
+          "No recent developments found"
+        ],
+        "news_sources": []
+      }
+    ]
+  }
+}

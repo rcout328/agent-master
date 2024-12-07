@@ -1,0 +1,33 @@
+{
+  "query": "100xEngineers",
+  "timestamp": "20241208_023113",
+  "execution_time": 15.951222896575928,
+  "results": {
+    "sentiment_analysis": [
+      {
+        "company": "100xEngineers",
+        "overall_sentiment": "positive",
+        "sentiment_score": 0.8,
+        "key_themes": [
+          "Generative AI Education",
+          "AI Product Development",
+          "AI Job Placement"
+        ],
+        "notable_developments": [
+          "Launch of Generative AI Buildathon 2024",
+          "Partnership with AI companies and industry experts"
+        ],
+        "news_sources": [
+          {
+            "url": "https://www.100xengineers.com/",
+            "date": "2024-12-08"
+          },
+          {
+            "url": "https://www.100xengineers.com/buildathon",
+            "date": "2024-12-08"
+          }
+        ]
+      }
+    ]
+  }
+}

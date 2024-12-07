@@ -1,0 +1,21 @@
+{
+  "query": "Gigster",
+  "timestamp": "20241208_023647",
+  "execution_time": 19.945935010910034,
+  "results": {
+    "sentiment_analysis": [
+      {
+        "company": "Gigster",
+        "overall_sentiment": "neutral",
+        "sentiment_score": 0,
+        "key_themes": [
+          "No recent news available"
+        ],
+        "notable_developments": [
+          "No recent developments found"
+        ],
+        "news_sources": []
+      }
+    ]
+  }
+}
