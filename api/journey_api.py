@@ -7,6 +7,7 @@ import json
 import os
 import requests
 import time
+from googlesearch import search
 
 # Import Gemini with error handling
 try:
@@ -29,7 +30,7 @@ CORS(app)
 logging.basicConfig(level=logging.DEBUG)
 
 # Initialize Firecrawl
-FIRECRAWL_API_KEY = "fc-b69d6504ab0a42b79e87b7827a538199"
+FIRECRAWL_API_KEY = "fc-43e5dcff501d4aef8cbccfa47b646f57"
 firecrawl_app = FirecrawlApp(api_key=FIRECRAWL_API_KEY)
 logging.info("Firecrawl initialized")
 
@@ -56,154 +57,177 @@ def extract_domain(url):
     except:
         return url
 
+def scrape_with_retry(url, max_retries=3):
+    """Scrape URL content with retries"""
+    for attempt in range(max_retries):
+        try:
+            response = requests.get(url, timeout=10)
+            if response.status_code == 200:
+                return response.text
+        except Exception as e:
+            logging.warning(f"Attempt {attempt + 1} failed: {str(e)}")
+            if attempt < max_retries - 1:
+                time.sleep(2)
+    return None
+
 def get_journey_data(business_query):
     """
-    Get customer journey data using custom search API and Firecrawl
+    Get customer journey data using enhanced search and analysis
     """
     logging.info(f"\n{'='*50}\nGathering journey data for: {business_query}\n{'='*50}")
     
-    result = {
-        "pre_purchase": [],
-        "purchase": [],
-        "post_purchase": [],
-        "optimization": [],
-        "sources": []
-    }
-    
+    # Reduced to 5 most important search queries covering entire journey
     search_queries = [
-        f"{business_query} customer journey analysis",
-        f"{business_query} customer experience touchpoints",
-        f"{business_query} customer buying process",
-        f"how do customers interact with {business_query}",
-        f"{business_query} customer path to purchase"
+        # Comprehensive Journey Overview
+        f"{business_query} customer journey analysis experience touchpoints",
+        
+        # Pre-Purchase & Research
+        f"{business_query} how customers discover research process marketing channels",
+        
+        # Purchase & Decision Making
+        f"{business_query} purchase decision factors checkout experience",
+        
+        # Post-Purchase Experience
+        f"{business_query} customer support delivery satisfaction reviews",
+        
+        # Optimization & Improvements
+        f"{business_query} customer pain points improvements optimization"
     ]
     
     scraped_content = []
-    max_attempts = 2  # Limit number of attempts per query
     
     for query in search_queries:
         try:
             logging.info(f"\nSearching for: {query}")
-            search_results = custom_search(query)
-            attempts = 0
+            # Use googlesearch package instead of custom search API
+            search_results = list(search(query, num_results=2))
             
             for url in search_results:
-                if attempts >= max_attempts:
-                    break
-                    
-                if not any(x in url.lower() for x in ['linkedin', 'facebook', 'twitter']):
-                    try:
-                        logging.info(f"Scraping: {url}")
-                        response = firecrawl_app.scrape_url(
-                            url=url,
-                            params={'formats': ['markdown']}
-                        )
-                        
-                        if response and 'markdown' in response:
-                            content = response['markdown']
-                            if len(content) > 200:
-                                logging.info("Successfully scraped content")
-                                scraped_content.append({
-                                    'url': url,
-                                    'domain': extract_domain(url),
-                                    'section': 'Journey Analysis',
-                                    'date': datetime.now().strftime("%Y-%m-%d"),
-                                    'content': content[:1000]  # Limit content size
-                                })
-                                break
-                    except Exception as e:
-                        if "402" in str(e):  # Credit limit error
-                            logging.warning(f"Firecrawl credit limit reached for {url}")
-                            scraped_content.append({
-                                'url': url,
-                                'domain': extract_domain(url),
-                                'section': 'Journey Analysis (Limited)',
-                                'date': datetime.now().strftime("%Y-%m-%d"),
-                                'content': f"Content from {extract_domain(url)} about {business_query}'s customer journey"
-                            })
-                        else:
-                            logging.error(f"Error scraping {url}: {str(e)}")
-                        attempts += 1
-                        continue
-            
+                content = scrape_with_retry(url)
+                if content and len(content) > 200:
+                    scraped_content.append({
+                        'url': url,
+                        'domain': extract_domain(url),
+                        'section': 'Journey Analysis',
+                        'date': datetime.now().strftime("%Y-%m-%d"),
+                        'content': content[:2000]
+                    })
             time.sleep(2)
             
         except Exception as e:
             logging.error(f"Error in search: {str(e)}")
             continue
-    
-    # Generate journey analysis using available content
+
     if scraped_content:
         try:
-            prompt = f"""
-            Create a detailed customer journey analysis for {business_query} with these exact sections:
-            
-            PRE-PURCHASE JOURNEY:
-            • Awareness phase
-            • Research phase
-            • Consideration phase
-            
-            PURCHASE EXPERIENCE:
-            • Decision making
-            • Checkout process
-            • Payment options
-            
-            POST-PURCHASE JOURNEY:
-            • Order confirmation
-            • Delivery experience
-            • Product usage
-            
-            OPTIMIZATION OPPORTUNITIES:
-            • Pain points
-            • Improvement areas
-            • Enhancement suggestions
-            
-            Use factual information where available, mark inferences with (Inferred).
-            Format each point as a clear, actionable item.
+            journey_prompt = f"""
+            Task: Create a detailed customer journey analysis for {business_query}.
+
+            Content to analyze:
+            {[item['content'] for item in scraped_content]}
+
+            Analysis:
+            Pre-Purchase Journey
+            Awareness Phase:
+            • How do customers first learn about {business_query}? (e.g., organic search, social media, referrals)
+            • What marketing channels are most effective in reaching the target audience?
+
+            Research Phase:
+            • What information do customers seek before making a purchase? (e.g., product reviews, pricing, features)
+            • Which websites or platforms do customers use to research?
+
+            Consideration Phase:
+            • What factors influence customers' decision-making process? (e.g., brand reputation, product quality, price)
+            • What are the main competitors and how does {business_query} differentiate itself?
+
+            Purchase Experience
+            Decision Making:
+            • What factors influence the final purchase decision? (e.g., promotions, discounts, limited-time offers)
+            • How can we simplify the decision-making process?
+
+            Checkout Process:
+            • How smooth is the checkout process? (e.g., number of steps, payment options)
+            • What can be done to reduce cart abandonment?
+
+            Payment Options:
+            • Are the payment options convenient and secure?
+            • Can we offer additional payment methods to cater to different customer preferences?
+
+            Post-Purchase Journey
+            Order Confirmation:
+            • How quickly do customers receive order confirmation?
+            • Is the confirmation email clear and informative?
+
+            Delivery Experience:
+            • How timely and reliable is the delivery process?
+            • Is the packaging adequate and environmentally friendly?
+
+            Product Usage:
+            • How easy is it for customers to use the product or service?
+            • Is there adequate support available for customers?
+
+            Optimization Opportunities
+            Pain Points:
+            • Identify specific pain points in the customer journey (e.g., slow website load times, confusing navigation, poor customer support)
+
+            Improvement Areas:
+            • Propose solutions to address the identified pain points (e.g., optimize website performance, simplify checkout process, improve customer support)
+
+            Enhancement Suggestions:
+            • Implement strategies to enhance the overall customer experience (e.g., personalized recommendations, loyalty programs, gamification)
+
+            Additional Considerations:
+            • Data-Driven Insights: Utilize customer data and analytics to identify trends and opportunities for improvement
+            • Customer Feedback: Actively seek and analyze customer feedback through surveys, reviews, and social media
+            • Competitive Analysis: Benchmark {business_query}'s customer journey against competitors to identify best practices
+            • A/B Testing: Experiment with different approaches to optimize the customer journey
+
+            Format each point with specific data where available.
+            Mark inferences with (Inferred).
+            Provide actionable insights and recommendations.
             """
             
-            response = model.generate_content(prompt)
+            response = model.generate_content(journey_prompt)
             analysis = response.text
             
-            # Extract sections
-            result["pre_purchase"] = extract_section(analysis, "PRE-PURCHASE JOURNEY")
-            result["purchase"] = extract_section(analysis, "PURCHASE EXPERIENCE")
-            result["post_purchase"] = extract_section(analysis, "POST-PURCHASE JOURNEY")
-            result["optimization"] = extract_section(analysis, "OPTIMIZATION OPPORTUNITIES")
+            # Save analysis to file with timestamp
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            output_file = os.path.join(output_folder, f'journey_analysis_{timestamp}.txt')
             
-            # Save Gemini output to a text file
-            with open(os.path.join(output_folder, 'compitoone.txt'), 'w') as f:
-                f.write(analysis)
+            with open(output_file, 'w') as f:
+                f.write(f"Customer Journey Analysis for: {business_query}\n")
+                f.write(f"Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+                f.write("="*50 + "\n\n")
+                f.write(analysis + "\n\n")
+                f.write("\nAdditional Considerations:\n")
+                f.write("="*30 + "\n")
+                f.write("Data Sources:\n")
+                for source in scraped_content:
+                    f.write(f"- {source['domain']} ({source['date']})\n")
             
-            # Add sources
-            result["sources"] = [{
-                'url': item['url'],
-                'domain': item['domain'],
-                'section': item['section'],
-                'date': item['date']
-            } for item in scraped_content]
+            logging.info(f"Analysis saved to: {output_file}")
+            
+            # Process and structure the response
+            result = {
+                "pre_purchase": extract_section(analysis, "Pre-Purchase Journey"),
+                "purchase": extract_section(analysis, "Purchase Experience"),
+                "post_purchase": extract_section(analysis, "Post-Purchase Journey"),
+                "optimization": extract_section(analysis, "Optimization Opportunities"),
+                "additional_considerations": extract_section(analysis, "Additional Considerations"),
+                "sources": [{
+                    'url': item['url'],
+                    'domain': item['domain'],
+                    'section': item['section'],
+                    'date': item['date']
+                } for item in scraped_content]
+            }
             
             return result
             
         except Exception as e:
-            logging.error(f"Error generating analysis: {str(e)}")
-            return generate_fallback_journey(business_query)
-    
+            logging.error(f"Error in analysis: {str(e)}")
+            
     return generate_fallback_journey(business_query)
-
-def custom_search(query):
-    """Perform a custom search using the Custom Search API"""
-    api_key = "AIzaSyAxeLlJ6vZxOl-TblUJg_dInBS3vNxaFVY"
-    search_engine_id = "37793b12975da4e35"
-    url = f"https://www.googleapis.com/customsearch/v1?key={api_key}&cx={search_engine_id}&q={query}&num=2"
-    
-    response = requests.get(url)
-    if response.status_code == 200:
-        search_results = response.json().get('items', [])
-        return [item['link'] for item in search_results]
-    else:
-        logging.error(f"Error during custom search: {response.status_code} - {response.text}")
-        return []
 
 def extract_section(text, section_name):
     """Extract content from a specific section"""

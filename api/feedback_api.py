@@ -6,12 +6,13 @@ import os
 import requests
 import time
 import google.generativeai as genai
+from googlesearch import search  # Add this import at the top
 
 # Initialize logging
 logging.basicConfig(level=logging.DEBUG)
 
 # Initialize Firecrawl
-FIRECRAWL_API_KEY = "fc-b69d6504ab0a42b79e87b7827a538199"
+FIRECRAWL_API_KEY = "fc-43e5dcff501d4aef8cbccfa47b646f57"
 firecrawl_app = FirecrawlApp(api_key=FIRECRAWL_API_KEY)
 logging.info("Firecrawl initialized")
 
@@ -38,148 +39,169 @@ def extract_domain(url):
         return url
 
 def get_feedback_data(business_query):
-    """Get feedback analysis data using custom search API and Firecrawl"""
-    logging.info(f"\n{'='*50}\nGathering feedback data for: {business_query}\n{'='*50}")
-    
-    result = {
-        "satisfaction_metrics": [],
-        "product_feedback": [],
-        "service_feedback": [],
-        "recommendations": [],
-        "sources": []
-    }
-    
-    search_queries = [
-        f"{business_query} customer reviews analysis",
-        f"{business_query} customer feedback summary",
-        f"{business_query} user satisfaction",
-        f"{business_query} customer complaints",
-        f"{business_query} customer experience reviews"
-    ]
-    
-    scraped_content = []
-    max_attempts = 2
-    search_api_key = "AIzaSyAxeLlJ6vZxOl-TblUJg_dInBS3vNxaFVY"
-    search_engine_id = "37793b12975da4e35"
-    
-    for query in search_queries:
-        try:
-            logging.info(f"\nSearching for: {query}")
-            search_url = f"https://www.googleapis.com/customsearch/v1?key={search_api_key}&cx={search_engine_id}&q={query}&num=2"
-            response = requests.get(search_url)
-            search_results = response.json().get('items', [])
-            attempts = 0
+    """Get feedback analysis data using search and Firecrawl"""
+    try:
+        if not business_query:
+            logging.error("No business query provided")
+            return generate_fallback_response("Unknown Business")
             
-            for item in search_results:
-                url = item['link']
-                if attempts >= max_attempts:
-                    break
-                    
-                if not any(x in url.lower() for x in ['linkedin', 'facebook', 'twitter']):
-                    try:
-                        logging.info(f"Scraping: {url}")
-                        response = firecrawl_app.scrape_url(
-                            url=url,
-                            params={'formats': ['markdown']}
-                        )
-                        
-                        if response and 'markdown' in response:
-                            content = response['markdown']
-                            if len(content) > 200:
-                                logging.info("Successfully scraped content")
-                                scraped_content.append({
-                                    'url': url,
-                                    'domain': extract_domain(url),
-                                    'section': 'Feedback Analysis',
-                                    'date': datetime.now().strftime("%Y-%m-%d"),
-                                    'content': content[:1000]
-                                })
-                                break
-                    except Exception as e:
-                        if "402" in str(e):
-                            logging.warning(f"Firecrawl credit limit reached for {url}")
+        logging.info(f"\n{'='*50}\nGathering feedback data for: {business_query}\n{'='*50}")
+        
+        # 5 focused search queries for comprehensive feedback analysis
+        search_queries = [
+            # Overall Satisfaction & Metrics
+            f"{business_query} customer satisfaction ratings reviews analysis",
+            
+            # Product & Features Feedback
+            f"{business_query} product features quality usability feedback",
+            
+            # Service & Support Experience
+            f"{business_query} customer service support response time reviews",
+            
+            # Customer Pain Points
+            f"{business_query} customer complaints issues problems analysis",
+            
+            # Improvement Suggestions
+            f"{business_query} customer suggestions improvements recommendations"
+        ]
+        
+        scraped_content = []
+        use_custom_api = True
+        
+        for query in search_queries:
+            try:
+                logging.info(f"\nSearching for: {query}")
+                search_results = perform_search(query, use_custom_api)
+                
+                if not search_results and use_custom_api:
+                    use_custom_api = False
+                    search_results = perform_search(query, use_custom_api=False)
+                
+                if search_results:
+                    for url in search_results:
+                        content = scrape_with_retry(url)
+                        if content and len(content) > 200:
                             scraped_content.append({
                                 'url': url,
                                 'domain': extract_domain(url),
-                                'section': 'Feedback Analysis (Limited)',
+                                'section': 'Feedback Analysis',
                                 'date': datetime.now().strftime("%Y-%m-%d"),
-                                'content': f"Content from {extract_domain(url)} about {business_query}'s feedback"
+                                'content': content[:2000]
                             })
-                        else:
-                            logging.error(f"Error scraping {url}: {str(e)}")
-                        attempts += 1
-                        continue
-            
-            time.sleep(2)
-            
-        except Exception as e:
-            logging.error(f"Error in search: {str(e)}")
-            continue
+                time.sleep(2)
+                
+            except Exception as e:
+                logging.error(f"Error in search for query '{query}': {str(e)}")
+                continue
 
-    if scraped_content:
+        if not scraped_content:
+            logging.warning("No content scraped, returning fallback response")
+            return generate_fallback_response(business_query)
+
         try:
-            prompt = f"""
-            Analyze this content about {business_query}'s customer feedback and create a detailed analysis.
-            
+            feedback_prompt = f"""
+            Task: Analyze the provided content about {business_query}'s customer feedback to create a detailed analysis.
+
             Content to analyze:
             {[item['content'] for item in scraped_content]}
-            
-            Provide a structured analysis with these exact sections:
 
-            SATISFACTION METRICS:
-            • Overall Rating
-            • Key Drivers
-            • Improvement Areas
+            Customer Feedback Analysis:
+            Satisfaction Metrics:
+            Overall Rating:
+            • [Summarize overall customer satisfaction]
+            • [Provide rating metrics where available]
 
-            PRODUCT FEEDBACK:
-            • Features
-            • Quality
-            • Usability
+            Key Drivers of Satisfaction:
+            • [Identify key factors contributing to positive experiences]
+            • [List specific strengths and advantages]
 
-            SERVICE FEEDBACK:
-            • Support Quality
-            • Response Time
-            • Resolution Rate
+            Areas for Improvement:
+            • [Identify areas where satisfaction is lower]
+            • [List specific pain points and challenges]
 
-            RECOMMENDATIONS:
-            • Quick Wins
-            • Long-term Goals
-            • Priority Actions
+            Product Feedback:
+            Features:
+            • [Evaluate feedback on specific features]
+            • [Assess feature effectiveness and usage]
 
-            Use factual information where available, mark inferences with (Inferred).
-            Format each point as a clear, actionable item.
+            Quality:
+            • [Assess feedback on product quality]
+            • [Evaluate durability and reliability]
+
+            Usability:
+            • [Evaluate user experience feedback]
+            • [Assess ease of use and accessibility]
+
+            Service Feedback:
+            Support Quality:
+            • [Evaluate customer support satisfaction]
+            • [Assess support team effectiveness]
+
+            Response Time:
+            • [Assess support response speed]
+            • [Evaluate communication efficiency]
+
+            Resolution Rate:
+            • [Evaluate issue resolution success]
+            • [Assess problem-solving effectiveness]
+
+            Recommendations:
+            Quick Wins:
+            • [List immediately actionable improvements]
+            • [Identify easy-to-implement changes]
+
+            Long-Term Goals:
+            • [Outline strategic improvements]
+            • [Define long-term objectives]
+
+            Priority Actions:
+            • [List specific action items]
+            • [Prioritize based on impact and urgency]
+
+            Format each point with specific data where available.
+            Mark inferences with (Inferred).
+            Prioritize recommendations based on impact and feasibility.
             """
             
-            response = model.generate_content(prompt)
+            response = model.generate_content(feedback_prompt)
             analysis = response.text
             
-            # Save Gemini output to a text file
-            output_file_path = os.path.join(output_folder, 'compitoone.txt')
-            with open(output_file_path, 'w') as output_file:
-                output_file.write(analysis)
-                logging.info(f"Gemini output saved to {output_file_path}")
+            # Save to file with timestamp
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            output_file = os.path.join(output_folder, f'feedback_analysis_{timestamp}.txt')
             
-            # Extract sections
-            result["satisfaction_metrics"] = extract_section(analysis, "SATISFACTION METRICS")
-            result["product_feedback"] = extract_section(analysis, "PRODUCT FEEDBACK")
-            result["service_feedback"] = extract_section(analysis, "SERVICE FEEDBACK")
-            result["recommendations"] = extract_section(analysis, "RECOMMENDATIONS")
+            with open(output_file, 'w') as f:
+                f.write(f"Customer Feedback Analysis for: {business_query}\n")
+                f.write(f"Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+                f.write("="*50 + "\n\n")
+                f.write(analysis + "\n\n")
+                f.write("Data Sources:\n")
+                for source in scraped_content:
+                    f.write(f"- {source['domain']} ({source['date']})\n")
             
-            # Add sources
-            result["sources"] = [{
-                'url': item['url'],
-                'domain': item['domain'],
-                'section': item['section'],
-                'date': item['date']
-            } for item in scraped_content]
+            # Process and structure the response
+            result = {
+                "satisfaction_metrics": extract_section(analysis, "Satisfaction Metrics"),
+                "product_feedback": extract_section(analysis, "Product Feedback"),
+                "service_feedback": extract_section(analysis, "Service Feedback"),
+                "recommendations": extract_section(analysis, "Recommendations"),
+                "sources": [{
+                    'url': item['url'],
+                    'domain': item['domain'],
+                    'section': item['section'],
+                    'date': item['date']
+                } for item in scraped_content]
+            }
             
             return result
             
         except Exception as e:
-            logging.error(f"Error generating analysis: {str(e)}")
+            logging.error(f"Error in analysis: {str(e)}")
             return generate_fallback_response(business_query)
-    
-    return generate_fallback_response(business_query)
+            
+    except Exception as e:
+        logging.error(f"Error in feedback analysis: {str(e)}")
+        return generate_fallback_response(business_query)
 
 def extract_section(text, section_name):
     """Extract content from a specific section"""
@@ -228,3 +250,58 @@ def generate_fallback_response(business_query):
         ],
         "sources": []
     } 
+
+def perform_search(query, use_custom_api=True):
+    """
+    Perform search with fallback mechanism
+    First tries Custom Search API, then falls back to googlesearch package
+    """
+    try:
+        if use_custom_api:
+            # Try Custom Search API first
+            api_key = "AIzaSyAxeLlJ6vZxOl-TblUJg_dInBS3vNxaFVY"
+            search_engine_id = "37793b12975da4e35"
+            url = f"https://www.googleapis.com/customsearch/v1?key={api_key}&cx={search_engine_id}&q={query}&num=2"
+            
+            response = requests.get(url)
+            if response.status_code == 200:
+                search_results = response.json().get('items', [])
+                if search_results:
+                    return [item['link'] for item in search_results]
+            logging.warning("Custom Search API failed, falling back to googlesearch")
+        
+        # Fallback to googlesearch package
+        logging.info("Using googlesearch package")
+        return list(search(query, num_results=2, lang="en"))
+        
+    except Exception as e:
+        logging.error(f"Search error: {str(e)}")
+        return []
+
+def scrape_with_retry(url, max_retries=3):
+    """Helper function to scrape URL with retry logic"""
+    for attempt in range(max_retries):
+        try:
+            # Skip social media URLs
+            if any(x in url.lower() for x in ['linkedin', 'facebook', 'twitter', 'reddit']):
+                logging.info(f"Skipping social media URL: {url}")
+                return None
+                
+            response = firecrawl_app.scrape_url(
+                url=url,
+                params={'formats': ['markdown']}
+            )
+            if response and response.get('markdown'):
+                logging.info("Successfully scraped content")
+                return response.get('markdown')
+                
+        except Exception as e:
+            if "429" in str(e):  # Rate limit error
+                wait_time = (attempt + 1) * 10
+                logging.info(f"Rate limit hit, waiting {wait_time} seconds...")
+                time.sleep(wait_time)
+                continue
+            logging.error(f"Error scraping {url}: {str(e)}")
+            
+        time.sleep(2)  # Basic delay between attempts
+    return None 

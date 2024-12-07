@@ -24,7 +24,7 @@ except ImportError:
 logging.basicConfig(level=logging.DEBUG)
 
 # Initialize Firecrawl
-FIRECRAWL_API_KEY = "fc-b69d6504ab0a42b79e87b7827a538199"
+FIRECRAWL_API_KEY = "fc-43e5dcff501d4aef8cbccfa47b646f57"
 firecrawl_app = FirecrawlApp(api_key=FIRECRAWL_API_KEY)
 logging.info("Firecrawl initialized")
 
@@ -51,153 +51,148 @@ def extract_domain(url):
     except:
         return url
 
+def scrape_with_retry(url, max_retries=3):
+    """Helper function to scrape URL with retry logic"""
+    for attempt in range(max_retries):
+        try:
+            # Skip social media URLs
+            if any(x in url.lower() for x in ['linkedin', 'facebook', 'twitter', 'reddit']):
+                logging.info(f"Skipping social media URL: {url}")
+                return None
+                
+            response = firecrawl_app.scrape_url(
+                url=url,
+                params={'formats': ['markdown']}
+            )
+            if response and response.get('markdown'):
+                logging.info("Successfully scraped content")
+                return response.get('markdown')
+                
+        except Exception as e:
+            if "429" in str(e):  # Rate limit error
+                wait_time = (attempt + 1) * 10
+                logging.info(f"Rate limit hit, waiting {wait_time} seconds...")
+                time.sleep(wait_time)
+                continue
+            logging.error(f"Error scraping {url}: {str(e)}")
+            
+        time.sleep(2)  # Basic delay between attempts
+    return None
+
 def get_icp_data(business_query):
     """
-    Get ICP data using search and Firecrawl with improved rate limiting
+    Get ICP data using enhanced search and analysis
     """
     logging.info(f"\n{'='*50}\nGathering ICP data for: {business_query}\n{'='*50}")
     
-    result = {
-        "demographics": [],
-        "psychographics": [],
-        "professional": [],
-        "pain_points": [],
-        "additional_insights": [],
-        "sources": []
-    }
-    
+    # Enhanced search queries for better ICP analysis
     search_queries = [
-        f"{business_query} customer profile demographics",
-        f"{business_query} target market analysis",
-        f"{business_query} customer persona"
-    ]  # Reduced number of queries
+        # Company & Market Information
+        f"{business_query} target market analysis customer profile",
+        f"{business_query} ideal customer demographics data",
+        
+        # Customer Behavior & Needs
+        f"{business_query} customer pain points needs analysis",
+        f"{business_query} customer behavior purchasing patterns",
+        
+        # Professional & Industry Context
+        f"{business_query} industry analysis target audience",
+        f"{business_query} customer success stories case studies"
+    ]
     
     scraped_content = []
     
-    def scrape_with_retry(url, max_retries=3):
-        """Helper function to scrape URL with retry logic"""
-        for attempt in range(max_retries):
-            try:
-                response = firecrawl_app.scrape_url(
-                    url=url,
-                    params={'formats': ['markdown']}
-                )
-                if response and 'markdown' in response:
-                    return response['markdown']
-            except Exception as e:
-                if "429" in str(e):  # Rate limit error
-                    wait_time = (attempt + 1) * 10
-                    logging.info(f"Rate limit hit, waiting {wait_time} seconds...")
-                    time.sleep(wait_time)
-                    continue
-                logging.error(f"Error scraping {url}: {str(e)}")
-            time.sleep(2)  # Basic delay between attempts
-        return None
-
     for query in search_queries:
         try:
             logging.info(f"\nSearching for: {query}")
-            urls = list(search(
-                query,
-                num=3,  # Reduced number of results
-                stop=3,
-                lang="en"
-            ))
+            urls = list(search(query, num_results=3, lang="en"))
             
-            if not urls:
-                logging.warning(f"No URLs found for query: {query}")
-                continue
-                
             for url in urls:
-                if not any(x in url.lower() for x in ['linkedin', 'facebook', 'twitter']):
-                    content = scrape_with_retry(url)
-                    if content and len(content) > 200:
-                        logging.info("Successfully scraped content")
-                        scraped_content.append({
-                            'url': url,
-                            'domain': extract_domain(url),
-                            'section': 'ICP Analysis',
-                            'date': datetime.now().strftime("%Y-%m-%d"),
-                            'content': content[:2000]  # Limit content size
-                        })
-                        break  # Break after successful scrape
-                        
-            time.sleep(3)  # Delay between searches
+                content = scrape_with_retry(url)
+                if content and len(content) > 200:
+                    scraped_content.append({
+                        'url': url,
+                        'domain': extract_domain(url),
+                        'section': 'ICP Analysis',
+                        'date': datetime.now().strftime("%Y-%m-%d"),
+                        'content': content[:2000]
+                    })
+            time.sleep(2)
             
         except Exception as e:
             logging.error(f"Error in search: {str(e)}")
-            time.sleep(5)  # Additional delay on error
             continue
-    
+
     if scraped_content:
         try:
-            prompt = f"""
-            Analyze this content about {business_query}'s customers and create a detailed ICP.
-            
+            enhanced_prompt = f"""
+            Task: Analyze the provided content to create a detailed Ideal Customer Profile (ICP) for {business_query}.
+
             Content to analyze:
             {[item['content'] for item in scraped_content]}
-            
-            Provide a comprehensive analysis with these exact sections.
-            Mark inferred information with "(Inferred)".
 
-            DEMOGRAPHICS:
-            • Age Range
-            • Income Level
-            • Location
-            • Education
+            Provide a comprehensive ICP analysis with the following structure:
 
-            PSYCHOGRAPHICS:
-            • Values and Beliefs
-            • Lifestyle
-            • Interests
-            • Behaviors
+            Demographics:
+            • Age Range: [Specific age range] (Inferred based on industry and product/service)
+            • Income Level: [Income bracket] (Inferred based on product/service pricing)
+            • Location: [Geographic region] (Inferred based on target market)
+            • Education: [Educational level] (Inferred based on product/service complexity)
 
-            PROFESSIONAL CHARACTERISTICS:
-            • Industry
-            • Company Size
-            • Role/Position
-            • Decision Making Authority
+            Psychographics:
+            • Values and Beliefs: [Core values] (Inferred based on industry and product/service)
+            • Lifestyle: [Lifestyle preferences] (Inferred based on target audience)
+            • Interests: [Relevant interests] (Inferred based on industry and product/service)
+            • Behaviors: [Buying habits, decision-making processes] (Inferred based on industry)
 
-            PAIN POINTS & NEEDS:
-            • Key Challenges
-            • Motivations
-            • Goals
-            • Purchase Triggers
+            Professional Characteristics:
+            • Industry: [Primary industries] (Inferred based on target market)
+            • Company Size: [Company size categories] (Inferred based on target market)
+            • Role/Position: [Job titles] (Inferred based on product/service)
+            • Decision Making Authority: [Decision-making process] (Inferred based on complexity)
 
-            ADDITIONAL INSIGHTS:
-            • Unique characteristics
-            • Special considerations
-            • Key differentiators
+            Pain Points & Needs:
+            • Key Challenges: [Specific problems] (Inferred based on industry)
+            • Motivations: [Driving factors] (Inferred based on industry)
+            • Goals: [Desired outcomes] (Inferred based on industry)
+            • Purchase Triggers: [Factors influencing purchase] (Inferred based on industry)
+
+            Additional Insights:
+            • [Unique characteristic or behavior]
+            • [Specific need or preference]
+            • [Potential opportunity or challenge]
+
+            Format each point with specific data where available and mark inferences clearly.
+            Provide concrete examples and quantifiable metrics when possible.
             """
             
-            response = model.generate_content(prompt)
+            response = model.generate_content(enhanced_prompt)
             analysis = response.text
             
-            # Save Gemini output to a text file
-            output_file_path = os.path.join(output_folder, 'compitoone.txt')
-            with open(output_file_path, 'w') as output_file:
-                output_file.write(analysis)
-                logging.info(f"Gemini output saved to {output_file_path}")
-            
+            # Save to file with better organization
+            output_file = os.path.join(output_folder, f'icp_analysis_{datetime.now().strftime("%Y%m%d_%H%M%S")}.txt')
+            with open(output_file, 'w') as f:
+                f.write(f"ICP Analysis for: {business_query}\n")
+                f.write(f"Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+                f.write("="*50 + "\n\n")
+                f.write(analysis)
+                
             # Process and structure the response
             sections = extract_meaningful_content(analysis)
             if sections:
-                processed_response = {
+                return {
                     **sections,
-                    "sources": [{'url': item['url'], 'domain': item['domain'], 
-                               'section': item['section'], 'date': item['date']} 
-                              for item in scraped_content]
+                    "sources": [{
+                        'url': item['url'],
+                        'domain': item['domain'],
+                        'section': item['section'],
+                        'date': item['date']
+                    } for item in scraped_content]
                 }
                 
-                if is_valid_response(processed_response):
-                    return processed_response
-                    
-            return generate_fallback_response(business_query)
-            
         except Exception as e:
-            logging.error(f"Error in Gemini analysis: {str(e)}")
-            return generate_fallback_response(business_query)
-    
+            logging.error(f"Error in analysis: {str(e)}")
+            
     return generate_fallback_response(business_query)
 
 def process_section(text, section_name):
@@ -227,25 +222,40 @@ def process_section(text, section_name):
         return []
 
 def extract_meaningful_content(text):
-    """Extract meaningful content from Gemini's response"""
-    try:
-        sections = {
-            "demographics": process_section(text, "DEMOGRAPHICS"),
-            "psychographics": process_section(text, "PSYCHOGRAPHICS"),
-            "professional": process_section(text, "PROFESSIONAL CHARACTERISTICS"),
-            "pain_points": process_section(text, "PAIN POINTS & NEEDS"),
-            "additional_insights": process_section(text, "ADDITIONAL INSIGHTS")
-        }
-        
-        # Validate each section has meaningful content
-        for key, value in sections.items():
-            if not value or all("not specify" in item.lower() for item in value):
-                sections[key] = [f"No specific {key} data available"]
+    """Enhanced content extraction with better structure"""
+    sections = {
+        "demographics": [],
+        "psychographics": [],
+        "professional": [],
+        "pain_points": [],
+        "additional_insights": []
+    }
+    
+    current_section = None
+    
+    for line in text.split('\n'):
+        line = line.strip()
+        if not line:
+            continue
+            
+        # Identify sections
+        if "Demographics:" in line:
+            current_section = "demographics"
+        elif "Psychographics:" in line:
+            current_section = "psychographics"
+        elif "Professional Characteristics:" in line:
+            current_section = "professional"
+        elif "Pain Points & Needs:" in line:
+            current_section = "pain_points"
+        elif "Additional Insights:" in line:
+            current_section = "additional_insights"
+        elif current_section and line.startswith('•'):
+            # Clean and add the insight
+            insight = line[1:].strip()
+            if insight and not insight.endswith(':'):
+                sections[current_section].append(insight)
                 
-        return sections
-    except Exception as e:
-        logging.error(f"Error extracting meaningful content: {str(e)}")
-        return None
+    return sections
 
 def is_valid_response(response):
     """Check if response has meaningful content"""

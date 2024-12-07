@@ -7,7 +7,8 @@ from concurrent.futures import ThreadPoolExecutor
 
 # Initialize Flask app
 app = Flask(__name__)
-CORS(app)
+# Configure CORS to allow all origins and methods
+CORS(app, resources={r"/api/*": {"origins": "*", "methods": ["GET", "POST", "OPTIONS"]}})
 
 # Logging configuration
 logging.basicConfig(level=logging.DEBUG)
@@ -35,7 +36,11 @@ from swot_api import get_swot_data
 def analyze_competitors():
     """Endpoint for competitor analysis"""
     if request.method == 'OPTIONS':
-        return '', 204
+        # Add required CORS headers for preflight requests
+        response = jsonify({})
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
+        response.headers.add('Access-Control-Allow-Methods', 'POST')
+        return response, 204
         
     try:
         data = request.json
@@ -67,7 +72,10 @@ def analyze_competitors():
 def analyze_market_trends():
     """Endpoint for market trends analysis"""
     if request.method == 'OPTIONS':
-        return '', 204
+        response = jsonify({})
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
+        response.headers.add('Access-Control-Allow-Methods', 'POST')
+        return response, 204
         
     try:
         data = request.json
@@ -107,7 +115,10 @@ def analyze_icp_endpoint():
 def analyze_journey():
     """Endpoint for journey analysis"""
     if request.method == 'OPTIONS':
-        return '', 204
+        response = jsonify({})
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
+        response.headers.add('Access-Control-Allow-Methods', 'POST')
+        return response, 204
         
     try:
         data = request.json
@@ -134,7 +145,10 @@ def analyze_journey():
 def analyze_features():
     """Endpoint for feature priority analysis"""
     if request.method == 'OPTIONS':
-        return '', 204
+        response = jsonify({})
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
+        response.headers.add('Access-Control-Allow-Methods', 'POST')
+        return response, 204
         
     try:
         data = request.json
@@ -161,7 +175,10 @@ def analyze_features():
 def analyze_feedback():
     """Endpoint for feedback analysis"""
     if request.method == 'OPTIONS':
-        return '', 204
+        response = jsonify({})
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
+        response.headers.add('Access-Control-Allow-Methods', 'POST')
+        return response, 204
         
     try:
         data = request.json
@@ -188,34 +205,62 @@ def analyze_feedback():
 def analyze_gap():
     """Endpoint for gap analysis"""
     if request.method == 'OPTIONS':
-        return '', 204
+        response = jsonify({})
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
+        response.headers.add('Access-Control-Allow-Methods', 'POST')
+        return response, 204
         
     try:
         data = request.json
-        query = data.get('query')
-        
-        if not query:
+        if not data or 'query' not in data:
             return jsonify({'error': 'No query provided'}), 400
 
-        # Run gap analysis in a separate thread
-        future = executor.submit(get_gap_data, query)
-        gap_info = future.result(timeout=60)
+        query = data.get('query')
+        if not query.strip():
+            return jsonify({'error': 'Empty query provided'}), 400
 
-        # Save the gap analysis output to a text file
-        with open(os.path.join(output_dir, 'compitoone.txt'), 'a') as f:
-            f.write(str(gap_info))
+        # Run gap analysis in a separate thread with timeout
+        try:
+            future = executor.submit(get_gap_data, query)
+            gap_info = future.result(timeout=60)  # 60 second timeout
+            
+            if not gap_info:
+                return jsonify({'error': 'No analysis results available'}), 404
 
-        return jsonify(gap_info)
+            # Save the gap analysis output to a text file
+            try:
+                with open(os.path.join(output_dir, 'compitoone.txt'), 'a') as f:
+                    f.write(f"\nGap Analysis for {query}:\n")
+                    f.write("="*50 + "\n")
+                    f.write(str(gap_info))
+                    f.write("\n" + "="*50 + "\n")
+            except Exception as file_error:
+                logging.error(f"Error saving gap analysis output: {str(file_error)}")
+                # Continue even if file saving fails
+
+            return jsonify(gap_info)
+
+        except TimeoutError:
+            return jsonify({'error': 'Analysis timed out'}), 504
+        except Exception as analysis_error:
+            logging.error(f"Error in gap analysis execution: {str(analysis_error)}")
+            return jsonify({'error': 'Analysis failed', 'details': str(analysis_error)}), 500
 
     except Exception as e:
-        logging.error(f"Error during gap analysis: {str(e)}")
-        return jsonify({'error': str(e)}), 500
+        logging.error(f"Error in gap analysis endpoint: {str(e)}")
+        return jsonify({
+            'error': 'Failed to process request',
+            'details': str(e)
+        }), 500
 
 @app.route('/api/impact-assessment', methods=['POST', 'OPTIONS'])
 def analyze_impact():
     """Endpoint for impact assessment"""
     if request.method == 'OPTIONS':
-        return '', 204
+        response = jsonify({})
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
+        response.headers.add('Access-Control-Allow-Methods', 'POST')
+        return response, 204
         
     try:
         data = request.json
@@ -242,7 +287,10 @@ def analyze_impact():
 def analyze_market():
     """Endpoint for market assessment"""
     if request.method == 'OPTIONS':
-        return '', 204
+        response = jsonify({})
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
+        response.headers.add('Access-Control-Allow-Methods', 'POST')
+        return response, 204
         
     try:
         data = request.json
@@ -269,7 +317,10 @@ def analyze_market():
 def analyze_swot():
     """Endpoint for SWOT analysis"""
     if request.method == 'OPTIONS':
-        return '', 204
+        response = jsonify({})
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
+        response.headers.add('Access-Control-Allow-Methods', 'POST')
+        return response, 204
         
     try:
         data = request.json

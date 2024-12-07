@@ -6,12 +6,13 @@ import os
 import requests
 import time
 import google.generativeai as genai
+from googlesearch import search  # Add this import at the top
 
 # Initialize logging
 logging.basicConfig(level=logging.DEBUG)
 
 # Initialize Firecrawl
-FIRECRAWL_API_KEY = "fc-b69d6504ab0a42b79e87b7827a538199"
+FIRECRAWL_API_KEY = "fc-43e5dcff501d4aef8cbccfa47b646f57"
 firecrawl_app = FirecrawlApp(api_key=FIRECRAWL_API_KEY)
 logging.info("Firecrawl initialized")
 
@@ -38,148 +39,175 @@ def extract_domain(url):
         return url
 
 def get_impact_data(business_query):
-    """Get impact assessment data using custom search API and Firecrawl"""
-    logging.info(f"\n{'='*50}\nGathering impact data for: {business_query}\n{'='*50}")
-    
-    result = {
-        "social_impact": [],
-        "economic_impact": [],
-        "environmental_impact": [],
-        "long_term_impact": [],
-        "sources": []
-    }
-    
-    search_queries = [
-        f"{business_query} social impact analysis",
-        f"{business_query} environmental impact report",
-        f"{business_query} economic impact assessment",
-        f"{business_query} sustainability initiatives",
-        f"{business_query} community impact"
-    ]
-    
-    scraped_content = []
-    max_attempts = 2
-    search_api_key = "AIzaSyAxeLlJ6vZxOl-TblUJg_dInBS3vNxaFVY"
-    search_engine_id = "37793b12975da4e35"
-    
-    for query in search_queries:
-        try:
-            logging.info(f"\nSearching for: {query}")
-            search_url = f"https://www.googleapis.com/customsearch/v1?key={search_api_key}&cx={search_engine_id}&q={query}&num=2"
-            response = requests.get(search_url)
-            search_results = response.json().get('items', [])
-            attempts = 0
+    """Get impact assessment data using search and Firecrawl"""
+    try:
+        if not business_query:
+            logging.error("No business query provided")
+            return generate_fallback_response("Unknown Business")
             
-            for item in search_results:
-                url = item['link']
-                if attempts >= max_attempts:
-                    break
-                    
-                if not any(x in url.lower() for x in ['linkedin', 'facebook', 'twitter']):
-                    try:
-                        logging.info(f"Scraping: {url}")
-                        response = firecrawl_app.scrape_url(
-                            url=url,
-                            params={'formats': ['markdown']}
-                        )
-                        
-                        if response and 'markdown' in response:
-                            content = response['markdown']
-                            if len(content) > 200:
-                                logging.info("Successfully scraped content")
-                                scraped_content.append({
-                                    'url': url,
-                                    'domain': extract_domain(url),
-                                    'section': 'Impact Analysis',
-                                    'date': datetime.now().strftime("%Y-%m-%d"),
-                                    'content': content[:1000]
-                                })
-                                break
-                    except Exception as e:
-                        if "402" in str(e):
-                            logging.warning(f"Firecrawl credit limit reached for {url}")
+        logging.info(f"\n{'='*50}\nGathering impact data for: {business_query}\n{'='*50}")
+        
+        # 5 focused search queries for comprehensive impact assessment
+        search_queries = [
+            # Social & Community Impact
+            f"{business_query} social impact community benefits employment analysis",
+            
+            # Economic & Innovation Impact
+            f"{business_query} revenue growth innovation market impact analysis",
+            
+            # Environmental & Sustainability
+            f"{business_query} environmental impact sustainability carbon footprint",
+            
+            # Long-term Growth & Legacy
+            f"{business_query} future growth scalability long term impact",
+            
+            # Stakeholder & Ethical Impact
+            f"{business_query} stakeholder impact ethical considerations analysis"
+        ]
+        
+        scraped_content = []
+        use_custom_api = True
+        
+        for query in search_queries:
+            try:
+                logging.info(f"\nSearching for: {query}")
+                search_results = perform_search(query, use_custom_api)
+                
+                if not search_results and use_custom_api:
+                    use_custom_api = False
+                    search_results = perform_search(query, use_custom_api=False)
+                
+                if search_results:
+                    for url in search_results:
+                        content = scrape_with_retry(url)
+                        if content and len(content) > 200:
                             scraped_content.append({
                                 'url': url,
                                 'domain': extract_domain(url),
-                                'section': 'Impact Analysis (Limited)',
+                                'section': 'Impact Analysis',
                                 'date': datetime.now().strftime("%Y-%m-%d"),
-                                'content': f"Content from {extract_domain(url)} about {business_query}'s impact"
+                                'content': content[:2000]
                             })
-                        else:
-                            logging.error(f"Error scraping {url}: {str(e)}")
-                        attempts += 1
-                        continue
-            
-            time.sleep(2)
-            
-        except Exception as e:
-            logging.error(f"Error in search: {str(e)}")
-            continue
+                time.sleep(2)
+                
+            except Exception as e:
+                logging.error(f"Error in search for query '{query}': {str(e)}")
+                continue
 
-    if scraped_content:
+        if not scraped_content:
+            logging.warning("No content scraped, returning fallback response")
+            return generate_fallback_response(business_query)
+
         try:
-            prompt = f"""
-            Analyze this content about {business_query}'s impact and create a detailed assessment.
-            
+            impact_prompt = f"""
+            Task: Analyze the provided content to create a detailed impact assessment for {business_query}.
+
             Content to analyze:
             {[item['content'] for item in scraped_content]}
-            
-            Provide a structured analysis with these exact sections:
 
-            SOCIAL IMPACT:
-            • Community Benefits
-            • Employment Impact
-            • Social Value
+            Impact Assessment:
+            Social Impact:
+            Community Benefits:
+            • [Identify specific community benefits]
+            • [List local development initiatives]
 
-            ECONOMIC IMPACT:
-            • Revenue Generation
-            • Market Growth
-            • Innovation Impact
+            Employment Impact:
+            • [Assess direct/indirect job creation]
+            • [Evaluate economic impact on region]
 
-            ENVIRONMENTAL IMPACT:
-            • Sustainability
-            • Resource Usage
-            • Carbon Footprint
+            Social Value:
+            • [Evaluate quality of life improvements]
+            • [Assess diversity and inclusion impact]
 
-            LONG-TERM IMPACT:
-            • Future Growth
-            • Scalability
-            • Legacy Value
+            Economic Impact:
+            Revenue Generation:
+            • [Analyze revenue streams and growth]
+            • [Identify diversification opportunities]
 
-            Use factual information where available, mark inferences with (Inferred).
-            Format each point as a clear, actionable item.
+            Market Growth:
+            • [Assess market expansion impact]
+            • [Evaluate innovation contribution]
+
+            Innovation Impact:
+            • [Evaluate technological advancement]
+            • [Identify intellectual property assets]
+
+            Environmental Impact:
+            Sustainability:
+            • [Assess sustainable practices]
+            • [List environmental certifications]
+
+            Resource Usage:
+            • [Evaluate resource efficiency]
+            • [Identify conservation opportunities]
+
+            Carbon Footprint:
+            • [Assess emissions and impact]
+            • [List reduction strategies]
+
+            Long-Term Impact:
+            Future Growth:
+            • [Analyze growth potential]
+            • [Identify emerging opportunities]
+
+            Scalability:
+            • [Assess scaling capabilities]
+            • [Identify scaling challenges]
+
+            Legacy Value:
+            • [Evaluate lasting societal impact]
+            • [Assess long-term contributions]
+
+            Additional Considerations:
+            • Data-Driven Analysis: [Provide quantifiable metrics]
+            • Stakeholder Perspective: [Assess stakeholder impacts]
+            • Ethical Considerations: [Evaluate ethical implications]
+
+            Format each point with specific data where available.
+            Mark inferences with (Inferred).
+            Prioritize based on impact significance.
             """
             
-            response = model.generate_content(prompt)
+            response = model.generate_content(impact_prompt)
             analysis = response.text
             
-            # Save Gemini output to a text file
-            output_file_path = os.path.join(output_folder, 'compitoone.txt')
-            with open(output_file_path, 'w') as output_file:
-                output_file.write(analysis)
-                logging.info(f"Gemini output saved to {output_file_path}")
+            # Save to file with timestamp
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            output_file = os.path.join(output_folder, f'impact_analysis_{timestamp}.txt')
             
-            # Extract sections
-            result["social_impact"] = extract_section(analysis, "SOCIAL IMPACT")
-            result["economic_impact"] = extract_section(analysis, "ECONOMIC IMPACT")
-            result["environmental_impact"] = extract_section(analysis, "ENVIRONMENTAL IMPACT")
-            result["long_term_impact"] = extract_section(analysis, "LONG-TERM IMPACT")
+            with open(output_file, 'w') as f:
+                f.write(f"Impact Assessment for: {business_query}\n")
+                f.write(f"Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+                f.write("="*50 + "\n\n")
+                f.write(analysis + "\n\n")
+                f.write("Data Sources:\n")
+                for source in scraped_content:
+                    f.write(f"- {source['domain']} ({source['date']})\n")
             
-            # Add sources
-            result["sources"] = [{
-                'url': item['url'],
-                'domain': item['domain'],
-                'section': item['section'],
-                'date': item['date']
-            } for item in scraped_content]
+            # Process and structure the response
+            result = {
+                "social_impact": extract_section(analysis, "Social Impact"),
+                "economic_impact": extract_section(analysis, "Economic Impact"),
+                "environmental_impact": extract_section(analysis, "Environmental Impact"),
+                "long_term_impact": extract_section(analysis, "Long-Term Impact"),
+                "additional_considerations": extract_section(analysis, "Additional Considerations"),
+                "sources": [{
+                    'url': item['url'],
+                    'domain': item['domain'],
+                    'section': item['section'],
+                    'date': item['date']
+                } for item in scraped_content]
+            }
             
             return result
             
         except Exception as e:
-            logging.error(f"Error generating analysis: {str(e)}")
+            logging.error(f"Error in analysis: {str(e)}")
             return generate_fallback_response(business_query)
-    
-    return generate_fallback_response(business_query)
+            
+    except Exception as e:
+        logging.error(f"Error in impact assessment: {str(e)}")
+        return generate_fallback_response(business_query)
 
 def extract_section(text, section_name):
     """Extract content from a specific section"""
@@ -228,3 +256,58 @@ def generate_fallback_response(business_query):
         ],
         "sources": []
     } 
+
+def perform_search(query, use_custom_api=True):
+    """
+    Perform search with fallback mechanism
+    First tries Custom Search API, then falls back to googlesearch package
+    """
+    try:
+        if use_custom_api:
+            # Try Custom Search API first
+            api_key = "AIzaSyAxeLlJ6vZxOl-TblUJg_dInBS3vNxaFVY"
+            search_engine_id = "37793b12975da4e35"
+            url = f"https://www.googleapis.com/customsearch/v1?key={api_key}&cx={search_engine_id}&q={query}&num=2"
+            
+            response = requests.get(url)
+            if response.status_code == 200:
+                search_results = response.json().get('items', [])
+                if search_results:
+                    return [item['link'] for item in search_results]
+            logging.warning("Custom Search API failed, falling back to googlesearch")
+        
+        # Fallback to googlesearch package
+        logging.info("Using googlesearch package")
+        return list(search(query, num_results=2, lang="en"))
+        
+    except Exception as e:
+        logging.error(f"Search error: {str(e)}")
+        return []
+
+def scrape_with_retry(url, max_retries=3):
+    """Helper function to scrape URL with retry logic"""
+    for attempt in range(max_retries):
+        try:
+            # Skip social media URLs
+            if any(x in url.lower() for x in ['linkedin', 'facebook', 'twitter', 'reddit']):
+                logging.info(f"Skipping social media URL: {url}")
+                return None
+                
+            response = firecrawl_app.scrape_url(
+                url=url,
+                params={'formats': ['markdown']}
+            )
+            if response and response.get('markdown'):
+                logging.info("Successfully scraped content")
+                return response.get('markdown')
+                
+        except Exception as e:
+            if "429" in str(e):  # Rate limit error
+                wait_time = (attempt + 1) * 10
+                logging.info(f"Rate limit hit, waiting {wait_time} seconds...")
+                time.sleep(wait_time)
+                continue
+            logging.error(f"Error scraping {url}: {str(e)}")
+            
+        time.sleep(2)  # Basic delay between attempts
+    return None 

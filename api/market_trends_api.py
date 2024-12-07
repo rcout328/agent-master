@@ -4,14 +4,13 @@ from firecrawl import FirecrawlApp
 import os
 import time
 import google.generativeai as genai
-import uuid  # Import uuid for unique file naming
 import requests  # Import requests for making API calls
 
 # Initialize logging
 logging.basicConfig(level=logging.DEBUG)
 
 # Initialize Firecrawl
-FIRECRAWL_API_KEY = "fc-b69d6504ab0a42b79e87b7827a538199"
+FIRECRAWL_API_KEY = "fc-43e5dcff501d4aef8cbccfa47b646f57"
 firecrawl_app = FirecrawlApp(api_key=FIRECRAWL_API_KEY)
 logging.info("Firecrawl initialized")
 
@@ -25,13 +24,12 @@ else:
     logging.warning("No Gemini API key found")
 
 def get_trends_data(query):
-    """
-    Get market trends data using custom search API and Firecrawl with improved scraping
-    """
+    company_name = "100xEngineers"
     logging.info(f"\n{'='*50}\nGathering trends data for: {query}\n{'='*50}")
     
-    # Define search queries
+    # Define search queries with better error handling
     search_queries = [
+        f"{company_name} overview",
         f"{query} market size revenue statistics",
         f"{query} industry market share data",
         f"{query} market growth forecast CAGR",
@@ -41,25 +39,29 @@ def get_trends_data(query):
     
     scraped_content = []
 
-    for search_query in search_queries:
-        try:
-            logging.info(f"\nSearching for: {search_query}")
-            # Custom Search API request
-            api_key = "AIzaSyAxeLlJ6vZxOl-TblUJg_dInBS3vNxaFVY"
-            search_engine_id = "37793b12975da4e35"
-            url = f"https://www.googleapis.com/customsearch/v1?q={search_query}&key={api_key}&cx={search_engine_id}&num=3"
-            response = requests.get(url)
-            response_data = response.json()
-            urls = [item['link'] for item in response_data.get('items', [])]
+    try:
+        for search_query in search_queries:
+            try:
+                logging.info(f"\nSearching for: {search_query}")
+                # Custom Search API request with error handling
+                api_key = "AIzaSyAxeLlJ6vZxOl-TblUJg_dInBS3vNxaFVY"
+                search_engine_id = "37793b12975da4e35"
+                url = f"https://www.googleapis.com/customsearch/v1?q={search_query}&key={api_key}&cx={search_engine_id}&num=3"
+                
+                response = requests.get(url, timeout=10)  # Add timeout
+                if not response.ok:
+                    logging.error(f"Search API error: {response.status_code}")
+                    continue
+                    
+                response_data = response.json()
+                if 'items' not in response_data:
+                    logging.warning(f"No search results for: {search_query}")
+                    continue
+                    
+                urls = [item['link'] for item in response_data.get('items', [])]
 
-            if not urls:
-                logging.warning(f"No URLs found for query: {search_query}")
-                continue
-            
-            for url in urls:
-                if not any(x in url.lower() for x in ['linkedin', 'facebook', 'twitter']):
-                    attempt = 0
-                    while attempt < 5:  # Retry up to 5 times
+                for url in urls:
+                    if not any(x in url.lower() for x in ['linkedin', 'facebook', 'twitter', 'reddit']):
                         try:
                             logging.info(f"Scraping: {url}")
                             response = firecrawl_app.scrape_url(
@@ -70,105 +72,69 @@ def get_trends_data(query):
                             if response and 'markdown' in response:
                                 content = response['markdown']
                                 if len(content) > 200:
-                                    logging.info("Successfully scraped content")
                                     scraped_content.append({
                                         'url': url,
                                         'domain': extract_domain(url),
                                         'section': 'Market Trends',
                                         'date': datetime.now().strftime("%Y-%m-%d"),
-                                        'content': content[:2000],  # Limit content size
+                                        'content': content[:2000]
                                     })
-                                    break
-                            break  # Exit retry loop if successful
                         except Exception as e:
-                            logging.error(f"Error scraping {url}: {str(e)}")
-                            attempt += 1
-                            time.sleep(2 ** attempt)  # Exponential backoff
-                    else:
-                        logging.warning(f"Failed to scrape {url} after multiple attempts.")
-            
-            time.sleep(2)
-            
-        except Exception as e:
-            logging.error(f"Error in search: {str(e)}")
-            continue
+                            logging.error(f"Scraping error for {url}: {str(e)}")
+                            continue
+                            
+                time.sleep(2)  # Rate limiting
+                
+            except Exception as e:
+                logging.error(f"Error in search query {search_query}: {str(e)}")
+                continue
 
-    if not scraped_content:
-        logging.warning("No content was scraped, returning fallback response")
+        if not scraped_content:
+            logging.warning("No content was scraped, returning fallback response")
+            return generate_fallback_response(query)
+
+        # Process the scraped content
+        return process_scraped_content(scraped_content, query)
+
+    except Exception as e:
+        logging.error(f"Error during market trends analysis: {str(e)}")
         return generate_fallback_response(query)
 
-    # Generate analysis using enhanced prompt
-    if scraped_content:
-        try:
-            analysis_prompt = f"""
-            Analyze this market data about {query} and provide a detailed trends analysis.
-            
-            Raw Data:
-            {[item['content'] for item in scraped_content]}
-            
-            Create a comprehensive market trends report with these exact sections:
-
-            1. MARKET SIZE & GROWTH
-            • Total Market Value
-            • Market Segments
-            • Regional Distribution
-
-            2. COMPETITIVE LANDSCAPE
-            • Market Leaders
-            • Market Differentiators
-            • Industry Dynamics
-
-            3. INDUSTRY TRENDS
-            • Current Trends
-            • Technology Impact
-            • Regulatory Environment
-
-            4. GROWTH FORECAST
-            • Short-Term Outlook
-            • Long-Term Potential
-            • Growth Drivers
-
-            5. RISK ASSESSMENT
-            • Market Challenges
-            • Economic Factors
-            • Competitive Threats
-
-            Format each point with specific data where available.
-            Mark estimates or inferences with (Inferred).
-            Include numerical data and percentages where possible.
-            """
-            
-            response = model.generate_content(analysis_prompt)
-            analysis = response.text
-            
-            # Create directory for storing Gemini output
-            output_dir = 'gemini_outputs'
-            os.makedirs(output_dir, exist_ok=True)
-            
-            # Save Gemini output to a specific txt file
-            output_filename = os.path.join(output_dir, 'markettrand.txt')
-            with open(output_filename, 'w') as file:
-                file.write(analysis)
-            logging.info(f"Gemini output saved to {output_filename}")
-            
-            # Process and structure the analysis
-            result = process_analysis(analysis, scraped_content)
-            
-            # Add sources
-            result["sources"] = [{
+def process_scraped_content(scraped_content, query):
+    try:
+        # Generate analysis using the scraped content
+        analysis = generate_analysis(scraped_content, query)
+        
+        # Structure the response
+        result = {
+            "market_size_growth": {
+                "total_market_value": extract_bullet_points(analysis, "Market Size"),
+                "market_segments": extract_bullet_points(analysis, "Market Segments"),
+                "regional_distribution": extract_bullet_points(analysis, "Regional Distribution")
+            },
+            "competitive_landscape": {
+                "market_leaders": extract_bullet_points(analysis, "Market Leaders"),
+                "market_differentiators": extract_bullet_points(analysis, "Market Differentiators"),
+                "industry_dynamics": extract_bullet_points(analysis, "Industry Dynamics")
+            },
+            "consumer_analysis": {
+                "segments": extract_bullet_points(analysis, "Consumer Segments"),
+                "behavior_patterns": extract_bullet_points(analysis, "Behavior Patterns"),
+                "pain_points": extract_bullet_points(analysis, "Pain Points")
+            },
+            "metrics": extract_metrics(scraped_content),
+            "sources": [{
                 'url': item['url'],
                 'domain': item['domain'],
                 'section': item['section'],
                 'date': item['date']
             } for item in scraped_content]
-
-            return result
-            
-        except Exception as e:
-            logging.error(f"Error in analysis: {str(e)}")
-            return generate_fallback_response(query)
-
-    return generate_fallback_response(query)
+        }
+        
+        return result
+    except Exception as e:
+        logging.error(f"Error processing scraped content: {str(e)}")
+        return generate_fallback_response(query)
 
 def extract_domain(url):
     """Extract domain name from URL"""
@@ -216,60 +182,54 @@ def process_analysis(analysis, scraped_content):
         "market_size_growth": {
             "total_market_value": [],
             "market_segments": [],
-            "regional_distribution": []
+            "regional_distribution": [],
+            "growth_drivers": []
         },
         "competitive_landscape": {
             "market_leaders": [],
             "market_differentiators": [],
-            "industry_dynamics": []
+            "industry_dynamics": [],
+            "entry_barriers": []
         },
-        "industry_trends": {
+        "consumer_analysis": {
+            "segments": [],
+            "behavior_patterns": [],
+            "pain_points": [],
+            "decision_factors": []
+        },
+        "technology_innovation": {
             "current_trends": [],
-            "technology_impact": [],
-            "regulatory_environment": []
+            "emerging_tech": [],
+            "digital_impact": [],
+            "innovation_opportunities": []
         },
-        "growth_forecast": {
-            "short_term": [],
-            "long_term": [],
-            "growth_drivers": []
+        "regulatory_environment": {
+            "key_regulations": [],
+            "compliance_requirements": [],
+            "environmental_impact": [],
+            "sustainability": []
         },
-        "risk_assessment": {
-            "market_challenges": [],
-            "economic_factors": [],
-            "competitive_threats": []
+        "future_outlook": {
+            "growth_forecast": [],
+            "opportunities": [],
+            "challenges": [],
+            "evolution_scenarios": []
+        },
+        "strategic_recommendations": {
+            "entry_strategies": [],
+            "product_development": [],
+            "tech_investments": [],
+            "risk_mitigation": []
         },
         "metrics": extract_metrics(scraped_content),
         "sources": []
     }
 
-    # Extract sections
-    result["market_size_growth"]["total_market_value"] = extract_bullet_points(analysis, "Total Market Value")
-    result["market_size_growth"]["market_segments"] = extract_bullet_points(analysis, "Market Segments")
-    result["market_size_growth"]["regional_distribution"] = extract_bullet_points(analysis, "Regional Distribution")
-    
-    result["competitive_landscape"]["market_leaders"] = extract_bullet_points(analysis, "Top Market Players")
-    result["competitive_landscape"]["market_differentiators"] = extract_bullet_points(analysis, "Market Differentiators")
-    result["competitive_landscape"]["industry_dynamics"] = extract_bullet_points(analysis, "Industry Dynamics")
-    
-    result["industry_trends"]["current_trends"] = extract_bullet_points(analysis, "Current Trends")
-    result["industry_trends"]["technology_impact"] = extract_bullet_points(analysis, "Technology Impact")
-    result["industry_trends"]["regulatory_environment"] = extract_bullet_points(analysis, "Regulatory Environment")
-    
-    result["growth_forecast"]["short_term"] = extract_bullet_points(analysis, "Short-Term")
-    result["growth_forecast"]["long_term"] = extract_bullet_points(analysis, "Long-Term")
-    result["growth_forecast"]["growth_drivers"] = extract_bullet_points(analysis, "Growth Drivers")
-    
-    result["risk_assessment"]["market_challenges"] = extract_bullet_points(analysis, "Market Challenges")
-    result["risk_assessment"]["economic_factors"] = extract_bullet_points(analysis, "Economic Factors")
-    result["risk_assessment"]["competitive_threats"] = extract_bullet_points(analysis, "Competitive Threats")
-
-    # Add sources
-    result["sources"] = [{
-        'url': item['url'],
-        'domain': item['domain'],
-        'section': item['section'],
-        'date': item['date']
-    } for item in scraped_content]
+    # Extract sections using more specific patterns
+    for section in result.keys():
+        if section != "metrics" and section != "sources":
+            for subsection in result[section].keys():
+                result[section][subsection] = extract_bullet_points(analysis, subsection.replace('_', ' ').title())
 
     return result
 

@@ -38,7 +38,7 @@ export default function JourneyMappingContent() {
     setCurrentPhase(1);
 
     try {
-      const response = await fetch('http://127.0.0.1:5003/api/journey-analysis', {
+      const response = await fetch('http://127.0.0.1:5000/api/journey-analysis', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
