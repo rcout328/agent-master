@@ -145,7 +145,7 @@ export default function ComplianceCheckContent() {
   if (!mounted) return null;
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 p-3 sm:p-6 lg:p-8">
+    <main className="min-h-screen bg-black p-3 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto">
         <header className="text-center mb-6 sm:mb-8 relative">
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-800 mb-2">

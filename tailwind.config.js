@@ -3,7 +3,7 @@ module.exports = {
     darkMode: ["class"],
     content: [
         "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
-        "./src/Components/**/*.{js,ts,jsx,tsx,mdx}", // Ensure the folder name matches the actual case
+        "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
         "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
     ],
     theme: {
@@ -48,6 +48,11 @@ module.exports = {
                     '3': 'hsl(var(--chart-3))',
                     '4': 'hsl(var(--chart-4))',
                     '5': 'hsl(var(--chart-5))'
+                },
+                dark: {
+                    DEFAULT: '#131314',
+                    lighter: '#1D1D1F',
+                    light: '#2D2D2F',
                 }
             },
             borderRadius: {

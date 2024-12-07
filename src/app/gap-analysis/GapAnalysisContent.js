@@ -277,7 +277,7 @@ export default function GapAnalysisContent() {
     if (!processedData) return null;
 
     return (
-      <div className="bg-[#1D1D1F]/90 p-6 rounded-xl backdrop-blur-xl border border-purple-500/20 mt-6">
+      <div className="bg-black p-6 rounded-xl backdrop-blur-xl border border-purple-500/20 mt-6">
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-xl font-semibold text-purple-400">
             Gap Analysis Results
@@ -489,7 +489,7 @@ export default function GapAnalysisContent() {
   };
 
   return (
-    <div className="min-h-screen bg-[#131314] text-white">
+    <div className="min-h-screen bg-black text-white">
       <div className="max-w-7xl mx-auto px-4 py-6">
         {/* Navigation and View Toggle */}
         <div className="flex items-center justify-between mb-8">

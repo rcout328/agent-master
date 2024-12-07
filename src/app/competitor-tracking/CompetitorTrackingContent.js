@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import Link from 'next/link';
-import Competitor from './Competitor';
+import Comp from './Comp';
 
 // Initialize Gemini
 const genAI = new GoogleGenerativeAI("AIzaSyAE2SKBA38bOktQBdXS6mTK5Y1a-nKB3Mo");
@@ -16,6 +16,7 @@ export default function CompetitorTrackingContent() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [processedData, setProcessedData] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [showCompAnalysis, setShowCompAnalysis] = useState(false);
 
   useEffect(() => {
     loadAllSnapshots();
@@ -299,11 +300,26 @@ export default function CompetitorTrackingContent() {
     );
   };
 
+  if (showCompAnalysis) {
+    return <Comp onClose={() => setShowCompAnalysis(false)} />;
+  }
+
   return (
-    <div className="min-h-screen bg-[#131314] text-white">
-      {/* View Toggle */}
+    <div className="min-h-screen bg-[#black] text-white">
       <div className="max-w-7xl mx-auto px-4 py-6">
-        {/* Navigation Tabs */}
+        {/* Top Navigation */}
+        <div className="flex justify-between items-center p-4 border-b border-gray-800">
+          <div className="flex space-x-2">
+            <button 
+              onClick={() => setShowCompAnalysis(true)}
+              className="px-4 py-2 bg-[#1D1D1F] rounded-lg text-white hover:bg-purple-600/20 transition-colors"
+            >
+              View Competitor Analysis
+            </button>
+          </div>
+        </div>
+
+        {/* Navigation and View Toggle */}
         <div className="flex items-center justify-between mb-8">
           <div className="bg-[#1D1D1F] p-1 rounded-xl inline-flex">
             <Link 
@@ -315,7 +331,7 @@ export default function CompetitorTrackingContent() {
             <button 
               className="px-4 py-2 rounded-lg bg-purple-600 text-white"
             >
-              Competitor Analysis
+              Competitor Tracking
             </button>
           </div>
 
@@ -343,95 +359,8 @@ export default function CompetitorTrackingContent() {
           </div>
         </div>
 
-        {/* Content based on view mode */}
-        {viewMode === 'web' ? (
-          <Competitor />
-        ) : (
-          <div className="max-w-7xl mx-auto">
-            <div className="mb-8">
-              <h2 className="text-2xl font-bold text-white mb-6">Stored Snapshots</h2>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {storedSnapshots.map((snapshot) => (
-                  <div 
-                    key={snapshot.id}
-                    className="bg-[#1D1D1F]/90 p-6 rounded-xl backdrop-blur-xl border border-purple-500/20 hover:border-purple-500/40 transition-all cursor-pointer"
-                    onClick={() => setSelectedSnapshot(snapshot)}
-                  >
-                    <div className="flex flex-col space-y-3">
-                      <div className="flex items-center justify-between">
-                        <span className="text-gray-200 font-mono text-sm">{snapshot.id}</span>
-                        <span className="text-xs text-gray-500">
-                          {new Date(snapshot.timestamp).toLocaleDateString()}
-                        </span>
-                      </div>
-                      
-                      {/* Preview of data */}
-                      <div className="mt-2 text-sm text-gray-400">
-                        {snapshot.data && typeof snapshot.data === 'object' && (
-                          <div className="space-y-1">
-                            {Object.keys(snapshot.data).slice(0, 3).map(key => (
-                              <div key={key} className="truncate">
-                                {key}: {typeof snapshot.data[key] === 'object' ? '...' : snapshot.data[key]}
-                              </div>
-                            ))}
-                            {Object.keys(snapshot.data).length > 3 && (
-                              <div className="text-purple-400">+ more data...</div>
-                            )}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Selected Snapshot */}
-              {selectedSnapshot && (
-                <div className="mt-8 space-y-6">
-                  <div className="bg-[#1D1D1F]/90 p-6 rounded-xl backdrop-blur-xl border border-purple-500/20">
-                    <div className="flex justify-between items-center mb-4">
-                      <h3 className="text-xl font-semibold text-purple-400">
-                        Snapshot Details: {selectedSnapshot.id}
-                      </h3>
-                      <div className="flex space-x-4">
-                        <button 
-                          onClick={() => processSnapshotData(selectedSnapshot)}
-                          disabled={isProcessing}
-                          className={`px-4 py-2 rounded-lg transition-colors ${
-                            isProcessing 
-                              ? 'bg-purple-600/50 cursor-not-allowed' 
-                              : 'bg-purple-600 hover:bg-purple-700'
-                          }`}
-                        >
-                          {isProcessing ? 'Processing...' : 'Process Data'}
-                        </button>
-                        <button 
-                          onClick={() => setSelectedSnapshot(null)}
-                          className="text-gray-400 hover:text-gray-300"
-                        >
-                          Close
-                        </button>
-                      </div>
-                    </div>
-                    <pre className="bg-[#2D2D2F] p-4 rounded-lg overflow-auto max-h-96 text-sm text-gray-300">
-                      {JSON.stringify(selectedSnapshot.data, null, 2)}
-                    </pre>
-                  </div>
-
-                  {/* Processed Data Review */}
-                  {renderProcessedDataReview()}
-                </div>
-              )}
-
-              {storedSnapshots.length === 0 && (
-                <div className="text-center text-gray-400 py-12">
-                  No stored snapshots found
-                </div>
-              )}
-            </div>
-          </div>
-        )}
+        {/* Rest of your existing content */}
+        {/* ... */}
       </div>
     </div>
   );

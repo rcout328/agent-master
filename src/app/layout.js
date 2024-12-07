@@ -2,15 +2,15 @@
 
 import { Inter } from 'next/font/google';
 import './globals.css';
-import Sidebar from '@/components/Sidebar';
 import MobileNav from '@/components/MovielNav';
+import Sidebar from '@/components/Sidebar';
 
 const inter = Inter({ subsets: ['latin'] });
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={`${inter.className} bg-[#131314]`}>
+      <body className={`${inter.className} bg-black`}>
         {/* Mobile Navigation - Only visible on screens < 760px */}
         <div className="md:hidden">
           <MobileNav />
@@ -23,7 +23,7 @@ export default function RootLayout({ children }) {
           </div>
           
           {/* Main Content */}
-          <main className="flex-1 min-h-screen bg-[#131314] p-6">
+          <main className="flex-1 min-h-screen bg-black p-6">
             {/* Add top padding on mobile to account for mobile nav */}
             <div className="md:hidden h-[57px]"></div>
             {children}

@@ -505,7 +505,7 @@ export default function FeaturePriorityContent() {
   };
 
   return (
-    <div className="min-h-screen bg-[#131314] text-white">
+    <div className="min-h-screen bg-black text-white">
       <div className="max-w-7xl mx-auto px-4 py-6">
         {/* Navigation and View Toggle */}
         <div className="flex items-center justify-between mb-8">

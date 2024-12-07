@@ -41,7 +41,7 @@ export default function Sidebar() {
     <div style={{ 
       width: '256px',
       minHeight: '100vh', 
-      background: 'linear-gradient(to bottom, #1D1D1F, #131314)',
+      background: 'black', // Changed background color to black
       color: 'white',
       padding: '24px',
       borderRight: '1px solid #1D1D1F',
@@ -71,10 +71,12 @@ export default function Sidebar() {
                     padding: '10px 12px',
                     borderRadius: '12px',
                     transition: 'all 0.2s',
-                    backgroundColor: pathname === item.path ? '#6B46C1' : 'transparent',
+                    backgroundColor: pathname === item.path ? '#1D1D1F' : 'transparent',
                     color: pathname === item.path ? 'white' : '#9CA3AF',
                     textDecoration: 'none'
                   }}
+                  onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#1D1D1F'} // Hover background color
+                  onMouseOut={(e) => e.currentTarget.style.backgroundColor = pathname === item.path ? '#1D1D1F' : 'transparent'} // Reset background color
                 >
                   <span style={{ fontSize: '24px', width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: '8px' }}>
                     {item.icon}

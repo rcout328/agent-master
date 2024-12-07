@@ -4,6 +4,30 @@ import { useState, useEffect } from 'react';
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import Link from 'next/link';
 import MarketTrand from './MarketTrand';
+import Mark from './Mark';
+import { Bar, Line } from 'react-chartjs-2';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+} from 'chart.js';
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 // Initialize Gemini
 const genAI = new GoogleGenerativeAI("AIzaSyAE2SKBA38bOktQBdXS6mTK5Y1a-nKB3Mo");
@@ -16,6 +40,7 @@ export default function MarketTrendsContent() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [processedData, setProcessedData] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [showMarkComponent, setShowMarkComponent] = useState(false);
 
   useEffect(() => {
     loadAllSnapshots();
@@ -353,9 +378,25 @@ export default function MarketTrendsContent() {
     );
   };
 
+  if (showMarkComponent) {
+    return <Mark onClose={() => setShowMarkComponent(false)} />;
+  }
+
   return (
-    <div className="min-h-screen bg-[#131314] text-white">
+    <div className="min-h-screen bg-[#000000] text-white">
       <div className="max-w-7xl mx-auto px-4 py-6">
+        {/* Top Navigation */}
+        <div className="flex justify-between items-center p-4 border-b border-gray-800">
+          <div className="flex space-x-2">
+            <button 
+              onClick={() => setShowMarkComponent(true)}
+              className="px-4 py-2 bg-[#1D1D1F] rounded-lg text-white hover:bg-purple-600/20 transition-colors"
+            >
+              View Market Analysis
+            </button>
+          </div>
+        </div>
+
         {/* Navigation and View Toggle */}
         <div className="flex items-center justify-between mb-8">
           <div className="bg-[#1D1D1F] p-1 rounded-xl inline-flex">

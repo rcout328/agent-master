@@ -231,7 +231,7 @@ export default function ICPCreationContent() {
     if (!processedData) return null;
 
     return (
-      <div className="bg-[#1D1D1F]/90 p-6 rounded-xl backdrop-blur-xl border border-purple-500/20 mt-6">
+      <div className="bg-black p-6 rounded-xl backdrop-blur-xl border border-purple-500/20 mt-6">
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-xl font-semibold text-purple-400">
             ICP Analysis Results
@@ -259,7 +259,7 @@ export default function ICPCreationContent() {
 
         <div className="space-y-6">
           {/* Demographics */}
-          <div className="bg-[#2D2D2F] p-4 rounded-lg">
+          <div className="bg-black p-4 rounded-lg">
             <h4 className="text-lg font-semibold text-purple-400 mb-3">Company Demographics</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
@@ -284,7 +284,7 @@ export default function ICPCreationContent() {
           </div>
 
           {/* Industry Segments */}
-          <div className="bg-[#2D2D2F] p-4 rounded-lg">
+          <div className="bg-black p-4 rounded-lg">
             <h4 className="text-lg font-semibold text-purple-400 mb-3">Industry Segments</h4>
             <div className="grid grid-cols-1 gap-2">
               {processedData.industry_segments.map(([industry, count], index) => (
@@ -302,11 +302,11 @@ export default function ICPCreationContent() {
           </div>
 
           {/* Geographic Distribution */}
-          <div className="bg-[#2D2D2F] p-4 rounded-lg">
+          <div className="bg-black p-4 rounded-lg">
             <h4 className="text-lg font-semibold text-purple-400 mb-3">Geographic Distribution</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {processedData.geographic_distribution.map(([region, count], index) => (
-                <div key={index} className="p-3 bg-[#1D1D1F] rounded-lg">
+                <div key={index} className="p-3 bg-black rounded-lg">
                   <div className="flex justify-between items-center">
                     <span className="text-gray-300">{region}</span>
                     <span className="text-purple-400 text-sm">{count} companies</span>
@@ -317,7 +317,7 @@ export default function ICPCreationContent() {
           </div>
 
           {/* Company Sizes */}
-          <div className="bg-[#2D2D2F] p-4 rounded-lg">
+          <div className="bg-black p-4 rounded-lg">
             <h4 className="text-lg font-semibold text-purple-400 mb-3">Company Size Distribution</h4>
             <div className="space-y-2">
               {processedData.company_sizes.map(([size, count], index) => (
@@ -335,11 +335,11 @@ export default function ICPCreationContent() {
           </div>
 
           {/* Contact Patterns */}
-          <div className="bg-[#2D2D2F] p-4 rounded-lg">
+          <div className="bg-black p-4 rounded-lg">
             <h4 className="text-lg font-semibold text-purple-400 mb-3">Contact Information</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {processedData.contact_patterns.slice(0, 6).map((contact, index) => (
-                <div key={index} className="p-3 bg-[#1D1D1F] rounded-lg">
+                <div key={index} className="p-3 bg-black rounded-lg">
                   <h5 className="font-semibold text-purple-300">{contact.name}</h5>
                   <div className="mt-2 space-y-1 text-sm">
                     {contact.email && <p className="text-gray-300">Email: {contact.email}</p>}
@@ -369,7 +369,7 @@ export default function ICPCreationContent() {
 
           {/* AI Analysis Results */}
           {analysis && (
-            <div className="bg-[#2D2D2F] p-4 rounded-lg">
+            <div className="bg-black p-4 rounded-lg">
               <h4 className="text-lg font-semibold text-purple-400 mb-3">AI Analysis</h4>
               <div className="prose prose-invert max-w-none">
                 <pre className="whitespace-pre-wrap text-sm text-gray-300">
@@ -387,7 +387,7 @@ export default function ICPCreationContent() {
   };
 
   return (
-    <div className="min-h-screen bg-[#131314] text-white">
+    <div className="min-h-screen bg-black text-white">
       {/* View Toggle */}
       <div className="max-w-7xl mx-auto px-4 py-6">
         {/* Navigation Tabs */}
@@ -501,7 +501,7 @@ export default function ICPCreationContent() {
                         </button>
                       </div>
                     </div>
-                    <pre className="bg-[#2D2D2F] p-4 rounded-lg overflow-auto max-h-96 text-sm text-gray-300">
+                    <pre className="bg-black p-4 rounded-lg overflow-auto max-h-96 text-sm text-gray-300">
                       {JSON.stringify(selectedSnapshot.data, null, 2)}
                     </pre>
                   </div>
