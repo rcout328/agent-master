@@ -1,0 +1,42 @@
+{
+  "query": "CircleCI",
+  "timestamp": "20241208_124735",
+  "execution_time": 29.980875968933105,
+  "results": {
+    "sentiment_analysis": [
+      {
+        "company": "CircleCI",
+        "overall_sentiment": "positive",
+        "sentiment_score": 0.5,
+        "key_themes": [
+          "New product features and enhancements",
+          "Expansion of leadership team",
+          "Commitment to customer satisfaction"
+        ],
+        "notable_developments": [
+          "Appointment of Judson Griffin as Chief Revenue Officer",
+          "Release of over a hundred product updates",
+          "Expansion into new regions with key hires"
+        ],
+        "news_sources": [
+          {
+            "url": "https://circleci.com/newsroom/",
+            "date": "2024-12-08"
+          },
+          {
+            "url": "https://circleci.com/changelog/",
+            "date": "2024-12-08"
+          },
+          {
+            "url": "https://www.businesswire.com/news/home/20241203621789/en/CircleCI-Appoints-Judson-Griffin-as-Chief-Revenue-Officer",
+            "date": "2024-12-08"
+          },
+          {
+            "url": "https://circleci.com/blog/product-updates/",
+            "date": "2024-12-08"
+          }
+        ]
+      }
+    ]
+  }
+}

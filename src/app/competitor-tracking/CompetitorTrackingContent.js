@@ -30,10 +30,25 @@ export default function CompetitorTrackingContent() {
   const [competitors, setCompetitors] = useState([]);
   const [selectedCompetitor, setSelectedCompetitor] = useState(null);
   const [isSearchingCompetitors, setIsSearchingCompetitors] = useState(false);
+  const [showPerformanceTracking, setShowPerformanceTracking] = useState(false);
+  const [performanceData, setPerformanceData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true); // Add loading state
 
   useEffect(() => {
-    loadAllSnapshots();
-  }, []);
+    const fetchData = async () => {
+      try {
+        setIsLoading(true); // Set loading state to true before fetching
+        loadAllSnapshots();
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        // Handle error appropriately (e.g., display an error message)
+      } finally {
+        setIsLoading(false); // Set loading state to false after fetching (success or failure)
+      }
+    };
+
+    fetchData();
+  }, []); // Empty dependency array ensures this runs only once on mount
 
   useEffect(() => {
     const checkApiStatus = async () => {
@@ -823,11 +838,353 @@ export default function CompetitorTrackingContent() {
     );
   };
 
+  const PerformanceTrackingPanel = () => {
+    const [currentSnapshotData, setCurrentSnapshotData] = useState(null);
+    const [isLoadingData, setIsLoadingData] = useState(false);
+    const [selectedCompany, setSelectedCompany] = useState('');
+
+    // Function to get all companies from snapshot data
+    const getCompaniesFromSnapshot = (snapshot) => {
+      console.log('Getting companies from snapshot:', snapshot);
+      
+      try {
+        // Check if snapshot exists and has data
+        if (!snapshot || !snapshot.data) {
+          console.warn('Invalid snapshot:', snapshot);
+          return [];
+        }
+
+        // Convert data to array if it's not already
+        const dataArray = Array.isArray(snapshot.data) ? snapshot.data : [snapshot.data];
+        
+        // Filter out invalid entries
+        const validCompanies = dataArray.filter(company => 
+          company && 
+          company.name && 
+          company.id && 
+          !company.warning
+        );
+
+        console.log('Valid companies found:', validCompanies.length);
+        
+        return validCompanies.map(company => ({
+          name: company.name,
+          id: company.id,
+          data: company
+        }));
+
+      } catch (error) {
+        console.error('Error processing companies:', error);
+        return [];
+      }
+    };
+
+    // Function to process snapshot data for selected company
+    const processSnapshot = async (snapshot, companyId) => {
+      console.log('Processing snapshot for company:', companyId);
+      setIsLoadingData(true);
+      
+      try {
+        // Ensure snapshot and data exist
+        if (!snapshot || !snapshot.data) {
+          throw new Error('Invalid snapshot data');
+        }
+
+        // Convert data to array if needed
+        const dataArray = Array.isArray(snapshot.data) ? snapshot.data : [snapshot.data];
+        
+        // Find the company
+        const company = dataArray.find(c => c && c.id === companyId);
+        if (!company) {
+          throw new Error('Company not found in snapshot');
+        }
+
+        // Create processed data with default empty objects
+        const processedData = {
+          generalInfo: {},
+          financialMetrics: {},
+          techMetrics: {},
+          teamMetrics: {}
+        };
+
+        // Safely add data if it exists
+        if (company) {
+          processedData.generalInfo = {
+            name: company.name || 'N/A',
+            legal_name: company.legal_name || 'N/A',
+            cb_rank: company.cb_rank || 'N/A',
+            region: company.region || 'N/A',
+            about: company.about || 'N/A',
+            industries: Array.isArray(company.industries) 
+              ? company.industries.map(i => i.value).join(', ') 
+              : 'N/A',
+            operating_status: company.operating_status || 'N/A',
+            company_type: company.company_type || 'N/A',
+            founded_date: company.founded_date || 'N/A',
+            num_employees: company.num_employees || 'N/A',
+            country_code: company.country_code || 'N/A',
+            website: company.website || 'N/A'
+          };
+
+          processedData.financialMetrics = {
+            ipo_status: company.ipo_status || 'N/A',
+            monthly_visits: company.monthly_visits || 'N/A',
+            semrush_visits_latest_month: company.semrush_visits_latest_month || 'N/A',
+            monthly_visits_growth: company.monthly_visits_growth || 'N/A',
+            semrush_visits_mom_pct: company.semrush_visits_mom_pct || 'N/A'
+          };
+
+          processedData.techMetrics = {
+            active_tech_count: company.active_tech_count || 'N/A',
+            builtwith_num_technologies_used: company.builtwith_num_technologies_used || 'N/A',
+            builtwith_tech: Array.isArray(company.builtwith_tech) 
+              ? company.builtwith_tech.length 
+              : 'N/A',
+            total_active_products: company.total_active_products || 'N/A'
+          };
+
+          processedData.teamMetrics = {
+            num_contacts: company.num_contacts || 'N/A',
+            num_contacts_linkedin: company.num_contacts_linkedin || 'N/A',
+            num_employee_profiles: company.num_employee_profiles || 'N/A',
+            current_employees: Array.isArray(company.current_employees) 
+              ? company.current_employees.length 
+              : 'N/A',
+            num_alumni: company.num_alumni || 'N/A'
+          };
+        }
+
+        console.log('Processed data:', processedData);
+        setCurrentSnapshotData(processedData);
+
+      } catch (error) {
+        console.error('Error processing snapshot:', error);
+        alert('Error processing snapshot data: ' + error.message);
+      } finally {
+        setIsLoadingData(false);
+      }
+    };
+
+    // Add logging for render
+    console.log('Rendering PerformanceTrackingPanel with:', {
+      selectedSnapshot,
+      selectedCompany,
+      currentSnapshotData,
+      isLoadingData
+    });
+
+    return (
+      <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 overflow-y-auto">
+        <div className="max-w-7xl mx-auto p-6">
+          <div className="bg-[#1D1D1F] rounded-xl shadow-xl">
+            {/* Header */}
+            <div className="p-6 border-b border-gray-800 flex justify-between items-center">
+              <div>
+                <h3 className="text-xl font-semibold text-purple-400">
+                  Company Performance Metrics
+                </h3>
+                {selectedSnapshot && (
+                  <p className="text-sm text-gray-400 mt-1">
+                    Snapshot ID: {selectedSnapshot.id}
+                  </p>
+                )}
+              </div>
+              <button onClick={() => setShowPerformanceTracking(false)} className="text-gray-400 hover:text-white transition-colors">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Snapshot and Company Selection */}
+            <div className="p-6 border-b border-gray-800">
+              <div className="flex flex-col gap-4">
+                {/* Snapshot Selection */}
+                <div className="flex items-center gap-4">
+                  <select
+                    value={selectedSnapshot?.id || ''}
+                    onChange={(e) => {
+                      const snapshot = storedSnapshots?.find(s => s?.id === e.target.value);
+                      setSelectedSnapshot(snapshot || null);
+                      setSelectedCompany('');
+                      setCurrentSnapshotData(null);
+                    }}
+                    className="flex-1 bg-[#1D1D1F] text-white px-4 py-2 rounded-lg border border-gray-700 focus:border-purple-500 outline-none"
+                  >
+                    <option value="">Select a snapshot</option>
+                    {(storedSnapshots || []).map((snapshot) => (
+                      snapshot && snapshot.id ? (
+                        <option key={snapshot.id} value={snapshot.id}>
+                          {snapshot.id} - {new Date(snapshot.timestamp).toLocaleDateString()}
+                        </option>
+                      ) : null
+                    ))}
+                  </select>
+                </div>
+
+                {/* Company Selection */}
+                {selectedSnapshot && (
+                  <div className="flex items-center gap-4">
+                    <select
+                      value={selectedCompany || ''}
+                      onChange={(e) => setSelectedCompany(e.target.value)}
+                      className="flex-1 bg-[#1D1D1F] text-white px-4 py-2 rounded-lg border border-gray-700 focus:border-purple-500 outline-none"
+                    >
+                      <option value="">Select a company</option>
+                      {getCompaniesFromSnapshot(selectedSnapshot).map((company) => (
+                        company && company.id ? (
+                          <option key={company.id} value={company.id}>
+                            {company.name}
+                          </option>
+                        ) : null
+                      ))}
+                    </select>
+                    
+                    <button
+                      onClick={() => {
+                        console.log('View Metrics clicked:', {
+                          selectedSnapshot,
+                          selectedCompany,
+                          isLoadingData
+                        });
+                        if (selectedSnapshot && selectedCompany) {
+                          processSnapshot(selectedSnapshot, selectedCompany);
+                        }
+                      }}
+                      disabled={!selectedSnapshot || !selectedCompany || isLoadingData}
+                      className={`px-4 py-2 rounded-lg transition-colors ${
+                        !selectedSnapshot || !selectedCompany || isLoadingData
+                          ? 'bg-purple-600/50 cursor-not-allowed'
+                          : 'bg-purple-600 hover:bg-purple-700'
+                      }`}
+                    >
+                      {isLoadingData ? (
+                        <div className="flex items-center gap-2">
+                          <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                          </svg>
+                          <span>Processing...</span>
+                        </div>
+                      ) : (
+                        'View Metrics'
+                      )}
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Display Metrics */}
+            <div className="p-6">
+              {currentSnapshotData ? (
+                <div className="space-y-6">
+                  {/* Financial Performance */}
+                  {currentSnapshotData.financialMetrics && (
+                    <div className="bg-[#2D2D2F] p-4 rounded-lg">
+                      <h4 className="text-lg font-medium text-purple-400 mb-4">
+                        Financial Performance
+                      </h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {Object.entries(currentSnapshotData.financialMetrics || {}).map(([key, value]) => (
+                          <MetricCard 
+                            key={key}
+                            title={key.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
+                            value={value}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Technology & Products */}
+                  {currentSnapshotData.techMetrics && (
+                    <div className="bg-[#2D2D2F] p-4 rounded-lg">
+                      <h4 className="text-lg font-medium text-purple-400 mb-4">
+                        Technology & Products
+                      </h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {Object.entries(currentSnapshotData.techMetrics || {}).map(([key, value]) => (
+                          <MetricCard 
+                            key={key}
+                            title={key.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
+                            value={value}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Contact & Employee Data */}
+                  {currentSnapshotData.teamMetrics && (
+                    <div className="bg-[#2D2D2F] p-4 rounded-lg">
+                      <h4 className="text-lg font-medium text-purple-400 mb-4">
+                        Team & People
+                      </h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {Object.entries(currentSnapshotData.teamMetrics || {}).map(([key, value]) => (
+                          <MetricCard 
+                            key={key}
+                            title={key.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
+                            value={value}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* General Information */}
+                  {currentSnapshotData.generalInfo && (
+                    <div className="bg-[#2D2D2F] p-4 rounded-lg">
+                      <h4 className="text-lg font-medium text-purple-400 mb-4">
+                        General Information
+                      </h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {Object.entries(currentSnapshotData.generalInfo || {}).map(([key, value]) => (
+                          <MetricCard 
+                            key={key}
+                            title={key.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
+                            value={value}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="text-center text-gray-400 py-12">
+                  Select a snapshot and company, then click "View Metrics" to see the data
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  // Helper component for metric cards
+  const MetricCard = ({ title, value, subValue }) => (
+    <div className="bg-[#1D1D1F] p-4 rounded-lg">
+      <h5 className="text-sm font-medium text-purple-300 mb-1">{title}</h5>
+      <p className="text-lg font-bold text-white">
+        {value || 'N/A'}
+      </p>
+      {subValue && (
+        <p className="text-xs text-gray-400 mt-1">
+          {subValue}
+        </p>
+      )}
+    </div>
+  );
+
+  // Main return for CompetitorTrackingContent
   return (
     <ErrorBoundary>
       <div className="min-h-screen bg-[#131314] text-white">
         <div className="max-w-7xl mx-auto px-4 py-6">
           <ApiStatusIndicator />
+          
           {/* View Toggle */}
           <div className="max-w-7xl mx-auto px-4 py-6">
             {/* Navigation Tabs */}
@@ -872,6 +1229,12 @@ export default function CompetitorTrackingContent() {
                   className="px-6 py-2 rounded-xl font-medium bg-green-600 text-white hover:bg-green-700 transition-colors"
                 >
                   Show Comp
+                </button>
+                <button
+                  onClick={() => setShowPerformanceTracking(true)}
+                  className="px-4 py-2 bg-[#1D1D1F] rounded-lg text-white hover:bg-purple-600/20 transition-colors"
+                >
+                  Performance Tracking
                 </button>
                 <button
                   onClick={() => setShowSentimentAnalysis(true)}
@@ -948,6 +1311,12 @@ export default function CompetitorTrackingContent() {
                               {isProcessing ? 'Processing...' : 'Process Data'}
                             </button>
                             <button 
+                              onClick={() => setShowPerformanceTracking(true)}
+                              className="px-4 py-2 bg-purple-600 rounded-lg text-white hover:bg-purple-700 transition-colors"
+                            >
+                              View Performance
+                            </button>
+                            <button 
                               onClick={() => setSelectedSnapshot(null)}
                               className="text-gray-400 hover:text-gray-300"
                             >
@@ -976,8 +1345,9 @@ export default function CompetitorTrackingContent() {
           </div>
         </div>
 
-        {/* Sentiment Analysis Panel */}
+        {/* Modals */}
         {showSentimentAnalysis && <SentimentAnalysisPanel />}
+        {showPerformanceTracking && <PerformanceTrackingPanel />}
       </div>
     </ErrorBoundary>
   );
