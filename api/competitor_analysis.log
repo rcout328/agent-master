@@ -964,3 +964,13 @@ ValueError: Invalid operation: The `response.text` quick accessor requires the r
 2024-12-08 12:47:05,840 - competitor_analysis - INFO - Analyzing sentiment for: CircleCI
 2024-12-08 12:47:35,821 - competitor_analysis - INFO - Sentiment analysis saved to sentiment_analysis_20241208_124735.json
 2024-12-08 12:47:35,821 - competitor_analysis - INFO - Sentiment analysis completed in 29.98 seconds
+2024-12-08 18:33:18,121 - competitor_analysis - ERROR - Error in feedback validation: Object of type Response is not JSON serializable
+2024-12-08 18:35:32,335 - competitor_analysis - ERROR - Error in feedback validation: Object of type Response is not JSON serializable
+2024-12-08 18:37:06,724 - competitor_analysis - ERROR - Error in feedback validation: Object of type coroutine is not JSON serializable
+2024-12-08 18:37:13,198 - competitor_analysis - ERROR - Error in feedback validation: Object of type coroutine is not JSON serializable
+2024-12-08 18:39:10,141 - competitor_analysis - ERROR - Error in feedback validation: Object of type Response is not JSON serializable
+2024-12-08 18:43:42,773 - competitor_analysis - ERROR - Error in feedback validation: Object of type Response is not JSON serializable
+2024-12-08 18:48:24,620 - competitor_analysis - ERROR - Error in feedback validation: Object of type Response is not JSON serializable
+2024-12-08 19:22:33,065 - competitor_analysis - ERROR - Error in feedback validation: Object of type Response is not JSON serializable
+2024-12-08 19:28:03,197 - competitor_analysis - ERROR - Error in feedback validation: Object of type Response is not JSON serializable
+2024-12-08 19:39:32,882 - competitor_analysis - ERROR - Error in feedback validation: Object of type coroutine is not JSON serializable

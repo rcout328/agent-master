@@ -1,0 +1,141 @@
+{
+  "query": "zara",
+  "timestamp": "2024-12-08T22:06:47.701322",
+  "feedback_count": 10,
+  "analysis": {
+    "sentiment_analysis": {
+      "distribution": {
+        "positive": 0,
+        "negative": 50,
+        "neutral": 50
+      },
+      "key_drivers": [
+        "Passkey/Sign-in errors mentioned negatively across multiple Amazon accounts (4 instances)",
+        "Overwhelmingly negative reviews on Trustpilot regarding Zara's service (multiple instances with TrustScores consistently below 2 out of 5)"
+      ],
+      "trends": [
+        "Consistent negative sentiment regarding Zara's online experience and customer service across various platforms",
+        "Lack of positive feedback across all sources makes it impossible to identify positive trends"
+      ]
+    },
+    "key_themes": [
+      {
+        "theme": "Website/App Login Issues",
+        "mentions": 4,
+        "sentiment": "negative",
+        "description": "Multiple instances across Amazon.com and Amazon.in report passkey errors and difficulties logging into accounts.  These errors suggest problems with server-side functionality or compatibility issues with passkey technology. Examples include:  \"Sorry, your passkey is not working. There might be a problem with the server.\" (repeated across multiple entries)."
+      },
+      {
+        "theme": "Negative Customer Reviews",
+        "mentions": 5,
+        "sentiment": "negative",
+        "description": "Trustpilot reviews consistently rate Zara poorly.  Multiple entries indicate low TrustScores ranging from 1.0 to 1.5 out of 5.  The number of reviews is substantial (e.g., 16,247 reviews for one instance), reinforcing the negative sentiment. The reviews consistently described as 'Bad'. Examples include  \"16,247 \u2022 Bad\"  and  \"TrustScore 1.5 out of 5\"."
+      },
+      {
+        "theme": "Amazon Product Listing",
+        "mentions": 1,
+        "sentiment": "neutral",
+        "description": "One entry is a snippet of an Amazon.in webpage showing a Zara book listing. This piece of data is largely neutral in terms of sentiment towards Zara itself but is relevant in understanding potential points of customer contact."
+      }
+    ],
+    "pain_points": [
+      {
+        "issue": "Website/App Login Functionality",
+        "severity": "high",
+        "frequency": 4,
+        "description": "The frequent reports of passkey errors and login failures indicate a significant problem impacting user experience. This impacts accessibility to Zara's online store and significantly reduces customer satisfaction. Specific examples include repeated error messages related to passkey issues."
+      },
+      {
+        "issue": "Negative Customer Perception (Based on Reviews)",
+        "severity": "high",
+        "frequency": 5,
+        "description": "The overwhelmingly negative reviews on Trustpilot suggest widespread dissatisfaction with Zara's products, services, or overall brand experience. The volume and consistency of negative feedback highlight a serious issue that needs attention.  Examples include consistently low TrustScores across multiple regional sites."
+      }
+    ],
+    "competitive_analysis": {
+      "market_position": "weak (based on provided data)",
+      "advantages": [],
+      "disadvantages": [
+        "Significantly negative customer perception based on Trustpilot reviews compared to competitors.",
+        "Technical issues with website login functionality negatively impacts customer experience"
+      ]
+    },
+    "recommendations": [
+      {
+        "title": "Investigate and Resolve Login Issues",
+        "priority": "high",
+        "description": "Thoroughly investigate the root cause of the passkey errors reported on Amazon.  This may involve server-side debugging, checking for compatibility problems with different devices, or exploring alternative authentication methods.  Implement thorough testing before re-releasing any fixes.",
+        "expected_impact": "Improved customer satisfaction and conversion rates; reduced negative reviews on app stores and social media."
+      },
+      {
+        "title": "Address Negative Customer Feedback on Trustpilot",
+        "priority": "high",
+        "description": "Actively respond to negative Trustpilot reviews and attempt to resolve customer issues.  Conduct thorough analysis of the negative reviews to identify recurring themes and address underlying problems related to product quality, customer service, shipping, returns or other relevant areas. Proactively improve areas based on that feedback and monitor to identify trending issues before they become viral.",
+        "expected_impact": "Improved brand reputation, increased customer loyalty, and potential improvement in Trustpilot rating.  A potential increase in positive reviews could also help offset existing negative feedback."
+      }
+    ]
+  },
+  "report_path": "feedback_logs/feedback_analysis_20241208_220647.txt",
+  "feedback_data": [
+    {
+      "url": "https://www.amazon.in/Zara-her-Sisters-Clothing-Retailer/product-reviews/0230229913?reviewerType=all_reviews",
+      "source": "www.amazon.in",
+      "content": "![](//fls-eu.amazon.com/1/batch/1/OP/A21TJRUUN4KGV:257-5062530-7159621:X81R2W8NXV7XABPQ1124$uedata=s:%2Fap%2Fuedata%3Fstaticb%26id%3DX81R2W8NXV7XABPQ1124:0)\n\n#### Please Enable Cookies to Continue\n\n#### Passkey error\n\nSomething went wrong, please sign-in another way or follow any instructions provided by your device.\n\n\nSorry, your passkey is not working. There might be a problem with the server. Sign in with your password or try your passkey again later.\n\n\n# Sign in\n\nEmail or mobile phone number\n\n\nEnter your email or mobile phone number\n\nEnter a valid email address or phone number\n\nContinue\n\n\nBy continuing, you agree to Amazon's [Conditions of Use](/gp/help/customer/display.html/ref=ap_signin_notification_condition_of_use?ie=UTF8&nodeId=200545940) and [Privacy Notice](/gp/help/customer/display.html/ref=ap_signin_notification_privacy_notice?ie=UTF8&nodeId=200534380).\n\n[Need help?](javascript:void(0))\n\n- [Forgot Password](https://www.amazon.in/ap/forgotpassword?openid.pape.max_auth_age=3600&openid.identity=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&language=en_IN&pageId=inflex&openid.return_to=https%3A%2F%2Fwww.amazon.in%2FZara-her-Sisters-Clothing-Retailer%2Fproduct-reviews%2F0230229913%3FreviewerType%3Dall_reviews&prevRID=X81R2W8NXV7XABPQ1124&openid.assoc_handle=inflex&openid.mode=checkid_setup&prepopulatedLoginId=&failedSignInCount=0&openid.claimed_id=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&openid.ns=http%3A%2F%2Fspecs.openid.net%2F",
+      "date": "2024-12-08"
+    },
+    {
+      "url": "https://www.amazon.in/Zara/dp/8172949596",
+      "source": "www.amazon.in",
+      "content": "[iframe](javascript:void(false))[iframe](javascript:void(false))[iframe](javascript:void(false))\n\n![](//fls-eu.amazon.in/1/batch/1/OP/A21TJRUUN4KGV:257-4034675-8208909:9H7NH6RGK66K6Z6WH2C8$uedata=s:%2Frd%2Fuedata%3Fstaticb%26id%3D9H7NH6RGK66K6Z6WH2C8:0)![](https://m.media-amazon.com/images/G/31/gno/sprites/nav-sprite-global-1x-reorg-privacy._CB541718031_.png)Skip to main contentBuy Zara Book Online at Low Prices in India \\| Zara Reviews & Ratings - Amazon.in\n\n- [Books](/Books/b/ref=dp_bc_aui_C_1/257-4034675-8208909?ie=UTF8&node=976389031)\n- \u203a\n\n- [Literature & Fiction](/literature-fiction-books/b/ref=dp_bc_aui_C_2/257-4034675-8208909?ie=UTF8&node=1318157031)\n- \u203a\n\n- [Contemporary Fiction](/Contemporary-Fiction-Books/b/ref=dp_bc_aui_C_3/257-4034675-8208909?ie=UTF8&node=1318160031)\n\n[Paperback\\\\\n\\\\\n\u20b9198.00](javascript:void(0))\n\n[Other New from \u20b9197.00](javascript:void(0))\n\n[Paperback from \u20b9197.00](/gp/offer-listing/8172949596/ref=aod_pop_null_new_olp_sr?ie=UTF8&condition=new_olp)\n\n\u20b9198.00 \u20b9198\n\nInclusive of all taxes\n\n_Fulfilled_\n\n[FREE delivery](/b?node=15765571031) Tuesday, 10 December on your first order. Order within 1 hr 54 mins. [Details](/gp/help/customer/display.html/?nodeId=200534000)\n\nDelivering to Mumbai 400001 - Update location\n\nIn stock\n\n\u20b9\u20b9198.00198.00\n()\nIncludes selected options.  Includes initial monthly payment and selected options.  Details\n\nPrice (\u20b9198.00x)\n\n\u20b9198.00\n\n* * *\n\nSubtotal\n\n\u20b9\u20b9198.00198.00\n\nSubtotal\n\n* * *\n\n* * *\n\nInitial payment breakdown\n\n* * *\n\nShip",
+      "date": "2024-12-08"
+    },
+    {
+      "url": "https://www.amazon.com/ZARA-COM-ZARA-Kindle-Tablet-Edition/product-reviews/B00D8Y5BFE",
+      "source": "www.amazon.com",
+      "content": "![](//fls-na.amazon.com/1/batch/1/OP/ATVPDKIKX0DER:140-1386234-7839013:HHRP7KJG8N8MAAYPN78J$uedata=s:%2Fap%2Fuedata%3Fstaticb%26id%3DHHRP7KJG8N8MAAYPN78J:0)\n\n#### Please Enable Cookies to Continue\n\n#### Passkey error\n\nSomething went wrong, please sign-in another way or follow any instructions provided by your device.\n\n\nSorry, your passkey isn't working. There might be a problem with the server. Sign in with your password or try your passkey again later.\n\n\n# Sign in\n\nEmail or mobile phone number\n\n\nEnter your email or mobile phone number\n\nEnter a valid email address or phone number\n\nContinue\n\n\nBy continuing, you agree to Amazon's [Conditions of Use](/gp/help/customer/display.html/ref=ap_signin_notification_condition_of_use?ie=UTF8&nodeId=508088) and [Privacy Notice](/gp/help/customer/display.html/ref=ap_signin_notification_privacy_notice?ie=UTF8&nodeId=468496).\n\n[Need help?](javascript:void(0))\n\n- [Forgot your password?](https://www.amazon.com/ap/forgotpassword?openid.pape.max_auth_age=3600&openid.identity=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&language=en_US&pageId=usflex&openid.return_to=https%3A%2F%2Fwww.amazon.com%2FZARA-COM-ZARA-Kindle-Tablet-Edition%2Fproduct-reviews%2FB00D8Y5BFE&prevRID=HHRP7KJG8N8MAAYPN78J&openid.assoc_handle=usflex&openid.mode=checkid_setup&prepopulatedLoginId=&failedSignInCount=0&openid.claimed_id=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&openid.ns=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0)\n\n- [Other issue",
+      "date": "2024-12-08"
+    },
+    {
+      "url": "https://www.amazon.in/Zaras-Secret-Fast-Fashion-Modelling/product-reviews/363908585X",
+      "source": "www.amazon.in",
+      "content": "![](//fls-eu.amazon.com/1/batch/1/OP/A21TJRUUN4KGV:257-3874651-7546960:RWA8CH192E0F8VDDAA6W$uedata=s:%2Fap%2Fuedata%3Fstaticb%26id%3DRWA8CH192E0F8VDDAA6W:0)\n\n#### Please Enable Cookies to Continue\n\n#### Passkey error\n\nSomething went wrong, please sign-in another way or follow any instructions provided by your device.\n\n\nSorry, your passkey is not working. There might be a problem with the server. Sign in with your password or try your passkey again later.\n\n\n# Sign in\n\nEmail or mobile phone number\n\n\nEnter your email or mobile phone number\n\nEnter a valid email address or phone number\n\nContinue\n\n\nBy continuing, you agree to Amazon's [Conditions of Use](/gp/help/customer/display.html/ref=ap_signin_notification_condition_of_use?ie=UTF8&nodeId=200545940) and [Privacy Notice](/gp/help/customer/display.html/ref=ap_signin_notification_privacy_notice?ie=UTF8&nodeId=200534380).\n\n[Need help?](javascript:void(0))\n\n- [Forgot Password](https://www.amazon.in/ap/forgotpassword?openid.pape.max_auth_age=3600&openid.identity=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&language=en_IN&pageId=inflex&openid.return_to=https%3A%2F%2Fwww.amazon.in%2FZaras-Secret-Fast-Fashion-Modelling%2Fproduct-reviews%2F363908585X&prevRID=RWA8CH192E0F8VDDAA6W&openid.assoc_handle=inflex&openid.mode=checkid_setup&prepopulatedLoginId=&failedSignInCount=0&openid.claimed_id=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&openid.ns=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0)\n\n- [Other issues",
+      "date": "2024-12-08"
+    },
+    {
+      "url": "https://www.trustpilot.com/review/www.zara.com",
+      "source": "www.trustpilot.com",
+      "content": "[![](https://consumersiteimages.trustpilot.net/business-units/481983d000006400050270ef-198x149-1x.jpg)](http://www.zara.com?utm_medium=company_profile&utm_source=trustpilot&utm_campaign=logo_click)\n\n# ZARAReviews\n\n16,247 \u2022 Bad\n\n![TrustScore 1.5 out of 5](https://cdn.trustpilot.net/brand-assets/4.1.0/stars/stars-1.5.svg)\n\n1.3\n\nVERIFIED COMPANY\n\nIn the [Clothing Store](/categories/clothing_store) category\n\n[www.zara.com\\\\\n\\\\\nVisit this website](http://www.zara.com?utm_medium=company_profile&utm_source=trustpilot&utm_campaign=domain_click)\n\n[www.zara.com](http://www.zara.com?utm_medium=company_profile&utm_source=trustpilot&utm_campaign=domain_click)\n\n[Write a review](/evaluate/www.zara.com)\n\n### Company activity [See all](/review/www.zara.com/transparency)\n\nClaimed profile\n\nHasn\u2019t replied to negative reviews\n\n![](data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%2740%27%20height=%2740%27/%3e)![Your profile picture](//user-images.trustpilot.com/default/v1/73x73.png)\n\n## [Write a review](/evaluate/www.zara.com \"Post a review of ZARA\")\n\n![](https://cdn.trustpilot.net/brand-assets/4.1.0/stars/stars-0.svg)\n\n## Reviews1.3\n\n16,247 total\n\n5-star\n\n7%\n\n4-star\n\n2%\n\n3-star\n\n2%\n\n2-star\n\n4%\n\n1-star\n\n85%\n\n* * *\n\nFilter\n\n#### Sort:\n\nMost relevant\n\n* * *\n\n![Rated 1 out of 5 stars](https://cdn.trustpilot.net/brand-assets/4.1.0/stars/stars-1.svg)\n\n2 days ago\n\n[**The most horrible customer service**](/reviews/67534a0141e61bd46d166367)\n\nThey even don't k",
+      "date": "2024-12-08"
+    },
+    {
+      "url": "https://www.trustpilot.com/review/zara.uk",
+      "source": "www.trustpilot.com",
+      "content": "# ZaraReviews\n\n2,570 \u2022 Bad\n\n![TrustScore 1 out of 5](https://cdn.trustpilot.net/brand-assets/4.1.0/stars/stars-1.svg)\n\n1.2\n\nIn the [Clothing Store](/categories/clothing_store) category\n\n[zara.uk\\\\\n\\\\\nVisit this website](http://zara.uk?utm_medium=company_profile&utm_source=trustpilot&utm_campaign=domain_click)\n\n[zara.uk](http://zara.uk?utm_medium=company_profile&utm_source=trustpilot&utm_campaign=domain_click)\n\n[Write a review](/evaluate/zara.uk)\n\n### Company activity [See all](/review/zara.uk/transparency)\n\nUnclaimed profile\n\nNo history of asking for reviews\n\nPeople review on their own initiative\n\n![](data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%2740%27%20height=%2740%27/%3e)![Your profile picture](//user-images.trustpilot.com/default/v1/73x73.png)\n\n## [Write a review](/evaluate/zara.uk \"Post a review of Zara\")\n\n![](https://cdn.trustpilot.net/brand-assets/4.1.0/stars/stars-0.svg)\n\n## Reviews1.2\n\n2,570 total\n\n5-star\n\n7%\n\n4-star\n\n2%\n\n3-star\n\n2%\n\n2-star\n\n2%\n\n1-star\n\n87%\n\n* * *\n\nFilter\n\n#### Sort:\n\nMost relevant\n\n* * *\n\n![Rated 1 out of 5 stars](https://cdn.trustpilot.net/brand-assets/4.1.0/stars/stars-1.svg)\n\nA day ago\n\n[**Worst experience I ordered online and this package was\u2026**](/reviews/67545cbea8f38783e5503aad)\n\nI ordered online and this package was suppose to be sent to the post office, I got an email to say it was sent there, when I went to collect there was no parcel, royal mail asked me to take up with retailer, which on",
+      "date": "2024-12-08"
+    },
+    {
+      "url": "https://uk.trustpilot.com/review/www.zara.com?page=2",
+      "source": "uk.trustpilot.com",
+      "content": "[![](https://consumersiteimages.trustpilot.net/business-units/481983d000006400050270ef-198x149-1x.jpg)](http://www.zara.com?utm_medium=company_profile&utm_source=trustpilot&utm_campaign=logo_click)\n\n# ZARAReviews\n\n16,247 \u2022 Bad\n\n![TrustScore 1.5 out of 5](https://cdn.trustpilot.net/brand-assets/4.1.0/stars/stars-1.5.svg)\n\n1.3\n\nVERIFIED COMPANY\n\nIn the [Clothing Shop](/categories/clothing_store) category\n\n[www.zara.com\\\\\n\\\\\nVisit this website](http://www.zara.com?utm_medium=company_profile&utm_source=trustpilot&utm_campaign=domain_click)\n\n[www.zara.com](http://www.zara.com?utm_medium=company_profile&utm_source=trustpilot&utm_campaign=domain_click)\n\n[Write a review](/evaluate/www.zara.com)\n\n### Company activity [See all](/review/www.zara.com/transparency)\n\nClaimed profile\n\nHasn\u2019t replied to negative reviews\n\n![](data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%2740%27%20height=%2740%27/%3e)![Your profile picture](//user-images.trustpilot.com/default/v1/73x73.png)\n\n## [Write a review](/evaluate/www.zara.com \"Post a review of ZARA\")\n\n![](https://cdn.trustpilot.net/brand-assets/4.1.0/stars/stars-0.svg)\n\n## Reviews1.3\n\n16,247 total\n\n5-star\n\n7%\n\n4-star\n\n2%\n\n3-star\n\n2%\n\n2-star\n\n4%\n\n1-star\n\n85%\n\n* * *\n\nFilter\n\n#### Sort:\n\nMost relevant\n\n* * *\n\n![Rated 1 out of 5 stars](https://cdn.trustpilot.net/brand-assets/4.1.0/stars/stars-1.svg)\n\n6 days ago\n\n[**Absolutely terrible customer service**](/reviews/674deeb4d68b9cda1c783f82)\n\nAbsolutely terri",
+      "date": "2024-12-08"
+    },
+    {
+      "url": "https://www.trustpilot.com/review/zara.dk?page=2",
+      "source": "www.trustpilot.com",
+      "content": "# ZARAReviews\n\n1,524 \u2022 Bad\n\n![TrustScore 1.5 out of 5](https://cdn.trustpilot.net/brand-assets/4.1.0/stars/stars-1.5.svg)\n\n1.4\n\nIn the [Children's Clothing Store](/categories/childrens_clothing_store) category\n\n[zara.dk\\\\\n\\\\\nVisit this website](http://zara.dk?utm_medium=company_profile&utm_source=trustpilot&utm_campaign=domain_click)\n\n[zara.dk](http://zara.dk?utm_medium=company_profile&utm_source=trustpilot&utm_campaign=domain_click)\n\n[Write a review](/evaluate/zara.dk)\n\n### Company activity [See all](/review/zara.dk/transparency)\n\nUnclaimed profile\n\nNo history of asking for reviews\n\nPeople review on their own initiative\n\n![](data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%2740%27%20height=%2740%27/%3e)![Your profile picture](//user-images.trustpilot.com/default/v1/73x73.png)\n\n## [Write a review](/evaluate/zara.dk \"Post a review of ZARA\")\n\n![](https://cdn.trustpilot.net/brand-assets/4.1.0/stars/stars-0.svg)\n\n## Reviews1.4\n\n1,524 total\n\n5-star\n\n8%\n\n4-star\n\n2%\n\n3-star\n\n2%\n\n2-star\n\n5%\n\n1-star\n\n83%\n\n* * *\n\nFilter\n\n#### Sort:\n\nMost relevant\n\n* * *\n\n![Rated 1 out of 5 stars](https://cdn.trustpilot.net/brand-assets/4.1.0/stars/stars-1.svg)\n\nUpdated Aug 7, 2024\n\n[**They don't like customers**](/reviews/66b26269c25e5bcf63374710)\n\nWent to Zara on Vimmelskaftet in Copenhagen to make a return. Waiting only 10 min in queue at the grundfloor, so I'm happy - so far. Then the standoffish employee at the counter coldly tells me I have to speak E",
+      "date": "2024-12-08"
+    },
+    {
+      "url": "https://www.trustpilot.com/review/www.zara.com",
+      "source": "www.trustpilot.com",
+      "content": "[![](https://consumersiteimages.trustpilot.net/business-units/481983d000006400050270ef-198x149-1x.jpg)](http://www.zara.com?utm_medium=company_profile&utm_source=trustpilot&utm_campaign=logo_click)\n\n# ZARAReviews\n\n16,247 \u2022 Bad\n\n![TrustScore 1.5 out of 5](https://cdn.trustpilot.net/brand-assets/4.1.0/stars/stars-1.5.svg)\n\n1.3\n\nVERIFIED COMPANY\n\nIn the [Clothing Store](/categories/clothing_store) category\n\n[www.zara.com\\\\\n\\\\\nVisit this website](http://www.zara.com?utm_medium=company_profile&utm_source=trustpilot&utm_campaign=domain_click)\n\n[www.zara.com](http://www.zara.com?utm_medium=company_profile&utm_source=trustpilot&utm_campaign=domain_click)\n\n[Write a review](/evaluate/www.zara.com)\n\n### Company activity [See all](/review/www.zara.com/transparency)\n\nClaimed profile\n\nHasn\u2019t replied to negative reviews\n\n![](data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%2740%27%20height=%2740%27/%3e)![Your profile picture](//user-images.trustpilot.com/default/v1/73x73.png)\n\n## [Write a review](/evaluate/www.zara.com \"Post a review of ZARA\")\n\n![](https://cdn.trustpilot.net/brand-assets/4.1.0/stars/stars-0.svg)\n\n## Reviews1.3\n\n16,247 total\n\n5-star\n\n7%\n\n4-star\n\n2%\n\n3-star\n\n2%\n\n2-star\n\n4%\n\n1-star\n\n85%\n\n* * *\n\nFilter\n\n#### Sort:\n\nMost relevant\n\n* * *\n\n![Rated 1 out of 5 stars](https://cdn.trustpilot.net/brand-assets/4.1.0/stars/stars-1.svg)\n\n2 days ago\n\n[**The most horrible customer service**](/reviews/67534a0141e61bd46d166367)\n\nThey even don't k",
+      "date": "2024-12-08"
+    },
+    {
+      "url": "https://www.sitejabber.com/reviews/zara.com",
+      "source": "www.sitejabber.com",
+      "content": "- [Clothing & Fashion](/categories/clothing-fashion)\n- [General Apparel](/categories/general-apparel)\n\n- [Share](/nofollow)\n\n\n\n\n[Share on Facebook](https://www.facebook.com/dialog/share?app_id=108661832535975&display=popup&href=https%3A%2F%2Fwww.sitejabber.com%2Freviews%2Fzara.com&redirect_uri=https%3A%2F%2Fwww.sitejabber.com%2Fshare-fb%2FaHR0cHM6Ly93d3cuc2l0ZWphYmJlci5jb20vcmV2aWV3cy96YXJhLmNvbQ%3D%3D)\n\n\n\n[Share on Twitter](https://twitter.com/intent/tweet?text=https%3A%2F%2Fwww.sitejabber.com%2Freviews%2Fzara.com&via=sitejabber)\n\n\n\n\n\n\n\nDone\n\n- [Bookmark](/nofollow \"Bookmark dialog\")\n\n\n## Zara\n\n\n\n\n\n\n\nAdd a note (optional - e.g. to review, to try)\n\nBookmarkCancel\n\n\n[![Thumbnail of Zara](https://static.sitejabber.com/img/websites/z/zar/zara.com-desktop@1x.1653080408.jpg)](http://zara.com)\n\n# Zara\n\n[Is this your business?](https://biz.sitejabber.com/dashboard/zara.com?register=1 \"Start managing your Sitejabber page (opens in a new window)\")\n\n[1.4 (1,075 reviews)](#reviews \"review breakdown\")\n\n- #### Unsolicited\n\n\n\n\n\n\n\n\n\n\n\n1,015 review\n\n- #### Unsolicited - Verified Purchase\n\n\n\n\n\n\n\n\n\n\n\n60 reviews\n\n\n[www.zara.com](/redir-external/814957)\n\n[Write a Review](/online-business-review?url=zara.com) Ask a Question\n\n[Write a Review](/online-business-review?url=zara.com) Ask a Question\n\n## Overview\n\nZara has a rating of **1.4 stars** from 1,075 reviews, indicating that most customers are generally dissatisfied with their purchases. Reviewers complaining about Zara most frequently mention ",
+      "date": "2024-12-08"
+    }
+  ]
+}

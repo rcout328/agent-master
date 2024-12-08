@@ -1,0 +1,27 @@
+Feedback Analysis Report: amazon
+==================================================
+
+Generated: 20241208_195248
+Sources Analyzed: 8
+
+Analysis Results:
+------------------------------
+{
+  "sentiment_analysis": {
+    "distribution": {
+      "positive": 0,
+      "negative": 100,
+      "neutral": 0
+    },
+    "key_drivers": [],
+    "trends": []
+  },
+  "key_themes": [],
+  "pain_points": [],
+  "competitive_analysis": {
+    "market_position": "",
+    "advantages": [],
+    "disadvantages": []
+  },
+  "recommendations": []
+}

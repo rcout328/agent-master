@@ -1,0 +1,43 @@
+Feedback Analysis Report: kitkat
+==================================================
+
+Generated: 20241208_221744
+Sources Analyzed: 3
+
+Analysis Results:
+------------------------------
+{
+  "analysis": {
+    "totalFeedback": 3,
+    "sources": {
+      "pcmag.com": 1,
+      "theverge.com": 1,
+      "anandtech.com": 1
+    },
+    "sentiment": "Neutral",
+    "kitkatRelevance": {
+      "directMentions": 1,
+      "indirectMentions": 2
+    },
+    "dateRange": "2024-12-08",
+    "topic": "Android KitKat reviews (and related technology)"
+  },
+  "sentiment_analysis": {
+    "distribution": {
+      "positive": 0,
+      "negative": 0,
+      "neutral": 100
+    },
+    "key_drivers": [],
+    "trends": []
+  },
+  "key_themes": [
+    {
+      "theme": "Service",
+      "mentions": 1,
+      "sentiment": "neutral",
+      "description": "Mentioned in 1 reviews. Example: [skip to main content](#main \"skip to main content\")\n\n[![max eddy](https://i.pcmag.com/imagery/autho"
+    }
+  ],
+  "pain_points": []
+}

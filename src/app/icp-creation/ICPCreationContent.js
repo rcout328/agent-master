@@ -4,9 +4,18 @@ import { useState, useEffect } from 'react';
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import Link from 'next/link';
 import Icp from './Icp';
+import FeedbackDisplay from '@/components/FeedbackDisplay';
 
 // Initialize Gemini
-const genAI = new GoogleGenerativeAI("AIzaSyAE2SKBA38bOktQBdXS6mTK5Y1a-nKB3Mo");
+const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_API_KEY || '');
+
+const DEFAULT_PLATFORMS = [
+  { id: 'google', name: 'Google Reviews', enabled: true },
+  { id: 'trustpilot', name: 'Trustpilot Reviews', enabled: false },
+  { id: 'amazon', name: 'Amazon Reviews', enabled: false },
+  { id: 'product', name: 'Product Reviews', enabled: false },
+  { id: 'custom', name: 'Custom Query', enabled: false }
+];
 
 export default function ICPCreationContent() {
   const [viewMode, setViewMode] = useState('api'); // 'api' or 'web'
@@ -16,6 +25,12 @@ export default function ICPCreationContent() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [processedData, setProcessedData] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [feedbackData, setFeedbackData] = useState(null);
+  const [isLoadingFeedback, setIsLoadingFeedback] = useState(false);
+  const [companyName, setCompanyName] = useState('');
+  const [showFeedbackSection, setShowFeedbackSection] = useState(false);
+  const [searchPlatforms, setSearchPlatforms] = useState(DEFAULT_PLATFORMS);
+  const [customQuery, setCustomQuery] = useState('');
 
   useEffect(() => {
     loadAllSnapshots();
@@ -386,6 +401,67 @@ export default function ICPCreationContent() {
     );
   };
 
+  const handlePlatformToggle = (platformId) => {
+    setSearchPlatforms(platforms => 
+      platforms.map(p => 
+        p.id === platformId ? { ...p, enabled: !p.enabled } : p
+      )
+    );
+  };
+
+  const handleFeedbackAnalysis = async (company = null) => {
+    const queryCompany = company || selectedSnapshot?.data?.name || companyName;
+    
+    if (!queryCompany) {
+      alert('Please select a snapshot or enter a company name');
+      return;
+    }
+    
+    setIsLoadingFeedback(true);
+    try {
+      const enabledPlatforms = searchPlatforms
+        .filter(p => p.enabled)
+        .map(p => p.id === 'custom' ? customQuery : `${p.name.toLowerCase()}`);
+
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/feedback-validation`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          query: queryCompany,
+          platforms: enabledPlatforms
+        })
+      });
+
+      if (!response.ok) throw new Error('Failed to fetch feedback');
+      const data = await response.json();
+      setFeedbackData(data);
+      
+      // Scroll to feedback section
+      document.getElementById('feedback-section')?.scrollIntoView({ behavior: 'smooth' });
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Failed to fetch feedback: ' + error.message);
+    } finally {
+      setIsLoadingFeedback(false);
+    }
+  };
+
+  const handleViewFeedback = () => {
+    setShowFeedbackSection(true);
+    document.getElementById('feedback-section')?.scrollIntoView({ behavior: 'smooth' });
+    if (selectedSnapshot?.data?.name) {
+      handleFeedbackAnalysis(selectedSnapshot.data.name);
+    }
+  };
+
+  const handleCloseFeedback = () => {
+    setShowFeedbackSection(false);
+    setFeedbackData(null);
+    setCompanyName('');
+  };
+
   return (
     <div className="min-h-screen bg-black text-white">
       {/* View Toggle */}
@@ -398,12 +474,15 @@ export default function ICPCreationContent() {
             >
               ICP Creation
             </button>
-            <Link 
-              href="/journey-mapping"
+            <button
+              onClick={() => {
+                setShowFeedbackSection(true);
+                document.getElementById('feedback-section')?.scrollIntoView({ behavior: 'smooth' });
+              }}
               className="px-4 py-2 rounded-lg text-gray-400 hover:text-white hover:bg-purple-600/50 transition-all duration-200"
             >
-              Journey Mapping
-            </Link>
+              Feedback Collection
+            </button>
           </div>
 
           <div className="flex items-center space-x-4">
@@ -430,87 +509,285 @@ export default function ICPCreationContent() {
           </div>
         </div>
 
+        {/* Add Feedback Link */}
+        <div className="mb-4">
+          <button
+            onClick={handleViewFeedback}
+            className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            <span className="mr-2">📝</span>
+            View Customer Feedback
+          </button>
+        </div>
+
+        {/* Single Feedback Analysis Section */}
+        {showFeedbackSection && (
+          <div id="feedback-section" className="mt-8">
+            <div className="bg-[#1D1D1F] p-6 rounded-xl">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-xl font-semibold text-purple-400">
+                  Customer Feedback Analysis
+                </h2>
+                <button
+                  onClick={() => {
+                    setShowFeedbackSection(false);
+                    setFeedbackData(null);
+                    setCompanyName('');
+                  }}
+                  className="text-gray-400 hover:text-gray-300 transition-colors"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                {/* Company Input */}
+                <div className="flex gap-4">
+                  <input
+                    type="text"
+                    value={companyName}
+                    onChange={(e) => setCompanyName(e.target.value)}
+                    placeholder="Enter company name..."
+                    className="flex-1 px-4 py-2 bg-[#2D2D2F] rounded-lg border border-gray-700 focus:border-purple-500 outline-none text-white"
+                  />
+                </div>
+
+                {/* Platform Selection */}
+                <div className="space-y-2">
+                  <h3 className="text-sm font-medium text-gray-400">Search Platforms</h3>
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2">
+                    {searchPlatforms.map(platform => (
+                      <button
+                        key={platform.id}
+                        onClick={() => handlePlatformToggle(platform.id)}
+                        className={`px-3 py-2 rounded-lg text-sm transition-colors ${
+                          platform.enabled
+                            ? 'bg-purple-600 text-white'
+                            : 'bg-[#2D2D2F] text-gray-400 hover:text-white'
+                        }`}
+                      >
+                        {platform.name}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Custom Query Input */}
+                {searchPlatforms.find(p => p.id === 'custom')?.enabled && (
+                  <div className="flex gap-4">
+                    <input
+                      type="text"
+                      value={customQuery}
+                      onChange={(e) => setCustomQuery(e.target.value)}
+                      placeholder="Enter custom search query..."
+                      className="flex-1 px-4 py-2 bg-[#2D2D2F] rounded-lg border border-gray-700 focus:border-purple-500 outline-none text-white"
+                    />
+                  </div>
+                )}
+
+                {/* Search Button */}
+                <div className="flex justify-end">
+                  <button
+                    onClick={() => handleFeedbackAnalysis()}
+                    disabled={isLoadingFeedback || (!selectedSnapshot && !companyName) || !searchPlatforms.some(p => p.enabled)}
+                    className={`px-6 py-2 rounded-lg font-medium transition-colors ${
+                      isLoadingFeedback || (!selectedSnapshot && !companyName) || !searchPlatforms.some(p => p.enabled)
+                        ? 'bg-purple-600/50 cursor-not-allowed'
+                        : 'bg-purple-600 hover:bg-purple-700'
+                    }`}
+                  >
+                    {isLoadingFeedback ? 'Analyzing...' : 'Analyze Feedback'}
+                  </button>
+                </div>
+              </div>
+
+              {/* Results */}
+              {feedbackData && <FeedbackDisplay feedbackData={feedbackData} />}
+
+              {/* Empty State */}
+              {!feedbackData && !isLoadingFeedback && (
+                <div className="text-center text-gray-400 py-12">
+                  {selectedSnapshot 
+                    ? `Click "Analyze Feedback" to analyze feedback for ${selectedSnapshot.data.name}`
+                    : 'Enter a company name and select platforms to analyze feedback'
+                  }
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
         {/* Content based on view mode */}
         {viewMode === 'web' ? (
           <Icp />
         ) : (
           <div className="max-w-7xl mx-auto">
-            <div className="mb-8">
-              <h2 className="text-2xl font-bold text-white mb-6">Stored Snapshots</h2>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {storedSnapshots.map((snapshot) => (
-                  <div 
-                    key={snapshot.id}
-                    className="bg-[#1D1D1F]/90 p-6 rounded-xl backdrop-blur-xl border border-purple-500/20 hover:border-purple-500/40 transition-all cursor-pointer"
-                    onClick={() => viewSnapshotData(snapshot)}
-                  >
-                    <div className="flex flex-col space-y-3">
-                      <div className="flex items-center justify-between">
-                        <span className="text-gray-200 font-mono text-sm">{snapshot.id}</span>
-                        <span className="text-xs text-gray-500">
-                          {new Date(snapshot.timestamp).toLocaleDateString()}
-                        </span>
+            {/* Only show snapshots when feedback section is hidden */}
+            {!showFeedbackSection && (
+              <div className="mb-8">
+                <h2 className="text-2xl font-bold text-white mb-6">Stored Snapshots</h2>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {storedSnapshots.map((snapshot) => (
+                    <div 
+                      key={snapshot.id}
+                      className="bg-[#1D1D1F]/90 p-6 rounded-xl backdrop-blur-xl border border-purple-500/20 hover:border-purple-500/40 transition-all cursor-pointer"
+                      onClick={() => viewSnapshotData(snapshot)}
+                    >
+                      <div className="flex flex-col space-y-3">
+                        <div className="flex items-center justify-between">
+                          <span className="text-gray-200 font-mono text-sm">{snapshot.id}</span>
+                          <span className="text-xs text-gray-500">
+                            {new Date(snapshot.timestamp).toLocaleDateString()}
+                          </span>
+                        </div>
+                        
+                        {/* Preview of data */}
+                        <div className="mt-2 text-sm text-gray-400">
+                          {snapshot.data && typeof snapshot.data === 'object' && (
+                            <div className="space-y-1">
+                              {Object.keys(snapshot.data).slice(0, 3).map(key => (
+                                <div key={key} className="truncate">
+                                  {key}: {typeof snapshot.data[key] === 'object' ? '...' : snapshot.data[key]}
+                                </div>
+                              ))}
+                              {Object.keys(snapshot.data).length > 3 && (
+                                <div className="text-purple-400">+ more data...</div>
+                              )}
+                            </div>
+                          )}
+                        </div>
                       </div>
-                      
-                      {/* Preview of data */}
-                      <div className="mt-2 text-sm text-gray-400">
-                        {snapshot.data && typeof snapshot.data === 'object' && (
-                          <div className="space-y-1">
-                            {Object.keys(snapshot.data).slice(0, 3).map(key => (
-                              <div key={key} className="truncate">
-                                {key}: {typeof snapshot.data[key] === 'object' ? '...' : snapshot.data[key]}
+                    </div>
+                  ))}
+                </div>
+
+                {/* Selected Snapshot */}
+                {selectedSnapshot && (
+                  <div className="mt-8 space-y-6">
+                    <div className="bg-[#1D1D1F]/90 p-6 rounded-xl backdrop-blur-xl border border-purple-500/20">
+                      <div className="flex justify-between items-center mb-4">
+                        <h3 className="text-xl font-semibold text-purple-400">
+                          Snapshot Details: {selectedSnapshot.id}
+                        </h3>
+                        <div className="flex space-x-4">
+                          <button 
+                            onClick={() => processSnapshotData(selectedSnapshot)}
+                            disabled={isProcessing}
+                            className={`px-4 py-2 rounded-lg transition-colors ${
+                              isProcessing 
+                                ? 'bg-purple-600/50 cursor-not-allowed' 
+                                : 'bg-purple-600 hover:bg-purple-700'
+                            }`}
+                          >
+                            {isProcessing ? 'Processing...' : 'Process Data'}
+                          </button>
+
+                          <button 
+                            onClick={() => handleFeedbackAnalysis(selectedSnapshot.data.name)}
+                            disabled={isLoadingFeedback}
+                            className={`px-4 py-2 rounded-lg transition-colors ${
+                              isLoadingFeedback
+                                ? 'bg-blue-600/50 cursor-not-allowed'
+                                : 'bg-blue-600 hover:bg-blue-700'
+                            }`}
+                          >
+                            {isLoadingFeedback ? 'Analyzing...' : 'Analyze Feedback'}
+                          </button>
+
+                          <button 
+                            onClick={() => setSelectedSnapshot(null)}
+                            className="text-gray-400 hover:text-gray-300"
+                          >
+                            Close
+                          </button>
+                        </div>
+                      </div>
+                      <pre className="bg-black p-4 rounded-lg overflow-auto max-h-96 text-sm text-gray-300">
+                        {JSON.stringify(selectedSnapshot.data, null, 2)}
+                      </pre>
+                    </div>
+
+                    {/* Processed Data Review */}
+                    {renderProcessedDataReview()}
+
+                    {/* Feedback Results Section */}
+                    {feedbackData && (
+                      <div className="mt-6 bg-[#1D1D1F] p-6 rounded-xl">
+                        <h3 className="text-xl font-semibold text-purple-400 mb-4">
+                          Customer Feedback Analysis
+                        </h3>
+                        
+                        {/* Sentiment Overview */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                          <div className="bg-[#2D2D2F] p-4 rounded-lg">
+                            <h4 className="text-sm font-medium text-gray-400 mb-2">Overall Sentiment</h4>
+                            <p className="text-2xl font-semibold text-purple-300">
+                              {feedbackData.sentiment_score}%
+                            </p>
+                          </div>
+                          
+                          <div className="bg-[#2D2D2F] p-4 rounded-lg">
+                            <h4 className="text-sm font-medium text-gray-400 mb-2">Total Reviews</h4>
+                            <p className="text-2xl font-semibold text-purple-300">
+                              {feedbackData.total_reviews}
+                            </p>
+                          </div>
+                          
+                          <div className="bg-[#2D2D2F] p-4 rounded-lg">
+                            <h4 className="text-sm font-medium text-gray-400 mb-2">Sources</h4>
+                            <p className="text-2xl font-semibold text-purple-300">
+                              {feedbackData.sources?.length || 0}
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Key Themes */}
+                        <div className="mb-6">
+                          <h4 className="text-lg font-medium text-purple-400 mb-3">Key Themes</h4>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {feedbackData.key_themes?.map((theme, index) => (
+                              <div key={index} className="bg-[#2D2D2F] p-4 rounded-lg">
+                                <h5 className="font-medium text-gray-300">{theme.name}</h5>
+                                <p className="text-sm text-gray-400 mt-1">{theme.mentions} mentions</p>
                               </div>
                             ))}
-                            {Object.keys(snapshot.data).length > 3 && (
-                              <div className="text-purple-400">+ more data...</div>
-                            )}
                           </div>
-                        )}
+                        </div>
+
+                        {/* Recent Reviews */}
+                        <div>
+                          <h4 className="text-lg font-medium text-purple-400 mb-3">Recent Reviews</h4>
+                          <div className="space-y-4">
+                            {feedbackData.recent_reviews?.map((review, index) => (
+                              <div key={index} className="bg-[#2D2D2F] p-4 rounded-lg">
+                                <div className="flex justify-between items-start mb-2">
+                                  <div className="text-gray-300">{review.source}</div>
+                                  <div className="text-sm text-gray-400">{review.date}</div>
+                                </div>
+                                <p className="text-gray-300">{review.content}</p>
+                                <div className="mt-2 text-sm">
+                                  <span className={`px-2 py-1 rounded ${
+                                    review.sentiment > 0 ? 'bg-green-500/20 text-green-400' :
+                                    review.sentiment < 0 ? 'bg-red-500/20 text-red-400' :
+                                    'bg-gray-500/20 text-gray-400'
+                                  }`}>
+                                    {review.sentiment > 0 ? 'Positive' : 
+                                     review.sentiment < 0 ? 'Negative' : 'Neutral'}
+                                  </span>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
                       </div>
-                    </div>
+                    )}
                   </div>
-                ))}
+                )}
               </div>
-
-              {/* Selected Snapshot */}
-              {selectedSnapshot && (
-                <div className="mt-8 space-y-6">
-                  <div className="bg-[#1D1D1F]/90 p-6 rounded-xl backdrop-blur-xl border border-purple-500/20">
-                    <div className="flex justify-between items-center mb-4">
-                      <h3 className="text-xl font-semibold text-purple-400">
-                        Snapshot Details: {selectedSnapshot.id}
-                      </h3>
-                      <div className="flex space-x-4">
-                        <button 
-                          onClick={() => processSnapshotData(selectedSnapshot)}
-                          disabled={isProcessing}
-                          className={`px-4 py-2 rounded-lg transition-colors ${
-                            isProcessing 
-                              ? 'bg-purple-600/50 cursor-not-allowed' 
-                              : 'bg-purple-600 hover:bg-purple-700'
-                          }`}
-                        >
-                          {isProcessing ? 'Processing...' : 'Process Data'}
-                        </button>
-                        <button 
-                          onClick={() => setSelectedSnapshot(null)}
-                          className="text-gray-400 hover:text-gray-300"
-                        >
-                          Close
-                        </button>
-                      </div>
-                    </div>
-                    <pre className="bg-black p-4 rounded-lg overflow-auto max-h-96 text-sm text-gray-300">
-                      {JSON.stringify(selectedSnapshot.data, null, 2)}
-                    </pre>
-                  </div>
-
-                  {/* Processed Data Review */}
-                  {renderProcessedDataReview()}
-                </div>
-              )}
-            </div>
+            )}
           </div>
         )}
       </div>

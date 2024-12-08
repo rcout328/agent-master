@@ -15,6 +15,7 @@ from urllib.parse import urlparse
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from competitor_news_api import get_competitor_insights
+from feedback_validation_api import FeedbackAnalyzer, process_feedback_validation
 
 # Initialize Gemini
 GOOGLE_API_KEY = "AIzaSyAE2SKBA38bOktQBdXS6mTK5Y1a-nKB3Mo"
@@ -759,6 +760,44 @@ def get_competitor_news_endpoint():
 
     except Exception as e:
         logger.error(f"Error getting competitor news: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/feedback-validation', methods=['POST', 'OPTIONS'])
+def feedback_validation_endpoint():
+    """Endpoint to validate and analyze customer feedback"""
+    if request.method == 'OPTIONS':
+        response = jsonify({})
+        response.headers['Access-Control-Allow-Origin'] = '*'
+        response.headers['Access-Control-Allow-Methods'] = 'POST'
+        response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
+        return response, 204
+
+    try:
+        data = request.json
+        query = data.get('query')
+        
+        if not query:
+            return jsonify({'error': 'No query provided'}), 400
+
+        # Use process_feedback_validation instead of direct FeedbackAnalyzer
+        result = process_feedback_validation(query)
+        
+        # Check if result is an error
+        if isinstance(result, tuple) and len(result) == 2 and isinstance(result[0], dict) and 'error' in result[0]:
+            return jsonify(result[0]), result[1]
+
+        # Save analysis to file with timestamp
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        filename = f'feedback_validation_{timestamp}.json'
+        
+        with open(os.path.join(output_dir, filename), 'w') as f:
+            json.dump(result, f, indent=2)
+
+        # Return response
+        return jsonify(result)
+
+    except Exception as e:
+        logger.error(f"Error in feedback validation: {str(e)}", exc_info=True)
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
