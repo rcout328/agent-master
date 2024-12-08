@@ -17,6 +17,7 @@ from googleapiclient.errors import HttpError
 from competitor_news_api import get_competitor_insights
 from feedback_validation_api import FeedbackAnalyzer, process_feedback_validation
 from pain_points_api import analyze_pain_points
+from journey_mapping_api import journey_mapping_endpoint
 
 # Initialize Gemini
 GOOGLE_API_KEY = "AIzaSyAE2SKBA38bOktQBdXS6mTK5Y1a-nKB3Mo"
@@ -776,25 +777,32 @@ def feedback_validation_endpoint():
     try:
         data = request.json
         query = data.get('query')
+        platforms = data.get('platforms', ['google reviews'])
         
         if not query:
             return jsonify({'error': 'No query provided'}), 400
 
-        # Use process_feedback_validation instead of direct FeedbackAnalyzer
-        result = process_feedback_validation(query)
+        # Use process_feedback_validation with fallback
+        result = process_feedback_validation(query, platforms)
         
-        # Check if result is an error
-        if isinstance(result, tuple) and len(result) == 2 and isinstance(result[0], dict) and 'error' in result[0]:
-            return jsonify(result[0]), result[1]
+        if not result or (isinstance(result, tuple) and result[1] == 404):
+            # If no data found, return empty structure instead of 404
+            return jsonify({
+                'query': query,
+                'timestamp': datetime.now().isoformat(),
+                'feedback_count': 0,
+                'analysis': {
+                    'sentiment_analysis': {
+                        'overall_sentiment': 'neutral',
+                        'sentiment_score': 0,
+                        'distribution': {'positive': 0, 'neutral': 100, 'negative': 0}
+                    },
+                    'key_themes': [],
+                    'recommendations': []
+                },
+                'sources': []
+            }), 200
 
-        # Save analysis to file with timestamp
-        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-        filename = f'feedback_validation_{timestamp}.json'
-        
-        with open(os.path.join(output_dir, filename), 'w') as f:
-            json.dump(result, f, indent=2)
-
-        # Return response
         return jsonify(result)
 
     except Exception as e:
@@ -840,6 +848,56 @@ def pain_points_endpoint():
 
     except Exception as e:
         logger.error(f"Error in pain points analysis: {str(e)}", exc_info=True)
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/journey-mapping', methods=['POST', 'OPTIONS'])
+def analyze_journey_mapping():
+    """Endpoint for journey mapping analysis"""
+    if request.method == 'OPTIONS':
+        response = jsonify({})
+        response.headers.add('Access-Control-Allow-Origin', '*')
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
+        response.headers.add('Access-Control-Allow-Methods', 'POST')
+        return response, 204
+        
+    try:
+        data = request.json
+        query = data.get('query')
+        
+        if not query:
+            return jsonify({'error': 'No query provided'}), 400
+
+        # Call the journey mapping endpoint
+        result = journey_mapping_endpoint()
+        return result
+
+    except Exception as e:
+        logger.error(f"Error in journey mapping analysis: {str(e)}", exc_info=True)
+        return jsonify({'error': str(e)}), 500
+
+# Add this route for journey simulation
+@app.route('/api/journey-mapping', methods=['POST', 'OPTIONS'])
+def journey_simulation_endpoint():
+    if request.method == 'OPTIONS':
+        response = jsonify({})
+        response.headers.add('Access-Control-Allow-Origin', '*')
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
+        response.headers.add('Access-Control-Allow-Methods', 'POST')
+        return response, 204
+        
+    try:
+        data = request.json
+        query = data.get('query')
+        
+        if not query:
+            return jsonify({'error': 'No query provided'}), 400
+
+        # Get journey data using existing function
+        result = get_journey_data(query)
+        return jsonify(result)
+
+    except Exception as e:
+        logger.error(f"Error in journey simulation: {str(e)}", exc_info=True)
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':

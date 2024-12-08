@@ -53,7 +53,7 @@ def perform_search(query):
         logger.error(f"Search error: {str(e)}")
         return []
 
-def scrape_with_retry(url, max_retries=3):
+def scrape_with_retry(url, max_retries=3, initial_delay=1, max_delay=60):
     """Helper function to scrape URL with retry logic"""
     # Skip problematic domains
     problematic_domains = [

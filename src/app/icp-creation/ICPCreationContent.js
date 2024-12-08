@@ -474,15 +474,12 @@ export default function ICPCreationContent() {
             >
               ICP Creation
             </button>
-            <button
-              onClick={() => {
-                setShowFeedbackSection(true);
-                document.getElementById('feedback-section')?.scrollIntoView({ behavior: 'smooth' });
-              }}
+            <Link
+              href="/journey-mapping"
               className="px-4 py-2 rounded-lg text-gray-400 hover:text-white hover:bg-purple-600/50 transition-all duration-200"
             >
-              Feedback Collection
-            </button>
+              Journey Mapping
+            </Link>
           </div>
 
           <div className="flex items-center space-x-4">

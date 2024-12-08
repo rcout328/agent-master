@@ -8,6 +8,8 @@ import os
 import time
 from googlesearch import search
 import google.generativeai as genai
+from urllib.parse import quote
+import requests
 
 # Setup logging with more detailed format
 logging.basicConfig(
@@ -32,6 +34,10 @@ if GOOGLE_API_KEY:
 else:
     logging.critical("No Gemini API key found - analysis functionality will be limited")
 
+# Add Google Custom Search configuration
+GOOGLE_CSE_API_KEY = "AIzaSyAxeLlJ6vZxOl-TblUJg_dInBS3vNxaFVY"
+GOOGLE_CSE_ID = "37793b12975da4e35"
+
 class FeedbackAnalyzer:
     def __init__(self, query, platforms=None):
         self.query = query
@@ -39,34 +45,82 @@ class FeedbackAnalyzer:
         self.feedback_data = []
         logger.debug(f"FeedbackAnalyzer initialized with query: {query} and platforms: {platforms}")
         
+    def perform_custom_search(self, search_query):
+        """Use Google Custom Search API as fallback"""
+        try:
+            encoded_query = quote(search_query)
+            url = f"https://www.googleapis.com/customsearch/v1?key={GOOGLE_CSE_API_KEY}&cx={GOOGLE_CSE_ID}&q={encoded_query}&num=5"
+            
+            response = requests.get(url)
+            if response.status_code == 200:
+                results = response.json().get('items', [])
+                return [item['link'] for item in results]
+            else:
+                logger.error(f"Custom search API error: {response.status_code}")
+                return []
+                
+        except Exception as e:
+            logger.error(f"Custom search error: {str(e)}")
+            return []
+
+    def get_search_results(self, query, use_custom_search=False):
+        """Get search results with fallback"""
+        try:
+            if not use_custom_search:
+                try:
+                    return list(search(query, num_results=5))
+                except Exception as e:
+                    if "429" in str(e):
+                        logger.warning("Rate limit hit, falling back to Custom Search API")
+                        return self.perform_custom_search(query)
+                    raise e
+            else:
+                return self.perform_custom_search(query)
+                
+        except Exception as e:
+            logger.error(f"Search error: {str(e)}")
+            return []
+
     def collect_feedback(self):
-        """Collect feedback from multiple sources"""
+        """Collect feedback with improved error handling"""
         logger.info(f"Starting feedback collection for: {self.query}")
         logger.info(f"Using platforms: {self.search_platforms}")
+        
+        use_custom_search = False
         
         for platform in self.search_platforms:
             search_query = f"{self.query} {platform}"
             try:
                 logger.info(f"Searching: {search_query}")
-                search_results = list(search(search_query, num_results=10))
-                logger.info(f"Found {len(search_results)} results for {platform}")
-                logger.debug(f"Search results URLs: {json.dumps(search_results, indent=2)}")
+                
+                # Get search results with fallback
+                search_results = self.get_search_results(search_query, use_custom_search)
+                
+                if not search_results and not use_custom_search:
+                    # If regular search fails, try custom search
+                    use_custom_search = True
+                    search_results = self.get_search_results(search_query, use_custom_search)
                 
                 for url in search_results:
                     try:
                         content = self.scrape_content(url)
                         if content:
                             self.feedback_data.append(content)
-                            logger.debug(f"Added content from {url}: {json.dumps(content, indent=2)}")
-                            if len(self.feedback_data) >= 20:
-                                logger.info("Reached maximum feedback items (20)")
+                            logger.debug(f"Added content from {url}")
+                            if len(self.feedback_data) >= 10:  # Reduced from 20
+                                logger.info("Reached maximum feedback items (10)")
                                 return len(self.feedback_data)
                     except Exception as e:
-                        logger.error(f"Error scraping {url}: {str(e)}", exc_info=True)
+                        logger.error(f"Error scraping {url}: {str(e)}")
                 
-                time.sleep(2)  # Respect rate limits
+                time.sleep(2)  # Add delay between searches
+                
             except Exception as e:
-                logger.error(f"Search error for {platform}: {str(e)}", exc_info=True)
+                logger.error(f"Search error for {platform}: {str(e)}")
+                if "429" in str(e) and not use_custom_search:
+                    use_custom_search = True
+                    logger.info("Switching to Custom Search API")
+                continue
                 
         logger.info(f"Collected {len(self.feedback_data)} total feedback items")
         return len(self.feedback_data)
