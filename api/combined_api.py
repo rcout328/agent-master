@@ -16,6 +16,7 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from competitor_news_api import get_competitor_insights
 from feedback_validation_api import FeedbackAnalyzer, process_feedback_validation
+from pain_points_api import analyze_pain_points
 
 # Initialize Gemini
 GOOGLE_API_KEY = "AIzaSyAE2SKBA38bOktQBdXS6mTK5Y1a-nKB3Mo"
@@ -798,6 +799,47 @@ def feedback_validation_endpoint():
 
     except Exception as e:
         logger.error(f"Error in feedback validation: {str(e)}", exc_info=True)
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/pain-points', methods=['POST', 'OPTIONS'])
+def pain_points_endpoint():
+    """Endpoint to analyze customer pain points"""
+    if request.method == 'OPTIONS':
+        response = jsonify({})
+        response.headers['Access-Control-Allow-Origin'] = '*'
+        response.headers['Access-Control-Allow-Methods'] = 'POST'
+        response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
+        return response, 204
+
+    try:
+        data = request.json
+        query = data.get('query')
+        market_segment = data.get('market_segment')
+        
+        if not query:
+            return jsonify({'error': 'No query provided'}), 400
+
+        # Analyze pain points
+        results = analyze_pain_points(query, market_segment)
+        if not results:
+            return jsonify({'error': 'Analysis failed'}), 500
+
+        # Save analysis to file with timestamp
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        filename = f'pain_points_{timestamp}.json'
+        
+        with open(os.path.join(output_dir, filename), 'w') as f:
+            json.dump({
+                'query': query,
+                'market_segment': market_segment,
+                'timestamp': timestamp,
+                'results': results
+            }, f, indent=2)
+
+        return jsonify(results)
+
+    except Exception as e:
+        logger.error(f"Error in pain points analysis: {str(e)}", exc_info=True)
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':

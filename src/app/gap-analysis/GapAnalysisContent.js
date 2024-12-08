@@ -16,6 +16,7 @@ export default function GapAnalysisContent() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [processedData, setProcessedData] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [showPainPointsUI, setShowPainPointsUI] = useState(false);
 
   useEffect(() => {
     loadAllSnapshots();
@@ -101,8 +102,8 @@ export default function GapAnalysisContent() {
       .filter(company => company.similar_companies)
       .map(company => {
         const competitors = company.similar_companies || [];
-        const avgTechStack = competitors.reduce((sum, comp) => sum + (comp.active_tech_count || 0), 0) / competitors.length;
-        const avgProducts = competitors.reduce((sum, comp) => sum + (comp.total_active_products || 0), 0) / competitors.length;
+        const avgTechStack = competitors.reduce((sum, comp) => sum + (comp.active_tech_count || 0), 0) / competitors.length || 0;
+        const avgProducts = competitors.reduce((sum, comp) => sum + (comp.total_active_products || 0), 0) / competitors.length || 0;
         
         return {
           name: company.name,
@@ -124,7 +125,7 @@ export default function GapAnalysisContent() {
         funding_gap: calculateFundingGap(company),
         contact_gap: calculateContactGap(company)
       }))
-      .filter(item => item.tech_gap || item.product_gap || item.funding_gap || item.contact_gap);
+      .filter(item => item.tech_gap.length > 0 || item.product_gap.length > 0 || item.funding_gap.length > 0 || item.contact_gap.length > 0);
   };
 
   const generateRecommendations = (data) => {
@@ -139,10 +140,10 @@ export default function GapAnalysisContent() {
 
   const analyzeMetrics = (data) => {
     return {
-      avg_tech_stack: Math.round(data.reduce((sum, company) => sum + (company.active_tech_count || 0), 0) / data.length),
-      avg_products: Math.round(data.reduce((sum, company) => sum + (company.total_active_products || 0), 0) / data.length),
-      avg_funding_rounds: Math.round(data.reduce((sum, company) => sum + (company.funding_rounds?.num_funding_rounds || 0), 0) / data.length),
-      avg_contacts: Math.round(data.reduce((sum, company) => sum + (company.num_contacts || 0), 0) / data.length)
+      avg_tech_stack: Math.round(data.reduce((sum, company) => sum + (company.active_tech_count || 0), 0) / data.length) || 0,
+      avg_products: Math.round(data.reduce((sum, company) => sum + (company.total_active_products || 0), 0) / data.length) || 0,
+      avg_funding_rounds: Math.round(data.reduce((sum, company) => sum + (company.funding_rounds?.num_funding_rounds || 0), 0) / data.length) || 0,
+      avg_contacts: Math.round(data.reduce((sum, company) => sum + (company.num_contacts || 0), 0) / data.length) || 0
     };
   };
 
@@ -268,6 +269,37 @@ export default function GapAnalysisContent() {
     } catch (error) {
       console.error('Error generating analysis:', error);
       alert('Failed to generate analysis: ' + error.message);
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
+
+  const analyzePainPoints = async (companyName) => {
+    if (!companyName) {
+      alert('Please enter a company name');
+      return;
+    }
+
+    setIsAnalyzing(true);
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/pain-points`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          query: companyName,
+          market_segment: null
+        })
+      });
+
+      if (!response.ok) throw new Error('Failed to analyze pain points');
+      const data = await response.json();
+      setPainPointsData(data);
+      setShowPainPoints(true);
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Failed to analyze pain points: ' + error.message);
     } finally {
       setIsAnalyzing(false);
     }
@@ -483,6 +515,286 @@ export default function GapAnalysisContent() {
               </div>
             </div>
           )}
+
+          {/* Add Pain Points Section */}
+          {showPainPoints && painPointsData && (
+            <div className="mt-6 bg-[#1D1D1F] p-6 rounded-xl">
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-xl font-semibold text-purple-400">
+                  Pain Points Analysis
+                </h3>
+                <button
+                  onClick={() => setShowPainPoints(false)}
+                  className="text-gray-400 hover:text-gray-300"
+                >
+                  Close
+                </button>
+              </div>
+
+              {isAnalyzingPainPoints ? (
+                <div className="text-center py-12">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500 mx-auto"></div>
+                  <p className="text-gray-400 mt-4">Analyzing pain points...</p>
+                </div>
+              ) : painPointsData ? (
+                <div className="space-y-6">
+                  {/* Major Pain Points */}
+                  <div className="bg-[#2D2D2F] p-4 rounded-lg">
+                    <h4 className="text-lg font-semibold text-purple-400 mb-3">Major Pain Points</h4>
+                    <div className="space-y-4">
+                      {painPointsData.analysis.major_pain_points.map((point, index) => (
+                        <div key={index} className="bg-[#1D1D1F] p-4 rounded-lg">
+                          <div className="flex justify-between items-start mb-2">
+                            <h5 className="font-medium text-gray-300">{point.issue}</h5>
+                            <span className={`px-2 py-1 text-sm rounded ${
+                              point.severity === 'high' ? 'bg-red-500/20 text-red-400' :
+                              point.severity === 'medium' ? 'bg-yellow-500/20 text-yellow-400' :
+                              'bg-green-500/20 text-green-400'
+                            }`}>
+                              {point.severity} severity
+                            </span>
+                          </div>
+                          <p className="text-sm text-gray-400 mb-2">{point.description}</p>
+                          <p className="text-sm text-purple-400">Impact: {point.impact}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Categories */}
+                  <div className="bg-[#2D2D2F] p-4 rounded-lg">
+                    <h4 className="text-lg font-semibold text-purple-400 mb-3">Categories</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {painPointsData.analysis.categories.map((category, index) => (
+                        <div key={index} className="bg-[#1D1D1F] p-4 rounded-lg">
+                          <h5 className="font-medium text-gray-300 mb-2">{category.name}</h5>
+                          <ul className="space-y-1 text-sm text-gray-400">
+                            {category.issues.map((issue, i) => (
+                              <li key={i}>• {issue}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Recommendations */}
+                  <div className="bg-[#2D2D2F] p-4 rounded-lg">
+                    <h4 className="text-lg font-semibold text-purple-400 mb-3">Recommendations</h4>
+                    <div className="space-y-4">
+                      {painPointsData.analysis.recommendations.map((rec, index) => (
+                        <div key={index} className="bg-[#1D1D1F] p-4 rounded-lg">
+                          <div className="flex justify-between items-start mb-2">
+                            <h5 className="font-medium text-gray-300">{rec.solution}</h5>
+                            <span className={`px-2 py-1 text-sm rounded ${
+                              rec.priority === 'high' ? 'bg-red-500/20 text-red-400' :
+                              rec.priority === 'medium' ? 'bg-yellow-500/20 text-yellow-400' :
+                              'bg-green-500/20 text-green-400'
+                            }`}>
+                              {rec.priority} priority
+                            </span>
+                          </div>
+                          <p className="text-sm text-gray-400 mb-2">{rec.implementation}</p>
+                          <p className="text-sm text-purple-400">Expected Impact: {rec.expected_impact}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="text-center text-gray-400 py-12">
+                  Select a company and click "Analyze Pain Points" to start the analysis
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
+
+  // First, update the viewSnapshotData function to include pain points reset
+  const viewSnapshotData = (snapshot) => {
+    setSelectedSnapshot(snapshot);
+    setProcessedData(null);
+    setPainPointsData(null); // Reset pain points when new snapshot is selected
+    setShowPainPoints(false); // Hide pain points section
+  };
+
+  // Add this function to handle pain points button click
+  const handlePainPointsClick = () => {
+    setShowPainPoints(true);
+    if (!painPointsData) {
+      // Use either selected snapshot or manual input
+      const companyName = selectedSnapshot?.data?.name || companyNameInput;
+      if (!companyName) {
+        // Show input dialog if no company name
+        const name = prompt('Enter company name for pain points analysis:');
+        if (name) {
+          setCompanyNameInput(name);
+          analyzePainPoints(name);
+        }
+      } else {
+        analyzePainPoints(companyName);
+      }
+    }
+  };
+
+  // Add this component for the focused pain points UI
+  const PainPointsAnalysis = ({ onClose }) => {
+    const [companyName, setCompanyName] = useState('');
+    const [isAnalyzing, setIsAnalyzing] = useState(false);
+    const [results, setResults] = useState(null);
+
+    const handleAnalyze = async () => {
+      if (!companyName) return;
+      
+      setIsAnalyzing(true);
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/pain-points`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query: companyName })
+        });
+        
+        const data = await response.json();
+        setResults(data);
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Failed to analyze pain points');
+      } finally {
+        setIsAnalyzing(false);
+      }
+    };
+
+    // Auto-focus the input when modal opens
+    useEffect(() => {
+      const timer = setTimeout(() => {
+        const input = document.getElementById('company-name-input');
+        if (input) input.focus();
+      }, 100);
+      return () => clearTimeout(timer);
+    }, []);
+
+    return (
+      <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div className="bg-[#1D1D1F] rounded-xl w-full max-w-4xl max-h-[90vh] overflow-auto">
+          <div className="p-6 border-b border-gray-800">
+            <div className="flex justify-between items-center">
+              <h2 className="text-2xl font-semibold text-purple-400">Pain Points Analysis</h2>
+              <button 
+                onClick={onClose}
+                className="text-gray-400 hover:text-gray-300"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div className="p-6">
+            <div className="space-y-4">
+              <input
+                id="company-name-input"
+                type="text"
+                value={companyName}
+                onChange={(e) => setCompanyName(e.target.value)}
+                placeholder="Enter company name to analyze..."
+                className="w-full px-4 py-3 bg-[#2D2D2F] rounded-lg border border-gray-700 focus:border-purple-500 outline-none text-white"
+                onKeyPress={(e) => e.key === 'Enter' && companyName && handleAnalyze()}
+              />
+              <button
+                onClick={handleAnalyze}
+                disabled={!companyName || isAnalyzing}
+                className={`w-full py-3 rounded-lg font-medium transition-colors ${
+                  !companyName || isAnalyzing
+                    ? 'bg-purple-600/50 cursor-not-allowed'
+                    : 'bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700'
+                }`}
+              >
+                {isAnalyzing ? 'Analyzing...' : 'Analyze Pain Points'}
+              </button>
+            </div>
+
+            {/* Show results */}
+            {results && (
+              <div className="mt-8 space-y-6">
+                {/* Major Pain Points */}
+                <div className="space-y-4">
+                  <h3 className="text-xl font-semibold text-purple-400">Major Pain Points</h3>
+                  <div className="grid gap-4">
+                    {results.analysis.major_pain_points.map((point, index) => (
+                      <div key={index} className="bg-[#2D2D2F] p-4 rounded-lg">
+                        <div className="flex justify-between items-start mb-2">
+                          <h4 className="font-medium text-gray-300">{point.issue}</h4>
+                          <span className={`px-2 py-1 text-sm rounded ${
+                            point.severity === 'high' ? 'bg-red-500/20 text-red-400' :
+                            point.severity === 'medium' ? 'bg-yellow-500/20 text-yellow-400' :
+                            'bg-green-500/20 text-green-400'
+                          }`}>
+                            {point.severity} severity
+                          </span>
+                        </div>
+                        <p className="text-sm text-gray-400 mb-2">{point.description}</p>
+                        <p className="text-sm text-purple-400">Impact: {point.impact}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Categories */}
+                <div className="space-y-4">
+                  <h3 className="text-xl font-semibold text-purple-400">Categories</h3>
+                  <div className="grid grid-cols-2 gap-4">
+                    {results.analysis.categories.map((category, index) => (
+                      <div key={index} className="bg-[#2D2D2F] p-4 rounded-lg">
+                        <h4 className="font-medium text-gray-300 mb-2">{category.name}</h4>
+                        <ul className="space-y-1 text-sm text-gray-400">
+                          {category.issues.map((issue, i) => (
+                            <li key={i}>• {issue}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Recommendations */}
+                <div className="space-y-4">
+                  <h3 className="text-xl font-semibold text-purple-400">Recommendations</h3>
+                  <div className="space-y-4">
+                    {results.analysis.recommendations.map((rec, index) => (
+                      <div key={index} className="bg-[#2D2D2F] p-4 rounded-lg">
+                        <div className="flex justify-between items-start mb-2">
+                          <h4 className="font-medium text-gray-300">{rec.solution}</h4>
+                          <span className={`px-2 py-1 text-sm rounded ${
+                            rec.priority === 'high' ? 'bg-red-500/20 text-red-400' :
+                            rec.priority === 'medium' ? 'bg-yellow-500/20 text-yellow-400' :
+                            'bg-green-500/20 text-green-400'
+                          }`}>
+                            {rec.priority} priority
+                          </span>
+                        </div>
+                        <p className="text-sm text-gray-400 mb-2">{rec.implementation}</p>
+                        <p className="text-sm text-purple-400">Expected Impact: {rec.expected_impact}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => {
+                    setResults(null);
+                    setCompanyName('');
+                  }}
+                  className="w-full py-3 bg-[#2D2D2F] rounded-lg text-gray-400 hover:text-white transition-colors"
+                >
+                  Analyze Another Company
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     );
@@ -490,6 +802,11 @@ export default function GapAnalysisContent() {
 
   return (
     <div className="min-h-screen bg-black text-white">
+      {/* Show Pain Points Modal when showPainPointsUI is true */}
+      {showPainPointsUI && (
+        <PainPointsAnalysis onClose={() => setShowPainPointsUI(false)} />
+      )}
+
       <div className="max-w-7xl mx-auto px-4 py-6">
         {/* Navigation and View Toggle */}
         <div className="flex items-center justify-between mb-8">
@@ -508,6 +825,14 @@ export default function GapAnalysisContent() {
           </div>
 
           <div className="flex items-center space-x-4">
+            {/* Pain Points Analysis Button */}
+            <button
+              onClick={() => setShowPainPointsUI(true)}
+              className="px-6 py-2 rounded-xl font-medium bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white transition-colors"
+            >
+              🎯 Pain Points Analysis
+            </button>
+            
             <button
               onClick={() => setViewMode('api')}
               className={`px-6 py-2 rounded-xl font-medium transition-colors ${
@@ -547,7 +872,7 @@ export default function GapAnalysisContent() {
                   <div 
                     key={snapshot.id}
                     className="bg-[#1D1D1F]/90 p-6 rounded-xl backdrop-blur-xl border border-purple-500/20 hover:border-purple-500/40 transition-all cursor-pointer"
-                    onClick={() => setSelectedSnapshot(snapshot)}
+                    onClick={() => viewSnapshotData(snapshot)}
                   >
                     <div className="flex flex-col space-y-3">
                       <div className="flex items-center justify-between">
@@ -597,6 +922,21 @@ export default function GapAnalysisContent() {
                         >
                           {isProcessing ? 'Processing...' : 'Process Data'}
                         </button>
+
+                        {/* Pain Points Button */}
+                        <button
+                          onClick={handlePainPointsClick}
+                          disabled={isAnalyzingPainPoints}
+                          className={`inline-flex items-center px-4 py-2 rounded-lg transition-colors ${
+                            isAnalyzingPainPoints
+                              ? 'bg-blue-600/50 cursor-not-allowed'
+                              : 'bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700'
+                          }`}
+                        >
+                          <span className="mr-2">🎯</span>
+                          {isAnalyzingPainPoints ? 'Analyzing...' : 'Pain Points'}
+                        </button>
+
                         <button 
                           onClick={() => setSelectedSnapshot(null)}
                           className="text-gray-400 hover:text-gray-300"
@@ -605,7 +945,7 @@ export default function GapAnalysisContent() {
                         </button>
                       </div>
                     </div>
-                    <pre className="bg-[#2D2D2F] p-4 rounded-lg overflow-auto max-h-96 text-sm text-gray-300">
+                    <pre className="bg-black p-4 rounded-lg overflow-auto max-h-96 text-sm text-gray-300">
                       {JSON.stringify(selectedSnapshot.data, null, 2)}
                     </pre>
                   </div>

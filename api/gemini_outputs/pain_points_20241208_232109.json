@@ -1,0 +1,34 @@
+{
+  "query": "amazon",
+  "market_segment": null,
+  "timestamp": "20241208_232109",
+  "results": {
+    "analysis": {
+      "major_pain_points": [
+        {
+          "issue": "Analysis Unavailable",
+          "description": "Unable to fetch real-time data. Using general assessment.",
+          "severity": "medium",
+          "impact": "Please try again later for detailed analysis"
+        }
+      ],
+      "categories": [
+        {
+          "name": "General Assessment",
+          "issues": [
+            "Data collection temporarily unavailable"
+          ],
+          "priority": "medium"
+        }
+      ],
+      "recommendations": [
+        {
+          "solution": "Retry Analysis",
+          "implementation": "Please try again in a few minutes",
+          "expected_impact": "Full analysis results",
+          "priority": "medium"
+        }
+      ]
+    }
+  }
+}
