@@ -1,0 +1,38 @@
+{
+  "query": "eBay",
+  "timestamp": "20241209_190640",
+  "execution_time": 23.22777223587036,
+  "results": {
+    "sentiment_analysis": [
+      {
+        "company": "eBay",
+        "overall_sentiment": "positive",
+        "sentiment_score": 0.7,
+        "key_themes": [
+          "Growth and innovation",
+          "Corporate social responsibility",
+          "Customer satisfaction"
+        ],
+        "notable_developments": [
+          "New AI-powered tools to help sellers",
+          "Investment in circular fashion",
+          "Commitment to workplace diversity and inclusion"
+        ],
+        "news_sources": [
+          {
+            "url": "https://www.ebayinc.com/stories/news/",
+            "date": "2024-12-09"
+          },
+          {
+            "url": "https://economictimes.indiatimes.com/topic/ebay",
+            "date": "2024-12-09"
+          },
+          {
+            "url": "https://www.ebay.com/sellercenter/resources/seller-updates",
+            "date": "2024-12-09"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -990,3 +990,37 @@ ValueError: Invalid operation: The `response.text` quick accessor requires the r
 2024-12-09 10:57:17,196 - competitor_analysis - INFO - Analysis saved to product_suggestions_20241209_105717.json
 2024-12-09 11:02:23,906 - competitor_analysis - INFO - Analyzing product: 100xEngineers
 2024-12-09 11:03:17,060 - competitor_analysis - INFO - Analysis saved to product_suggestions_20241209_110317.json
+2024-12-09 14:00:19,150 - competitor_analysis - DEBUG - Handling OPTIONS request
+2024-12-09 14:00:19,155 - competitor_analysis - INFO - Starting competitor search process
+2024-12-09 14:00:19,155 - competitor_analysis - INFO - Analyzing competitors for: amazon
+2024-12-09 14:01:19,383 - competitor_analysis - DEBUG - Handling OPTIONS request
+2024-12-09 14:01:19,387 - competitor_analysis - INFO - Starting competitor search process
+2024-12-09 14:01:19,387 - competitor_analysis - INFO - Analyzing competitors for: amazon
+2024-12-09 14:01:31,580 - competitor_analysis - ERROR - Error parsing competitor data: Expecting value: line 1 column 1 (char 0)
+2024-12-09 14:01:46,347 - competitor_analysis - DEBUG - Handling OPTIONS request
+2024-12-09 14:01:46,350 - competitor_analysis - INFO - Starting competitor search process
+2024-12-09 14:01:46,350 - competitor_analysis - INFO - Analyzing competitors for: amazon
+2024-12-09 14:02:16,662 - competitor_analysis - INFO - Analysis completed in 30.31 seconds
+2024-12-09 14:02:32,921 - competitor_analysis - DEBUG - Handling OPTIONS request for sentiment analysis
+2024-12-09 14:02:32,924 - competitor_analysis - INFO - Starting sentiment analysis process
+2024-12-09 14:02:32,924 - competitor_analysis - INFO - Analyzing sentiment for: Walmart
+2024-12-09 14:02:50,416 - competitor_analysis - INFO - Sentiment analysis saved to sentiment_analysis_20241209_140250.json
+2024-12-09 14:02:50,417 - competitor_analysis - INFO - Sentiment analysis completed in 17.49 seconds
+2024-12-09 16:22:42,107 - competitor_analysis - DEBUG - Handling OPTIONS request
+2024-12-09 16:22:42,111 - competitor_analysis - INFO - Starting competitor search process
+2024-12-09 16:22:42,112 - competitor_analysis - INFO - Analyzing competitors for: amazon
+2024-12-09 16:23:50,268 - competitor_analysis - DEBUG - Handling OPTIONS request
+2024-12-09 16:23:50,271 - competitor_analysis - INFO - Starting competitor search process
+2024-12-09 16:23:50,271 - competitor_analysis - INFO - Analyzing competitors for: amazon
+2024-12-09 16:24:02,901 - competitor_analysis - ERROR - Error parsing competitor data: Expecting value: line 1 column 1 (char 0)
+2024-12-09 16:24:12,266 - competitor_analysis - DEBUG - Handling OPTIONS request
+2024-12-09 16:24:12,268 - competitor_analysis - INFO - Starting competitor search process
+2024-12-09 16:24:12,268 - competitor_analysis - INFO - Analyzing competitors for: amazon
+2024-12-09 16:24:23,613 - competitor_analysis - ERROR - Error parsing competitor data: Expecting value: line 1 column 1 (char 0)
+2024-12-09 19:06:17,157 - competitor_analysis - DEBUG - Handling OPTIONS request for sentiment analysis
+2024-12-09 19:06:17,160 - competitor_analysis - INFO - Starting sentiment analysis process
+2024-12-09 19:06:17,160 - competitor_analysis - INFO - Analyzing sentiment for: eBay
+2024-12-09 19:06:40,388 - competitor_analysis - INFO - Sentiment analysis saved to sentiment_analysis_20241209_190640.json
+2024-12-09 19:06:40,389 - competitor_analysis - INFO - Sentiment analysis completed in 23.23 seconds
+2024-12-09 19:19:56,273 - competitor_analysis - INFO - Analyzing product: 100xEngineers
+2024-12-09 19:20:44,823 - competitor_analysis - INFO - Analysis saved to product_suggestions_20241209_192044.json

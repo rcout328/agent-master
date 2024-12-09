@@ -604,133 +604,61 @@ def log_request_info():
 
 @app.route('/api/search-competitors', methods=['POST', 'OPTIONS'])
 def search_competitors():
-    """Endpoint to search for competitors"""
+    """Endpoint for competitor search and analysis"""
     if request.method == 'OPTIONS':
-        logger.debug('Handling OPTIONS request')
         response = jsonify({})
-        response.headers['Access-Control-Allow-Origin'] = '*'
-        response.headers['Access-Control-Allow-Methods'] = 'POST'
-        response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
+        response.headers.add('Access-Control-Allow-Methods', 'POST')
         return response, 204
-
+        
     try:
-        start_time = time.time()
-        logger.info('Starting competitor search process')
-        
-        data = request.get_json()
-        if not data or 'query' not in data:
-            return jsonify({'error': 'No query provided'}), 400
+        # Validate request data
+        if not request.is_json:
+            return jsonify({
+                'error': 'Request must be JSON',
+                'competitors': [],
+                'analysis_summary': '',
+                'sources': []
+            }), 400
             
-        query = data['query']
-        logger.info(f'Analyzing competitors for: {query}')
+        data = request.get_json()
+        if not data:
+            return jsonify({
+                'error': 'Empty request body',
+                'competitors': [],
+                'analysis_summary': '',
+                'sources': []
+            }), 400
+            
+        query = data.get('query')
+        if not query or not isinstance(query, str):
+            return jsonify({
+                'error': 'Invalid or missing query parameter',
+                'competitors': [],
+                'analysis_summary': '',
+                'sources': []
+            }), 400
 
-        # First, get competitor list from Gemini
-        competitor_prompt = f"""
-        Analyze and list exactly 5 main competitors for {query}.
-        Return only a JSON object in this exact format:
-        {{
-            "competitors": [
-                {{
-                    "name": "Competitor Name",
-                    "description": "2-3 sentence description",
-                    "strengths": ["strength1", "strength2", "strength3"],
-                    "market_position": "Brief market position",
-                    "target_market": "Target audience",
-                    "unique_features": ["feature1", "feature2"]
-                }}
-            ],
-            "analysis_summary": "Brief market overview"
-        }}
-        """
-
-        # Get competitors from Gemini
-        model = genai.GenerativeModel('gemini-pro')
-        response = model.generate_content(
-            contents=competitor_prompt,
-            generation_config={
-                "temperature": 0.7,
-                "top_p": 1,
-                "max_output_tokens": 2048,
-            }
-        )
-
-        if not response.parts or not response.parts[0].text:
-            return jsonify({'error': 'Failed to generate competitor list'}), 500
-
-        # Parse competitor data
-        try:
-            text = response.parts[0].text.strip()
-            if '```' in text:
-                text = text.split('```')[1].strip()
-            result = json.loads(text)
-        except Exception as e:
-            logger.error(f'Error parsing competitor data: {e}')
-            return jsonify({'error': 'Failed to parse competitor data'}), 500
-
-        # For each competitor, get recent news and analyze
-        for competitor in result['competitors']:
-            try:
-                # Get recent news
-                news_prompt = f"""
-                Analyze recent developments and news for {competitor['name']}.
-                Focus on:
-                1. Recent business developments
-                2. Market performance
-                3. New initiatives
-                4. Industry impact
-                
-                Return a JSON object with:
-                {{
-                    "recent_developments": ["development1", "development2"],
-                    "market_updates": ["update1", "update2"],
-                    "key_initiatives": ["initiative1", "initiative2"]
-                }}
-                """
-                
-                news_response = model.generate_content(
-                    contents=news_prompt,
-                    generation_config={"temperature": 0.7, "top_p": 1}
-                )
-                
-                if news_response.parts and news_response.parts[0].text:
-                    try:
-                        news_text = news_response.parts[0].text.strip()
-                        if '```' in news_text:
-                            news_text = news_text.split('```')[1].strip()
-                        news_data = json.loads(news_text)
-                        competitor['news'] = news_data
-                    except:
-                        competitor['news'] = {
-                            "recent_developments": [],
-                            "market_updates": [],
-                            "key_initiatives": []
-                        }
-                
-            except Exception as e:
-                logger.error(f'Error getting news for {competitor["name"]}: {e}')
-                competitor['news'] = {
-                    "recent_developments": [],
-                    "market_updates": [],
-                    "key_initiatives": []
-                }
-
-        # Save complete analysis
-        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-        analysis_file = f'competitor_analysis_{timestamp}.json'
-        with open(os.path.join(output_dir, analysis_file), 'w') as f:
-            json.dump({
-                'query': query,
-                'timestamp': timestamp,
-                'execution_time': time.time() - start_time,
-                'results': result
-            }, f, indent=2)
+        # Get competitor data
+        competitor_info = get_competitor_data(query)
         
-        logger.info(f'Analysis completed in {time.time() - start_time:.2f} seconds')
-        return jsonify(result)
+        # Ensure response format even if empty
+        response_data = {
+            'competitors': competitor_info.get('competitors', []),
+            'analysis_summary': competitor_info.get('analysis_summary', ''),
+            'sources': competitor_info.get('sources', [])
+        }
+
+        return jsonify(response_data)
 
     except Exception as e:
-        logger.error(f'Error in competitor search: {str(e)}')
-        return jsonify({'error': str(e)}), 500
+        logging.error(f"Error in competitor search endpoint: {str(e)}")
+        return jsonify({
+            'error': str(e),
+            'competitors': [],
+            'analysis_summary': '',
+            'sources': []
+        }), 500
 
 @app.route('/api/competitor-news', methods=['POST', 'OPTIONS'])
 def get_competitor_news_endpoint():

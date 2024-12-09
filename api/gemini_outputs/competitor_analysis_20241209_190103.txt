@@ -1,0 +1,14 @@
+# Competitor Analysis for amazon
+
+## TOP COMPETITORS
+Walmart: Leading US e-commerce competitor; leverages its extensive physical store network for in-store pickup, easy returns, and competitive pricing, particularly on everyday household items.
+
+eBay: Major e-commerce platform; offers a peer-to-peer marketplace with auction and fixed-price listings, differentiating itself from Amazon's traditional retail approach.
+
+Alibaba Group: Dominant player in the Chinese and global e-commerce market; operates various retail subsidiaries (AliExpress, Taobao, Tmall) offering a diverse range of products and business models.
+
+Target: Strong US competitor; combines a large network of physical stores with a growing online presence, focusing on a loyal customer base and convenient same-day options.
+
+Flipkart: Leading Indian e-commerce platform; offers a business model similar to Amazon's but with a unique loyalty program (Flipkart Plus SuperCoins).
+
+

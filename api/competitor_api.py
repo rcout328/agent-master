@@ -6,12 +6,13 @@ import time
 import google.generativeai as genai
 import requests
 from googlesearch import search
+import json
 
 # Initialize logging
 logging.basicConfig(level=logging.DEBUG)
 
 # Initialize Firecrawl
-FIRECRAWL_API_KEY = "fc-43e5dcff501d4aef8cbccfa47b646f57"
+FIRECRAWL_API_KEY = "fc-5fadfeae30314d4ea8a3d9afaa75c493"
 firecrawl_app = FirecrawlApp(api_key=FIRECRAWL_API_KEY)
 logging.info("Firecrawl initialized")
 
@@ -75,69 +76,56 @@ def get_competitor_data(query):
     logging.info(f"\n{'='*50}\nAnalyzing competitors for: {query}\n{'='*50}")
     
     result = {
-        "main_competitors": [],
-        "competitor_strengths": [],
-        "key_findings": [],
+        "competitors": [],
+        "analysis_summary": "",
         "sources": []
     }
 
-    # Create directory for outputs
-    output_dir = 'gemini_outputs'
-    os.makedirs(output_dir, exist_ok=True)
-    
-    # Generate unique filename
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    output_file = os.path.join(output_dir, f'competitor_analysis_{timestamp}.txt')
-
     try:
-        # Phase 1: Top Competitors Analysis
-        logging.info("\nPhase 1: Analyzing Top Competitors")
-        competitor_search_query = f"{query} top competitors market leaders analysis"
-        urls = search_with_retry(competitor_search_query)
+        # Generate competitor analysis prompt
+        competitor_prompt = f"""
+        Analyze and list exactly 5 main competitors for {query}.
+        Return only a JSON object in this exact format:
+        {{
+            "competitors": [
+                {{
+                    "name": "Competitor Name",
+                    "description": "2-3 sentence description",
+                    "strengths": ["strength1", "strength2", "strength3"],
+                    "market_position": "Brief market position",
+                    "target_market": "Target audience",
+                    "unique_features": ["feature1", "feature2"]
+                }}
+            ],
+            "analysis_summary": "Brief market overview"
+        }}
+        """
+
+        # Get analysis from Gemini
+        model = genai.GenerativeModel('gemini-pro')
+        response = model.generate_content(competitor_prompt)
         
-        competitor_content = ""
-        for url in urls:
-            content = scrape_with_retry(url, 'Competitors')
-            if content:
-                competitor_content += content + "\n"
-                result["sources"].append({
-                    'url': url,
-                    'domain': extract_domain(url),
-                    'section': 'Competitors',
-                    'date': datetime.now().strftime("%Y-%m-%d")
-                })
+        if not response or not response.text:
+            logging.error("Empty response from Gemini")
+            return result
 
-        if competitor_content:
-            competitor_prompt = f"""
-            Task 1: Identify Top 5 Competitors
-            Analyze the following content to identify the top 5 competitors of {query}.
+        # Parse response
+        analysis_text = response.text.strip()
+        if '```json' in analysis_text:
+            analysis_text = analysis_text.split('```json')[1].split('```')[0]
+        
+        analysis = json.loads(analysis_text)
+        
+        # Validate and merge response
+        if isinstance(analysis, dict):
+            result["competitors"] = analysis.get("competitors", [])
+            result["analysis_summary"] = analysis.get("analysis_summary", "")
             
-            Content: {competitor_content}
-            
-            Format your response exactly as follows:
-            [Competitor 1 Name]: [Market position and key offering]
-            [Competitor 2 Name]: [Market position and key offering]
-            [Competitor 3 Name]: [Market position and key offering]
-            [Competitor 4 Name]: [Market position and key offering]
-            [Competitor 5 Name]: [Market position and key offering]
-            """
-            
-            competitors = model.generate_content(competitor_prompt).text
-            result["main_competitors"] = extract_section(competitors, "")
-            
-            with open(output_file, 'w') as f:
-                f.write(f"# Competitor Analysis for {query}\n\n")
-                f.write("## TOP COMPETITORS\n")
-                f.write(competitors + "\n\n")
-
-        # Continue with other phases...
-        # (Keep the rest of your existing phases code)
+        return result
 
     except Exception as e:
         logging.error(f"Error in competitor analysis: {str(e)}")
-        return create_empty_response()
-
-    return result
+        return result
 
 def extract_section(text, section_name):
     """Enhanced section extraction to handle ICP data"""

@@ -1,0 +1,210 @@
+{
+  "query": "100xEngineers",
+  "timestamp": "2024-12-09T16:46:50.411996",
+  "journey_map": {
+    "pre_purchase": [
+      {
+        "stage": "Awareness",
+        "touchpoints": [
+          "100xEngineers website (www.100xengineers.com)",
+          "Social Media (implied)",
+          "Search Engine Results (implied)"
+        ],
+        "customer_actions": [
+          "Visits website",
+          "Reads about Generative AI course",
+          "Views curriculum and mentors"
+        ],
+        "pain_points": [
+          "Uncertainty about course quality",
+          "Lack of clear differentiation from other ChatGPT courses",
+          "Hesitation due to cost (implied)"
+        ],
+        "opportunities": [
+          "Showcase strong testimonials and case studies",
+          "Highlight unique selling propositions (USP)",
+          "Offer free introductory content or webinars"
+        ]
+      },
+      {
+        "stage": "Consideration",
+        "touchpoints": [
+          "Website FAQs",
+          "Website About Us section",
+          "Website Mentors section",
+          "Buildathon registration page"
+        ],
+        "customer_actions": [
+          "Reads FAQs",
+          "Checks credibility of mentors",
+          "Explores Buildathon opportunity",
+          "Reads reviews or testimonials (if available)"
+        ],
+        "pain_points": [
+          "Difficulty in comparing the course to competitors",
+          "Concern about time commitment",
+          "Lack of social proof or community"
+        ],
+        "opportunities": [
+          "Improved website navigation",
+          "Detailed comparison table with competitors",
+          "Showcase active student community"
+        ]
+      },
+      {
+        "stage": "Decision",
+        "touchpoints": [
+          "Join Waitlist form (https://forms.100xengineers.com/genai-waitlist)",
+          "Contact Us page"
+        ],
+        "customer_actions": [
+          "Joins waitlist",
+          "Contacts support with questions",
+          "Compares pricing and course features (if applicable)"
+        ],
+        "pain_points": [
+          "Waitlist length might be discouraging",
+          "Lack of immediate response to inquiries",
+          "Unclear payment options"
+        ],
+        "opportunities": [
+          "Faster waitlist processing",
+          "Implement live chat support",
+          "Clearly state pricing and payment options"
+        ]
+      }
+    ],
+    "purchase": [
+      {
+        "stage": "Enrollment",
+        "touchpoints": [
+          "Confirmation email (implied)",
+          "Payment gateway (implied)"
+        ],
+        "customer_actions": [
+          "Completes enrollment",
+          "Makes payment",
+          "Receives confirmation and onboarding materials"
+        ],
+        "pain_points": [
+          "Complex enrollment process",
+          "Technical issues during payment",
+          "Lack of clear onboarding instructions"
+        ],
+        "opportunities": [
+          "Streamlined enrollment process",
+          "Robust payment gateway integration",
+          "Comprehensive onboarding materials"
+        ]
+      }
+    ],
+    "post_purchase": [
+      {
+        "stage": "Onboarding & Learning",
+        "touchpoints": [
+          "Course materials",
+          "Mentors",
+          "Student community (implied)"
+        ],
+        "customer_actions": [
+          "Accesses course materials",
+          "Engages with mentors",
+          "Interacts with other students",
+          "Completes assignments"
+        ],
+        "pain_points": [
+          "Difficult to understand course content",
+          "Lack of mentor support or feedback",
+          "Limited interaction with other students"
+        ],
+        "opportunities": [
+          "Improved course content clarity",
+          "Regular mentor check-ins",
+          "Active student forums or online groups"
+        ]
+      },
+      {
+        "stage": "Completion & Career",
+        "touchpoints": [
+          "Graduation (implied)",
+          "Job placement assistance (implied)",
+          "Alumni network (implied)"
+        ],
+        "customer_actions": [
+          "Completes course",
+          "Searches for jobs",
+          "Network with other graduates"
+        ],
+        "pain_points": [
+          "Difficulty in finding relevant job opportunities",
+          "Lack of career support",
+          "Limited alumni network"
+        ],
+        "opportunities": [
+          "Career counseling",
+          "Job placement services",
+          "Active alumni community"
+        ]
+      }
+    ],
+    "optimization": [
+      {
+        "area": "Website UX/UI",
+        "current_state": "Some information is scattered and difficult to find; call to action could be more prominent.",
+        "target_state": "Improved website navigation, clear and concise information architecture, strong calls-to-action.",
+        "recommendations": [
+          "Conduct user testing",
+          "Re-design website navigation",
+          "A/B test different call-to-action buttons"
+        ],
+        "priority": "high",
+        "expected_impact": "Increased conversion rates, improved user satisfaction"
+      },
+      {
+        "area": "Lead nurturing",
+        "current_state": "Relies mainly on waitlist; lacks a robust email marketing strategy to engage leads.",
+        "target_state": "Regular email communication with waitlist members, providing valuable content and updates.",
+        "recommendations": [
+          "Implement email marketing automation",
+          "Develop a content calendar for lead nurturing"
+        ],
+        "priority": "medium",
+        "expected_impact": "Improved lead conversion rates, stronger brand engagement"
+      },
+      {
+        "area": "Student Support",
+        "current_state": "Unclear level of support provided; potential for improvement in mentor interaction and community engagement.",
+        "target_state": "Regular mentor check-ins, active student forums, and readily available support channels.",
+        "recommendations": [
+          "Implement a feedback mechanism",
+          "Create an online student community platform",
+          "Train mentors on effective communication strategies"
+        ],
+        "priority": "high",
+        "expected_impact": "Enhanced learning experience, increased student satisfaction"
+      }
+    ]
+  },
+  "sources": [
+    {
+      "url": "https://www.100xengineers.com/",
+      "source": "www.100xengineers.com",
+      "date": "2024-12-09"
+    },
+    {
+      "url": "https://survicate.com/blog/customer-journey-touchpoints/",
+      "source": "survicate.com",
+      "date": "2024-12-09"
+    },
+    {
+      "url": "https://www.100xengineers.com/",
+      "source": "www.100xengineers.com",
+      "date": "2024-12-09"
+    },
+    {
+      "url": "https://medium.com/design-ibm/ux-engineers-add-great-value-to-the-design-process-9555c1fe3b89",
+      "source": "medium.com",
+      "date": "2024-12-09"
+    }
+  ]
+}

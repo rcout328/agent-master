@@ -1,0 +1,206 @@
+{
+  "query": "100xEngineers",
+  "timestamp": "2024-12-09T14:09:14.444234",
+  "journey_map": {
+    "pre_purchase": [
+      {
+        "stage": "Awareness",
+        "touchpoints": [
+          "Website (100xEngineers.com)",
+          "Social Media (implied)",
+          "Search Engine Results (implied)"
+        ],
+        "customer_actions": [
+          "Visits website",
+          "Reads overview, curriculum, mentors sections",
+          "Reads FAQs",
+          "Watches promotional videos (implied from images)"
+        ],
+        "pain_points": [
+          "Uncertainty about program quality",
+          "Lack of clear understanding of learning outcomes",
+          "Hesitation due to cost (implied)",
+          "Fear of time commitment"
+        ],
+        "opportunities": [
+          "Showcase strong testimonials and case studies",
+          "Provide clearer value proposition and ROI",
+          "Offer free introductory webinars or demos",
+          "Highlight flexible learning options"
+        ]
+      },
+      {
+        "stage": "Consideration",
+        "touchpoints": [
+          "Website (100xEngineers.com)",
+          "Social Media (implied)",
+          "Email marketing (implied)",
+          "Buildathon registration page"
+        ],
+        "customer_actions": [
+          "Compares 100xEngineers with alternatives",
+          "Reads reviews or testimonials (if available)",
+          "Attends webinars/buildathons (implied)",
+          "Joins waitlist"
+        ],
+        "pain_points": [
+          "Difficulty comparing to competitors",
+          "Lack of social proof",
+          "Concerns about instructor availability/support",
+          "Uncertainty about job placement assistance"
+        ],
+        "opportunities": [
+          "Develop detailed competitor comparison page",
+          "Gather and prominently display student testimonials",
+          "Clearly outline support systems and resources",
+          "Showcase successful job placement statistics"
+        ]
+      },
+      {
+        "stage": "Decision",
+        "touchpoints": [
+          "Waitlist form",
+          "Email correspondence (implied)",
+          "Payment page (implied)"
+        ],
+        "customer_actions": [
+          "Completes waitlist form",
+          "Receives program information",
+          "Enrolls in program (if available)",
+          "Makes payment (if applicable)"
+        ],
+        "pain_points": [
+          "Complex or unclear enrollment process",
+          "Lack of payment options",
+          "Hesitation due to lack of immediate access",
+          "Uncertainty about cancellation policy"
+        ],
+        "opportunities": [
+          "Streamline enrollment process",
+          "Offer multiple payment options",
+          "Provide clear communication throughout enrollment",
+          "Clearly define cancellation policy"
+        ]
+      }
+    ],
+    "purchase": [
+      {
+        "stage": "Enrollment",
+        "touchpoints": [
+          "Confirmation email",
+          "Onboarding materials (implied)"
+        ],
+        "customer_actions": [
+          "Receives confirmation",
+          "Accesses learning materials",
+          "Completes onboarding"
+        ],
+        "pain_points": [
+          "Difficulties accessing learning materials",
+          "Unclear onboarding instructions",
+          "Lack of initial communication post enrollment"
+        ],
+        "opportunities": [
+          "Provide clear and concise onboarding materials",
+          "Offer dedicated support during onboarding",
+          "Establish immediate post enrollment communication"
+        ]
+      }
+    ],
+    "post_purchase": [
+      {
+        "stage": "Learning & Engagement",
+        "touchpoints": [
+          "Learning platform (implied)",
+          "Instructor communication (implied)",
+          "Community forum (implied)"
+        ],
+        "customer_actions": [
+          "Participates in classes/workshops",
+          "Engages with instructors and peers",
+          "Completes assignments"
+        ],
+        "pain_points": [
+          "Lack of engagement with the community",
+          "Difficulty understanding certain concepts",
+          "Lack of personalized feedback",
+          "Inconsistent instructor availability"
+        ],
+        "opportunities": [
+          "Foster a strong community through online forums",
+          "Offer additional support resources",
+          "Provide timely and personalized feedback",
+          "Establish regular communication with instructors"
+        ]
+      },
+      {
+        "stage": "Completion & Outcomes",
+        "touchpoints": [
+          "Certification (implied)",
+          "Job placement support (implied)",
+          "Alumni network (implied)"
+        ],
+        "customer_actions": [
+          "Completes the program",
+          "Seeks job opportunities",
+          "Engages with alumni network"
+        ],
+        "pain_points": [
+          "Uncertainty about job prospects",
+          "Lack of career guidance",
+          "Limited network opportunities"
+        ],
+        "opportunities": [
+          "Offer career counseling and networking events",
+          "Develop an active alumni network",
+          "Provide job placement assistance"
+        ]
+      }
+    ],
+    "optimization": [
+      {
+        "area": "Website User Experience",
+        "current_state": "Website provides basic information but lacks compelling visuals and strong calls to action.",
+        "target_state": "Website is visually appealing, easy to navigate, and features strong calls to action (CTA) leading to conversions (waitlist sign-ups and buildathon registrations).",
+        "recommendations": [
+          "Improve website design and layout",
+          "Add more visuals, testimonials, and case studies",
+          "Implement A/B testing to optimize CTAs",
+          "Improve website SEO"
+        ],
+        "priority": "high",
+        "expected_impact": "Increased website engagement and conversions."
+      },
+      {
+        "area": "Student Communication & Support",
+        "current_state": "Information about communication frequency and support channels is unclear.",
+        "target_state": "Clear and consistent communication channels are established to address student queries and provide timely feedback.  Students know what to expect and how to access support.",
+        "recommendations": [
+          "Create a comprehensive FAQs page",
+          "Establish dedicated support channels (email, chat, forum)",
+          "Regular newsletters and updates",
+          "Proactive communication about program progress"
+        ],
+        "priority": "high",
+        "expected_impact": "Improved student satisfaction and reduced churn."
+      }
+    ]
+  },
+  "sources": [
+    {
+      "url": "https://www.100xengineers.com/",
+      "source": "www.100xengineers.com",
+      "date": "2024-12-09"
+    },
+    {
+      "url": "https://brittanyhodak.com/8-customer-journey-touchpoints-crucial-to-creating-superfans/",
+      "source": "brittanyhodak.com",
+      "date": "2024-12-09"
+    },
+    {
+      "url": "https://www.100xengineers.com/",
+      "source": "www.100xengineers.com",
+      "date": "2024-12-09"
+    }
+  ]
+}

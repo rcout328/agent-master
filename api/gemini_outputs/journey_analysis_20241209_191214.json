@@ -1,0 +1,231 @@
+{
+  "query": "iphone 12",
+  "timestamp": "2024-12-09T19:12:14.724063",
+  "journey_map": {
+    "pre_purchase": [
+      {
+        "stage": "Awareness",
+        "touchpoints": [
+          "Social Media Ads",
+          "Apple Website",
+          "Tech Blogs (like Forbes, but indirectly based on provided data)",
+          "Word-of-Mouth"
+        ],
+        "customer_actions": [
+          "See iPhone 12 ads or articles",
+          "Visit Apple website to learn specs",
+          "Read reviews and comparisons",
+          "Discuss with friends/family"
+        ],
+        "pain_points": [
+          "Overwhelmed by choices",
+          "Difficulty comparing specs to competitors",
+          "Uncertainty about value proposition",
+          "Lack of hands-on experience"
+        ],
+        "opportunities": [
+          "Targeted advertising highlighting key features",
+          "Easy-to-understand comparison charts",
+          "Compelling videos showcasing features",
+          "In-store or online demos"
+        ]
+      },
+      {
+        "stage": "Consideration",
+        "touchpoints": [
+          "Apple Website (detailed specs)",
+          "Review Sites",
+          "YouTube Reviews",
+          "Retail Stores (if applicable)",
+          "Price Comparison Websites"
+        ],
+        "customer_actions": [
+          "Read detailed product descriptions",
+          "Check reviews & ratings",
+          "Watch product demo videos",
+          "Visit a store to see the phone",
+          "Compare prices from different retailers"
+        ],
+        "pain_points": [
+          "Confusing technical jargon",
+          "Conflicting reviews",
+          "Long wait times in stores",
+          "Difficulty understanding financing options",
+          "Shipping delays or high shipping costs"
+        ],
+        "opportunities": [
+          "Simplified language on website",
+          "Response to negative reviews and clear addressing of issues",
+          "Fast and seamless online ordering",
+          "Streamlined financing options",
+          "Free or low-cost shipping"
+        ]
+      },
+      {
+        "stage": "Decision",
+        "touchpoints": [
+          "Apple Website (Buy button)",
+          "Authorized Retailers",
+          "Carrier Websites",
+          "Trade-in programs"
+        ],
+        "customer_actions": [
+          "Add to cart",
+          "Checkout process",
+          "Choose financing option",
+          "Trade-in old phone",
+          "Compare carrier deals"
+        ],
+        "pain_points": [
+          "Complex checkout process",
+          "Hidden fees",
+          "Difficulty trading in an old device",
+          "Inconsistent pricing across retailers",
+          "Limited carrier options"
+        ],
+        "opportunities": [
+          "Easy and intuitive checkout",
+          "Transparent pricing",
+          "Simplified trade-in process",
+          "Price matching guarantee",
+          "Wide range of carrier partnerships"
+        ]
+      }
+    ],
+    "purchase": [
+      {
+        "stage": "Purchase",
+        "touchpoints": [
+          "Apple Online Store",
+          "Apple Retail Stores",
+          "Authorized Retailers",
+          "Carrier Stores"
+        ],
+        "customer_actions": [
+          "Complete purchase online",
+          "In-store pickup",
+          "Home delivery",
+          "Activate device"
+        ],
+        "pain_points": [
+          "Long wait times for delivery/pickup",
+          "Issues with online payment",
+          "Difficulties activating the device",
+          "Problems with in-store customer service",
+          "Damaged packaging upon arrival"
+        ],
+        "opportunities": [
+          "Faster shipping and efficient pickup",
+          "Secure payment options",
+          "Easy device activation instructions",
+          "Improved in-store customer service",
+          "Robust packaging to minimize damage"
+        ]
+      }
+    ],
+    "post_purchase": [
+      {
+        "stage": "Onboarding/Usage",
+        "touchpoints": [
+          "Device Setup Guide",
+          "Apple Support Website",
+          "Apple Store App",
+          "App Store"
+        ],
+        "customer_actions": [
+          "Set up the phone",
+          "Download apps",
+          "Explore features",
+          "Seek help if needed"
+        ],
+        "pain_points": [
+          "Difficult setup process",
+          "Inconvenient access to support",
+          "Lack of clear instructions",
+          "Too many features at once",
+          "Technical issues"
+        ],
+        "opportunities": [
+          "Simplified setup wizard",
+          "Easy access to online support",
+          "Improved in-app tutorials",
+          "Phased feature introduction",
+          "Proactive troubleshooting assistance"
+        ]
+      },
+      {
+        "stage": "Loyalty/Advocacy",
+        "touchpoints": [
+          "Apple Support",
+          "Social Media",
+          "Apple Communities",
+          "Apple Feedback Mechanisms"
+        ],
+        "customer_actions": [
+          "Share experience online",
+          "Recommend to friends",
+          "Engage with Apple support",
+          "Provide feedback",
+          "Renew contract or buy another Apple product"
+        ],
+        "pain_points": [
+          "Negative support experiences",
+          "Ignoring customer feedback",
+          "Lack of community engagement",
+          "Limited loyalty programs"
+        ],
+        "opportunities": [
+          "Prompt and helpful customer support",
+          "Active response to feedback",
+          "Stronger community building",
+          "Rewarding customer loyalty"
+        ]
+      }
+    ],
+    "optimization": [
+      {
+        "area": "Pre-purchase Customer Experience",
+        "current_state": "Mixed; some areas are excellent (website design), while others need improvement (review aggregation and comparison tools)",
+        "target_state": "Seamless and informative pre-purchase experience making it easy for customers to research, compare, and purchase the product.",
+        "recommendations": [
+          "Improve comparison tools",
+          "Aggregate and highlight customer reviews more effectively",
+          "Invest in more engaging video content",
+          "Enhance website's mobile responsiveness"
+        ],
+        "priority": "high",
+        "expected_impact": "Increased conversion rates and improved customer satisfaction"
+      },
+      {
+        "area": "Post-purchase Support",
+        "current_state": "Adequate but could be more proactive and personalized",
+        "target_state": "Proactive and personalized post-purchase support aimed at maximizing customer satisfaction and loyalty.",
+        "recommendations": [
+          "Implement more proactive troubleshooting tools",
+          "Offer personalized onboarding assistance",
+          "Improve customer service response times",
+          "Develop more robust feedback mechanisms"
+        ],
+        "priority": "medium",
+        "expected_impact": "Improved customer retention and positive word-of-mouth referrals"
+      }
+    ]
+  },
+  "sources": [
+    {
+      "url": "https://www.forbes.com/sites/michellegreenwald/2014/05/21/20-ways-apple-masters-customer-touchpoints-why-its-great-for-business/",
+      "source": "www.forbes.com",
+      "date": "2024-12-09"
+    },
+    {
+      "url": "https://uxcam.com/blog/mobile-app-customer-journey/",
+      "source": "uxcam.com",
+      "date": "2024-12-09"
+    },
+    {
+      "url": "https://www.apple.com/eg/iphone-12/key-features/",
+      "source": "www.apple.com",
+      "date": "2024-12-09"
+    }
+  ]
+}
