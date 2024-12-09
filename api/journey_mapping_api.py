@@ -16,7 +16,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Initialize APIs
-FIRECRAWL_API_KEY = "fc-43e5dcff501d4aef8cbccfa47b646f57"
+FIRECRAWL_API_KEY = "fc-5fadfeae30314d4ea8a3d9afaa75c493"
 firecrawl_app = FirecrawlApp(api_key=FIRECRAWL_API_KEY)
 
 GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY', '')

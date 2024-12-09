@@ -16,6 +16,9 @@ export default function ImpactAssessmentContent() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [processedData, setProcessedData] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [customerImpactData, setCustomerImpactData] = useState(null);
+  const [isAnalyzingCustomerImpact, setIsAnalyzingCustomerImpact] = useState(false);
+  const [showCustomerImpact, setShowCustomerImpact] = useState(false);
 
   useEffect(() => {
     loadAllSnapshots();
@@ -804,6 +807,29 @@ export default function ImpactAssessmentContent() {
       'N/A';
   };
 
+  const analyzeCustomerImpact = async () => {
+    setIsAnalyzingCustomerImpact(true);
+    try {
+      const response = await fetch('/api/customer-impact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          company_name: selectedSnapshot?.data?.company_name || 'Unknown Company'
+        }),
+      });
+
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      const data = await response.json();
+      setCustomerImpactData(data);
+      setShowCustomerImpact(true);
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Failed to analyze customer impact: ' + error.message);
+    } finally {
+      setIsAnalyzingCustomerImpact(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-black text-white">
       <div className="max-w-7xl mx-auto px-4 py-6">
@@ -843,6 +869,17 @@ export default function ImpactAssessmentContent() {
               }`}
             >
               Web View
+            </button>
+            <button
+              onClick={analyzeCustomerImpact}
+              disabled={isAnalyzingCustomerImpact || !selectedSnapshot}
+              className={`px-6 py-2 rounded-xl font-medium transition-colors ${
+                isAnalyzingCustomerImpact || !selectedSnapshot
+                  ? 'bg-purple-600/50 cursor-not-allowed'
+                  : 'bg-purple-600 hover:bg-purple-700'
+              }`}
+            >
+              {isAnalyzingCustomerImpact ? 'Analyzing...' : 'Customer Impact'}
             </button>
           </div>
         </div>
@@ -943,6 +980,54 @@ export default function ImpactAssessmentContent() {
                   No stored snapshots found
                 </div>
               )}
+            </div>
+          </div>
+        )}
+
+        {/* Customer Impact Analysis Section */}
+        {showCustomerImpact && customerImpactData && (
+          <div className="mt-6 bg-[#1D1D1F]/90 p-6 rounded-xl backdrop-blur-xl border border-purple-500/20">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-xl font-semibold text-purple-400">
+                Customer Impact Analysis
+              </h3>
+              <button 
+                onClick={() => setShowCustomerImpact(false)}
+                className="text-gray-400 hover:text-gray-300"
+              >
+                Close
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Customer Sentiment */}
+              <div className="bg-[#2D2D2F] p-4 rounded-lg">
+                <h4 className="text-purple-400 font-medium mb-2">Customer Sentiment</h4>
+                <div className="space-y-2">
+                  <p className="text-gray-300">Score: {customerImpactData.customer_sentiment?.overall_score}</p>
+                  <div>
+                    <p className="text-gray-400 text-sm">Positive Aspects:</p>
+                    <ul className="list-disc list-inside text-gray-300">
+                      {customerImpactData.customer_sentiment?.positive_aspects.map((aspect, i) => (
+                        <li key={i}>{aspect}</li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              {/* Impact Areas */}
+              <div className="bg-[#2D2D2F] p-4 rounded-lg">
+                <h4 className="text-purple-400 font-medium mb-2">Impact Areas</h4>
+                <div className="space-y-4">
+                  {customerImpactData.impact_areas?.map((area, i) => (
+                    <div key={i} className="border-b border-gray-700 pb-2 last:border-0">
+                      <p className="text-gray-300 font-medium">{area.area}</p>
+                      <p className="text-gray-400 text-sm">Impact Level: {area.impact_level}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         )}

@@ -15,8 +15,8 @@ logging.basicConfig(
 )
 
 # Initialize Gemini
-GOOGLE_API_KEY = "AIzaSyAE2SKBA38bOktQBdXS6mTK5Y1a-nKB3Mo"
-genai.configure(api_key=GOOGLE_API_KEY)
+FIRECRAWL_API_KEY = "fc-5fadfeae30314d4ea8a3d9afaa75c493"
+genai.configure(api_key=FIRECRAWL_API_KEY)
 
 def get_competitor_news(competitor_name):
     """Get news about competitor using Google Search"""

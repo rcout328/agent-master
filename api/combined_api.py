@@ -18,6 +18,9 @@ from competitor_news_api import get_competitor_insights
 from feedback_validation_api import FeedbackAnalyzer, process_feedback_validation
 from pain_points_api import analyze_pain_points
 from journey_mapping_api import journey_mapping_endpoint
+from product_suggestions_api import analyze_product_suggestions
+from geographical_analysis_api import analyze_geographical_data
+from customer_impact_api import analyze_customer_impact
 
 # Initialize Gemini
 GOOGLE_API_KEY = "AIzaSyAE2SKBA38bOktQBdXS6mTK5Y1a-nKB3Mo"
@@ -898,6 +901,111 @@ def journey_simulation_endpoint():
 
     except Exception as e:
         logger.error(f"Error in journey simulation: {str(e)}", exc_info=True)
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/product-suggestions', methods=['POST', 'OPTIONS'])
+def product_suggestions_endpoint():
+    """Endpoint for product enhancement suggestions"""
+    if request.method == 'OPTIONS':
+        response = jsonify({})
+        response.headers.add('Access-Control-Allow-Origin', '*')
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
+        response.headers.add('Access-Control-Allow-Methods', 'POST')
+        return response, 204
+        
+    try:
+        data = request.json
+        if not data or not data.get('name'):
+            return jsonify({'error': 'Product details required'}), 400
+
+        # Log the incoming request
+        logger.info(f"Analyzing product: {data.get('name')}")
+        
+        # Get product suggestions
+        result = analyze_product_suggestions(data)
+        
+        # Save analysis to file
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        filename = f'product_suggestions_{timestamp}.json'
+        
+        with open(os.path.join(output_dir, filename), 'w') as f:
+            json.dump({
+                'product_details': data,
+                'timestamp': timestamp,
+                'analysis': result
+            }, f, indent=2)
+            
+        logger.info(f"Analysis saved to {filename}")
+
+        return jsonify(result)
+
+    except Exception as e:
+        logger.error(f"Error in product suggestions: {str(e)}", exc_info=True)
+        return jsonify({
+            'error': str(e),
+            'suggestions': [],
+            'market_insights': {
+                'trends': [],
+                'competitor_activities': [],
+                'customer_needs': []
+            },
+            'sources': []
+        }), 500
+
+@app.route('/api/geographical-analysis', methods=['POST', 'OPTIONS'])
+def geographical_analysis_endpoint():
+    """Endpoint for geographical analysis"""
+    if request.method == 'OPTIONS':
+        response = jsonify({})
+        response.headers.add('Access-Control-Allow-Origin', '*')
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
+        response.headers.add('Access-Control-Allow-Methods', 'POST')
+        return response, 204
+        
+    try:
+        data = request.json
+        if not data:
+            return jsonify({'error': 'No data provided'}), 400
+
+        # Analyze geographical data
+        result = analyze_geographical_data(data)
+        return jsonify(result)
+
+    except Exception as e:
+        logger.error(f"Error in geographical analysis: {str(e)}", exc_info=True)
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/customer-impact', methods=['POST', 'OPTIONS'])
+def analyze_customer_impact_endpoint():
+    """Endpoint for customer impact analysis"""
+    if request.method == 'OPTIONS':
+        response = jsonify({})
+        response.headers['Access-Control-Allow-Origin'] = '*'
+        response.headers['Access-Control-Allow-Methods'] = 'POST'
+        response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
+        return response, 204
+
+    try:
+        data = request.json
+        company_name = data.get('company_name')
+
+        if not company_name:
+            return jsonify({'error': 'No company name provided'}), 400
+
+        # Run customer impact analysis in a separate thread
+        future = executor.submit(analyze_customer_impact, company_name)
+        impact_info = future.result(timeout=60)  # Adjust timeout as needed
+
+        # Save the impact analysis output to a JSON file
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        filename = f'customer_impact_{timestamp}.json'
+        with open(os.path.join(output_dir, filename), 'w') as f:
+            json.dump(impact_info, f, indent=2)
+
+        return jsonify(impact_info)
+
+    except Exception as e:
+        logging.error(f"Error during customer impact analysis: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':

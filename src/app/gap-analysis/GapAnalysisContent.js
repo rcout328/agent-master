@@ -17,6 +17,9 @@ export default function GapAnalysisContent() {
   const [processedData, setProcessedData] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [showPainPointsUI, setShowPainPointsUI] = useState(false);
+  const [showProductSuggestions, setShowProductSuggestions] = useState(false);
+  const [productData, setProductData] = useState(null);
+  const [isAnalyzingProduct, setIsAnalyzingProduct] = useState(false);
 
   useEffect(() => {
     loadAllSnapshots();
@@ -800,11 +803,223 @@ export default function GapAnalysisContent() {
     );
   };
 
+  // Add the ProductSuggestions component
+  const ProductSuggestions = ({ onClose }) => {
+    const [productDetails, setProductDetails] = useState({
+      name: '',
+      description: '',
+      currentFeatures: '',
+      targetMarket: '',
+      mainChallenges: '',
+      product_url: ''
+    });
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [results, setResults] = useState(null);
+
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+      if (Object.values(productDetails).some(val => !val.trim())) return;
+
+      setIsSubmitting(true);
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/product-suggestions`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(productDetails)
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        setResults(data);
+      } catch (error) {
+        console.error('Product Analysis Error:', error);
+        setError('Failed to analyze product. Please try again.');
+      } finally {
+        setIsSubmitting(false);
+      }
+    };
+
+    return (
+      <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div className="bg-[#1D1D1F] rounded-xl w-full max-w-6xl max-h-[90vh] overflow-auto">
+          <div className="p-6 border-b border-gray-800">
+            <div className="flex justify-between items-center">
+              <h2 className="text-2xl font-semibold text-purple-400">Product Enhancement Suggestions</h2>
+              <button onClick={onClose} className="text-gray-400 hover:text-gray-300">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div className="p-6">
+            {!results ? (
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Product Name
+                  </label>
+                  <input
+                    type="text"
+                    value={productDetails.name}
+                    onChange={(e) => setProductDetails(prev => ({...prev, name: e.target.value}))}
+                    className="w-full px-4 py-2 bg-[#2D2D2F] rounded-lg border border-gray-700 focus:border-purple-500 outline-none text-white"
+                    placeholder="Enter your product name"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Product Description
+                  </label>
+                  <textarea
+                    value={productDetails.description}
+                    onChange={(e) => setProductDetails(prev => ({...prev, description: e.target.value}))}
+                    className="w-full px-4 py-2 bg-[#2D2D2F] rounded-lg border border-gray-700 focus:border-purple-500 outline-none text-white h-24"
+                    placeholder="Describe your product in detail"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Current Features
+                  </label>
+                  <textarea
+                    value={productDetails.currentFeatures}
+                    onChange={(e) => setProductDetails(prev => ({...prev, currentFeatures: e.target.value}))}
+                    className="w-full px-4 py-2 bg-[#2D2D2F] rounded-lg border border-gray-700 focus:border-purple-500 outline-none text-white h-24"
+                    placeholder="List your product's current features"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Target Market
+                  </label>
+                  <input
+                    type="text"
+                    value={productDetails.targetMarket}
+                    onChange={(e) => setProductDetails(prev => ({...prev, targetMarket: e.target.value}))}
+                    className="w-full px-4 py-2 bg-[#2D2D2F] rounded-lg border border-gray-700 focus:border-purple-500 outline-none text-white"
+                    placeholder="Who is your target market?"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Main Challenges
+                  </label>
+                  <textarea
+                    value={productDetails.mainChallenges}
+                    onChange={(e) => setProductDetails(prev => ({...prev, mainChallenges: e.target.value}))}
+                    className="w-full px-4 py-2 bg-[#2D2D2F] rounded-lg border border-gray-700 focus:border-purple-500 outline-none text-white h-24"
+                    placeholder="What challenges are you facing with the product?"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Product URL (Optional)
+                  </label>
+                  <input
+                    type="url"
+                    value={productDetails.product_url}
+                    onChange={(e) => setProductDetails(prev => ({...prev, product_url: e.target.value}))}
+                    className="w-full px-4 py-2 bg-[#2D2D2F] rounded-lg border border-gray-700 focus:border-purple-500 outline-none text-white"
+                    placeholder="https://example.com/product-page"
+                  />
+                  <p className="mt-1 text-sm text-gray-400">
+                    Add a direct link to your product page for better analysis
+                  </p>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className={`w-full py-3 rounded-lg font-medium transition-colors ${
+                    isSubmitting
+                      ? 'bg-purple-600/50 cursor-not-allowed'
+                      : 'bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700'
+                  }`}
+                >
+                  {isSubmitting ? 'Analyzing...' : 'Analyze Product'}
+                </button>
+              </form>
+            ) : (
+              <div className="space-y-6">
+                {/* Render enhancement suggestions */}
+                {results.suggestions?.map((suggestion, index) => (
+                  <div key={index} className="bg-[#2D2D2F] p-4 rounded-lg">
+                    <h3 className="text-lg font-medium text-purple-400 mb-2">{suggestion.title}</h3>
+                    <p className="text-gray-300 mb-3">{suggestion.description}</p>
+                    
+                    <div className="space-y-2">
+                      <h4 className="text-sm font-medium text-blue-400">Key Benefits:</h4>
+                      <ul className="list-disc list-inside text-gray-300 space-y-1">
+                        {suggestion.benefits.map((benefit, i) => (
+                          <li key={i}>{benefit}</li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    <div className="mt-3">
+                      <span className={`px-2 py-1 text-sm rounded ${
+                        suggestion.priority === 'high' ? 'bg-red-500/20 text-red-400' :
+                        suggestion.priority === 'medium' ? 'bg-yellow-500/20 text-yellow-400' :
+                        'bg-green-500/20 text-green-400'
+                      }`}>
+                        {suggestion.priority} priority
+                      </span>
+                    </div>
+                  </div>
+                ))}
+
+                {/* Sources */}
+                {results.sources?.length > 0 && (
+                  <div className="mt-6">
+                    <h3 className="text-lg font-medium text-purple-400 mb-4">Research Sources</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {results.sources.map((source, index) => (
+                        <a
+                          key={index}
+                          href={source.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="bg-[#2D2D2F] p-4 rounded-lg hover:bg-[#3D3D3F] transition-colors"
+                        >
+                          <div className="flex justify-between items-center">
+                            <span className="text-purple-400">{source.source}</span>
+                            <span className="text-sm text-gray-400">{source.date}</span>
+                          </div>
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="min-h-screen bg-black text-white">
       {/* Show Pain Points Modal when showPainPointsUI is true */}
       {showPainPointsUI && (
         <PainPointsAnalysis onClose={() => setShowPainPointsUI(false)} />
+      )}
+
+      {/* Add Product Suggestions Modal */}
+      {showProductSuggestions && (
+        <ProductSuggestions onClose={() => setShowProductSuggestions(false)} />
       )}
 
       <div className="max-w-7xl mx-auto px-4 py-6">
@@ -830,7 +1045,14 @@ export default function GapAnalysisContent() {
               onClick={() => setShowPainPointsUI(true)}
               className="px-6 py-2 rounded-xl font-medium bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white transition-colors"
             >
-              🎯 Pain Points Analysis
+              🎯 Pain Points
+            </button>
+            {/* Product Suggestions Button */}
+            <button
+              onClick={() => setShowProductSuggestions(true)}
+              className="px-6 py-2 rounded-xl font-medium bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white transition-colors"
+            >
+              💡 Product Suggestions
             </button>
             
             <button

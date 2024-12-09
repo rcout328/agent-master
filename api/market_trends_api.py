@@ -12,7 +12,7 @@ import json
 logging.basicConfig(level=logging.DEBUG)
 
 # Initialize Firecrawl
-FIRECRAWL_API_KEY = "fc-43e5dcff501d4aef8cbccfa47b646f57"
+FIRECRAWL_API_KEY = "fc-5fadfeae30314d4ea8a3d9afaa75c493"
 firecrawl_app = FirecrawlApp(api_key=FIRECRAWL_API_KEY)
 logging.info("Firecrawl initialized")
 

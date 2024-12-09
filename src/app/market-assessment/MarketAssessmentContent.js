@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import Link from 'next/link';
 import Market from './Market';
+import { FaGlobe } from 'react-icons/fa';
 
 // Initialize Gemini
 const genAI = new GoogleGenerativeAI("AIzaSyAE2SKBA38bOktQBdXS6mTK5Y1a-nKB3Mo");
@@ -16,6 +17,7 @@ export default function MarketAssessmentContent() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [processedData, setProcessedData] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [showGeographicalAnalysis, setShowGeographicalAnalysis] = useState(false);
 
   useEffect(() => {
     loadAllSnapshots();
@@ -519,6 +521,205 @@ export default function MarketAssessmentContent() {
     );
   };
 
+  const GeographicalAnalysis = ({ onClose }) => {
+    const [selectedSnapshot, setSelectedSnapshot] = useState(null);
+    const [storedSnapshots, setStoredSnapshots] = useState([]);
+    const [analysis, setAnalysis] = useState(null);
+    const [isAnalyzing, setIsAnalyzing] = useState(false);
+
+    useEffect(() => {
+      loadSnapshots();
+    }, []);
+
+    const loadSnapshots = () => {
+      const allKeys = Object.keys(localStorage);
+      const snapshots = allKeys
+        .filter(key => key.includes('snapshot_'))
+        .map(key => {
+          try {
+            const data = JSON.parse(localStorage.getItem(key));
+            return {
+              id: key.split('snapshot_')[1],
+              data: data,
+              timestamp: new Date().toISOString()
+            };
+          } catch (e) {
+            console.error(`Error parsing snapshot ${key}:`, e);
+            return null;
+          }
+        })
+        .filter(Boolean);
+
+      setStoredSnapshots(snapshots);
+    };
+
+    const analyzeGeographicalData = async () => {
+      if (!selectedSnapshot) return;
+
+      setIsAnalyzing(true);
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/geographical-analysis`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(selectedSnapshot.data)
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        setAnalysis(data);
+      } catch (error) {
+        console.error('Analysis Error:', error);
+      } finally {
+        setIsAnalyzing(false);
+      }
+    };
+
+    return (
+      <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div className="bg-[#1D1D1F] rounded-xl w-full max-w-6xl max-h-[90vh] overflow-auto">
+          <div className="p-6 border-b border-gray-800">
+            <div className="flex justify-between items-center">
+              <h2 className="text-2xl font-semibold text-purple-400">Geographical Analysis</h2>
+              <button onClick={onClose} className="text-gray-400 hover:text-gray-300">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div className="p-6">
+            {!selectedSnapshot ? (
+              <div className="space-y-6">
+                <h3 className="text-xl font-semibold text-purple-400">Select Snapshot</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {storedSnapshots.map((snapshot) => (
+                    <div
+                      key={snapshot.id}
+                      onClick={() => setSelectedSnapshot(snapshot)}
+                      className="bg-[#2D2D2F] p-4 rounded-lg cursor-pointer hover:bg-[#3D3D3F] transition-colors"
+                    >
+                      <div className="flex justify-between items-center">
+                        <span className="text-purple-400">Snapshot {snapshot.id}</span>
+                        <span className="text-sm text-gray-400">
+                          {new Date(snapshot.timestamp).toLocaleDateString()}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : !analysis ? (
+              <div className="space-y-6">
+                <div className="flex justify-between items-center">
+                  <h3 className="text-xl font-semibold text-purple-400">
+                    Snapshot {selectedSnapshot.id}
+                  </h3>
+                  <button
+                    onClick={() => setSelectedSnapshot(null)}
+                    className="text-gray-400 hover:text-gray-300"
+                  >
+                    Back to Snapshots
+                  </button>
+                </div>
+
+                <div className="bg-[#2D2D2F] p-4 rounded-lg">
+                  <pre className="text-sm text-gray-300 overflow-auto">
+                    {JSON.stringify(selectedSnapshot.data, null, 2)}
+                  </pre>
+                </div>
+
+                <button
+                  onClick={analyzeGeographicalData}
+                  disabled={isAnalyzing}
+                  className={`w-full py-3 rounded-lg font-medium transition-colors ${
+                    isAnalyzing
+                      ? 'bg-purple-600/50 cursor-not-allowed'
+                      : 'bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700'
+                  }`}
+                >
+                  {isAnalyzing ? 'Analyzing...' : 'Analyze Geographical Data'}
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-6">
+                {/* Regional Distribution */}
+                <div className="bg-[#2D2D2F] p-4 rounded-lg">
+                  <h3 className="text-lg font-medium text-purple-400 mb-4">Regional Distribution</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {analysis.regional_distribution.map((region, index) => (
+                      <div key={index} className="bg-[#3D3D3F] p-3 rounded">
+                        <div className="flex justify-between items-center mb-2">
+                          <span className="text-gray-300">{region.name}</span>
+                          <span className="text-purple-400">{region.company_count} companies</span>
+                        </div>
+                        <div className="h-2 bg-gray-700 rounded">
+                          <div
+                            className="h-full bg-purple-600 rounded"
+                            style={{ width: `${region.percentage}%` }}
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Industry Clusters */}
+                <div className="bg-[#2D2D2F] p-4 rounded-lg">
+                  <h3 className="text-lg font-medium text-purple-400 mb-4">Industry Clusters</h3>
+                  <div className="space-y-4">
+                    {analysis.industry_clusters.map((cluster, index) => (
+                      <div key={index} className="bg-[#3D3D3F] p-3 rounded">
+                        <h4 className="font-medium text-gray-300 mb-2">{cluster.region}</h4>
+                        <div className="flex flex-wrap gap-2">
+                          {cluster.industries.map((industry, i) => (
+                            <span
+                              key={i}
+                              className="px-2 py-1 bg-purple-500/20 text-purple-400 rounded text-sm"
+                            >
+                              {industry}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Growth Trends */}
+                <div className="bg-[#2D2D2F] p-4 rounded-lg">
+                  <h3 className="text-lg font-medium text-purple-400 mb-4">Growth Trends</h3>
+                  <div className="space-y-4">
+                    {analysis.growth_trends.map((trend, index) => (
+                      <div key={index} className="bg-[#3D3D3F] p-3 rounded">
+                        <div className="flex justify-between items-center mb-2">
+                          <span className="text-gray-300">{trend.region}</span>
+                          <span className={`px-2 py-1 rounded text-sm ${
+                            trend.growth_rate > 0 
+                              ? 'bg-green-500/20 text-green-400'
+                              : 'bg-red-500/20 text-red-400'
+                          }`}>
+                            {trend.growth_rate > 0 ? '+' : ''}{trend.growth_rate}%
+                          </span>
+                        </div>
+                        <p className="text-sm text-gray-400">{trend.insight}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="min-h-screen bg-[#131314] text-white">
       <div className="max-w-7xl mx-auto px-4 py-6">
@@ -558,6 +759,13 @@ export default function MarketAssessmentContent() {
               }`}
             >
               Web View
+            </button>
+            <button
+              onClick={() => setShowGeographicalAnalysis(true)}
+              className="px-6 py-2 rounded-xl font-medium bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white transition-colors"
+            >
+              <FaGlobe className="inline-block mr-2" />
+              Geographical Analysis
             </button>
           </div>
         </div>
@@ -662,6 +870,11 @@ export default function MarketAssessmentContent() {
           </div>
         )}
       </div>
+
+      {/* Add modal */}
+      {showGeographicalAnalysis && (
+        <GeographicalAnalysis onClose={() => setShowGeographicalAnalysis(false)} />
+      )}
     </div>
   );
 } 
