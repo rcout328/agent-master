@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import SimpleMarkdown from 'simple-markdown';
 
 export default function CompetitorTrackingContent() {
@@ -28,7 +29,7 @@ export default function CompetitorTrackingContent() {
 
   const metricOptions = [
     "Market Share",
-    "Product Features",
+    "Product Features", 
     "Pricing Strategy",
     "Marketing Channels",
     "Customer Satisfaction"
@@ -92,32 +93,41 @@ export default function CompetitorTrackingContent() {
       return;
     }
 
+    if (userInputs.metrics.length === 0) {
+      setError('Please select at least one metric');
+      return;
+    }
+
+    if (!userInputs.industry) {
+      setError('Industry is required');
+      return;
+    }
+
     try {
       setIsAnalyzing(true);
       setError(null);
+
+      const requestData = {
+        report_type: 'competitor_tracking',
+        inputs: {
+          ...userInputs,
+          analysis_scope: parseInt(userInputs.analysis_scope),
+          timeframe: userInputs.timeframe.toString()
+        }
+      };
 
       const response = await fetch('https://varun324242-sj.hf.space/api/generate-report', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json'
         },
-        body: JSON.stringify({
-          report_type: 'competitor_tracking',
-          inputs: {
-            company_name: userInputs.company_name,
-            industry: userInputs.industry,
-            competitors: userInputs.competitors,
-            metrics: userInputs.metrics,
-            timeframe: userInputs.timeframe,
-            analysis_depth: userInputs.analysis_depth,
-            market_region: userInputs.market_region,
-            analysis_scope: userInputs.analysis_scope
-          }
-        })
+        body: JSON.stringify(requestData)
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errorData = await response.json();
+        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
       }
 
       const data = await response.json();
@@ -134,7 +144,6 @@ export default function CompetitorTrackingContent() {
     }
   };
 
-  // Function to fetch all reports
   const fetchAllReports = async () => {
     try {
       const response = await fetch('https://varun324242-sj.hf.space/api/reports');
@@ -145,23 +154,21 @@ export default function CompetitorTrackingContent() {
     }
   };
 
-  // Parse markdown when analysis result changes
   useEffect(() => {
     if (analysisResult?.analysis_report) {
       const formattedReport = analysisResult.analysis_report
-        .replace(/^# (.*$)/gm, '<h1 class="text-3xl font-bold mt-6 mb-4 text-gray-900">$1</h1>')
-        .replace(/^## (.*$)/gm, '<h2 class="text-2xl font-bold mt-6 mb-3 text-gray-800">$1</h2>')
-        .replace(/^### (.*$)/gm, '<h3 class="text-xl font-semibold mt-4 mb-2 text-gray-700">$1</h3>')
-        .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-gray-900">$1</strong>')
-        .replace(/^\- (.*$)/gm, '<li class="ml-4 mb-1 text-gray-700">• $1</li>')
-        .replace(/^(?!<[hl]|<li)(.*$)/gm, '<p class="mb-4 text-gray-600 leading-relaxed">$1</p>')
+        .replace(/^# (.*$)/gm, '<h1 class="text-3xl font-bold mt-6 mb-4">$1</h1>')
+        .replace(/^## (.*$)/gm, '<h2 class="text-2xl font-bold mt-6 mb-3">$1</h2>')
+        .replace(/^### (.*$)/gm, '<h3 class="text-xl font-semibold mt-4 mb-2">$1</h3>')
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/^\- (.*$)/gm, '<li class="ml-4 mb-1">• $1</li>')
+        .replace(/^(?!<[hl]|<li)(.*$)/gm, '<p class="mb-4 leading-relaxed">$1</p>')
         .replace(/(<li.*<\/li>)/s, '<ul class="mb-4 space-y-2">$1</ul>');
       
       setParsedReport(formattedReport);
     }
   }, [analysisResult]);
 
-  // Fetch reports on component mount
   useEffect(() => {
     fetchAllReports();
   }, []);
@@ -182,118 +189,136 @@ export default function CompetitorTrackingContent() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
-          <h2 className="text-3xl font-bold mb-6 text-gray-800">Competitor Tracking Analysis</h2>
+    <div className="min-h-screen bg-black text-white">
+      <div className="max-w-6xl mx-auto px-6 py-8">
+        {/* Header */}
+        <div className="mb-8 text-center">
+          <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
+            Competitor Tracking Analysis
+          </h1>
+        </div>
+
+        {/* Navigation */}
+        <div className="mb-10 flex justify-center">
+          <div className="bg-[#1D1D1F]/60 backdrop-blur-xl p-1.5 rounded-xl inline-flex shadow-xl">
+            <Link 
+              href="/market-trends"
+              className="px-8 py-2.5 rounded-lg text-white hover:text-white hover:bg-white/5"
+            >
+              Market Analysis
+            </Link>
+            <button className="px-8 py-2.5 rounded-lg transition-all duration-300 bg-purple-600/90 text-white">
+              Competitor Tracking
+            </button>
+          </div>
+        </div>
+
+        {/* Input Form */}
+        <div className="space-y-6 mb-8 bg-[#1D1D1F]/60 backdrop-blur-xl p-8 rounded-xl">
+          <div>
+            <label className="block text-sm font-medium mb-2 text-white">Company Name</label>
+            <input
+              type="text"
+              name="company_name"
+              value={userInputs.company_name}
+              onChange={handleInputChange}
+              className="w-full p-3 bg-[#2D2D2F] border border-gray-700 rounded-md focus:ring-2 focus:ring-purple-500 text-white"
+              placeholder="Your company name"
+            />
+          </div>
           
-          {/* Input Form */}
-          <div className="space-y-6 mb-8">
-            <div>
-              <label className="block text-sm font-medium mb-2 text-gray-700">Company Name</label>
+          <div>
+            <label className="block text-sm font-medium mb-2 text-white">Industry</label>
+            <input
+              type="text"
+              name="industry"
+              value={userInputs.industry}
+              onChange={handleInputChange}
+              className="w-full p-3 bg-[#2D2D2F] border border-gray-700 rounded-md focus:ring-2 focus:ring-purple-500 text-white"
+              placeholder="Your industry"
+            />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium mb-2 text-white">Competitors</label>
+            <div className="flex space-x-2 mb-2">
               <input
                 type="text"
-                name="company_name"
-                value={userInputs.company_name}
-                onChange={handleInputChange}
-                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
-                placeholder="Your company name"
+                value={currentCompetitor}
+                onChange={(e) => setCurrentCompetitor(e.target.value)}
+                className="flex-1 p-3 bg-[#2D2D2F] border border-gray-700 rounded-md focus:ring-2 focus:ring-purple-500 text-white"
+                placeholder="Add competitor"
               />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium mb-2 text-gray-700">Industry</label>
-              <input
-                type="text"
-                name="industry"
-                value={userInputs.industry}
-                onChange={handleInputChange}
-                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
-                placeholder="Your industry"
-              />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium mb-2 text-gray-700">Competitors</label>
-              <div className="flex space-x-2 mb-2">
-                <input
-                  type="text"
-                  value={currentCompetitor}
-                  onChange={(e) => setCurrentCompetitor(e.target.value)}
-                  className="flex-1 p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
-                  placeholder="Add competitor"
-                />
-                <button
-                  onClick={handleCompetitorAdd}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-                >
-                  Add
-                </button>
-              </div>
-              <div className="space-y-2">
-                {userInputs.competitors.map((competitor, index) => (
-                  <div key={index} className="flex items-center justify-between bg-gray-50 p-2 rounded">
-                    <span>{competitor}</span>
-                    <button
-                      onClick={() => removeCompetitor(index)}
-                      className="text-red-600 hover:text-red-800"
-                    >
-                      Remove
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium mb-2 text-gray-700">Tracking Metrics</label>
-              <select
-                multiple
-                name="metrics"
-                value={userInputs.metrics}
-                onChange={handleMetricsChange}
-                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+              <button
+                onClick={handleCompetitorAdd}
+                className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700"
               >
-                {metricOptions.map(metric => (
-                  <option key={metric} value={metric}>{metric}</option>
-                ))}
-              </select>
-              <p className="mt-1 text-sm text-gray-500">Hold Ctrl/Cmd to select multiple metrics</p>
+                Add
+              </button>
             </div>
-            
-            <div>
-              <label className="block text-sm font-medium mb-2 text-gray-700">Analysis Depth</label>
-              <select
-                name="analysis_depth"
-                value={userInputs.analysis_depth}
-                onChange={handleInputChange}
-                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
-              >
-                {analysisDepthOptions.map(option => (
-                  <option key={option.value} value={option.value}>{option.label}</option>
-                ))}
-              </select>
+            <div className="space-y-2">
+              {userInputs.competitors.map((competitor, index) => (
+                <div key={index} className="flex items-center justify-between bg-[#2D2D2F] p-2 rounded">
+                  <span className="text-white">{competitor}</span>
+                  <button
+                    onClick={() => removeCompetitor(index)}
+                    className="text-red-400 hover:text-red-300"
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))}
             </div>
-            
-            <div>
-              <label className="block text-sm font-medium mb-2 text-gray-700">Market Region</label>
-              <select
-                name="market_region"
-                value={userInputs.market_region}
-                onChange={handleInputChange}
-                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
-              >
-                {marketRegions.map(region => (
-                  <option key={region.value} value={region.value}>{region.label}</option>
-                ))}
-              </select>
-            </div>
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium mb-2 text-white">Tracking Metrics</label>
+            <select
+              multiple
+              name="metrics"
+              value={userInputs.metrics}
+              onChange={handleMetricsChange}
+              className="w-full p-3 bg-[#2D2D2F] border border-gray-700 rounded-md focus:ring-2 focus:ring-purple-500 text-white"
+            >
+              {metricOptions.map(metric => (
+                <option key={metric} value={metric}>{metric}</option>
+              ))}
+            </select>
+            <p className="mt-1 text-sm text-gray-400">Hold Ctrl/Cmd to select multiple metrics</p>
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium mb-2 text-white">Analysis Depth</label>
+            <select
+              name="analysis_depth"
+              value={userInputs.analysis_depth}
+              onChange={handleInputChange}
+              className="w-full p-3 bg-[#2D2D2F] border border-gray-700 rounded-md focus:ring-2 focus:ring-purple-500 text-white"
+            >
+              {analysisDepthOptions.map(option => (
+                <option key={option.value} value={option.value}>{option.label}</option>
+              ))}
+            </select>
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium mb-2 text-white">Market Region</label>
+            <select
+              name="market_region"
+              value={userInputs.market_region}
+              onChange={handleInputChange}
+              className="w-full p-3 bg-[#2D2D2F] border border-gray-700 rounded-md focus:ring-2 focus:ring-purple-500 text-white"
+            >
+              {marketRegions.map(region => (
+                <option key={region.value} value={region.value}>{region.label}</option>
+              ))}
+            </select>
           </div>
 
           <button
             onClick={startAnalysis}
             disabled={isAnalyzing}
-            className="w-full bg-blue-600 text-white px-6 py-3 rounded-md font-medium hover:bg-blue-700 disabled:bg-blue-300 transition-colors"
+            className="w-full bg-purple-600 text-white px-6 py-3 rounded-md font-medium hover:bg-purple-700 disabled:bg-purple-800/50 transition-colors"
           >
             {isAnalyzing ? 'Analyzing Competitors...' : 'Start Analysis'}
           </button>
@@ -301,136 +326,59 @@ export default function CompetitorTrackingContent() {
 
         {/* Analysis Status */}
         {isAnalyzing && (
-          <div className="bg-white p-6 rounded-lg shadow-lg mb-8">
+          <div className="bg-[#1D1D1F]/60 backdrop-blur-xl p-6 rounded-xl mb-8">
             <div className="flex items-center space-x-3">
-              <div className="animate-spin h-5 w-5 border-2 border-blue-500 border-t-transparent rounded-full"></div>
-              <p className="text-gray-700">Analyzing competitors...</p>
+              <div className="animate-spin h-5 w-5 border-2 border-purple-500 border-t-transparent rounded-full"></div>
+              <p className="text-white">Analyzing competitors...</p>
             </div>
           </div>
         )}
 
         {/* Error Display */}
         {error && (
-          <div className="bg-white p-6 rounded-lg shadow-lg mb-8">
-            <div className="bg-red-50 border border-red-200 rounded-md p-4 text-red-700">
+          <div className="bg-[#1D1D1F]/60 backdrop-blur-xl p-6 rounded-xl mb-8">
+            <div className="bg-red-900/50 border border-red-500/50 rounded-md p-4 text-red-200">
               {error}
             </div>
           </div>
         )}
 
-        {/* Generated Reports Section */}
-        <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
-          <h2 className="text-2xl font-bold mb-6 text-gray-800">Generated Reports</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {allReports.map((report, index) => (
-              <div key={index} className="bg-gray-50 rounded-lg p-6 border border-gray-200">
-                <h3 className="text-lg font-semibold mb-2 text-gray-800">{report.company_name}</h3>
-                <p className="text-gray-600 mb-2">Type: {report.report_type}</p>
-                <p className="text-gray-600 mb-4">Generated: {report.timestamp}</p>
-                <button
-                  onClick={() => viewReport(report)}
-                  className="text-blue-600 hover:text-blue-800 font-medium"
-                >
-                  View Report
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
-
         {/* Results Display */}
         {analysisResult && (
-          <div className="bg-white rounded-lg shadow-lg">
+          <div className="bg-[#1D1D1F]/60 backdrop-blur-xl rounded-xl">
             <div className="p-8">
-              <h2 className="text-3xl font-bold mb-6 text-gray-800">Analysis Results</h2>
+              <h2 className="text-3xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
+                Analysis Results
+              </h2>
               
-              {/* Summary Card */}
-              <div className="mb-8">
-                <h3 className="text-xl font-semibold mb-4 text-gray-700">Analysis Summary</h3>
-                <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <p className="mb-2">
-                        <span className="font-medium text-gray-700">Company:</span>{' '}
-                        {analysisResult.summary.company}
-                      </p>
-                      <p className="mb-2">
-                        <span className="font-medium text-gray-700">Industry:</span>{' '}
-                        {analysisResult.summary.industry}
-                      </p>
-                      <p>
-                        <span className="font-medium text-gray-700">Generated:</span>{' '}
-                        {analysisResult.summary.timestamp}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="mb-2">
-                        <span className="font-medium text-gray-700">Competitors:</span>{' '}
-                        {userInputs.competitors.join(', ')}
-                      </p>
-                      <p>
-                        <span className="font-medium text-gray-700">Metrics:</span>{' '}
-                        {userInputs.metrics.join(', ')}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Validation Report */}
-              <div className="mb-8">
-                <button
-                  onClick={() => setShowValidation(!showValidation)}
-                  className="flex items-center justify-between w-full text-left text-xl font-semibold mb-4 text-gray-700 hover:text-gray-900 transition-colors"
-                >
-                  <span>Validation Report</span>
-                  <svg
-                    className={`w-6 h-6 transform transition-transform duration-200 ${
-                      showValidation ? 'rotate-180' : ''
-                    }`}
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
-                {showValidation && (
-                  <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
-                    <pre className="whitespace-pre-wrap text-gray-700 font-mono text-sm">
-                      {analysisResult.validation_report}
-                    </pre>
-                  </div>
-                )}
-              </div>
-
-              {/* Analysis Report */}
-              <div>
-                <h3 className="text-xl font-semibold mb-4 text-gray-700">Competitor Analysis Report</h3>
-                <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
-                  <div
-                    className="prose prose-lg max-w-none"
-                    dangerouslySetInnerHTML={{ __html: parsedReport }}
-                  />
-                </div>
-              </div>
+              <div className="prose prose-invert max-w-none 
+                [&>h1]:text-3xl [&>h1]:font-bold [&>h1]:mb-4 
+                [&>h2]:text-2xl [&>h2]:font-bold [&>h2]:mb-3
+                [&>h3]:text-xl [&>h3]:font-semibold [&>h3]:mb-2
+                [&>p]:mb-4 [&>p]:leading-relaxed
+                [&>ul]:mb-4 [&>ul]:space-y-2
+                [&>strong]:text-purple-300 [&>strong]:font-semibold
+                [&>em]:text-purple-200 [&>em]:italic
+                [&>blockquote]:border-l-4 [&>blockquote]:border-purple-400 [&>blockquote]:pl-4 [&>blockquote]:italic [&>blockquote]:text-white"
+                dangerouslySetInnerHTML={{ __html: parsedReport }}
+              />
             </div>
           </div>
         )}
 
         {showReportModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-lg w-full max-w-4xl max-h-[90vh] overflow-hidden">
-              <div className="p-6 border-b border-gray-200 flex justify-between items-center">
+          <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div className="bg-[#1D1D1F] rounded-xl w-full max-w-4xl max-h-[90vh] overflow-hidden">
+              <div className="p-6 border-b border-gray-800 flex justify-between items-center">
                 <div>
-                  <h3 className="text-xl font-semibold text-gray-800">
+                  <h3 className="text-xl font-semibold text-white">
                     {selectedReport.company_name} - {selectedReport.report_type}
                   </h3>
-                  <p className="text-sm text-gray-600">Generated: {selectedReport.timestamp}</p>
+                  <p className="text-sm text-gray-400">Generated: {selectedReport.timestamp}</p>
                 </div>
                 <button
                   onClick={() => setShowReportModal(false)}
-                  className="text-gray-500 hover:text-gray-700"
+                  className="text-gray-400 hover:text-white"
                 >
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -439,17 +387,8 @@ export default function CompetitorTrackingContent() {
               </div>
               <div className="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
                 <div
-                  className="prose prose-lg max-w-none"
-                  dangerouslySetInnerHTML={{
-                    __html: reportContent
-                      .replace(/^# (.*$)/gm, '<h1 class="text-3xl font-bold mt-6 mb-4 text-gray-900">$1</h1>')
-                      .replace(/^## (.*$)/gm, '<h2 class="text-2xl font-bold mt-6 mb-3 text-gray-800">$1</h2>')
-                      .replace(/^### (.*$)/gm, '<h3 class="text-xl font-semibold mt-4 mb-2 text-gray-700">$1</h3>')
-                      .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-gray-900">$1</strong>')
-                      .replace(/^\- (.*$)/gm, '<li class="ml-4 mb-1 text-gray-700">• $1</li>')
-                      .replace(/^(?!<[hl]|<li)(.*$)/gm, '<p class="mb-4 text-gray-600 leading-relaxed">$1</p>')
-                      .replace(/(<li.*<\/li>)/s, '<ul class="mb-4 space-y-2">$1</ul>')
-                  }}
+                  className="prose prose-invert max-w-none"
+                  dangerouslySetInnerHTML={{ __html: reportContent }}
                 />
               </div>
             </div>

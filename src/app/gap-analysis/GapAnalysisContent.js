@@ -8,13 +8,8 @@ export default function GapAnalysisContent() {
   const [analysisResult, setAnalysisResult] = useState(null);
   const [error, setError] = useState(null);
   const [parsedReport, setParsedReport] = useState('');
-  const [showValidation, setShowValidation] = useState(false);
-  const [allReports, setAllReports] = useState([]);
-  const [selectedReport, setSelectedReport] = useState(null);
-  const [showReportModal, setShowReportModal] = useState(false);
-  const [reportContent, setReportContent] = useState('');
-
-  const [gapFormInputs, setGapFormInputs] = useState({
+  const [savedReports, setSavedReports] = useState([]);
+  const [userInputs, setUserInputs] = useState({
     company_name: '',
     industry: '',
     focus_areas: [],
@@ -26,7 +21,7 @@ export default function GapAnalysisContent() {
   // Predefined options
   const focusAreas = [
     "Market Size and Growth",
-    "Industry Trends",
+    "Industry Trends", 
     "Market Segments",
     "Geographic Distribution",
     "Competitive Landscape"
@@ -45,17 +40,31 @@ export default function GapAnalysisContent() {
     { value: 'asia_pacific', label: 'Asia Pacific' }
   ];
 
+  useEffect(() => {
+    const savedGapReports = localStorage.getItem('gapAnalysisReports');
+    if (savedGapReports) {
+      setSavedReports(JSON.parse(savedGapReports));
+    }
+
+    const currentAnalysis = localStorage.getItem('currentGapAnalysis');
+    if (currentAnalysis) {
+      const { result, inputs } = JSON.parse(currentAnalysis);
+      setAnalysisResult(result);
+      setUserInputs(inputs);
+    }
+  }, []);
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     
     if (name === 'focus_areas') {
       const selectedOptions = Array.from(e.target.selectedOptions, option => option.value);
-      setGapFormInputs(prev => ({
+      setUserInputs(prev => ({
         ...prev,
         focus_areas: selectedOptions
       }));
     } else {
-      setGapFormInputs(prev => ({
+      setUserInputs(prev => ({
         ...prev,
         [name]: value
       }));
@@ -63,19 +72,16 @@ export default function GapAnalysisContent() {
   };
 
   const startAnalysis = async () => {
-    if (!gapFormInputs.company_name) {
+    if (!userInputs.company_name) {
       setError('Company name is required');
-      return;
-    }
-
-    if (!gapFormInputs.focus_areas || gapFormInputs.focus_areas.length === 0) {
-      setError('Please select at least one focus area');
       return;
     }
 
     try {
       setIsAnalyzing(true);
       setError(null);
+      
+      localStorage.removeItem('currentGapAnalysis');
 
       const response = await fetch('https://varun324242-sj.hf.space/api/generate-report', {
         method: 'POST',
@@ -85,16 +91,11 @@ export default function GapAnalysisContent() {
         body: JSON.stringify({
           report_type: 'gap_analysis',
           inputs: {
-            ...gapFormInputs,
+            ...userInputs,
             analysis_type: 'gap'
           }
         })
       });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to generate report');
-      }
 
       const data = await response.json();
       
@@ -102,287 +103,275 @@ export default function GapAnalysisContent() {
         throw new Error(data.message);
       }
 
+      // Save new report
+      const newReport = {
+        id: Date.now(),
+        timestamp: new Date().toISOString(),
+        company_name: userInputs.company_name,
+        industry: userInputs.industry,
+        result: data
+      };
+
+      const updatedReports = [newReport, ...savedReports].slice(0, 10);
+      localStorage.setItem('gapAnalysisReports', JSON.stringify(updatedReports));
+      setSavedReports(updatedReports);
+
+      // Save current analysis
+      localStorage.setItem('currentGapAnalysis', JSON.stringify({
+        result: data,
+        inputs: userInputs,
+        timestamp: new Date().toISOString()
+      }));
+
       setAnalysisResult(data);
-      fetchAllReports();
     } catch (err) {
-      setError(err.message || 'An error occurred while generating the report');
-      console.error('Analysis error:', err);
+      setError(err.message);
     } finally {
       setIsAnalyzing(false);
     }
   };
 
-  // Parse markdown when analysis result changes
+  const clearReports = () => {
+    localStorage.removeItem('gapAnalysisReports');
+    localStorage.removeItem('currentGapAnalysis');
+    setSavedReports([]);
+    setAnalysisResult(null);
+    setParsedReport('');
+    setUserInputs({
+      company_name: '',
+      industry: '',
+      focus_areas: [],
+      timeframe: '2024',
+      analysis_depth: 'detailed',
+      market_region: 'global'
+    });
+  };
+
+  const loadSavedReport = (report) => {
+    localStorage.setItem('currentGapAnalysis', JSON.stringify({
+      result: report.result,
+      inputs: {
+        company_name: report.company_name,
+        industry: report.industry,
+        focus_areas: report.result.summary.focus_areas || [],
+        timeframe: report.result.summary.timeframe || '2024',
+        analysis_depth: report.result.summary.analysis_depth || 'detailed',
+        market_region: report.result.summary.market_region || 'global'
+      },
+      timestamp: report.timestamp
+    }));
+
+    setAnalysisResult(report.result);
+    setUserInputs({
+      company_name: report.company_name,
+      industry: report.industry,
+      focus_areas: report.result.summary.focus_areas || [],
+      timeframe: report.result.summary.timeframe || '2024',
+      analysis_depth: report.result.summary.analysis_depth || 'detailed',
+      market_region: report.result.summary.market_region || 'global'
+    });
+  };
+
   useEffect(() => {
     if (analysisResult?.analysis_report) {
       const formattedReport = analysisResult.analysis_report
-        .replace(/^# (.*$)/gm, '<h1 class="text-3xl font-bold mt-6 mb-4 text-gray-900">$1</h1>')
-        .replace(/^## (.*$)/gm, '<h2 class="text-2xl font-bold mt-6 mb-3 text-gray-800">$1</h2>')
-        .replace(/^### (.*$)/gm, '<h3 class="text-xl font-semibold mt-4 mb-2 text-gray-700">$1</h3>')
-        .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-gray-900">$1</strong>')
-        .replace(/^\- (.*$)/gm, '<li class="ml-4 mb-1 text-gray-700">• $1</li>')
-        .replace(/^(?!<[hl]|<li)(.*$)/gm, '<p class="mb-4 text-gray-600 leading-relaxed">$1</p>')
-        .replace(/(<li.*<\/li>)/s, '<ul class="mb-4 space-y-2">$1</ul>');
-      
+        .replace(/^# (.*$)/gm, '<h1>$1</h1>')
+        .replace(/^## (.*$)/gm, '<h2>$1</h2>')
+        .replace(/^### (.*$)/gm, '<h3>$1</h3>')
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/^\- (.*$)/gm, '<li>$1</li>')
+        .replace(/^(?!<[hl]|<li)(.*$)/gm, '<p>$1</p>');
       setParsedReport(formattedReport);
     }
   }, [analysisResult]);
 
-  const fetchAllReports = async () => {
-    try {
-      const response = await fetch('https://varun324242-sj.hf.space/api/reports');
-      const data = await response.json();
-      setAllReports(data.reports.filter(report => report.report_type.includes('gap')));
-    } catch (err) {
-      console.error('Error fetching reports:', err);
-    }
-  };
-
-  const viewReport = async (report) => {
-    try {
-      const response = await fetch(`https://varun324242-sj.hf.space/api/report-content/${report.filename}`);
-      const data = await response.json();
-      
-      if (data.status === 'success') {
-        setSelectedReport(report);
-        setReportContent(data.content);
-        setShowReportModal(true);
-      }
-    } catch (err) {
-      console.error('Error fetching report content:', err);
-    }
-  };
-
-  useEffect(() => {
-    fetchAllReports();
-  }, []);
-
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        {/* Navigation */}
-        <div className="mb-8">
-          <div className="bg-white p-1 rounded-xl inline-flex shadow-sm">
+    <div className="min-h-screen bg-black text-white">
+      <div className="max-w-6xl mx-auto px-6 py-8">
+        <div className="mb-8 text-center">
+          <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
+            Gap Analysis
+          </h1>
+        </div>
+
+        <div className="mb-10 flex justify-center">
+          <div className="bg-[#1D1D1F]/60 backdrop-blur-xl p-1.5 rounded-xl inline-flex shadow-xl">
             <Link 
-              href="/competitor-tracking"
-              className="px-4 py-2 rounded-lg text-gray-600 hover:text-gray-800 hover:bg-gray-100 transition-all duration-200"
+              href="/icp-creation"
+              className="px-8 py-2.5 rounded-lg text-white hover:text-white hover:bg-white/5"
             >
-              Competitor Tracking
+              ICP Creation
             </Link>
-            <button 
-              className="px-4 py-2 rounded-lg bg-blue-600 text-white"
-            >
+            <button className="px-8 py-2.5 rounded-lg transition-all duration-300 bg-purple-600/90 text-white">
               Gap Analysis
             </button>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
-          <h2 className="text-3xl font-bold mb-6 text-gray-800">Gap Analysis</h2>
-          
-          {/* Input Form */}
-          <div className="space-y-6 mb-8">
-            <div>
-              <label className="block text-sm font-medium mb-2 text-gray-700">Company Name</label>
-              <input
-                type="text"
-                name="company_name"
-                value={gapFormInputs.company_name}
-                onChange={handleInputChange}
-                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
-                placeholder="Your company name"
-              />
+        {savedReports.length > 0 && (
+          <div className="mb-6 flex justify-between items-center">
+            <div className="text-sm text-white">
+              {savedReports.length} saved report{savedReports.length !== 1 ? 's' : ''}
             </div>
-            
-            <div>
-              <label className="block text-sm font-medium mb-2 text-gray-700">Industry</label>
-              <input
-                type="text"
-                name="industry"
-                value={gapFormInputs.industry}
-                onChange={handleInputChange}
-                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
-                placeholder="Your industry"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-2 text-gray-700">Focus Areas</label>
-              <select
-                name="focus_areas"
-                multiple
-                value={gapFormInputs.focus_areas}
-                onChange={handleInputChange}
-                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 min-h-[120px]"
-              >
-                {focusAreas.map(area => (
-                  <option key={area} value={area}>{area}</option>
-                ))}
-              </select>
-              <p className="text-xs text-gray-500 mt-1">Hold Ctrl/Cmd to select multiple areas</p>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-2 text-gray-700">Market Region</label>
-              <select
-                name="market_region"
-                value={gapFormInputs.market_region}
-                onChange={handleInputChange}
-                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
-              >
-                {marketRegions.map(region => (
-                  <option key={region.value} value={region.value}>{region.label}</option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-2 text-gray-700">Analysis Depth</label>
-              <select
-                name="analysis_depth"
-                value={gapFormInputs.analysis_depth}
-                onChange={handleInputChange}
-                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
-              >
-                {analysisDepthOptions.map(option => (
-                  <option key={option.value} value={option.value}>{option.label}</option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-2 text-gray-700">Timeframe</label>
-              <input
-                type="text"
-                name="timeframe"
-                value={gapFormInputs.timeframe}
-                onChange={handleInputChange}
-                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
-                placeholder="Enter timeframe (e.g., 2024)"
-              />
-            </div>
-          </div>
-
-          <button
-            onClick={startAnalysis}
-            disabled={isAnalyzing}
-            className="w-full bg-blue-600 text-white px-6 py-3 rounded-md font-medium hover:bg-blue-700 disabled:bg-blue-300 transition-colors"
-          >
-            {isAnalyzing ? 'Generating Gap Analysis...' : 'Generate Gap Analysis'}
-          </button>
-        </div>
-
-        {/* Analysis Status */}
-        {isAnalyzing && (
-          <div className="bg-white p-6 rounded-lg shadow-lg mb-8">
-            <div className="flex items-center space-x-3">
-              <div className="animate-spin h-5 w-5 border-2 border-blue-500 border-t-transparent rounded-full"></div>
-              <p className="text-gray-700">Generating gap analysis...</p>
-            </div>
+            <button
+              onClick={clearReports}
+              className="px-4 py-1.5 text-sm rounded-lg bg-red-500/20 text-red-400 hover:bg-red-500/30 transition-colors"
+            >
+              Clear All Reports
+            </button>
           </div>
         )}
 
-        {/* Error Display */}
-        {error && (
-          <div className="bg-white p-6 rounded-lg shadow-lg mb-8">
-            <div className="bg-red-50 border border-red-200 rounded-md p-4 text-red-700">
-              {error}
+        {savedReports.length > 0 && (
+          <div className="mb-8 bg-[#1D1D1F]/60 backdrop-blur-xl rounded-xl p-4 border border-gray-800/50">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold text-purple-400">Recent Reports</h3>
             </div>
-          </div>
-        )}
-
-        {/* Results Display */}
-        {analysisResult && (
-          <div className="bg-white rounded-lg shadow-lg">
-            <div className="p-8">
-              <h2 className="text-3xl font-bold mb-6 text-gray-800">Gap Analysis Results</h2>
-              
-              {/* Summary Card */}
-              <div className="mb-8">
-                <h3 className="text-xl font-semibold mb-4 text-gray-700">Analysis Summary</h3>
-                <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <p className="mb-2">
-                        <span className="font-medium text-gray-700">Company:</span>{' '}
-                        {analysisResult.summary.company}
-                      </p>
-                      <p className="mb-2">
-                        <span className="font-medium text-gray-700">Industry:</span>{' '}
-                        {analysisResult.summary.industry}
-                      </p>
-                      <p>
-                        <span className="font-medium text-gray-700">Generated:</span>{' '}
-                        {analysisResult.summary.timestamp}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="mb-2">
-                        <span className="font-medium text-gray-700">Market Region:</span>{' '}
-                        {gapFormInputs.market_region}
-                      </p>
-                      <p>
-                        <span className="font-medium text-gray-700">Analysis Depth:</span>{' '}
-                        {gapFormInputs.analysis_depth}
-                      </p>
-                    </div>
+            <div className="space-y-2">
+              {savedReports.map(report => (
+                <div 
+                  key={report.id}
+                  className="flex justify-between items-center p-3 rounded-lg bg-[#2D2D2F]/50 hover:bg-[#2D2D2F]/70 transition-colors cursor-pointer"
+                  onClick={() => loadSavedReport(report)}
+                >
+                  <div>
+                    <p className="text-white font-medium">{report.company_name}</p>
+                    <p className="text-sm text-white">{report.industry}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm text-white">
+                      {new Date(report.timestamp).toLocaleDateString()}
+                    </p>
                   </div>
                 </div>
-              </div>
-
-              {/* Analysis Report */}
-              <div>
-                <h3 className="text-xl font-semibold mb-4 text-gray-700">Gap Analysis Report</h3>
-                <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
-                  <div
-                    className="prose prose-lg max-w-none"
-                    dangerouslySetInnerHTML={{ __html: parsedReport }}
-                  />
-                </div>
-              </div>
+              ))}
             </div>
           </div>
         )}
 
-        {/* Report Modal */}
-        {showReportModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-lg w-full max-w-4xl max-h-[90vh] overflow-hidden">
-              <div className="p-6 border-b border-gray-200 flex justify-between items-center">
-                <div>
-                  <h3 className="text-xl font-semibold text-gray-800">
-                    {selectedReport.company_name} - Gap Analysis
-                  </h3>
-                  <p className="text-sm text-gray-600">Generated: {selectedReport.timestamp}</p>
-                </div>
-                <button
-                  onClick={() => setShowReportModal(false)}
-                  className="text-gray-500 hover:text-gray-700"
-                >
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
+        <div className="space-y-8">
+          <div className="bg-[#1D1D1F]/80 backdrop-blur-xl rounded-xl shadow-xl p-8 border border-gray-800/50">
+            <div className="grid grid-cols-2 gap-8">
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-purple-400">Company Name</label>
+                <input
+                  name="company_name"
+                  value={userInputs.company_name}
+                  onChange={handleInputChange}
+                  className="w-full p-2.5 bg-[#2D2D2F]/50 text-white rounded-lg border border-gray-700/50 focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/10"
+                  placeholder="Enter company name"
+                />
               </div>
-              <div className="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
-                <div
-                  className="prose prose-lg max-w-none"
-                  dangerouslySetInnerHTML={{
-                    __html: reportContent
-                      .replace(/^# (.*$)/gm, '<h1 class="text-3xl font-bold mt-6 mb-4 text-gray-900">$1</h1>')
-                      .replace(/^## (.*$)/gm, '<h2 class="text-2xl font-bold mt-6 mb-3 text-gray-800">$1</h2>')
-                      .replace(/^### (.*$)/gm, '<h3 class="text-xl font-semibold mt-4 mb-2 text-gray-700">$1</h3>')
-                      .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-gray-900">$1</strong>')
-                      .replace(/^\- (.*$)/gm, '<li class="ml-4 mb-1 text-gray-700">• $1</li>')
-                      .replace(/^(?!<[hl]|<li)(.*$)/gm, '<p class="mb-4 text-gray-600 leading-relaxed">$1</p>')
-                      .replace(/(<li.*<\/li>)/s, '<ul class="mb-4 space-y-2">$1</ul>')
-                  }}
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-purple-400">Industry</label>
+                <input
+                  name="industry"
+                  value={userInputs.industry}
+                  onChange={handleInputChange}
+                  className="w-full p-2.5 bg-[#2D2D2F]/50 text-white rounded-lg border border-gray-700/50 focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/10"
+                  placeholder="Enter industry"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-purple-400">Focus Areas</label>
+                <select
+                  name="focus_areas"
+                  multiple
+                  value={userInputs.focus_areas}
+                  onChange={handleInputChange}
+                  className="w-full p-2.5 bg-[#2D2D2F]/50 text-white rounded-lg border border-gray-700/50 focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/10"
+                >
+                  {focusAreas.map(area => (
+                    <option key={area} value={area}>{area}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-purple-400">Market Region</label>
+                <select
+                  name="market_region"
+                  value={userInputs.market_region}
+                  onChange={handleInputChange}
+                  className="w-full p-2.5 bg-[#2D2D2F]/50 text-white rounded-lg border border-gray-700/50 focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/10"
+                >
+                  {marketRegions.map(region => (
+                    <option key={region.value} value={region.value}>{region.label}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-purple-400">Analysis Depth</label>
+                <select
+                  name="analysis_depth"
+                  value={userInputs.analysis_depth}
+                  onChange={handleInputChange}
+                  className="w-full p-2.5 bg-[#2D2D2F]/50 text-white rounded-lg border border-gray-700/50 focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/10"
+                >
+                  {analysisDepthOptions.map(option => (
+                    <option key={option.value} value={option.value}>{option.label}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-purple-400">Timeframe</label>
+                <input
+                  name="timeframe"
+                  value={userInputs.timeframe}
+                  onChange={handleInputChange}
+                  className="w-full p-2.5 bg-[#2D2D2F]/50 text-white rounded-lg border border-gray-700/50 focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/10"
+                  placeholder="Enter timeframe (e.g., 2024)"
                 />
               </div>
             </div>
+
+            <div className="mt-8">
+              <button
+                onClick={startAnalysis}
+                disabled={isAnalyzing}
+                className="w-full bg-purple-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-purple-700 disabled:bg-purple-500/50 transition-colors"
+              >
+                {isAnalyzing ? 'Generating Analysis...' : 'Generate Gap Analysis'}
+              </button>
+            </div>
           </div>
-        )}
+
+          {error && (
+            <div className="bg-red-500/10 text-red-400 p-4 rounded-lg">
+              {error}
+            </div>
+          )}
+
+          {analysisResult && (
+            <div className="bg-[#1D1D1F]/80 backdrop-blur-xl rounded-xl shadow-xl p-8 border border-gray-800/50">
+              <div className="prose prose-invert max-w-none">
+                <div
+                  className="
+                    text-white
+                    leading-relaxed 
+                    [&>h1]:text-3xl [&>h1]:font-bold [&>h1]:text-purple-400 [&>h1]:mb-6
+                    [&>h2]:text-2xl [&>h2]:font-semibold [&>h2]:text-purple-400 [&>h2]:mt-8 [&>h2]:mb-4
+                    [&>h3]:text-xl [&>h3]:font-semibold [&>h3]:text-purple-400 [&>h3]:mt-6 [&>h3]:mb-3
+                    [&>p]:text-white [&>p]:mb-4 [&>p]:text-base [&>p]:leading-relaxed
+                    [&>ul]:mb-6 [&>ul]:list-disc [&>ul]:pl-6 
+                    [&>ul>li]:text-white [&>ul>li]:mb-2
+                    [&>ol]:mb-6 [&>ol]:list-decimal [&>ol]:pl-6
+                    [&>ol>li]:text-white [&>ol>li]:mb-2
+                    [&>strong]:text-purple-300 [&>strong]:font-semibold
+                    [&>em]:text-purple-200 [&>em]:italic
+                    [&>blockquote]:border-l-4 [&>blockquote]:border-purple-400 [&>blockquote]:pl-4 [&>blockquote]:italic [&>blockquote]:text-white
+                  "
+                  dangerouslySetInnerHTML={{ __html: parsedReport }}
+                />
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
-} 
+}

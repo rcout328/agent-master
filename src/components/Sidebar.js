@@ -10,17 +10,10 @@ export default function Sidebar() {
 
   const menuItems = [
     {
-      title: 'DASHBOARD',
-      items: [
-        { name: 'Home', icon: '🏠', path: '/' }
-      ]
-    },
-    {
       title: 'MODULES', 
       items: [
         { name: 'Market Analysis', icon: '📊', path: '/market-trends' },
         { name: 'Customer Discovery', icon: '👥', path: '/icp-creation' },
-        { name: 'SWOT Analysis', icon: '⚖️', path: '/swot-analysis' },
         { name: 'Product Evolution', icon: '⭐', path: '/feature-priority' },
         { name: 'Market Expansion', icon: '📈', path: '/market-assessment' }
       ]
