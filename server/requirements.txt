@@ -1,0 +1,11 @@
+flask
+flask-cors
+python-dotenv
+crewai
+langchain
+google-generativeai
+serpapi
+requests
+beautifulsoup4
+markdown
+python-dotenv

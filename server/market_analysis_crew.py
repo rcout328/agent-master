@@ -231,13 +231,12 @@ def create_market_analysis_crew(user_inputs):
 
     return crew
 
-def get_market_analysis_crew(company_name=None):
+def get_market_analysis_crew(user_inputs):
     """Get a configured market analysis crew"""
-    if not company_name:
-        user_inputs = get_user_input()
-    else:
+    if isinstance(user_inputs, str):
+        # If just a company name is provided
         user_inputs = {
-            "company_name": company_name,
+            "company_name": user_inputs,
             "industry": "",
             "focus_areas": [
                 "Market Size and Growth",
