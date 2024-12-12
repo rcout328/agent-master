@@ -1,0 +1,4 @@
+2024-12-12 16:13:46,683 - werkzeug - WARNING -  * Debugger is active!
+2024-12-12 16:13:46,691 - werkzeug - INFO -  * Debugger PIN: 675-192-332
+2024-12-12 16:13:46,855 - werkzeug - INFO - 127.0.0.1 - - [12/Dec/2024 16:13:46] "[33mOPTIONS /api/generate-report HTTP/1.1[0m" 404 -
+2024-12-12 16:14:57,432 - werkzeug - INFO -  * Detected change in '/Users/varunisrani/Downloads/agent-master/server/market_analysis_api.py', reloading

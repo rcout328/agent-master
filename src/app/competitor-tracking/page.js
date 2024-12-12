@@ -1,6 +1,6 @@
 import CompetitorTrackingContent from './CompetitorTrackingContent';
 
-export default function CompetitorTrackingPage() {
+export default function CompetitorTracking() {
   return <CompetitorTrackingContent />;
 } 
 

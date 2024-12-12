@@ -145,3 +145,12 @@ LiteLLM completion() model= gpt-4o-mini; provider = openai
 2024-12-12 14:51:08,763 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
 2024-12-12 14:51:09,285 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
 2024-12-12 14:51:09,307 - werkzeug - INFO - 127.0.0.1 - - [12/Dec/2024 14:51:09] "POST /api/market-analysis HTTP/1.1" 200 -
+2024-12-12 14:55:28,142 - werkzeug - INFO - 127.0.0.1 - - [12/Dec/2024 14:55:28] "[35m[1mOPTIONS /api/market-analysis HTTP/1.1[0m" 204 -
+2024-12-12 14:55:28,146 - __main__ - INFO - Starting market analysis for flipkart
+2024-12-12 14:55:28,162 - opentelemetry.trace - WARNING - Overriding of current TracerProvider is not allowed
+2024-12-12 14:55:28,829 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2024-12-12 14:55:29,559 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2024-12-12 14:55:29,781 - LiteLLM - INFO - 
+LiteLLM completion() model= gpt-4o-mini; provider = openai
+2024-12-12 14:55:31,728 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-12 14:55:31,731 - LiteLLM - INFO - Wrapper: Completed Call, calling success_handler

@@ -1,0 +1,11 @@
+2024-12-12 16:24:03,171 - werkzeug - WARNING -  * Debugger is active!
+2024-12-12 16:24:03,178 - werkzeug - INFO -  * Debugger PIN: 675-192-332
+2024-12-12 16:24:03,210 - werkzeug - INFO - 127.0.0.1 - - [12/Dec/2024 16:24:03] "GET /api/reports HTTP/1.1" 200 -
+2024-12-12 16:25:46,484 - werkzeug - INFO - 127.0.0.1 - - [12/Dec/2024 16:25:46] "GET /api/reports HTTP/1.1" 200 -
+2024-12-12 16:25:51,708 - werkzeug - INFO - 127.0.0.1 - - [12/Dec/2024 16:25:51] "[33mGET /api/report-content/competitor_analysis_report.md HTTP/1.1[0m" 404 -
+2024-12-12 16:26:56,886 - werkzeug - INFO - 127.0.0.1 - - [12/Dec/2024 16:26:56] "[33mGET /api/report-content/competitor_analysis_report.md HTTP/1.1[0m" 404 -
+2024-12-12 16:27:00,862 - werkzeug - INFO - 127.0.0.1 - - [12/Dec/2024 16:27:00] "[33mGET /api/report-content/competitor_analysis_report.md HTTP/1.1[0m" 404 -
+2024-12-12 16:27:01,208 - werkzeug - INFO - 127.0.0.1 - - [12/Dec/2024 16:27:01] "[33mGET /api/report-content/competitor_analysis_report.md HTTP/1.1[0m" 404 -
+2024-12-12 16:27:02,940 - werkzeug - INFO - 127.0.0.1 - - [12/Dec/2024 16:27:02] "GET /api/reports HTTP/1.1" 200 -
+2024-12-12 16:27:06,681 - werkzeug - INFO - 127.0.0.1 - - [12/Dec/2024 16:27:06] "[33mGET /api/report-content/competitor_analysis_report.md HTTP/1.1[0m" 404 -
+2024-12-12 16:29:34,876 - werkzeug - INFO -  * Detected change in '/Users/varunisrani/Downloads/agent-master/server/market_analysis_api.py', reloading

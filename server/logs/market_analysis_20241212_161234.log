@@ -1,0 +1,16 @@
+2024-12-12 16:12:34,711 - werkzeug - WARNING -  * Debugger is active!
+2024-12-12 16:12:34,718 - werkzeug - INFO -  * Debugger PIN: 675-192-332
+2024-12-12 16:12:36,991 - werkzeug - INFO - 127.0.0.1 - - [12/Dec/2024 16:12:36] "[35m[1mOPTIONS /api/market-analysis HTTP/1.1[0m" 204 -
+2024-12-12 16:12:36,998 - __main__ - INFO - Starting market analysis for amazon
+2024-12-12 16:12:37,245 - LiteLLM - INFO - 
+LiteLLM completion() model= gpt-4o-mini; provider = openai
+2024-12-12 16:12:38,723 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-12 16:12:38,740 - LiteLLM - INFO - Wrapper: Completed Call, calling success_handler
+2024-12-12 16:12:42,457 - LiteLLM - INFO - 
+LiteLLM completion() model= gpt-4o-mini; provider = openai
+2024-12-12 16:12:43,786 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-12 16:12:43,791 - LiteLLM - INFO - Wrapper: Completed Call, calling success_handler
+2024-12-12 16:12:45,276 - LiteLLM - INFO - 
+LiteLLM completion() model= gpt-4o-mini; provider = openai
+2024-12-12 16:12:46,987 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-12 16:12:46,989 - LiteLLM - INFO - Wrapper: Completed Call, calling success_handler

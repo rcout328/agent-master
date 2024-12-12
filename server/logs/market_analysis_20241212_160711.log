@@ -1,0 +1,4 @@
+2024-12-12 16:07:11,374 - werkzeug - WARNING -  * Debugger is active!
+2024-12-12 16:07:11,380 - werkzeug - INFO -  * Debugger PIN: 675-192-332
+2024-12-12 16:07:14,926 - werkzeug - INFO - 127.0.0.1 - - [12/Dec/2024 16:07:14] "[33mOPTIONS /api/generate-report HTTP/1.1[0m" 404 -
+2024-12-12 16:07:30,162 - werkzeug - INFO - 127.0.0.1 - - [12/Dec/2024 16:07:30] "[33mOPTIONS /api/generate-report HTTP/1.1[0m" 404 -

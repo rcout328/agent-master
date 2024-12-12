@@ -1,0 +1,76 @@
+2024-12-12 14:55:41,382 - werkzeug - WARNING -  * Debugger is active!
+2024-12-12 14:55:41,391 - werkzeug - INFO -  * Debugger PIN: 675-192-332
+2024-12-12 14:59:42,649 - werkzeug - INFO - 127.0.0.1 - - [12/Dec/2024 14:59:42] "[35m[1mOPTIONS /api/market-analysis HTTP/1.1[0m" 204 -
+2024-12-12 14:59:42,653 - __main__ - INFO - Starting market analysis for flipkart
+2024-12-12 14:59:42,703 - chromadb.telemetry.product.posthog - INFO - Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2024-12-12 14:59:42,787 - chromadb.telemetry.product.posthog - INFO - Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2024-12-12 14:59:43,841 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2024-12-12 14:59:48,539 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2024-12-12 14:59:48,584 - LiteLLM - INFO - 
+LiteLLM completion() model= gpt-4o-mini; provider = openai
+2024-12-12 14:59:53,254 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-12 14:59:53,268 - LiteLLM - INFO - Wrapper: Completed Call, calling success_handler
+2024-12-12 14:59:56,800 - LiteLLM - INFO - 
+LiteLLM completion() model= gpt-4o-mini; provider = openai
+2024-12-12 15:00:01,343 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-12 15:00:01,348 - LiteLLM - INFO - Wrapper: Completed Call, calling success_handler
+2024-12-12 15:00:10,671 - LiteLLM - INFO - 
+LiteLLM completion() model= gpt-4o-mini; provider = openai
+2024-12-12 15:00:13,127 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-12 15:00:13,233 - LiteLLM - INFO - Wrapper: Completed Call, calling success_handler
+2024-12-12 15:00:14,865 - LiteLLM - INFO - 
+LiteLLM completion() model= gpt-4o-mini; provider = openai
+2024-12-12 15:00:23,870 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-12 15:00:23,873 - LiteLLM - INFO - Wrapper: Completed Call, calling success_handler
+2024-12-12 15:00:24,893 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2024-12-12 15:00:26,640 - LiteLLM - INFO - 
+LiteLLM completion() model= gpt-4o-mini; provider = openai
+2024-12-12 15:00:29,812 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-12 15:00:29,996 - LiteLLM - INFO - Wrapper: Completed Call, calling success_handler
+2024-12-12 15:00:30,834 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2024-12-12 15:00:31,960 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2024-12-12 15:00:32,471 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2024-12-12 15:00:32,988 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2024-12-12 15:00:33,495 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2024-12-12 15:00:34,213 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2024-12-12 15:00:34,830 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2024-12-12 15:00:34,843 - LiteLLM - INFO - 
+LiteLLM completion() model= gpt-4o-mini; provider = openai
+2024-12-12 15:00:45,273 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-12 15:00:45,275 - LiteLLM - INFO - Wrapper: Completed Call, calling success_handler
+2024-12-12 15:00:45,430 - LiteLLM - INFO - 
+LiteLLM completion() model= gpt-4o-mini; provider = openai
+2024-12-12 15:00:50,804 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-12 15:00:50,814 - LiteLLM - INFO - Wrapper: Completed Call, calling success_handler
+2024-12-12 15:00:51,950 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2024-12-12 15:00:51,965 - LiteLLM - INFO - 
+LiteLLM completion() model= gpt-4o-mini; provider = openai
+2024-12-12 15:00:59,404 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-12 15:00:59,405 - LiteLLM - INFO - Wrapper: Completed Call, calling success_handler
+2024-12-12 15:01:00,120 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2024-12-12 15:01:00,840 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2024-12-12 15:01:01,348 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2024-12-12 15:01:01,871 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2024-12-12 15:01:02,579 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2024-12-12 15:01:03,207 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2024-12-12 15:01:03,806 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2024-12-12 15:01:03,818 - LiteLLM - INFO - 
+LiteLLM completion() model= gpt-4o-mini; provider = openai
+2024-12-12 15:01:11,388 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-12 15:01:11,798 - LiteLLM - INFO - Wrapper: Completed Call, calling success_handler
+2024-12-12 15:01:11,808 - LiteLLM - INFO - 
+LiteLLM completion() model= gpt-4o-mini; provider = openai
+2024-12-12 15:01:15,415 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-12 15:01:15,417 - LiteLLM - INFO - Wrapper: Completed Call, calling success_handler
+2024-12-12 15:01:16,063 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2024-12-12 15:01:16,094 - LiteLLM - INFO - 
+LiteLLM completion() model= gpt-4o-mini; provider = openai
+2024-12-12 15:01:20,717 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-12 15:01:20,719 - LiteLLM - INFO - Wrapper: Completed Call, calling success_handler
+2024-12-12 15:01:21,393 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2024-12-12 15:01:21,933 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2024-12-12 15:01:22,442 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2024-12-12 15:01:23,022 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2024-12-12 15:01:23,675 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2024-12-12 15:01:23,693 - werkzeug - INFO - 127.0.0.1 - - [12/Dec/2024 15:01:23] "POST /api/market-analysis HTTP/1.1" 200 -
+2024-12-12 15:41:55,669 - werkzeug - INFO -  * Detected change in '/Users/varunisrani/Downloads/agent-master/server/market_analysis_crew.py', reloading

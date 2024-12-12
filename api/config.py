@@ -17,3 +17,11 @@ model = genai.GenerativeModel('gemini-1.5-flash')
 # Output directory
 output_dir = 'gemini_outputs'
 os.makedirs(output_dir, exist_ok=True) 
+
+class Config:
+    CORS_HEADERS = {
+        'Access-Control-Allow-Origin': 'http://localhost:3000',
+        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type',
+        'Access-Control-Allow-Credentials': 'true'
+    } 
