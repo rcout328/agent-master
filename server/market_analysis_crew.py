@@ -179,12 +179,148 @@ class ReportGenerator:
         )
 
     def create_icp_report_crew(self, inputs):
-        # Similar structure for ICP Report
-        pass
+        analyst = Agent(
+            role='ICP Research Analyst',
+            goal=f'Create detailed Ideal Customer Profile for {inputs["company_name"]}',
+            backstory="""Expert in customer profiling, market segmentation, and buyer persona development. 
+            Skilled at identifying and analyzing ideal customer characteristics and behaviors.""",
+            tools=[self.search_tool],
+            verbose=True
+        )
+
+        writer = Agent(
+            role='ICP Report Writer',
+            goal='Create comprehensive ICP analysis reports',
+            backstory="""Professional report writer specializing in customer profile documentation 
+            and actionable insights for business strategy.""",
+            tools=[self.write_file_tool],
+            verbose=True
+        )
+
+        tasks = [
+            Task(
+                description=f"""Analyze and create Ideal Customer Profile for {inputs["company_name"]}
+                Industry: {inputs['industry']}
+                Business Model: {inputs.get('business_model', 'B2B')}
+                Target Market: {inputs.get('target_market', 'Global')}
+                Company Size: {inputs.get('company_size', 'All')}
+                
+                Provide detailed analysis including:
+                1. Customer Demographics
+                2. Firmographics (for B2B)
+                3. Behavioral Patterns
+                4. Pain Points
+                5. Decision Making Process
+                6. Value Propositions
+                7. Buying Criteria
+                
+                Focus on creating actionable customer insights.""",
+                expected_output="""A comprehensive ICP analysis containing:
+                - Detailed customer characteristics
+                - Market segment analysis
+                - Behavioral insights
+                - Purchase patterns
+                - Decision factors
+                The analysis should be data-driven and actionable.""",
+                agent=analyst
+            ),
+            Task(
+                description=f"""Create a detailed ICP report including:
+                1. Executive Summary
+                2. Ideal Customer Profile Overview
+                3. Detailed Customer Characteristics
+                4. Market Segment Analysis
+                5. Customer Journey Mapping
+                6. Engagement Strategies
+                7. Implementation Recommendations
+                
+                Use insights from the analysis to create a clear, actionable report.""",
+                expected_output="""A well-structured markdown report containing:
+                - Executive summary
+                - Detailed ICP analysis
+                - Market insights
+                - Strategic recommendations
+                The report should be clear, professional, and ready for executive review.""",
+                agent=writer
+            )
+        ]
+
+        return Crew(
+            agents=[analyst, writer],
+            tasks=tasks,
+            verbose=True
+        )
 
     def create_gap_analysis_crew(self, inputs):
-        # Similar structure for Gap Analysis
-        pass
+        analyst = Agent(
+            role='Gap Analysis Specialist',
+            goal=f'Analyze gaps and opportunities for {inputs["company_name"]}',
+            backstory="""Expert in identifying and analyzing organizational gaps, market gaps, 
+            and strategic opportunities. Skilled at providing actionable recommendations.""",
+            tools=[self.search_tool],
+            verbose=True
+        )
+
+        writer = Agent(
+            role='Gap Analysis Report Writer',
+            goal='Create comprehensive gap analysis reports',
+            backstory="""Professional report writer specializing in gap analysis documentation 
+            and strategic recommendations.""",
+            tools=[self.write_file_tool],
+            verbose=True
+        )
+
+        tasks = [
+            Task(
+                description=f"""Conduct gap analysis for {inputs["company_name"]} in {inputs["industry"]}
+                Focus Areas: {', '.join(inputs['focus_areas'])}
+                Time Period: {inputs['timeframe']}
+                Analysis Depth: {inputs['analysis_depth']}
+                Market Region: {inputs['market_region']}
+                
+                Provide detailed analysis including:
+                1. Current State Assessment
+                2. Desired Future State
+                3. Gap Identification
+                4. Root Cause Analysis
+                5. Impact Assessment
+                6. Recommendations
+                
+                Focus on the selected areas and provide actionable insights.""",
+                expected_output="""A comprehensive gap analysis containing:
+                - Current state evaluation
+                - Future state definition
+                - Gap identification and analysis
+                - Strategic recommendations
+                The analysis should be data-driven and actionable.""",
+                agent=analyst
+            ),
+            Task(
+                description=f"""Create a detailed gap analysis report including:
+                1. Executive Summary
+                2. Current State Analysis
+                3. Future State Vision
+                4. Gap Identification
+                5. Impact Analysis
+                6. Strategic Recommendations
+                7. Implementation Roadmap
+                
+                Use insights from the analysis to create a clear, actionable report.""",
+                expected_output="""A well-structured markdown report containing:
+                - Executive summary
+                - Detailed gap analysis
+                - Strategic recommendations
+                - Implementation plan
+                The report should be clear, professional, and ready for executive review.""",
+                agent=writer
+            )
+        ]
+
+        return Crew(
+            agents=[analyst, writer],
+            tasks=tasks,
+            verbose=True
+        )
 
     def create_market_assessment_crew(self, inputs):
         # Similar structure for Market Assessment
@@ -195,6 +331,9 @@ class ReportGenerator:
         pass
 
     def generate_report(self, report_type, inputs):
+        # Convert report type to match the crew creator function names
+        report_type = report_type.lower().replace(' ', '_')
+        
         crew_creators = {
             'market_analysis': self.create_market_analysis_crew,
             'competitor_tracking': self.create_competitor_tracking_crew,
@@ -208,6 +347,9 @@ class ReportGenerator:
             raise ValueError(f"Invalid report type: {report_type}")
 
         crew = crew_creators[report_type](inputs)
+        if crew is None:
+            raise ValueError(f"Failed to create crew for report type: {report_type}")
+        
         return crew.kickoff()
 
 def create_reports(result, inputs, report_type):

@@ -126,7 +126,7 @@ def get_reports():
 
 @app.route('/api/generate-report', methods=['POST', 'OPTIONS'])
 def generate_report():
-    """New endpoint for generating any type of report"""
+    """Endpoint for generating any type of report"""
     if request.method == 'OPTIONS':
         response = make_response()
         return response
@@ -155,39 +155,77 @@ def generate_report():
                 'message': 'Company name is required'
             }), 400
 
+        # Report-specific validation
+        if report_type == 'competitor_tracking':
+            if not inputs.get('competitors'):
+                return jsonify({
+                    'status': 'error',
+                    'message': 'Competitors list is required'
+                }), 400
+            if not inputs.get('metrics'):
+                return jsonify({
+                    'status': 'error',
+                    'message': 'Tracking metrics are required'
+                }), 400
+
+        elif report_type == 'icp_report':
+            required_fields = [
+                'business_model',
+                'target_market',
+                'company_size',
+                'annual_revenue'
+            ]
+            missing = [field for field in required_fields if not inputs.get(field)]
+            if missing:
+                return jsonify({
+                    'status': 'error',
+                    'message': f'Missing required fields: {", ".join(missing)}'
+                }), 400
+
+        elif report_type == 'gap_analysis':
+            required_fields = [
+                'focus_areas',
+                'analysis_depth',
+                'market_region'
+            ]
+            missing = [field for field in required_fields if not inputs.get(field)]
+            if missing:
+                return jsonify({
+                    'status': 'error',
+                    'message': f'Missing required fields: {", ".join(missing)}'
+                }), 400
+
         logger.info(f"Starting {report_type} for {inputs['company_name']}")
         
-        # Generate report
+        # Generate report using the report generator
         generator = get_report_generator()
         result = generator.generate_report(report_type, inputs)
         
         # Create report files
         validation_file, report_file = create_reports(result, inputs, report_type)
         
-        try:
-            with open(validation_file, 'r') as f:
-                validation_report = f.read()
+        # Read the generated files
+        with open(validation_file, 'r') as f:
+            validation_report = f.read()
             
-            with open(report_file, 'r') as f:
-                analysis_report = f.read()
+        with open(report_file, 'r') as f:
+            analysis_report = f.read()
             
-            return jsonify({
-                'status': 'success',
-                'validation_report': validation_report,
-                'analysis_report': analysis_report,
-                'summary': {
-                    'company': inputs['company_name'],
-                    'report_type': report_type,
-                    'industry': inputs.get('industry', ''),
-                    'timestamp': time.strftime('%Y-%m-%d %H:%M:%S')
-                }
-            })
-        except FileNotFoundError as e:
-            logger.error(f"Report file not found: {str(e)}")
-            return jsonify({
-                'status': 'error',
-                'message': 'Error reading report files'
-            }), 500
+        return jsonify({
+            'status': 'success',
+            'validation_report': validation_report,
+            'analysis_report': analysis_report,
+            'summary': {
+                'company': inputs['company_name'],
+                'report_type': report_type,
+                'industry': inputs.get('industry', ''),
+                'timestamp': time.strftime('%Y-%m-%d %H:%M:%S'),
+                'analysis_type': inputs.get('analysis_type', ''),
+                'metrics': inputs.get('metrics', {}),
+                'focus_areas': inputs.get('focus_areas', []),
+                'market_region': inputs.get('market_region', 'global')
+            }
+        })
 
     except Exception as e:
         logger.error(f"Error generating report: {str(e)}")

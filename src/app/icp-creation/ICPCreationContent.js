@@ -1,790 +1,381 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import Link from 'next/link';
-import Icp from './Icp';
-import FeedbackDisplay from '@/components/FeedbackDisplay';
-
-// Initialize Gemini
-const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_API_KEY || '');
-
-const DEFAULT_PLATFORMS = [
-  { id: 'google', name: 'Google Reviews', enabled: true },
-  { id: 'trustpilot', name: 'Trustpilot Reviews', enabled: false },
-  { id: 'amazon', name: 'Amazon Reviews', enabled: false },
-  { id: 'product', name: 'Product Reviews', enabled: false },
-  { id: 'custom', name: 'Custom Query', enabled: false }
-];
 
 export default function ICPCreationContent() {
-  const [viewMode, setViewMode] = useState('api'); // 'api' or 'web'
-  const [storedSnapshots, setStoredSnapshots] = useState([]);
-  const [selectedSnapshot, setSelectedSnapshot] = useState(null);
-  const [analysis, setAnalysis] = useState(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [processedData, setProcessedData] = useState(null);
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [feedbackData, setFeedbackData] = useState(null);
-  const [isLoadingFeedback, setIsLoadingFeedback] = useState(false);
-  const [companyName, setCompanyName] = useState('');
-  const [showFeedbackSection, setShowFeedbackSection] = useState(false);
-  const [searchPlatforms, setSearchPlatforms] = useState(DEFAULT_PLATFORMS);
-  const [customQuery, setCustomQuery] = useState('');
+  const [analysisResult, setAnalysisResult] = useState(null);
+  const [error, setError] = useState(null);
+  const [parsedReport, setParsedReport] = useState('');
+  const [showValidation, setShowValidation] = useState(false);
+  const [allReports, setAllReports] = useState([]);
+  const [selectedReport, setSelectedReport] = useState(null);
+  const [showReportModal, setShowReportModal] = useState(false);
+  const [reportContent, setReportContent] = useState('');
 
-  useEffect(() => {
-    loadAllSnapshots();
-  }, []);
+  const [userInputs, setUserInputs] = useState({
+    company_name: '',
+    industry: '',
+    target_market: 'global',
+    business_model: 'b2b',
+    company_size: 'medium',
+    annual_revenue: '1m_10m',
+    pain_points: [],
+    key_requirements: [],
+    decision_makers: [],
+    budget_range: 'medium',
+    time_period: '2024'
+  });
 
-  const loadAllSnapshots = () => {
-    const allKeys = Object.keys(localStorage);
-    const snapshots = allKeys
-      .filter(key => key.includes('snapshot_'))
-      .map(key => {
-        try {
-          const data = JSON.parse(localStorage.getItem(key));
-          return {
-            id: key.split('snapshot_')[1],
-            data: data,
-            timestamp: new Date().toISOString()
-          };
-        } catch (e) {
-          console.error(`Error parsing snapshot ${key}:`, e);
-          return null;
-        }
-      })
-      .filter(Boolean);
+  // Predefined options
+  const targetMarkets = [
+    { value: 'global', label: 'Global' },
+    { value: 'north_america', label: 'North America' },
+    { value: 'europe', label: 'Europe' },
+    { value: 'asia_pacific', label: 'Asia Pacific' }
+  ];
 
-    setStoredSnapshots(snapshots);
+  const businessModels = [
+    { value: 'b2b', label: 'B2B' },
+    { value: 'b2c', label: 'B2C' },
+    { value: 'b2b2c', label: 'B2B2C' }
+  ];
+
+  const companySizes = [
+    { value: 'small', label: 'Small (1-50 employees)' },
+    { value: 'medium', label: 'Medium (51-500 employees)' },
+    { value: 'large', label: 'Large (501+ employees)' }
+  ];
+
+  const revenueRanges = [
+    { value: 'under_1m', label: 'Under $1M' },
+    { value: '1m_10m', label: '$1M - $10M' },
+    { value: '10m_50m', label: '$10M - $50M' },
+    { value: 'over_50m', label: 'Over $50M' }
+  ];
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setUserInputs(prev => ({
+      ...prev,
+      [name]: value
+    }));
   };
 
-  const processSnapshotData = async (snapshotData) => {
-    try {
-      setIsProcessing(true);
-      console.log('Processing snapshot data:', snapshotData.id);
-      
-      // Extract data array from the snapshot
-      let raw_data = [];
-      if (snapshotData && snapshotData.data) {
-        if (Array.isArray(snapshotData.data)) {
-          raw_data = snapshotData.data;
-        } else if (snapshotData.data.data && Array.isArray(snapshotData.data.data)) {
-          raw_data = snapshotData.data.data;
-        } else if (snapshotData.data.results && Array.isArray(snapshotData.data.results)) {
-          raw_data = snapshotData.data.results;
-        }
-      }
-
-      if (!Array.isArray(raw_data) || raw_data.length === 0) {
-        throw new Error('No valid data array found in snapshot');
-      }
-
-      // Process ICP data
-      const processed = {
-        demographics: analyzeCompanyDemographics(raw_data),
-        industry_segments: analyzeIndustrySegments(raw_data),
-        geographic_distribution: analyzeGeographicDistribution(raw_data),
-        contact_patterns: analyzeContactPatterns(raw_data),
-        company_sizes: analyzeCompanySizes(raw_data)
-      };
-
-      console.log('Processed ICP data:', processed);
-      setProcessedData(processed);
-
-    } catch (error) {
-      console.error('Error processing data:', error);
-      alert('Failed to process snapshot data: ' + error.message);
-    } finally {
-      setIsProcessing(false);
-    }
-  };
-
-  // Helper functions for ICP analysis
-  const analyzeCompanyDemographics = (data) => {
-    const demographics = {
-      company_types: {},
-      operating_status: {},
-      founded_years: []
-    };
-
-    data.forEach(company => {
-      if (company.company_type) {
-        demographics.company_types[company.company_type] = 
-          (demographics.company_types[company.company_type] || 0) + 1;
-      }
-      if (company.operating_status) {
-        demographics.operating_status[company.operating_status] = 
-          (demographics.operating_status[company.operating_status] || 0) + 1;
-      }
-      if (company.founded_date) {
-        demographics.founded_years.push(parseInt(company.founded_date.slice(0, 4)));
-      }
-    });
-
-    return demographics;
-  };
-
-  const analyzeIndustrySegments = (data) => {
-    const industries = {};
-    data.forEach(company => {
-      (company.industries || []).forEach(industry => {
-        if (industry.value) {
-          industries[industry.value] = (industries[industry.value] || 0) + 1;
-        }
-      });
-    });
-    return Object.entries(industries)
-      .sort(([, a], [, b]) => b - a)
-      .slice(0, 10);
-  };
-
-  const analyzeGeographicDistribution = (data) => {
-    const regions = {};
-    data.forEach(company => {
-      if (company.region) {
-        regions[company.region] = (regions[company.region] || 0) + 1;
-      }
-      (company.location || []).forEach(loc => {
-        if (loc.name) {
-          regions[loc.name] = (regions[loc.name] || 0) + 1;
-        }
-      });
-    });
-    return Object.entries(regions)
-      .sort(([, a], [, b]) => b - a);
-  };
-
-  const analyzeContactPatterns = (data) => {
-    return data.map(company => ({
-      name: company.name,
-      email: company.contact_email,
-      phone: company.contact_phone,
-      social_media: company.social_media_links || []
-    })).filter(contact => contact.email || contact.phone);
-  };
-
-  const analyzeCompanySizes = (data) => {
-    const sizes = {};
-    data.forEach(company => {
-      if (company.num_employees) {
-        sizes[company.num_employees] = (sizes[company.num_employees] || 0) + 1;
-      }
-    });
-    return Object.entries(sizes)
-      .sort(([a], [b]) => {
-        const getNum = (str) => parseInt(str.split('-')[0].replace('+', ''));
-        return getNum(a) - getNum(b);
-      });
-  };
-
-  const generateICPAnalysis = async () => {
-    try {
-      setIsAnalyzing(true);
-      
-      const prompt = `
-        Analyze this Ideal Customer Profile (ICP) data and provide strategic insights:
-
-        Demographics:
-        ${JSON.stringify(processedData.demographics, null, 2)}
-
-        Industry Segments:
-        ${processedData.industry_segments.map(([industry, count]) => 
-          `${industry}: ${count} companies`
-        ).join('\n')}
-
-        Geographic Distribution:
-        ${processedData.geographic_distribution.map(([region, count]) => 
-          `${region}: ${count} companies`
-        ).join('\n')}
-
-        Company Sizes:
-        ${processedData.company_sizes.map(([size, count]) => 
-          `${size}: ${count} companies`
-        ).join('\n')}
-
-        Please provide:
-        1. Ideal Customer Profile Definition
-        2. Key Market Segments
-        3. Geographic Focus Areas
-        4. Company Size Sweet Spot
-        5. Targeting Recommendations
-        6. Engagement Strategy
-
-        Format the analysis in clear sections with bullet points.
-      `;
-
-      const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
-      const result = await model.generateContent(prompt);
-      const response = await result.response;
-      const analysisText = response.text();
-
-      setAnalysis({
-        timestamp: new Date().toISOString(),
-        snapshotId: selectedSnapshot.id,
-        content: analysisText,
-        processedData: processedData
-      });
-
-    } catch (error) {
-      console.error('Error generating analysis:', error);
-      if (error.message.includes('GoogleGenerativeAIFetchError')) {
-        alert('An internal error occurred while generating analysis. Please try again later.');
-      } else {
-        alert('Failed to generate ICP analysis: ' + error.message);
-      }
-    } finally {
-      setIsAnalyzing(false);
-    }
-  };
-
-  const viewSnapshotData = (snapshot) => {
-    setSelectedSnapshot(snapshot);
-    processSnapshotData(snapshot);
-  };
-
-  const renderProcessedDataReview = () => {
-    if (!processedData) return null;
-
-    return (
-      <div className="bg-black p-6 rounded-xl backdrop-blur-xl border border-purple-500/20 mt-6">
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="text-xl font-semibold text-purple-400">
-            ICP Analysis Results
-          </h3>
-          <div className="flex space-x-4">
-            <button
-              onClick={generateICPAnalysis}
-              disabled={isAnalyzing}
-              className={`px-4 py-2 rounded-lg transition-colors ${
-                isAnalyzing 
-                  ? 'bg-purple-600/50 cursor-not-allowed' 
-                  : 'bg-purple-600 hover:bg-purple-700'
-              }`}
-            >
-              {isAnalyzing ? 'Analyzing...' : 'Generate AI Analysis'}
-            </button>
-            <button
-              onClick={() => setProcessedData(null)}
-              className="text-gray-400 hover:text-gray-300"
-            >
-              Close
-            </button>
-          </div>
-        </div>
-
-        <div className="space-y-6">
-          {/* Demographics */}
-          <div className="bg-black p-4 rounded-lg">
-            <h4 className="text-lg font-semibold text-purple-400 mb-3">Company Demographics</h4>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <h5 className="text-md font-semibold text-purple-300 mb-2">Company Types</h5>
-                {Object.entries(processedData.demographics.company_types).map(([type, count], index) => (
-                  <div key={index} className="flex justify-between text-gray-300 text-sm">
-                    <span>{type}</span>
-                    <span>{count}</span>
-                  </div>
-                ))}
-              </div>
-              <div>
-                <h5 className="text-md font-semibold text-purple-300 mb-2">Operating Status</h5>
-                {Object.entries(processedData.demographics.operating_status).map(([status, count], index) => (
-                  <div key={index} className="flex justify-between text-gray-300 text-sm">
-                    <span>{status}</span>
-                    <span>{count}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Industry Segments */}
-          <div className="bg-black p-4 rounded-lg">
-            <h4 className="text-lg font-semibold text-purple-400 mb-3">Industry Segments</h4>
-            <div className="grid grid-cols-1 gap-2">
-              {processedData.industry_segments.map(([industry, count], index) => (
-                <div key={index} className="flex justify-between items-center">
-                  <span className="text-gray-300">{industry}</span>
-                  <div className="flex items-center space-x-3">
-                    <div className="h-2 bg-purple-500/20 rounded-full" style={{
-                      width: `${(count / processedData.industry_segments[0][1]) * 100}%`
-                    }}></div>
-                    <span className="text-gray-400 text-sm">{count}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Geographic Distribution */}
-          <div className="bg-black p-4 rounded-lg">
-            <h4 className="text-lg font-semibold text-purple-400 mb-3">Geographic Distribution</h4>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {processedData.geographic_distribution.map(([region, count], index) => (
-                <div key={index} className="p-3 bg-black rounded-lg">
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-300">{region}</span>
-                    <span className="text-purple-400 text-sm">{count} companies</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Company Sizes */}
-          <div className="bg-black p-4 rounded-lg">
-            <h4 className="text-lg font-semibold text-purple-400 mb-3">Company Size Distribution</h4>
-            <div className="space-y-2">
-              {processedData.company_sizes.map(([size, count], index) => (
-                <div key={index} className="flex justify-between items-center">
-                  <span className="text-gray-300">{size}</span>
-                  <div className="flex items-center space-x-3">
-                    <div className="h-2 bg-purple-500/20 rounded-full" style={{
-                      width: `${(count / processedData.company_sizes[0][1]) * 100}%`
-                    }}></div>
-                    <span className="text-gray-400 text-sm">{count}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Contact Patterns */}
-          <div className="bg-black p-4 rounded-lg">
-            <h4 className="text-lg font-semibold text-purple-400 mb-3">Contact Information</h4>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {processedData.contact_patterns.slice(0, 6).map((contact, index) => (
-                <div key={index} className="p-3 bg-black rounded-lg">
-                  <h5 className="font-semibold text-purple-300">{contact.name}</h5>
-                  <div className="mt-2 space-y-1 text-sm">
-                    {contact.email && <p className="text-gray-300">Email: {contact.email}</p>}
-                    {contact.phone && <p className="text-gray-300">Phone: {contact.phone}</p>}
-                    {contact.social_media.length > 0 && (
-                      <div className="flex gap-2 mt-2">
-                        {contact.social_media.map((link, i) => (
-                          <a 
-                            key={i}
-                            href={link}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-purple-400 hover:text-purple-300"
-                          >
-                            {link.includes('linkedin') ? 'LinkedIn' : 
-                             link.includes('facebook') ? 'Facebook' : 
-                             link.includes('twitter') ? 'Twitter' : 'Social'}
-                          </a>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* AI Analysis Results */}
-          {analysis && (
-            <div className="bg-black p-4 rounded-lg">
-              <h4 className="text-lg font-semibold text-purple-400 mb-3">AI Analysis</h4>
-              <div className="prose prose-invert max-w-none">
-                <pre className="whitespace-pre-wrap text-sm text-gray-300">
-                  {analysis.content}
-                </pre>
-              </div>
-              <div className="mt-2 text-xs text-gray-500">
-                Generated on: {new Date(analysis.timestamp).toLocaleString()}
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-    );
-  };
-
-  const handlePlatformToggle = (platformId) => {
-    setSearchPlatforms(platforms => 
-      platforms.map(p => 
-        p.id === platformId ? { ...p, enabled: !p.enabled } : p
-      )
-    );
-  };
-
-  const handleFeedbackAnalysis = async (company = null) => {
-    const queryCompany = company || selectedSnapshot?.data?.name || companyName;
-    
-    if (!queryCompany) {
-      alert('Please select a snapshot or enter a company name');
+  const startAnalysis = async () => {
+    if (!userInputs.company_name) {
+      setError('Company name is required');
       return;
     }
-    
-    setIsLoadingFeedback(true);
-    try {
-      const enabledPlatforms = searchPlatforms
-        .filter(p => p.enabled)
-        .map(p => p.id === 'custom' ? customQuery : `${p.name.toLowerCase()}`);
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/feedback-validation`, {
+    try {
+      setIsAnalyzing(true);
+      setError(null);
+
+      const response = await fetch('http://localhost:5001/api/generate-report', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          query: queryCompany,
-          platforms: enabledPlatforms
+          report_type: 'icp_report',
+          inputs: {
+            ...userInputs,
+            analysis_type: 'icp'
+          }
         })
       });
 
-      if (!response.ok) throw new Error('Failed to fetch feedback');
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to generate report');
+      }
+
       const data = await response.json();
-      setFeedbackData(data);
       
-      // Scroll to feedback section
-      document.getElementById('feedback-section')?.scrollIntoView({ behavior: 'smooth' });
-    } catch (error) {
-      console.error('Error:', error);
-      alert('Failed to fetch feedback: ' + error.message);
+      if (data.status === 'error') {
+        throw new Error(data.message);
+      }
+
+      setAnalysisResult(data);
+      fetchAllReports(); // Refresh reports list
+    } catch (err) {
+      setError(err.message || 'An error occurred while generating the report');
+      console.error('Analysis error:', err);
     } finally {
-      setIsLoadingFeedback(false);
+      setIsAnalyzing(false);
     }
   };
 
-  const handleViewFeedback = () => {
-    setShowFeedbackSection(true);
-    document.getElementById('feedback-section')?.scrollIntoView({ behavior: 'smooth' });
-    if (selectedSnapshot?.data?.name) {
-      handleFeedbackAnalysis(selectedSnapshot.data.name);
+  // Parse markdown when analysis result changes
+  useEffect(() => {
+    if (analysisResult?.analysis_report) {
+      const formattedReport = analysisResult.analysis_report
+        .replace(/^# (.*$)/gm, '<h1 class="text-3xl font-bold mt-6 mb-4 text-gray-900">$1</h1>')
+        .replace(/^## (.*$)/gm, '<h2 class="text-2xl font-bold mt-6 mb-3 text-gray-800">$1</h2>')
+        .replace(/^### (.*$)/gm, '<h3 class="text-xl font-semibold mt-4 mb-2 text-gray-700">$1</h3>')
+        .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-gray-900">$1</strong>')
+        .replace(/^\- (.*$)/gm, '<li class="ml-4 mb-1 text-gray-700">• $1</li>')
+        .replace(/^(?!<[hl]|<li)(.*$)/gm, '<p class="mb-4 text-gray-600 leading-relaxed">$1</p>')
+        .replace(/(<li.*<\/li>)/s, '<ul class="mb-4 space-y-2">$1</ul>');
+      
+      setParsedReport(formattedReport);
+    }
+  }, [analysisResult]);
+
+  const fetchAllReports = async () => {
+    try {
+      const response = await fetch('http://localhost:5001/api/reports');
+      const data = await response.json();
+      setAllReports(data.reports.filter(report => report.report_type.includes('icp')));
+    } catch (err) {
+      console.error('Error fetching reports:', err);
     }
   };
 
-  const handleCloseFeedback = () => {
-    setShowFeedbackSection(false);
-    setFeedbackData(null);
-    setCompanyName('');
+  const viewReport = async (report) => {
+    try {
+      const response = await fetch(`http://localhost:5001/api/report-content/${report.filename}`);
+      const data = await response.json();
+      
+      if (data.status === 'success') {
+        setSelectedReport(report);
+        setReportContent(data.content);
+        setShowReportModal(true);
+      }
+    } catch (err) {
+      console.error('Error fetching report content:', err);
+    }
   };
+
+  useEffect(() => {
+    fetchAllReports();
+  }, []);
 
   return (
-    <div className="min-h-screen bg-black text-white">
-      {/* View Toggle */}
-      <div className="max-w-7xl mx-auto px-4 py-6">
-        {/* Navigation Tabs */}
-        <div className="flex items-center justify-between mb-8">
-          <div className="bg-[#1D1D1F] p-1 rounded-xl inline-flex">
-            <button 
-              className="px-4 py-2 rounded-lg bg-purple-600 text-white"
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        {/* Navigation */}
+        <div className="mb-8">
+          <div className="bg-white p-1 rounded-xl inline-flex shadow-sm">
+            <Link 
+              href="/competitor-tracking"
+              className="px-4 py-2 rounded-lg text-gray-600 hover:text-gray-800 hover:bg-gray-100 transition-all duration-200"
             >
-              ICP Creation
-            </button>
-            <Link
-              href="/journey-mapping"
-              className="px-4 py-2 rounded-lg text-gray-400 hover:text-white hover:bg-purple-600/50 transition-all duration-200"
-            >
-              Journey Mapping
+              Competitor Tracking
             </Link>
-          </div>
-
-          <div className="flex items-center space-x-4">
-            <button
-              onClick={() => setViewMode('api')}
-              className={`px-6 py-2 rounded-xl font-medium transition-colors ${
-                viewMode === 'api'
-                  ? 'bg-purple-600 text-white'
-                  : 'bg-[#2D2D2F] text-gray-400 hover:text-white'
-              }`}
+            <button 
+              className="px-4 py-2 rounded-lg bg-blue-600 text-white"
             >
-              API View
-            </button>
-            <button
-              onClick={() => setViewMode('web')}
-              className={`px-6 py-2 rounded-xl font-medium transition-colors ${
-                viewMode === 'web'
-                  ? 'bg-purple-600 text-white'
-                  : 'bg-[#2D2D2F] text-gray-400 hover:text-white'
-              }`}
-            >
-              Web View
+              ICP Analysis
             </button>
           </div>
         </div>
 
-        {/* Add Feedback Link */}
-        <div className="mb-4">
+        <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
+          <h2 className="text-3xl font-bold mb-6 text-gray-800">ICP Analysis</h2>
+          
+          {/* Input Form */}
+          <div className="space-y-6 mb-8">
+            <div>
+              <label className="block text-sm font-medium mb-2 text-gray-700">Company Name</label>
+              <input
+                type="text"
+                name="company_name"
+                value={userInputs.company_name}
+                onChange={handleInputChange}
+                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+                placeholder="Your company name"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium mb-2 text-gray-700">Industry</label>
+              <input
+                type="text"
+                name="industry"
+                value={userInputs.industry}
+                onChange={handleInputChange}
+                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+                placeholder="Your industry"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-2 text-gray-700">Target Market</label>
+              <select
+                name="target_market"
+                value={userInputs.target_market}
+                onChange={handleInputChange}
+                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+              >
+                {targetMarkets.map(market => (
+                  <option key={market.value} value={market.value}>{market.label}</option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-2 text-gray-700">Business Model</label>
+              <select
+                name="business_model"
+                value={userInputs.business_model}
+                onChange={handleInputChange}
+                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+              >
+                {businessModels.map(model => (
+                  <option key={model.value} value={model.value}>{model.label}</option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-2 text-gray-700">Company Size</label>
+              <select
+                name="company_size"
+                value={userInputs.company_size}
+                onChange={handleInputChange}
+                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+              >
+                {companySizes.map(size => (
+                  <option key={size.value} value={size.value}>{size.label}</option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-2 text-gray-700">Annual Revenue Range</label>
+              <select
+                name="annual_revenue"
+                value={userInputs.annual_revenue}
+                onChange={handleInputChange}
+                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+              >
+                {revenueRanges.map(range => (
+                  <option key={range.value} value={range.value}>{range.label}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
           <button
-            onClick={handleViewFeedback}
-            className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            onClick={startAnalysis}
+            disabled={isAnalyzing}
+            className="w-full bg-blue-600 text-white px-6 py-3 rounded-md font-medium hover:bg-blue-700 disabled:bg-blue-300 transition-colors"
           >
-            <span className="mr-2">📝</span>
-            View Customer Feedback
+            {isAnalyzing ? 'Generating ICP Analysis...' : 'Generate ICP Analysis'}
           </button>
         </div>
 
-        {/* Single Feedback Analysis Section */}
-        {showFeedbackSection && (
-          <div id="feedback-section" className="mt-8">
-            <div className="bg-[#1D1D1F] p-6 rounded-xl">
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-xl font-semibold text-purple-400">
-                  Customer Feedback Analysis
-                </h2>
-                <button
-                  onClick={() => {
-                    setShowFeedbackSection(false);
-                    setFeedbackData(null);
-                    setCompanyName('');
-                  }}
-                  className="text-gray-400 hover:text-gray-300 transition-colors"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-              </div>
-
-              <div className="space-y-4">
-                {/* Company Input */}
-                <div className="flex gap-4">
-                  <input
-                    type="text"
-                    value={companyName}
-                    onChange={(e) => setCompanyName(e.target.value)}
-                    placeholder="Enter company name..."
-                    className="flex-1 px-4 py-2 bg-[#2D2D2F] rounded-lg border border-gray-700 focus:border-purple-500 outline-none text-white"
-                  />
-                </div>
-
-                {/* Platform Selection */}
-                <div className="space-y-2">
-                  <h3 className="text-sm font-medium text-gray-400">Search Platforms</h3>
-                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2">
-                    {searchPlatforms.map(platform => (
-                      <button
-                        key={platform.id}
-                        onClick={() => handlePlatformToggle(platform.id)}
-                        className={`px-3 py-2 rounded-lg text-sm transition-colors ${
-                          platform.enabled
-                            ? 'bg-purple-600 text-white'
-                            : 'bg-[#2D2D2F] text-gray-400 hover:text-white'
-                        }`}
-                      >
-                        {platform.name}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Custom Query Input */}
-                {searchPlatforms.find(p => p.id === 'custom')?.enabled && (
-                  <div className="flex gap-4">
-                    <input
-                      type="text"
-                      value={customQuery}
-                      onChange={(e) => setCustomQuery(e.target.value)}
-                      placeholder="Enter custom search query..."
-                      className="flex-1 px-4 py-2 bg-[#2D2D2F] rounded-lg border border-gray-700 focus:border-purple-500 outline-none text-white"
-                    />
-                  </div>
-                )}
-
-                {/* Search Button */}
-                <div className="flex justify-end">
-                  <button
-                    onClick={() => handleFeedbackAnalysis()}
-                    disabled={isLoadingFeedback || (!selectedSnapshot && !companyName) || !searchPlatforms.some(p => p.enabled)}
-                    className={`px-6 py-2 rounded-lg font-medium transition-colors ${
-                      isLoadingFeedback || (!selectedSnapshot && !companyName) || !searchPlatforms.some(p => p.enabled)
-                        ? 'bg-purple-600/50 cursor-not-allowed'
-                        : 'bg-purple-600 hover:bg-purple-700'
-                    }`}
-                  >
-                    {isLoadingFeedback ? 'Analyzing...' : 'Analyze Feedback'}
-                  </button>
-                </div>
-              </div>
-
-              {/* Results */}
-              {feedbackData && <FeedbackDisplay feedbackData={feedbackData} />}
-
-              {/* Empty State */}
-              {!feedbackData && !isLoadingFeedback && (
-                <div className="text-center text-gray-400 py-12">
-                  {selectedSnapshot 
-                    ? `Click "Analyze Feedback" to analyze feedback for ${selectedSnapshot.data.name}`
-                    : 'Enter a company name and select platforms to analyze feedback'
-                  }
-                </div>
-              )}
+        {/* Analysis Status */}
+        {isAnalyzing && (
+          <div className="bg-white p-6 rounded-lg shadow-lg mb-8">
+            <div className="flex items-center space-x-3">
+              <div className="animate-spin h-5 w-5 border-2 border-blue-500 border-t-transparent rounded-full"></div>
+              <p className="text-gray-700">Generating ICP analysis...</p>
             </div>
           </div>
         )}
 
-        {/* Content based on view mode */}
-        {viewMode === 'web' ? (
-          <Icp />
-        ) : (
-          <div className="max-w-7xl mx-auto">
-            {/* Only show snapshots when feedback section is hidden */}
-            {!showFeedbackSection && (
+        {/* Error Display */}
+        {error && (
+          <div className="bg-white p-6 rounded-lg shadow-lg mb-8">
+            <div className="bg-red-50 border border-red-200 rounded-md p-4 text-red-700">
+              {error}
+            </div>
+          </div>
+        )}
+
+        {/* Results Display */}
+        {analysisResult && (
+          <div className="bg-white rounded-lg shadow-lg">
+            <div className="p-8">
+              <h2 className="text-3xl font-bold mb-6 text-gray-800">ICP Analysis Results</h2>
+              
+              {/* Summary Card */}
               <div className="mb-8">
-                <h2 className="text-2xl font-bold text-white mb-6">Stored Snapshots</h2>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {storedSnapshots.map((snapshot) => (
-                    <div 
-                      key={snapshot.id}
-                      className="bg-[#1D1D1F]/90 p-6 rounded-xl backdrop-blur-xl border border-purple-500/20 hover:border-purple-500/40 transition-all cursor-pointer"
-                      onClick={() => viewSnapshotData(snapshot)}
-                    >
-                      <div className="flex flex-col space-y-3">
-                        <div className="flex items-center justify-between">
-                          <span className="text-gray-200 font-mono text-sm">{snapshot.id}</span>
-                          <span className="text-xs text-gray-500">
-                            {new Date(snapshot.timestamp).toLocaleDateString()}
-                          </span>
-                        </div>
-                        
-                        {/* Preview of data */}
-                        <div className="mt-2 text-sm text-gray-400">
-                          {snapshot.data && typeof snapshot.data === 'object' && (
-                            <div className="space-y-1">
-                              {Object.keys(snapshot.data).slice(0, 3).map(key => (
-                                <div key={key} className="truncate">
-                                  {key}: {typeof snapshot.data[key] === 'object' ? '...' : snapshot.data[key]}
-                                </div>
-                              ))}
-                              {Object.keys(snapshot.data).length > 3 && (
-                                <div className="text-purple-400">+ more data...</div>
-                              )}
-                            </div>
-                          )}
-                        </div>
-                      </div>
+                <h3 className="text-xl font-semibold mb-4 text-gray-700">Analysis Summary</h3>
+                <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <p className="mb-2">
+                        <span className="font-medium text-gray-700">Company:</span>{' '}
+                        {analysisResult.summary.company}
+                      </p>
+                      <p className="mb-2">
+                        <span className="font-medium text-gray-700">Industry:</span>{' '}
+                        {analysisResult.summary.industry}
+                      </p>
+                      <p>
+                        <span className="font-medium text-gray-700">Generated:</span>{' '}
+                        {analysisResult.summary.timestamp}
+                      </p>
                     </div>
-                  ))}
-                </div>
-
-                {/* Selected Snapshot */}
-                {selectedSnapshot && (
-                  <div className="mt-8 space-y-6">
-                    <div className="bg-[#1D1D1F]/90 p-6 rounded-xl backdrop-blur-xl border border-purple-500/20">
-                      <div className="flex justify-between items-center mb-4">
-                        <h3 className="text-xl font-semibold text-purple-400">
-                          Snapshot Details: {selectedSnapshot.id}
-                        </h3>
-                        <div className="flex space-x-4">
-                          <button 
-                            onClick={() => processSnapshotData(selectedSnapshot)}
-                            disabled={isProcessing}
-                            className={`px-4 py-2 rounded-lg transition-colors ${
-                              isProcessing 
-                                ? 'bg-purple-600/50 cursor-not-allowed' 
-                                : 'bg-purple-600 hover:bg-purple-700'
-                            }`}
-                          >
-                            {isProcessing ? 'Processing...' : 'Process Data'}
-                          </button>
-
-                          <button 
-                            onClick={() => handleFeedbackAnalysis(selectedSnapshot.data.name)}
-                            disabled={isLoadingFeedback}
-                            className={`px-4 py-2 rounded-lg transition-colors ${
-                              isLoadingFeedback
-                                ? 'bg-blue-600/50 cursor-not-allowed'
-                                : 'bg-blue-600 hover:bg-blue-700'
-                            }`}
-                          >
-                            {isLoadingFeedback ? 'Analyzing...' : 'Analyze Feedback'}
-                          </button>
-
-                          <button 
-                            onClick={() => setSelectedSnapshot(null)}
-                            className="text-gray-400 hover:text-gray-300"
-                          >
-                            Close
-                          </button>
-                        </div>
-                      </div>
-                      <pre className="bg-black p-4 rounded-lg overflow-auto max-h-96 text-sm text-gray-300">
-                        {JSON.stringify(selectedSnapshot.data, null, 2)}
-                      </pre>
+                    <div>
+                      <p className="mb-2">
+                        <span className="font-medium text-gray-700">Target Market:</span>{' '}
+                        {userInputs.target_market}
+                      </p>
+                      <p>
+                        <span className="font-medium text-gray-700">Business Model:</span>{' '}
+                        {userInputs.business_model}
+                      </p>
                     </div>
-
-                    {/* Processed Data Review */}
-                    {renderProcessedDataReview()}
-
-                    {/* Feedback Results Section */}
-                    {feedbackData && (
-                      <div className="mt-6 bg-[#1D1D1F] p-6 rounded-xl">
-                        <h3 className="text-xl font-semibold text-purple-400 mb-4">
-                          Customer Feedback Analysis
-                        </h3>
-                        
-                        {/* Sentiment Overview */}
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                          <div className="bg-[#2D2D2F] p-4 rounded-lg">
-                            <h4 className="text-sm font-medium text-gray-400 mb-2">Overall Sentiment</h4>
-                            <p className="text-2xl font-semibold text-purple-300">
-                              {feedbackData.sentiment_score}%
-                            </p>
-                          </div>
-                          
-                          <div className="bg-[#2D2D2F] p-4 rounded-lg">
-                            <h4 className="text-sm font-medium text-gray-400 mb-2">Total Reviews</h4>
-                            <p className="text-2xl font-semibold text-purple-300">
-                              {feedbackData.total_reviews}
-                            </p>
-                          </div>
-                          
-                          <div className="bg-[#2D2D2F] p-4 rounded-lg">
-                            <h4 className="text-sm font-medium text-gray-400 mb-2">Sources</h4>
-                            <p className="text-2xl font-semibold text-purple-300">
-                              {feedbackData.sources?.length || 0}
-                            </p>
-                          </div>
-                        </div>
-
-                        {/* Key Themes */}
-                        <div className="mb-6">
-                          <h4 className="text-lg font-medium text-purple-400 mb-3">Key Themes</h4>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {feedbackData.key_themes?.map((theme, index) => (
-                              <div key={index} className="bg-[#2D2D2F] p-4 rounded-lg">
-                                <h5 className="font-medium text-gray-300">{theme.name}</h5>
-                                <p className="text-sm text-gray-400 mt-1">{theme.mentions} mentions</p>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-
-                        {/* Recent Reviews */}
-                        <div>
-                          <h4 className="text-lg font-medium text-purple-400 mb-3">Recent Reviews</h4>
-                          <div className="space-y-4">
-                            {feedbackData.recent_reviews?.map((review, index) => (
-                              <div key={index} className="bg-[#2D2D2F] p-4 rounded-lg">
-                                <div className="flex justify-between items-start mb-2">
-                                  <div className="text-gray-300">{review.source}</div>
-                                  <div className="text-sm text-gray-400">{review.date}</div>
-                                </div>
-                                <p className="text-gray-300">{review.content}</p>
-                                <div className="mt-2 text-sm">
-                                  <span className={`px-2 py-1 rounded ${
-                                    review.sentiment > 0 ? 'bg-green-500/20 text-green-400' :
-                                    review.sentiment < 0 ? 'bg-red-500/20 text-red-400' :
-                                    'bg-gray-500/20 text-gray-400'
-                                  }`}>
-                                    {review.sentiment > 0 ? 'Positive' : 
-                                     review.sentiment < 0 ? 'Negative' : 'Neutral'}
-                                  </span>
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                    )}
                   </div>
-                )}
+                </div>
               </div>
-            )}
+
+              {/* Analysis Report */}
+              <div>
+                <h3 className="text-xl font-semibold mb-4 text-gray-700">ICP Analysis Report</h3>
+                <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
+                  <div
+                    className="prose prose-lg max-w-none"
+                    dangerouslySetInnerHTML={{ __html: parsedReport }}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Report Modal */}
+        {showReportModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+            <div className="bg-white rounded-lg w-full max-w-4xl max-h-[90vh] overflow-hidden">
+              <div className="p-6 border-b border-gray-200 flex justify-between items-center">
+                <div>
+                  <h3 className="text-xl font-semibold text-gray-800">
+                    {selectedReport.company_name} - ICP Analysis
+                  </h3>
+                  <p className="text-sm text-gray-600">Generated: {selectedReport.timestamp}</p>
+                </div>
+                <button
+                  onClick={() => setShowReportModal(false)}
+                  className="text-gray-500 hover:text-gray-700"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              <div className="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
+                <div
+                  className="prose prose-lg max-w-none"
+                  dangerouslySetInnerHTML={{
+                    __html: reportContent
+                      .replace(/^# (.*$)/gm, '<h1 class="text-3xl font-bold mt-6 mb-4 text-gray-900">$1</h1>')
+                      .replace(/^## (.*$)/gm, '<h2 class="text-2xl font-bold mt-6 mb-3 text-gray-800">$1</h2>')
+                      .replace(/^### (.*$)/gm, '<h3 class="text-xl font-semibold mt-4 mb-2 text-gray-700">$1</h3>')
+                      .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-gray-900">$1</strong>')
+                      .replace(/^\- (.*$)/gm, '<li class="ml-4 mb-1 text-gray-700">• $1</li>')
+                      .replace(/^(?!<[hl]|<li)(.*$)/gm, '<p class="mb-4 text-gray-600 leading-relaxed">$1</p>')
+                      .replace(/(<li.*<\/li>)/s, '<ul class="mb-4 space-y-2">$1</ul>')
+                  }}
+                />
+              </div>
+            </div>
           </div>
         )}
       </div>

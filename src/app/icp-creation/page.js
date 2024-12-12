@@ -2,6 +2,6 @@
 
 import ICPCreationContent from './ICPCreationContent';
 
-export default function ICPCreationPage() {
+export default function ICPCreation() {
   return <ICPCreationContent />;
 }
