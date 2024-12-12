@@ -24,7 +24,7 @@ export default function MarketTrendsContent() {
 
   const focusAreaOptions = [
     "Market Size and Growth",
-    "Competitor Analysis",
+    "Competitor Analysis", 
     "Customer Demographics",
     "Technology Trends",
     "Financial Analysis",
@@ -85,7 +85,7 @@ export default function MarketTrendsContent() {
       setError(null);
       setAnalysisStatus('starting');
 
-      const response = await fetch('http://localhost:5001/api/market-analysis', {
+      const response = await fetch('https://varun324242-sj.hf.space/api/market-analysis', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

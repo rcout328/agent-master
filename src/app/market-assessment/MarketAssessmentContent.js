@@ -87,7 +87,7 @@ export default function MarketAssessmentContent() {
       setIsAnalyzing(true);
       setError(null);
 
-      const response = await fetch('http://localhost:5001/api/generate-report', {
+      const response = await fetch('https://varun324242-sj.hf.space/api/generate-report', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -119,7 +119,7 @@ export default function MarketAssessmentContent() {
 
   const fetchAllReports = async () => {
     try {
-      const response = await fetch('http://localhost:5001/api/reports');
+      const response = await fetch('https://varun324242-sj.hf.space/api/reports');
       const data = await response.json();
       setAllReports(data.reports.filter(report => 
         report.report_type.includes('market_assessment')
@@ -139,7 +139,7 @@ export default function MarketAssessmentContent() {
         // If the report is a file path, fetch the content
         if (typeof analysisResult.analysis_report === 'string' && 
             analysisResult.analysis_report.endsWith('.md')) {
-          fetch(`http://localhost:5001/api/report-content/${analysisResult.analysis_report}`)
+          fetch(`https://varun324242-sj.hf.space/api/report-content/${analysisResult.analysis_report}`)
             .then(res => res.json())
             .then(data => {
               const formattedReport = formatMarkdownContent(data.content);

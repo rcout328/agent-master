@@ -1,0 +1,8 @@
+venv/bin/uv filter=lfs diff=lfs merge=lfs -text
+venv/lib/python3.11/site-packages/cryptography/hazmat/bindings/_rust.abi3.so filter=lfs diff=lfs merge=lfs -text
+venv/lib/python3.11/site-packages/grpc/_cython/cygrpc.cpython-311-darwin.so filter=lfs diff=lfs merge=lfs -text
+venv/lib/python3.11/site-packages/grpc_tools/_protoc_compiler.cpython-311-darwin.so filter=lfs diff=lfs merge=lfs -text
+venv/lib/python3.11/site-packages/lance/lance.abi3.so filter=lfs diff=lfs merge=lfs -text
+venv/lib/python3.11/site-packages/lancedb/_lancedb.abi3.so filter=lfs diff=lfs merge=lfs -text
+venv/lib/python3.11/site-packages/numpy/.dylibs/libopenblas64_.0.dylib filter=lfs diff=lfs merge=lfs -text
+venv/lib/python3.11/site-packages/onnxruntime/capi/libonnxruntime.1.20.1.dylib filter=lfs diff=lfs merge=lfs -text

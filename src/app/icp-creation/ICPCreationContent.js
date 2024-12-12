@@ -73,7 +73,7 @@ export default function ICPCreationContent() {
       setIsAnalyzing(true);
       setError(null);
 
-      const response = await fetch('http://localhost:5001/api/generate-report', {
+      const response = await fetch('https://varun324242-sj.hf.space/api/generate-report', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -126,7 +126,7 @@ export default function ICPCreationContent() {
 
   const fetchAllReports = async () => {
     try {
-      const response = await fetch('http://localhost:5001/api/reports');
+      const response = await fetch('https://varun324242-sj.hf.space/api/reports');
       const data = await response.json();
       setAllReports(data.reports.filter(report => report.report_type.includes('icp')));
     } catch (err) {
@@ -136,7 +136,7 @@ export default function ICPCreationContent() {
 
   const viewReport = async (report) => {
     try {
-      const response = await fetch(`http://localhost:5001/api/report-content/${report.filename}`);
+      const response = await fetch(`https://varun324242-sj.hf.space/api/report-content/${report.filename}`);
       const data = await response.json();
       
       if (data.status === 'success') {
