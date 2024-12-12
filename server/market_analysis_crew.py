@@ -323,12 +323,152 @@ class ReportGenerator:
         )
 
     def create_market_assessment_crew(self, inputs):
-        # Similar structure for Market Assessment
-        pass
+        """Create crew for market assessment reports"""
+        analyst = Agent(
+            role='Market Assessment Analyst',
+            goal=f'Analyze market position and opportunities for {inputs["company_name"]}',
+            backstory="""Expert in market assessment and analysis. Skilled at evaluating 
+            market conditions, competitive landscapes, and growth opportunities.""",
+            tools=[self.search_tool],
+            verbose=True
+        )
+
+        writer = Agent(
+            role='Market Assessment Writer',
+            goal='Create comprehensive market assessment reports',
+            backstory="""Professional report writer specializing in market assessment documentation 
+            and strategic insights.""",
+            tools=[self.write_file_tool],
+            verbose=True
+        )
+
+        tasks = [
+            Task(
+                description=f"""Conduct market assessment for {inputs["company_name"]} in {inputs["industry"]}
+                Assessment Type: {inputs["market_type"]}
+                Focus Areas: {', '.join(inputs['focus_areas'])}
+                Market Region: {inputs['market_region']}
+                Timeframe: {inputs['timeframe']}
+                Key Metrics: {', '.join(inputs['metrics'])}
+                
+                Provide detailed analysis including:
+                1. Market Overview
+                2. Competitive Position
+                3. Growth Opportunities
+                4. Market Trends
+                5. Risk Assessment
+                6. Strategic Recommendations
+                
+                Focus on the selected areas and metrics to provide actionable insights.""",
+                expected_output="""A comprehensive market assessment containing:
+                - Market overview and size
+                - Competitive analysis
+                - Growth opportunities
+                - Strategic recommendations
+                The analysis should be data-driven and actionable.""",
+                agent=analyst
+            ),
+            Task(
+                description=f"""Create a detailed market assessment report including:
+                1. Executive Summary
+                2. Market Analysis
+                3. Competitive Position
+                4. Growth Opportunities
+                5. Risk Assessment
+                6. Strategic Recommendations
+                7. Implementation Guidelines
+                
+                Use insights from the analysis to create a clear, actionable report.""",
+                expected_output="""A well-structured markdown report containing:
+                - Executive summary
+                - Detailed market assessment
+                - Strategic recommendations
+                - Implementation guidelines
+                The report should be clear, professional, and ready for executive review.""",
+                agent=writer
+            )
+        ]
+
+        return Crew(
+            agents=[analyst, writer],
+            tasks=tasks,
+            verbose=True
+        )
 
     def create_impact_assessment_crew(self, inputs):
-        # Similar structure for Impact Assessment
-        pass
+        """Create crew for impact assessment reports"""
+        analyst = Agent(
+            role='Impact Assessment Analyst',
+            goal=f'Analyze business impact for {inputs["company_name"]}',
+            backstory="""Expert in impact analysis and assessment. Skilled at evaluating 
+            social, economic, and environmental impacts of business operations.""",
+            tools=[self.search_tool],
+            verbose=True
+        )
+
+        writer = Agent(
+            role='Impact Assessment Writer',
+            goal='Create comprehensive impact assessment reports',
+            backstory="""Professional report writer specializing in impact assessment documentation 
+            and strategic recommendations.""",
+            tools=[self.write_file_tool],
+            verbose=True
+        )
+
+        tasks = [
+            Task(
+                description=f"""Analyze impact for {inputs["company_name"]} in {inputs["industry"]}
+                Impact Areas: {', '.join(inputs['impact_areas'])}
+                Timeframe: {inputs['timeframe']}
+                Region: {inputs['market_region']}
+                
+                Provide detailed analysis including:
+                1. Social Impact Analysis
+                2. Economic Impact Assessment
+                3. Environmental Impact
+                4. Stakeholder Impact
+                5. Long-term Sustainability
+                6. Risk Assessment
+                7. Recommendations
+                
+                Focus on quantifiable metrics and actionable insights.""",
+                expected_output="""A comprehensive impact assessment containing:
+                - Social impact metrics
+                - Economic impact analysis
+                - Environmental sustainability measures
+                - Stakeholder analysis
+                - Strategic recommendations
+                The analysis should be data-driven and actionable.""",
+                agent=analyst
+            ),
+            Task(
+                description=f"""Create a detailed impact assessment report including:
+                1. Executive Summary
+                2. Impact Analysis Overview
+                3. Social Impact Assessment
+                4. Economic Impact Analysis
+                5. Environmental Impact Evaluation
+                6. Stakeholder Analysis
+                7. Risk Assessment
+                8. Strategic Recommendations
+                9. Implementation Guidelines
+                
+                Use insights from the analysis to create a clear, actionable report.""",
+                expected_output="""A well-structured markdown report containing:
+                - Executive summary
+                - Detailed impact assessment
+                - Key metrics and findings
+                - Strategic recommendations
+                The report should be clear, professional, and ready for executive review.""",
+                agent=writer
+            )
+        ]
+
+        return Crew(
+            agents=[analyst, writer],
+            tasks=tasks,
+            verbose=True
+        )
 
     def generate_report(self, report_type, inputs):
         # Convert report type to match the crew creator function names
