@@ -1,188 +1,404 @@
 "use client";
 
-import { useState } from 'react';
-import { Bar, Line } from 'react-chartjs-2';
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-} from 'chart.js';
+import { useState, useEffect } from 'react';
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import Link from 'next/link';
+import MarketTrand from './market-trends/MarketTrand';
+import Mark from './market-trends/Mark';
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend
-);
+export default function MarketTrendsContent() {
+  const [viewMode, setViewMode] = useState('api');
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [analysisResult, setAnalysisResult] = useState(null);
+  const [error, setError] = useState(null);
+  const [parsedReport, setParsedReport] = useState('');
+  const [userInputs, setUserInputs] = useState({
+    company_name: '',
+    industry: '',
+    focus_areas: [],
+    time_period: '2024'
+  });
 
-export default function Home() {
-  const [searchQuery, setSearchQuery] = useState('');
+  const [analysisStatus, setAnalysisStatus] = useState('idle');
+  const [showValidation, setShowValidation] = useState(false);
 
-  // Recent Activity data
-  const recentActivity = [
-    { name: 'Cycle', price: '₹29.99', change: '-2.94%', logo: '/cycle-logo.png' },
-    { name: 'Moksh', price: '₹29.99', change: '-2.94%', logo: '/moksh-logo.png' },
-    { name: 'Lotus', price: '₹29.99', change: '-2.94%', logo: '/lotus-logo.png' }
+  const [savedReports, setSavedReports] = useState([]);
+
+  const focusAreaOptions = [
+    "Market Size and Growth",
+    "Competitor Analysis", 
+    "Customer Demographics",
+    "Technology Trends",
+    "Financial Analysis",
+    "Geographic Expansion",
+    "Product Development"
   ];
 
-  // Market Share data
-  const marketShareData = {
-    labels: ['Cycle Pure', 'Mangaldeep', 'Mysore Sugandhi', 'Others'],
-    datasets: [{
-      data: [35, 28, 20, 17],
-      backgroundColor: [
-        '#4169E1',  // Blue
-        '#90EE90',  // Green
-        '#DC143C',  // Red
-        '#FFA500',  // Orange
-      ],
-    }]
+  // Simple function to convert markdown-like text to HTML
+  const convertToHtml = (text) => {
+    if (!text) return '';
+    
+    return text
+      // Headers
+      .replace(/^# (.*$)/gm, '<h1 class="text-3xl font-bold mt-6 mb-4 text-purple-400">$1</h1>')
+      .replace(/^## (.*$)/gm, '<h2 class="text-2xl font-bold mt-6 mb-3 text-purple-400">$1</h2>')
+      .replace(/^### (.*$)/gm, '<h3 class="text-xl font-semibold mt-4 mb-2 text-purple-400">$1</h3>')
+      // Bold
+      .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-white">$1</strong>')
+      // Lists
+      .replace(/^\- (.*$)/gm, '<li class="ml-4 mb-1 text-white">• $1</li>')
+      // Paragraphs
+      .replace(/^(?!<[hl]|<li)(.*$)/gm, '<p class="mb-4 text-white leading-relaxed">$1</p>')
+      // List wrapper
+      .replace(/(<li.*<\/li>)/s, '<ul class="mb-4">$1</ul>');
   };
 
-  // Latest Strategy data
-  const strategyUpdates = [
-    {
-      title: 'Market Trends',
-      description: 'Demand for eco-friendly agarbattis increased by 15% this quarter.'
-    },
-    {
-      title: 'Upcoming Opportunities',
-      description: 'Festive season (Diwali) expected to increase agarbatti sales by 20%.'
-    },
-    {
-      title: 'Competitor Alerts',
-      description: 'Tirupati Industries is investing heavily in rural distribution.'
-    },
-    {
-      title: 'Performance Tracking',
-      description: 'Achieve 55% market share in Tier 1 cities by Q4.'
-    },
-    {
-      title: 'Marketing Insights',
-      description: 'Instagram campaign increased customer engagement by 25%.'
-    },
-    {
-      title: 'Digital Marketing',
-      description: 'Invest in digital marketing for urban regions to boost sales by 10%.'
+  useEffect(() => {
+    if (analysisResult?.analysis_report) {
+      const htmlContent = convertToHtml(analysisResult.analysis_report);
+      setParsedReport(htmlContent);
     }
-  ];
+  }, [analysisResult]);
+
+  useEffect(() => {
+    // Load saved reports
+    const savedReportsFromStorage = localStorage.getItem('marketTrendReports');
+    if (savedReportsFromStorage) {
+      setSavedReports(JSON.parse(savedReportsFromStorage));
+    }
+
+    // Load current analysis
+    const currentAnalysis = localStorage.getItem('currentMarketAnalysis');
+    if (currentAnalysis) {
+      const parsedAnalysis = JSON.parse(currentAnalysis);
+      setAnalysisResult(parsedAnalysis.result);
+      setUserInputs(parsedAnalysis.inputs);
+    }
+  }, []);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setUserInputs(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleFocusAreaChange = (e) => {
+    const value = Array.from(e.target.selectedOptions, option => option.value);
+    setUserInputs(prev => ({
+      ...prev,
+      focus_areas: value
+    }));
+  };
+
+  const startAnalysis = async () => {
+    if (!userInputs.company_name) {
+      setError('Company name is required');
+      return;
+    }
+
+    try {
+      // Clear previous results
+      setAnalysisResult(null);
+      setParsedReport('');
+      setIsAnalyzing(true);
+      setError(null);
+      
+      // Clear current analysis from localStorage when starting new analysis
+      localStorage.removeItem('currentMarketAnalysis');
+
+      const response = await fetch('https://varun324242-sj.hf.space/api/market-analysis', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userInputs)
+      });
+
+      const data = await response.json();
+      
+      if (data.status === 'error') {
+        throw new Error(data.message);
+      }
+
+      // Save new report to local storage
+      const newReport = {
+        id: Date.now(),
+        timestamp: new Date().toISOString(),
+        company: userInputs.company_name,
+        industry: userInputs.industry,
+        result: data
+      };
+
+      const updatedReports = [newReport, ...savedReports].slice(0, 10);
+      localStorage.setItem('marketTrendReports', JSON.stringify(updatedReports));
+      setSavedReports(updatedReports);
+
+      // Save current analysis
+      localStorage.setItem('currentMarketAnalysis', JSON.stringify({
+        result: data,
+        inputs: userInputs,
+        timestamp: new Date().toISOString()
+      }));
+
+      setAnalysisResult(data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
+
+  const clearReports = () => {
+    localStorage.removeItem('marketTrendReports');
+    localStorage.removeItem('currentMarketAnalysis');
+    setSavedReports([]);
+    setAnalysisResult(null);
+    setParsedReport('');
+    setUserInputs({
+      company_name: '',
+      industry: '',
+      focus_areas: [],
+      time_period: '2024'
+    });
+  };
+
+  const loadSavedReport = (report) => {
+    // Save as current analysis
+    localStorage.setItem('currentMarketAnalysis', JSON.stringify({
+      result: report.result,
+      inputs: {
+        company_name: report.company,
+        industry: report.industry,
+        focus_areas: report.result.summary.focus_areas || [],
+        time_period: report.result.summary.time_period || '2024'
+      },
+      timestamp: report.timestamp
+    }));
+
+    setAnalysisResult(report.result);
+    setUserInputs({
+      company_name: report.company,
+      industry: report.industry,
+      focus_areas: report.result.summary.focus_areas || [],
+      time_period: report.result.summary.time_period || '2024'
+    });
+  };
 
   return (
-    <div className="min-h-screen bg-black text-white p-6">
-      {/* Search and Notification Bar */}
-      <div className="flex justify-between items-center mb-8">
-        <div className="relative flex-1 max-w-md">
-          <input
-            type="text"
-            placeholder="Search for Competitors..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full px-4 py-2 bg-[#1D1D1F] border border-purple-500/30 rounded-xl 
-                     text-white placeholder-gray-400 focus:outline-none focus:border-purple-500"
-          />
-          <button className="absolute right-3 top-1/2 -translate-y-1/2">
-            <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-          </button>
+    <div className="min-h-screen bg-black text-white">
+      <div className="max-w-6xl mx-auto px-6 py-8">
+        <div className="mb-8 text-center">
+          <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
+            Market Trends Analysis
+          </h1>
         </div>
-        <div className="flex items-center gap-4">
-          <button className="p-2 rounded-lg bg-[#1D1D1F] text-gray-400 hover:text-white transition-colors">
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-            </svg>
-          </button>
-        </div>
-      </div>
 
-      {/* Recent Activity Cards */}
-      <div className="mb-8">
-        <h2 className="text-xl font-semibold mb-4">Recent Activity</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {recentActivity.map((item, index) => (
-            <div key={index} className="bg-[#1D1D1F] p-4 rounded-xl flex items-center justify-between hover:bg-[#2D2D2F] transition-colors">
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 rounded-full bg-purple-500/10 flex items-center justify-center">
-                  <img src={item.logo} alt={item.name} className="w-6 h-6" />
+        <div className="mb-10 flex justify-center">
+          <div className="bg-[#1D1D1F]/60 backdrop-blur-xl p-1.5 rounded-xl inline-flex shadow-xl">
+            <button className="px-8 py-2.5 rounded-lg transition-all duration-300 bg-purple-600/90 text-white">
+              Market Analysis
+            </button>
+            <Link 
+              href="/competitor-tracking"
+              className="px-8 py-2.5 rounded-lg text-white hover:text-white hover:bg-white/5"
+            >
+              Competitor Tracking
+            </Link>
+          </div>
+        </div>
+
+        {savedReports.length > 0 && (
+          <div className="mb-6 flex justify-between items-center">
+            <div className="text-sm text-white">
+              {savedReports.length} saved report{savedReports.length !== 1 ? 's' : ''}
+            </div>
+            <button
+              onClick={clearReports}
+              className="px-4 py-1.5 text-sm rounded-lg bg-red-500/20 text-red-400 hover:bg-red-500/30 transition-colors"
+            >
+              Clear All Reports
+            </button>
+          </div>
+        )}
+
+        {savedReports.length > 0 && (
+          <div className="mb-8 bg-[#1D1D1F]/60 backdrop-blur-xl rounded-xl p-4 border border-gray-800/50">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold text-purple-400">Recent Reports</h3>
+            </div>
+            <div className="space-y-2">
+              {savedReports.map(report => (
+                <div 
+                  key={report.id}
+                  className="flex justify-between items-center p-3 rounded-lg bg-[#2D2D2F]/50 hover:bg-[#2D2D2F]/70 transition-colors cursor-pointer"
+                  onClick={() => loadSavedReport(report)}
+                >
+                  <div>
+                    <p className="text-white font-medium">{report.company}</p>
+                    <p className="text-sm text-white">{report.industry}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm text-white">
+                      {new Date(report.timestamp).toLocaleDateString()}
+                    </p>
+                  </div>
                 </div>
-                <span className="font-medium">{item.name}</span>
-              </div>
-              <div className="text-right">
-                <div className="font-medium">{item.price}</div>
-                <div className="text-red-500 text-sm">{item.change}</div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Market Share Chart */}
-        <div className="lg:col-span-2 bg-[#1D1D1F] p-6 rounded-xl">
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="text-lg font-semibold">Your Competitors</h3>
-            <div className="flex space-x-4">
-              <button className="px-4 py-2 bg-[#2D2D2F] text-gray-300 rounded-lg hover:bg-purple-600/20 transition-colors">
-                Get a Report
-              </button>
-              <select className="px-4 py-2 bg-[#2D2D2F] text-gray-300 rounded-lg border-none outline-none">
-                <option>Valuation</option>
-              </select>
-              <select className="px-4 py-2 bg-[#2D2D2F] text-gray-300 rounded-lg border-none outline-none">
-                <option>Yearly</option>
-              </select>
+              ))}
             </div>
           </div>
-          <div className="h-[400px]">
-            <Bar 
-              data={marketShareData}
-              options={{
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                  legend: {
-                    display: true,
-                    position: 'right',
-                    labels: { color: '#fff' }
-                  }
-                },
-                scales: {
-                  y: {
-                    beginAtZero: true,
-                    grid: { color: 'rgba(255, 255, 255, 0.1)' },
-                    ticks: { color: '#fff' }
-                  },
-                  x: {
-                    grid: { display: false },
-                    ticks: { color: '#fff' }
-                  }
-                }
-              }}
-            />
-          </div>
-        </div>
+        )}
 
-        {/* Latest Strategy */}
-        <div className="bg-[#1D1D1F] p-6 rounded-xl">
-          <h3 className="text-lg font-semibold mb-4">Latest Strategy</h3>
-          <div className="space-y-4">
-            {strategyUpdates.map((update, index) => (
-              <div key={index} className="border-b border-gray-800 pb-4 last:border-0">
-                <h4 className="text-sm font-medium text-gray-300 mb-1">{update.title}</h4>
-                <p className="text-sm text-gray-400">{update.description}</p>
+        <div className="space-y-8">
+          <div className="bg-[#1D1D1F]/80 backdrop-blur-xl rounded-xl shadow-xl p-8 border border-gray-800/50">
+            <div className="grid grid-cols-2 gap-8">
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-purple-400">Company Name</label>
+                <input
+                  name="company_name"
+                  value={userInputs.company_name}
+                  onChange={handleInputChange}
+                  className="w-full p-2.5 bg-[#2D2D2F]/50 text-white rounded-lg border border-gray-700/50 focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/10"
+                  placeholder="Enter company name"
+                />
               </div>
-            ))}
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-purple-400">Industry</label>
+                <input
+                  name="industry"
+                  value={userInputs.industry}
+                  onChange={handleInputChange}
+                  className="w-full p-2.5 bg-[#2D2D2F]/50 text-white rounded-lg border border-gray-700/50 focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/10"
+                  placeholder="Enter industry"
+                />
+              </div>
+
+              <div className="col-span-2 space-y-2">
+                <label className="text-sm font-medium text-purple-400">Focus Areas</label>
+                <div className="grid grid-cols-3 gap-2 bg-[#2D2D2F]/50 p-3 rounded-lg border border-gray-700/50">
+                  {focusAreaOptions.map(area => (
+                    <label 
+                      key={area} 
+                      className="flex items-center gap-2 p-2 rounded-lg hover:bg-purple-600/10 cursor-pointer group"
+                    >
+                      <input
+                        type="checkbox"
+                        name="focus_areas"
+                        value={area}
+                        checked={userInputs.focus_areas.includes(area)}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          setUserInputs(prev => ({
+                            ...prev,
+                            focus_areas: e.target.checked 
+                              ? [...prev.focus_areas, value]
+                              : prev.focus_areas.filter(item => item !== value)
+                          }));
+                        }}
+                        className="w-4 h-4 rounded border-gray-600 text-purple-600 focus:ring-purple-500/20"
+                      />
+                      <span className="text-sm text-white group-hover:text-white">
+                        {area}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-purple-400">Time Period</label>
+                <input
+                  name="time_period"
+                  value={userInputs.time_period}
+                  onChange={handleInputChange}
+                  className="w-full p-2.5 bg-[#2D2D2F]/50 text-white rounded-lg border border-gray-700/50 focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/10"
+                  placeholder="e.g., 2024"
+                />
+              </div>
+
+              <div className="col-span-2">
+                <button
+                  onClick={startAnalysis}
+                  disabled={isAnalyzing}
+                  className="w-full px-6 py-2.5 rounded-lg font-medium bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white shadow-lg transition-all duration-300 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isAnalyzing ? 'Analyzing...' : 'Start Analysis'}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-[#1D1D1F]/80 backdrop-blur-xl rounded-xl shadow-xl border border-gray-800/50">
+            {isAnalyzing ? (
+              <div className="h-60 flex items-center justify-center">
+                <div className="flex items-center gap-3">
+                  <div className="animate-spin h-6 w-6 border-2 border-purple-500 border-t-transparent rounded-full"></div>
+                  <p className="text-white text-lg">Analyzing market trends...</p>
+                </div>
+              </div>
+            ) : analysisResult ? (
+              <div className="p-8 space-y-6">
+                <h2 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
+                  Analysis Results
+                </h2>
+                
+                <div className="bg-[#2D2D2F]/70 p-6 rounded-lg border border-gray-700/50">
+                  <div className="grid grid-cols-2 gap-6">
+                    <div className="space-y-3">
+                      <p className="text-white">
+                        <span className="font-medium text-purple-400">Company:</span>
+                        <span className="ml-2">{analysisResult.summary.company}</span>
+                      </p>
+                      <p className="text-white">
+                        <span className="font-medium text-purple-400">Industry:</span>
+                        <span className="ml-2">{analysisResult.summary.industry}</span>
+                      </p>
+                    </div>
+                    <div className="space-y-3">
+                      <p className="text-white">
+                        <span className="font-medium text-purple-400">Time Period:</span>
+                        <span className="ml-2">{analysisResult.summary.time_period}</span>
+                      </p>
+                      <p className="text-white">
+                        <span className="font-medium text-purple-400">Focus Areas:</span>
+                        <span className="ml-2">{analysisResult.summary.focus_areas.join(', ')}</span>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-[#2D2D2F]/70 p-6 rounded-lg border border-gray-700/50">
+                  <div className="prose prose-invert max-w-none">
+                    <div 
+                      className="
+                        text-white
+                        leading-relaxed 
+                        [&>h1]:text-3xl [&>h1]:font-bold [&>h1]:text-purple-400 [&>h1]:mb-6
+                        [&>h2]:text-2xl [&>h2]:font-semibold [&>h2]:text-purple-400 [&>h2]:mt-8 [&>h2]:mb-4
+                        [&>h3]:text-xl [&>h3]:font-semibold [&>h3]:text-purple-400 [&>h3]:mt-6 [&>h3]:mb-3
+                        [&>p]:text-white [&>p]:mb-4 [&>p]:text-base [&>p]:leading-relaxed
+                        [&>ul]:mb-6 [&>ul]:list-disc [&>ul]:pl-6 
+                        [&>ul>li]:text-white [&>ul>li]:mb-2
+                        [&>ol]:mb-6 [&>ol]:list-decimal [&>ol]:pl-6
+                        [&>ol>li]:text-white [&>ol>li]:mb-2
+                        [&>strong]:text-purple-300 [&>strong]:font-semibold
+                        [&>em]:text-purple-200 [&>em]:italic
+                        [&>blockquote]:border-l-4 [&>blockquote]:border-purple-400 [&>blockquote]:pl-4 [&>blockquote]:italic [&>blockquote]:text-white
+                      "
+                      dangerouslySetInnerHTML={{ __html: parsedReport }} 
+                    />
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="h-60 flex items-center justify-center">
+                <p className="text-white text-lg">
+                  Analysis results will appear here
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </div>

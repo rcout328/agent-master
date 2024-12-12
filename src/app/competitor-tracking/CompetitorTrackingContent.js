@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import SimpleMarkdown from 'simple-markdown';
+import jsPDF from 'jspdf';
 
 export default function CompetitorTrackingContent() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -26,6 +27,7 @@ export default function CompetitorTrackingContent() {
   const [selectedReport, setSelectedReport] = useState(null);
   const [showReportModal, setShowReportModal] = useState(false);
   const [reportContent, setReportContent] = useState('');
+  const [savedReports, setSavedReports] = useState([]);
 
   const metricOptions = [
     "Market Share",
@@ -106,6 +108,9 @@ export default function CompetitorTrackingContent() {
     try {
       setIsAnalyzing(true);
       setError(null);
+      setAnalysisResult(null);
+      setParsedReport('');
+      localStorage.removeItem('currentCompetitorAnalysis');
 
       const requestData = {
         report_type: 'competitor_tracking',
@@ -136,7 +141,29 @@ export default function CompetitorTrackingContent() {
         throw new Error(data.message);
       }
 
+      // Save to localStorage after successful API response
+      const newReport = {
+        id: Date.now(),
+        timestamp: new Date().toISOString(),
+        company: userInputs.company_name,
+        industry: userInputs.industry,
+        competitors: userInputs.competitors,
+        result: data
+      };
+
+      const existingReports = JSON.parse(localStorage.getItem('competitorTrackingReports') || '[]');
+      const updatedReports = [newReport, ...existingReports].slice(0, 10);
+      localStorage.setItem('competitorTrackingReports', JSON.stringify(updatedReports));
+      setSavedReports(updatedReports);
+
+      localStorage.setItem('currentCompetitorAnalysis', JSON.stringify({
+        result: data,
+        inputs: userInputs,
+        timestamp: new Date().toISOString()
+      }));
+
       setAnalysisResult(data);
+
     } catch (err) {
       setError(err.message);
     } finally {
@@ -173,6 +200,20 @@ export default function CompetitorTrackingContent() {
     fetchAllReports();
   }, []);
 
+  useEffect(() => {
+    const savedReportsFromStorage = localStorage.getItem('competitorTrackingReports');
+    if (savedReportsFromStorage) {
+      setSavedReports(JSON.parse(savedReportsFromStorage));
+    }
+
+    const currentAnalysis = localStorage.getItem('currentCompetitorAnalysis');
+    if (currentAnalysis) {
+      const parsedAnalysis = JSON.parse(currentAnalysis);
+      setAnalysisResult(parsedAnalysis.result);
+      setUserInputs(parsedAnalysis.inputs);
+    }
+  }, []);
+
   const viewReport = async (report) => {
     try {
       const response = await fetch(`https://varun324242-sj.hf.space/api/report-content/${report.filename}`);
@@ -186,6 +227,227 @@ export default function CompetitorTrackingContent() {
     } catch (err) {
       console.error('Error fetching report content:', err);
     }
+  };
+
+  const exportToPDF = async () => {
+    if (!analysisResult) return;
+
+    try {
+      const pdf = new jsPDF('p', 'pt', 'a4');
+      
+      // Set font for better text rendering
+      pdf.setFont("helvetica");
+      
+      // Add Header with styling
+      pdf.setFontSize(24);
+      pdf.setTextColor(128, 90, 213);
+      pdf.text('Competitor Tracking Analysis', 40, 40);
+
+      // Add company and competitor info
+      const addCompanyInfo = () => {
+        pdf.setFontSize(12);
+        pdf.setTextColor(60, 60, 60);
+        
+        const metadata = [
+          `Company: ${userInputs.company_name}`,
+          `Industry: ${userInputs.industry}`,
+          `Generated: ${new Date().toLocaleString()}`,
+          `Analysis Depth: ${userInputs.analysis_depth}`,
+          `Market Region: ${userInputs.market_region}`
+        ];
+
+        let y = 80;
+        metadata.forEach(text => {
+          pdf.text(text, 40, y);
+          y += 20;
+        });
+
+        return y + 10;
+      };
+
+      // Add competitors section
+      const addCompetitors = (startY) => {
+        pdf.setFontSize(14);
+        pdf.setTextColor(128, 90, 213);
+        pdf.text('Analyzed Competitors:', 40, startY);
+
+        pdf.setFontSize(11);
+        pdf.setTextColor(60, 60, 60);
+        let y = startY + 20;
+        
+        userInputs.competitors.forEach(competitor => {
+          pdf.text(`• ${competitor}`, 50, y);
+          y += 15;
+        });
+
+        return y + 10;
+      };
+
+      // Add metrics section
+      const addMetrics = (startY) => {
+        pdf.setFontSize(14);
+        pdf.setTextColor(128, 90, 213);
+        pdf.text('Tracking Metrics:', 40, startY);
+
+        pdf.setFontSize(11);
+        pdf.setTextColor(60, 60, 60);
+        let y = startY + 20;
+        
+        userInputs.metrics.forEach(metric => {
+          pdf.text(`• ${metric}`, 50, y);
+          y += 15;
+        });
+
+        return y + 10;
+      };
+
+      // Add main analysis content with markdown formatting
+      const addAnalysisContent = (startY) => {
+        let y = startY;
+        const maxWidth = pdf.internal.pageSize.getWidth() - 80;
+
+        // Split content into sections based on markdown headers
+        const sections = analysisResult.analysis_report.split(/(?=^#+ )/gm);
+
+        sections.forEach(section => {
+          // Add new page if needed
+          if (y > pdf.internal.pageSize.getHeight() - 60) {
+            pdf.addPage();
+            y = 40;
+          }
+
+          // Handle different header levels
+          if (section.startsWith('# ')) {
+            pdf.setFontSize(18);
+            pdf.setTextColor(128, 90, 213);
+            const title = section.split('\n')[0].replace('# ', '');
+            pdf.text(title, 40, y);
+            y += 25;
+          } else if (section.startsWith('## ')) {
+            pdf.setFontSize(16);
+            pdf.setTextColor(128, 90, 213);
+            const title = section.split('\n')[0].replace('## ', '');
+            pdf.text(title, 40, y);
+            y += 20;
+          } else if (section.startsWith('### ')) {
+            pdf.setFontSize(14);
+            pdf.setTextColor(128, 90, 213);
+            const title = section.split('\n')[0].replace('### ', '');
+            pdf.text(title, 40, y);
+            y += 20;
+          }
+
+          // Handle content (paragraphs and lists)
+          const content = section.split('\n').slice(1).join('\n');
+          pdf.setFontSize(11);
+          pdf.setTextColor(60, 60, 60);
+
+          const lines = content.split('\n');
+          lines.forEach(line => {
+            if (y > pdf.internal.pageSize.getHeight() - 60) {
+              pdf.addPage();
+              y = 40;
+            }
+
+            if (line.trim().startsWith('- ')) {
+              // Handle list items
+              const bulletText = line.trim().replace('- ', '');
+              const textLines = pdf.splitTextToSize(`• ${bulletText}`, maxWidth - 20);
+              textLines.forEach(textLine => {
+                pdf.text(textLine, 50, y);
+                y += 15;
+              });
+            } else if (line.trim()) {
+              // Handle regular paragraphs
+              const textLines = pdf.splitTextToSize(line.trim(), maxWidth);
+              textLines.forEach(textLine => {
+                pdf.text(textLine, 40, y);
+                y += 15;
+              });
+            }
+          });
+
+          y += 10; // Add spacing between sections
+        });
+      };
+
+      // Add all sections
+      let currentY = addCompanyInfo();
+      currentY = addCompetitors(currentY);
+      currentY = addMetrics(currentY);
+      addAnalysisContent(currentY);
+
+      // Add page numbers
+      const pageCount = pdf.internal.getNumberOfPages();
+      for (let i = 1; i <= pageCount; i++) {
+        pdf.setPage(i);
+        pdf.setFontSize(10);
+        pdf.setTextColor(128, 128, 128);
+        pdf.text(
+          `Page ${i} of ${pageCount}`,
+          pdf.internal.pageSize.getWidth() / 2,
+          pdf.internal.pageSize.getHeight() - 20,
+          { align: 'center' }
+        );
+      }
+
+      // Save with optimized settings
+      pdf.save(`${userInputs.company_name}_competitor_analysis_${new Date().toISOString().split('T')[0]}.pdf`, {
+        compress: true,
+        precision: 3,
+        userUnit: 1.0
+      });
+
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+    }
+  };
+
+  const clearReports = () => {
+    localStorage.removeItem('competitorTrackingReports');
+    localStorage.removeItem('currentCompetitorAnalysis');
+    setSavedReports([]);
+    setAnalysisResult(null);
+    setParsedReport('');
+    setUserInputs({
+      company_name: '',
+      industry: '',
+      competitors: [],
+      metrics: [],
+      timeframe: '2024',
+      analysis_depth: 'detailed',
+      market_region: 'global',
+      analysis_scope: 4
+    });
+  };
+
+  const loadSavedReport = (report) => {
+    localStorage.setItem('currentCompetitorAnalysis', JSON.stringify({
+      result: report.result,
+      inputs: {
+        company_name: report.company,
+        industry: report.industry,
+        competitors: report.competitors,
+        metrics: report.result.metrics || [],
+        timeframe: report.result.timeframe || '2024',
+        analysis_depth: report.result.analysis_depth || 'detailed',
+        market_region: report.result.market_region || 'global',
+        analysis_scope: 4
+      },
+      timestamp: report.timestamp
+    }));
+
+    setAnalysisResult(report.result);
+    setUserInputs({
+      company_name: report.company,
+      industry: report.industry,
+      competitors: report.competitors,
+      metrics: report.result.metrics || [],
+      timeframe: report.result.timeframe || '2024',
+      analysis_depth: report.result.analysis_depth || 'detailed',
+      market_region: report.result.market_region || 'global',
+      analysis_scope: 4
+    });
   };
 
   return (
@@ -347,9 +609,30 @@ export default function CompetitorTrackingContent() {
         {analysisResult && (
           <div className="bg-[#1D1D1F]/60 backdrop-blur-xl rounded-xl">
             <div className="p-8">
-              <h2 className="text-3xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
-                Analysis Results
-              </h2>
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
+                  Analysis Results
+                </h2>
+                <button
+                  onClick={exportToPDF}
+                  className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg flex items-center gap-2 transition-colors"
+                >
+                  <svg 
+                    className="w-5 h-5" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
+                  >
+                    <path 
+                      strokeLinecap="round" 
+                      strokeLinejoin="round" 
+                      strokeWidth={2} 
+                      d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.707.707V19a2 2 0 01-2 2z" 
+                    />
+                  </svg>
+                  Export PDF
+                </button>
+              </div>
               
               <div className="prose prose-invert max-w-none 
                 [&>h1]:text-3xl [&>h1]:font-bold [&>h1]:mb-4 
@@ -391,6 +674,41 @@ export default function CompetitorTrackingContent() {
                   dangerouslySetInnerHTML={{ __html: reportContent }}
                 />
               </div>
+            </div>
+          </div>
+        )}
+
+        {savedReports.length > 0 && (
+          <div className="mb-8 bg-[#1D1D1F]/60 backdrop-blur-xl rounded-xl p-4 border border-gray-800/50">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold text-purple-400">Recent Reports</h3>
+              <button
+                onClick={clearReports}
+                className="px-4 py-1.5 text-sm rounded-lg bg-red-500/20 text-red-400 hover:bg-red-500/30 transition-colors"
+              >
+                Clear All Reports
+              </button>
+            </div>
+            <div className="space-y-2">
+              {savedReports.map(report => (
+                <div 
+                  key={report.id}
+                  className="flex justify-between items-center p-3 rounded-lg bg-[#2D2D2F]/50 hover:bg-[#2D2D2F]/70 transition-colors cursor-pointer"
+                  onClick={() => loadSavedReport(report)}
+                >
+                  <div>
+                    <p className="text-white font-medium">{report.company}</p>
+                    <p className="text-sm text-gray-400">
+                      Competitors: {report.competitors.join(', ')}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm text-gray-400">
+                      {new Date(report.timestamp).toLocaleString()}
+                    </p>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         )}

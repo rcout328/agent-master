@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import jsPDF from 'jspdf';
+import { marked } from 'marked';
 
 export default function GapAnalysisContent() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -17,6 +19,7 @@ export default function GapAnalysisContent() {
     analysis_depth: 'detailed',
     market_region: 'global'
   });
+  const [isPdfGenerating, setIsPdfGenerating] = useState(false);
 
   // Predefined options
   const focusAreas = [
@@ -185,6 +188,295 @@ export default function GapAnalysisContent() {
     }
   }, [analysisResult]);
 
+  const exportToPdf = async () => {
+    if (!analysisResult) return;
+    
+    try {
+      setIsPdfGenerating(true);
+      
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'pt',
+        format: 'a4',
+        compress: true,
+        precision: 2
+      });
+
+      // Set font and initial variables
+      pdf.setFont("helvetica");
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const margin = 40;
+      const maxWidth = pageWidth - (2 * margin);
+      
+      // Title styling with gradient-like effect
+      const addTitle = () => {
+        // Add subtle gradient background
+        const gradientHeight = 80;
+        for (let i = 0; i < gradientHeight; i++) {
+          const alpha = 0.1 * (1 - i / gradientHeight);
+          pdf.setFillColor(128, 90, 213, alpha);
+          pdf.rect(0, i, pageWidth, 1, 'F');
+        }
+        
+        pdf.setFont("helvetica", "bold");
+        pdf.setFontSize(28);
+        pdf.setTextColor(88, 28, 135);
+        pdf.text('Gap Analysis Report', margin, margin + 20);
+        
+        // Add decorative line
+        pdf.setDrawColor(128, 90, 213);
+        pdf.setLineWidth(0.5);
+        pdf.line(margin, margin + 30, pageWidth - margin, margin + 30);
+        
+        return margin + 50;
+      };
+
+      // Enhanced metadata section with better organization
+      const addMetadata = (startY) => {
+        // Add section background
+        pdf.setFillColor(245, 245, 250);
+        pdf.rect(margin - 10, startY - 10, maxWidth + 20, 100, 'F');
+        
+        pdf.setFont("helvetica", "bold");
+        pdf.setFontSize(14);
+        pdf.setTextColor(88, 28, 135);
+        pdf.text('Analysis Details', margin, startY + 5);
+        
+        const leftColumn = [
+          { label: 'Company:', value: userInputs.company_name },
+          { label: 'Industry:', value: userInputs.industry },
+          { label: 'Analysis Depth:', value: userInputs.analysis_depth.replace('_', ' ').toUpperCase() }
+        ];
+        
+        const rightColumn = [
+          { label: 'Market Region:', value: userInputs.market_region.replace('_', ' ').toUpperCase() },
+          { label: 'Timeframe:', value: userInputs.timeframe },
+          { label: 'Generated:', value: new Date().toLocaleString() }
+        ];
+
+        let y = startY + 25;
+        const columnWidth = maxWidth / 2;
+        
+        // Draw both columns
+        [leftColumn, rightColumn].forEach((column, columnIndex) => {
+          let columnY = y;
+          column.forEach(item => {
+            pdf.setFont("helvetica", "bold");
+            pdf.setFontSize(11);
+            pdf.setTextColor(88, 28, 135);
+            pdf.text(item.label, margin + (columnWidth * columnIndex), columnY);
+            
+            pdf.setFont("helvetica", "normal");
+            pdf.setTextColor(60, 60, 60);
+            pdf.text(item.value, margin + 70 + (columnWidth * columnIndex), columnY);
+            columnY += 20;
+          });
+        });
+
+        return startY + 110;
+      };
+
+      // Enhanced focus areas section with better visual hierarchy
+      const addFocusAreas = (startY) => {
+        // Section header with background
+        pdf.setFillColor(245, 245, 250);
+        pdf.rect(margin - 10, startY - 10, maxWidth + 20, 30, 'F');
+        
+        pdf.setFont("helvetica", "bold");
+        pdf.setFontSize(14);
+        pdf.setTextColor(88, 28, 135);
+        pdf.text('Focus Areas', margin, startY + 5);
+
+        let y = startY + 35;
+        
+        // Create two columns for focus areas
+        const itemsPerColumn = Math.ceil(userInputs.focus_areas.length / 2);
+        const columnWidth = maxWidth / 2;
+        
+        userInputs.focus_areas.forEach((area, index) => {
+          const columnIndex = Math.floor(index / itemsPerColumn);
+          const itemY = y + (index % itemsPerColumn) * 20;
+          
+          // Add custom bullet points
+          pdf.setDrawColor(128, 90, 213);
+          pdf.circle(margin + 3 + (columnWidth * columnIndex), itemY - 2, 2, 'F');
+          
+          pdf.setFont("helvetica", "normal");
+          pdf.setFontSize(11);
+          pdf.setTextColor(60, 60, 60);
+          pdf.text(area, margin + 15 + (columnWidth * columnIndex), itemY);
+        });
+
+        return y + (Math.ceil(userInputs.focus_areas.length / 2) * 20) + 20;
+      };
+
+      // Enhanced content section with better markdown processing
+      const processContent = (startY) => {
+        let y = startY;
+        const lines = analysisResult.analysis_report.split('\n');
+        let inList = false;
+        let listIndent = 0;
+        
+        for (const line of lines) {
+          // Check for page break
+          if (y > pageHeight - margin * 2) {
+            pdf.addPage();
+            y = margin;
+          }
+
+          // Headers with enhanced styling
+          if (line.startsWith('# ')) {
+            y += 10;
+            // Add subtle background for main headers
+            pdf.setFillColor(245, 245, 250);
+            pdf.rect(margin - 10, y - 15, maxWidth + 20, 35, 'F');
+            
+            pdf.setFont("helvetica", "bold");
+            pdf.setFontSize(18);
+            pdf.setTextColor(88, 28, 135);
+            const text = line.replace('# ', '').trim();
+            pdf.text(text, margin, y);
+            y += 30;
+          }
+          else if (line.startsWith('## ')) {
+            y += 5;
+            pdf.setFont("helvetica", "bold");
+            pdf.setFontSize(16);
+            pdf.setTextColor(88, 28, 135);
+            const text = line.replace('## ', '').trim();
+            pdf.text(text, margin, y);
+            
+            // Add subtle underline
+            pdf.setDrawColor(88, 28, 135, 0.5);
+            pdf.setLineWidth(0.5);
+            pdf.line(margin, y + 2, margin + pdf.getTextWidth(text), y + 2);
+            
+            y += 25;
+          }
+          else if (line.startsWith('### ')) {
+            pdf.setFont("helvetica", "bold");
+            pdf.setFontSize(14);
+            pdf.setTextColor(88, 28, 135);
+            const text = line.replace('### ', '').trim();
+            pdf.text(text, margin, y);
+            y += 20;
+          }
+          // Lists with better formatting
+          else if (line.trim().startsWith('- ')) {
+            if (!inList) {
+              y += 5;
+              inList = true;
+            }
+            
+            pdf.setFont("helvetica", "normal");
+            pdf.setFontSize(11);
+            pdf.setTextColor(60, 60, 60);
+            
+            const text = line.trim().replace('- ', '').trim();
+            const wrappedText = pdf.splitTextToSize(text, maxWidth - 25);
+            
+            // Custom bullet point
+            pdf.setDrawColor(128, 90, 213);
+            pdf.circle(margin + 3, y - 2, 2, 'F');
+            
+            wrappedText.forEach((textLine, index) => {
+              pdf.text(textLine, margin + 15, y);
+              y += 15;
+            });
+          }
+          // Bold text processing
+          else if (line.includes('**')) {
+            pdf.setFontSize(11);
+            pdf.setTextColor(60, 60, 60);
+            const parts = line.split('**');
+            let x = margin;
+            
+            parts.forEach((part, index) => {
+              pdf.setFont("helvetica", index % 2 === 1 ? "bold" : "normal");
+              const wrappedText = pdf.splitTextToSize(part, maxWidth);
+              wrappedText.forEach(textLine => {
+                pdf.text(textLine, x, y);
+                x += pdf.getTextWidth(textLine);
+              });
+            });
+            y += 15;
+          }
+          // Regular paragraphs
+          else if (line.trim()) {
+            inList = false;
+            pdf.setFont("helvetica", "normal");
+            pdf.setFontSize(11);
+            pdf.setTextColor(60, 60, 60);
+            
+            const wrappedText = pdf.splitTextToSize(line.trim(), maxWidth);
+            wrappedText.forEach(textLine => {
+              pdf.text(textLine, margin, y);
+              y += 15;
+            });
+            y += 5;
+          }
+          // Spacing between sections
+          else {
+            inList = false;
+            y += 10;
+          }
+        }
+        return y;
+      };
+
+      // Generate PDF content
+      let currentY = addTitle();
+      currentY = addMetadata(currentY);
+      currentY = addFocusAreas(currentY);
+      processContent(currentY);
+
+      // Enhanced footer and page numbers
+      const pageCount = pdf.internal.getNumberOfPages();
+      for (let i = 1; i <= pageCount; i++) {
+        pdf.setPage(i);
+        
+        // Add gradient footer
+        const footerHeight = 30;
+        for (let j = 0; j < footerHeight; j++) {
+          const alpha = 0.05 * (j / footerHeight);
+          pdf.setFillColor(128, 90, 213, alpha);
+          pdf.rect(0, pageHeight - footerHeight + j, pageWidth, 1, 'F');
+        }
+        
+        // Add page numbers and timestamp
+        pdf.setFont("helvetica", "normal");
+        pdf.setFontSize(9);
+        pdf.setTextColor(88, 28, 135);
+        
+        // Left side: timestamp
+        const timestamp = new Date().toLocaleString();
+        pdf.text(`Generated: ${timestamp}`, margin, pageHeight - 15);
+        
+        // Right side: page numbers
+        pdf.text(
+          `Page ${i} of ${pageCount}`,
+          pageWidth - margin,
+          pageHeight - 15,
+          { align: 'right' }
+        );
+      }
+
+      // Save with optimized settings
+      pdf.save(`${userInputs.company_name}_gap_analysis_${new Date().toISOString().split('T')[0]}.pdf`, {
+        compress: true,
+        precision: 2,
+        userUnit: 1.0
+      });
+
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      setError('Failed to generate PDF. Please try again.');
+    } finally {
+      setIsPdfGenerating(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-black text-white">
       <div className="max-w-6xl mx-auto px-6 py-8">
@@ -348,6 +640,33 @@ export default function GapAnalysisContent() {
 
           {analysisResult && (
             <div className="bg-[#1D1D1F]/80 backdrop-blur-xl rounded-xl shadow-xl p-8 border border-gray-800/50">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
+                  Analysis Results
+                </h2>
+                <button
+                  onClick={exportToPdf}
+                  disabled={isPdfGenerating}
+                  className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg flex items-center gap-2 transition-colors disabled:opacity-50"
+                >
+                  {isPdfGenerating ? (
+                    <>
+                      <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                      </svg>
+                      <span>Generating PDF...</span>
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.707.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                      <span>Export PDF</span>
+                    </>
+                  )}
+                </button>
+              </div>
               <div className="prose prose-invert max-w-none">
                 <div
                   className="
