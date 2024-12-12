@@ -1,0 +1,55 @@
+2024-12-12 04:59:29,423 [DEBUG] load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-12-12 04:59:29,423 [DEBUG] load_verify_locations cafile='/Users/varunisrani/Desktop/100xengineers/venv/lib/python3.11/site-packages/certifi/cacert.pem'
+2024-12-12 04:59:29,438 [INFO] Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2024-12-12 04:59:29,504 [DEBUG] Starting component System
+2024-12-12 04:59:29,504 [DEBUG] Starting component Posthog
+2024-12-12 04:59:29,504 [DEBUG] Starting component OpenTelemetryClient
+2024-12-12 04:59:29,504 [DEBUG] Starting component SqliteDB
+2024-12-12 04:59:29,506 [DEBUG] Starting component SimpleQuotaEnforcer
+2024-12-12 04:59:29,506 [DEBUG] Starting component SimpleRateLimitEnforcer
+2024-12-12 04:59:29,506 [DEBUG] Starting component LocalSegmentManager
+2024-12-12 04:59:29,506 [DEBUG] Starting component LocalExecutor
+2024-12-12 04:59:29,506 [DEBUG] Starting component SegmentAPI
+2024-12-12 04:59:29,508 [DEBUG] load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-12-12 04:59:29,509 [DEBUG] load_verify_locations cafile='/Users/varunisrani/Desktop/100xengineers/venv/lib/python3.11/site-packages/certifi/cacert.pem'
+2024-12-12 04:59:29,514 [INFO] Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2024-12-12 04:59:29,514 [DEBUG] Starting component System
+2024-12-12 04:59:29,514 [DEBUG] Starting component Posthog
+2024-12-12 04:59:29,514 [DEBUG] Starting component OpenTelemetryClient
+2024-12-12 04:59:29,514 [DEBUG] Starting component SqliteDB
+2024-12-12 04:59:29,515 [DEBUG] Starting component SimpleQuotaEnforcer
+2024-12-12 04:59:29,516 [DEBUG] Starting component SimpleRateLimitEnforcer
+2024-12-12 04:59:29,516 [DEBUG] Starting component LocalSegmentManager
+2024-12-12 04:59:29,516 [DEBUG] Starting component LocalExecutor
+2024-12-12 04:59:29,516 [DEBUG] Starting component SegmentAPI
+2024-12-12 04:59:29,517 [INFO] 🚀 Starting crew execution
+2024-12-12 04:59:29,519 [ERROR] ❌ Crew execution failed: 'Logger' object has no attribute 'info'
+Traceback (most recent call last):
+  File "/Users/varunisrani/Desktop/100xengineers/market_analysis_crew.py", line 326, in kickoff
+    result = super().kickoff()
+             ^^^^^^^^^^^^^^^^^
+  File "/Users/varunisrani/Desktop/100xengineers/venv/lib/python3.11/site-packages/crewai/crew.py", line 553, in kickoff
+    result = self._run_sequential_process()
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/varunisrani/Desktop/100xengineers/venv/lib/python3.11/site-packages/crewai/crew.py", line 660, in _run_sequential_process
+    return self._execute_tasks(self.tasks)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/varunisrani/Desktop/100xengineers/venv/lib/python3.11/site-packages/crewai/crew.py", line 758, in _execute_tasks
+    task_output = task.execute_sync(
+                  ^^^^^^^^^^^^^^^^^^
+  File "/Users/varunisrani/Desktop/100xengineers/venv/lib/python3.11/site-packages/crewai/task.py", line 192, in execute_sync
+    return self._execute_core(agent, context, tools)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/varunisrani/Desktop/100xengineers/venv/lib/python3.11/site-packages/crewai/task.py", line 250, in _execute_core
+    result = agent.execute_task(
+             ^^^^^^^^^^^^^^^^^^^
+  File "/Users/varunisrani/Desktop/100xengineers/market_analysis_crew.py", line 183, in execute_task
+    self._logger.info(f"🤖 Agent '{self.role}' starting task execution")
+    ^^^^^^^^^^^^^^^^^
+  File "/Users/varunisrani/Desktop/100xengineers/venv/lib/python3.11/site-packages/pydantic/main.py", line 892, in __getattr__
+    raise AttributeError(f'{type(self).__name__!r} object has no attribute {item!r}')
+AttributeError: 'Logger' object has no attribute 'info'
+2024-12-12 04:59:30,020 [DEBUG] Starting new HTTPS connection (1): us.i.posthog.com:443
+2024-12-12 04:59:31,096 [DEBUG] https://us.i.posthog.com:443 "POST /batch/ HTTP/11" 200 15
+2024-12-12 04:59:31,101 [DEBUG] Starting new HTTPS connection (1): telemetry.crewai.com:4319
+2024-12-12 04:59:31,969 [DEBUG] https://telemetry.crewai.com:4319 "POST /v1/traces HTTP/11" 200 2

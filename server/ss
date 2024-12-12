@@ -1,0 +1,174 @@
+from crewai import Agent, Task, Crew, Process
+# from langchain_groq import ChatGroq
+from langchain.tools import Tool
+from langchain_community.tools import WriteFileTool
+from langchain_community.utilities.serpapi import SerpAPIWrapper
+import os
+from langchain_openai import ChatOpenAI
+
+# Set API keys in environment
+# os.environ["GROQ_API_KEY"] = "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"
+os.environ["OPENAI_API_KEY"] = "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"
+os.environ["SERPAPI_API_KEY"] = "ab5994a0325d006f6567d50536425e38ed348e96bb7db92be50c07adb92e7dd3"  # Replace with your Serp API key
+
+# Initialize the OpenAI model
+openai_model = ChatOpenAI(
+    model_name="gpt-4",
+    temperature=0.7
+)
+
+# Initialize tools - Using SerpAPI for better search results
+search = SerpAPIWrapper()
+
+def enhanced_search(query):
+    try:
+        # Format query to specifically target 100xEngineers and related market data
+        formatted_query = f"{query} site:100xengineers.com OR {query} coding bootcamp market trends 2024"
+        return search.run(query=formatted_query, kwargs={
+            "num": 10,  # Get more results
+            "time": "y",  # Recent results within last year
+        })
+    except Exception as e:
+        return f"Search failed: {str(e)}"
+
+search_tool = Tool(
+    name="Search the internet",
+    description="Search the web using Serp API for comprehensive results about 100xEngineers and coding education market",
+    func=enhanced_search
+)
+
+write_file = WriteFileTool()
+file_tool = Tool(
+    name="Write File",
+    description="Write content to a file at the specified path",
+    func=write_file.run
+)
+
+# Create the CEO Agent
+genesis_ceo = Agent(
+    role='Chief Executive Officer',
+    goal='Analyze 100xEngineers market trends and opportunities',
+    backstory="""You are the CEO of Genesis Market Analysis, specializing in engineering education platforms.
+    Your expertise lies in analyzing coding bootcamp markets and online learning trends.
+    You focus on understanding the competitive landscape of engineering education.""",
+    verbose=True,
+    tools=[search_tool],
+    llm=openai_model,
+    max_iter=100,
+    max_rpm=20,
+    max_retry_limit=1000
+)
+
+# Create Data Collector Agent
+data_collector = Agent(
+    role='Data Collection Specialist',
+    goal='Analyze 100xEngineers.com market position and competitive landscape',
+    backstory="""You are an expert at analyzing coding education platforms, with specific focus on 100xEngineers.com.
+    Your specialty is gathering detailed market intelligence about:
+    1. 100xEngineers.com's unique value proposition and teaching methodology
+    2. Their competition in the Indian and global markets
+    3. Current trends in project-based engineering education
+    4. Student success rates and employment outcomes""",
+    verbose=True,
+    tools=[search_tool],
+    llm=openai_model,
+    max_iter=15,  # Increased iterations for more thorough research
+    max_rpm=50,
+    max_retry_limit=5
+)
+
+# Create Report Generator Agent
+report_generator = Agent(
+    role='Report Generation Expert',
+    goal='Create detailed analysis of 100xEngineers market position',
+    backstory="""You are a skilled report writer specializing in education technology.
+    You transform market data into actionable insights for coding education platforms.
+    You understand the unique value propositions of engineering education services.""",
+    verbose=True,
+    tools=[file_tool],
+    llm=openai_model,
+    max_iter=10,
+    max_rpm=50,
+    max_retry_limit=5
+)
+
+# Define Tasks
+data_collection_task = Task(
+    description="""Conduct comprehensive market research focused on 100xEngineers.com.
+    Focus on:
+    1. 100xEngineers.com's specific offerings:
+       - Their project-based learning approach
+       - Curriculum structure and effectiveness
+       - Mentor-led learning model
+       - Career outcomes and placement rates
+    
+    2. Market Analysis:
+       - Position in Indian coding education market
+       - Comparison with competitors (Scaler, Newton School, etc.)
+       - Target audience demographics
+       - Pricing strategy analysis
+    
+    3. Industry Trends:
+       - Demand for full-stack developers in India
+       - Emerging technologies covered in curriculum
+       - Employment trends for bootcamp graduates
+       - Remote learning effectiveness""",
+    expected_output="""A detailed market analysis report including:
+    1. 100xEngineers.com Platform Analysis:
+       - Core strengths and unique features
+       - Student feedback and success metrics
+       - Teaching methodology effectiveness
+    
+    2. Competitive Analysis:
+       - Market share and positioning
+       - Pricing comparison
+       - Feature comparison with major competitors
+    
+    3. Market Opportunities:
+       - Growth potential in Indian market
+       - International expansion possibilities
+       - Curriculum enhancement recommendations
+    
+    All data should be recent (2023-2024) and properly cited.""",
+    agent=data_collector
+)
+
+report_creation_task = Task(
+    description="""Create a market analysis report for 100xEngineers.
+    Include:
+    - Market positioning strategy
+    - Competitive advantages
+    - Growth opportunities
+    - Target audience analysis""",
+    expected_output="""A professional market analysis report containing:
+    - Executive summary of 100xEngineers' market position
+    - Analysis of engineering education market trends
+    - Competitive landscape analysis
+    - Growth strategy recommendations
+    The report should be actionable and data-driven.""",
+    agent=report_generator
+)
+
+validation_task = Task(
+    description="""Review and validate the 100xEngineers market analysis report.
+    Ensure:
+    - Accuracy of market insights
+    - Completeness of competitive analysis
+    - Validity of growth recommendations""",
+    expected_output="""A validation report containing:
+    - Verification of market data accuracy
+    - Assessment of competitive analysis
+    - Evaluation of growth strategies
+    - Recommendations for improvements""",
+    agent=genesis_ceo
+)
+
+# Create the Crew
+market_analysis_crew = Crew(
+    agents=[genesis_ceo, data_collector, report_generator],
+    tasks=[data_collection_task, report_creation_task, validation_task],
+    process=Process.sequential,
+    verbose=True,
+    max_rpm=50,
+    memory=True
+)
