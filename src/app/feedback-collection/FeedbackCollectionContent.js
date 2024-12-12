@@ -92,11 +92,12 @@ export default function FeedbackCollectionContent() {
     alert('Link copied to clipboard!');
   };
 
-  const handleResponse = async (feedbackId) => {
+  const handleResponse = async (feedbackId, userEmail) => {
     if (!responseText[feedbackId]?.trim()) return;
     
     setIsResponding(prev => ({ ...prev, [feedbackId]: true }));
     try {
+      // Save response to database
       const { error } = await supabase
         .from('feedback_form')
         .update({ 
@@ -106,6 +107,14 @@ export default function FeedbackCollectionContent() {
         .eq('feedback_id', feedbackId);
 
       if (error) throw error;
+      
+      // Create Gmail mailto link with response
+      const subject = encodeURIComponent('Response to Your Feedback');
+      const body = encodeURIComponent(responseText[feedbackId]);
+      const mailtoLink = `mailto:${userEmail}?subject=${subject}&body=${body}`;
+      
+      // Open Gmail in new window
+      window.open(mailtoLink, '_blank');
       
       // Clear response text and refresh feedback
       setResponseText(prev => ({ ...prev, [feedbackId]: '' }));
@@ -297,12 +306,7 @@ export default function FeedbackCollectionContent() {
                   <p className="text-gray-300">{feedback.comments}</p>
                 </div>
                 <div className="mt-4 pt-4 border-t border-gray-800">
-                  {feedback.response ? (
-                    <div>
-                      <p className="text-sm text-gray-400">Response:</p>
-                      <p className="text-gray-300 mt-2">{feedback.response}</p>
-                    </div>
-                  ) : (
+                  {!feedback.response ? (
                     <div className="space-y-3">
                       <textarea
                         value={responseText[feedback.feedback_id] || ''}
@@ -315,15 +319,30 @@ export default function FeedbackCollectionContent() {
                         className="w-full px-4 py-2 bg-[#2D2D2F] rounded-lg border border-gray-600 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 text-gray-300"
                       />
                       <button
-                        onClick={() => handleResponse(feedback.feedback_id)}
+                        onClick={() => handleResponse(feedback.feedback_id, feedback.user_email)}
                         disabled={isResponding[feedback.feedback_id] || !responseText[feedback.feedback_id]?.trim()}
                         className={`px-4 py-2 rounded-lg transition-colors ${
                           isResponding[feedback.feedback_id] || !responseText[feedback.feedback_id]?.trim()
                             ? 'bg-purple-600/50 cursor-not-allowed'
                             : 'bg-purple-600 hover:bg-purple-700'
-                        } text-white`}
+                        } text-white flex items-center gap-2`}
                       >
-                        {isResponding[feedback.feedback_id] ? 'Sending...' : 'Send Response'}
+                        {isResponding[feedback.feedback_id] ? 'Sending...' : 'Send Response via Email'}
+                      </button>
+                    </div>
+                  ) : (
+                    <div>
+                      <p className="text-sm text-gray-400">Response:</p>
+                      <p className="text-gray-300 mt-2">{feedback.response}</p>
+                      <button
+                        onClick={() => {
+                          const subject = encodeURIComponent('Follow-up to Your Feedback');
+                          const body = encodeURIComponent(feedback.response);
+                          window.open(`mailto:${feedback.user_email}?subject=${subject}&body=${body}`, '_blank');
+                        }}
+                        className="mt-2 text-purple-400 hover:text-purple-300 text-sm flex items-center gap-1"
+                      >
+                        Send Follow-up Email
                       </button>
                     </div>
                   )}
