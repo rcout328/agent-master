@@ -29,6 +29,32 @@ export default function CompetitorTrackingContent() {
   const [reportContent, setReportContent] = useState('');
   const [savedReports, setSavedReports] = useState([]);
 
+  const [generationSteps, setGenerationSteps] = useState([]);
+  const [currentStep, setCurrentStep] = useState(0);
+
+  const AI_GENERATION_STEPS = [
+    {
+      message: "AI Agent gathering competitor data...",
+      duration: 2000
+    },
+    {
+      message: "AI Agent analyzing competitive landscape...",
+      duration: 2000
+    },
+    {
+      message: "AI Agent evaluating market positions...",
+      duration: 2000
+    },
+    {
+      message: "AI Agent comparing strategies...",
+      duration: 2000
+    },
+    {
+      message: "AI Agent compiling competitor insights...",
+      duration: 2000
+    }
+  ];
+
   const metricOptions = [
     "Market Share",
     "Product Features", 
@@ -106,11 +132,21 @@ export default function CompetitorTrackingContent() {
     }
 
     try {
-      setIsAnalyzing(true);
-      setError(null);
       setAnalysisResult(null);
       setParsedReport('');
       localStorage.removeItem('currentCompetitorAnalysis');
+      
+      setIsAnalyzing(true);
+      setError(null);
+      setGenerationSteps([]);
+      setCurrentStep(0);
+
+      // Show AI agent messages
+      for (let i = 0; i < AI_GENERATION_STEPS.length; i++) {
+        setCurrentStep(i);
+        setGenerationSteps(prev => [...prev, AI_GENERATION_STEPS[i]]);
+        await new Promise(resolve => setTimeout(resolve, AI_GENERATION_STEPS[i].duration));
+      }
 
       const requestData = {
         report_type: 'competitor_tracking',
@@ -168,6 +204,8 @@ export default function CompetitorTrackingContent() {
       setError(err.message);
     } finally {
       setIsAnalyzing(false);
+      setGenerationSteps([]);
+      setCurrentStep(0);
     }
   };
 
@@ -475,179 +513,242 @@ export default function CompetitorTrackingContent() {
           </div>
         </div>
 
-        {/* Input Form */}
-        <div className="space-y-6 mb-8 bg-[#1D1D1F]/60 backdrop-blur-xl p-8 rounded-xl">
-          <div>
-            <label className="block text-sm font-medium mb-2 text-white">Company Name</label>
-            <input
-              type="text"
-              name="company_name"
-              value={userInputs.company_name}
-              onChange={handleInputChange}
-              className="w-full p-3 bg-[#2D2D2F] border border-gray-700 rounded-md focus:ring-2 focus:ring-purple-500 text-white"
-              placeholder="Your company name"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium mb-2 text-white">Industry</label>
-            <input
-              type="text"
-              name="industry"
-              value={userInputs.industry}
-              onChange={handleInputChange}
-              className="w-full p-3 bg-[#2D2D2F] border border-gray-700 rounded-md focus:ring-2 focus:ring-purple-500 text-white"
-              placeholder="Your industry"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium mb-2 text-white">Competitors</label>
-            <div className="flex space-x-2 mb-2">
-              <input
-                type="text"
-                value={currentCompetitor}
-                onChange={(e) => setCurrentCompetitor(e.target.value)}
-                className="flex-1 p-3 bg-[#2D2D2F] border border-gray-700 rounded-md focus:ring-2 focus:ring-purple-500 text-white"
-                placeholder="Add competitor"
-              />
-              <button
-                onClick={handleCompetitorAdd}
-                className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700"
-              >
-                Add
-              </button>
-            </div>
-            <div className="space-y-2">
-              {userInputs.competitors.map((competitor, index) => (
-                <div key={index} className="flex items-center justify-between bg-[#2D2D2F] p-2 rounded">
-                  <span className="text-white">{competitor}</span>
-                  <button
-                    onClick={() => removeCompetitor(index)}
-                    className="text-red-400 hover:text-red-300"
-                  >
-                    Remove
-                  </button>
+        {/* Form Section */}
+        <div className="space-y-8">
+          <div className="bg-[#1D1D1F]/80 backdrop-blur-xl rounded-xl shadow-xl p-8 border border-gray-800/50">
+            <div className="grid grid-cols-2 gap-8">
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-purple-400">Company Name</label>
+                <input
+                  name="company_name"
+                  value={userInputs.company_name}
+                  onChange={handleInputChange}
+                  className="w-full p-2.5 bg-[#2D2D2F]/50 text-white rounded-lg border border-gray-700/50 focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/10"
+                  placeholder="Enter company name"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-purple-400">Industry</label>
+                <input
+                  name="industry"
+                  value={userInputs.industry}
+                  onChange={handleInputChange}
+                  className="w-full p-2.5 bg-[#2D2D2F]/50 text-white rounded-lg border border-gray-700/50 focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/10"
+                  placeholder="Enter industry"
+                />
+              </div>
+
+              <div className="col-span-2 space-y-2">
+                <label className="text-sm font-medium text-purple-400">Tracking Metrics</label>
+                <div className="grid grid-cols-3 gap-2 bg-[#2D2D2F]/50 p-3 rounded-lg border border-gray-700/50">
+                  {metricOptions.map(metric => (
+                    <label 
+                      key={metric} 
+                      className="flex items-center gap-2 p-2 rounded-lg hover:bg-purple-600/10 cursor-pointer group"
+                    >
+                      <input
+                        type="checkbox"
+                        name="metrics"
+                        value={metric}
+                        checked={userInputs.metrics.includes(metric)}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          setUserInputs(prev => ({
+                            ...prev,
+                            metrics: e.target.checked 
+                              ? [...prev.metrics, value]
+                              : prev.metrics.filter(item => item !== value)
+                          }));
+                        }}
+                        className="w-4 h-4 rounded border-gray-600 text-purple-600 focus:ring-purple-500/20"
+                      />
+                      <span className="text-sm text-white group-hover:text-white">
+                        {metric}
+                      </span>
+                    </label>
+                  ))}
                 </div>
-              ))}
-            </div>
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium mb-2 text-white">Tracking Metrics</label>
-            <select
-              multiple
-              name="metrics"
-              value={userInputs.metrics}
-              onChange={handleMetricsChange}
-              className="w-full p-3 bg-[#2D2D2F] border border-gray-700 rounded-md focus:ring-2 focus:ring-purple-500 text-white"
-            >
-              {metricOptions.map(metric => (
-                <option key={metric} value={metric}>{metric}</option>
-              ))}
-            </select>
-            <p className="mt-1 text-sm text-gray-400">Hold Ctrl/Cmd to select multiple metrics</p>
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium mb-2 text-white">Analysis Depth</label>
-            <select
-              name="analysis_depth"
-              value={userInputs.analysis_depth}
-              onChange={handleInputChange}
-              className="w-full p-3 bg-[#2D2D2F] border border-gray-700 rounded-md focus:ring-2 focus:ring-purple-500 text-white"
-            >
-              {analysisDepthOptions.map(option => (
-                <option key={option.value} value={option.value}>{option.label}</option>
-              ))}
-            </select>
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium mb-2 text-white">Market Region</label>
-            <select
-              name="market_region"
-              value={userInputs.market_region}
-              onChange={handleInputChange}
-              className="w-full p-3 bg-[#2D2D2F] border border-gray-700 rounded-md focus:ring-2 focus:ring-purple-500 text-white"
-            >
-              {marketRegions.map(region => (
-                <option key={region.value} value={region.value}>{region.label}</option>
-              ))}
-            </select>
-          </div>
+              </div>
 
-          <button
-            onClick={startAnalysis}
-            disabled={isAnalyzing}
-            className="w-full bg-purple-600 text-white px-6 py-3 rounded-md font-medium hover:bg-purple-700 disabled:bg-purple-800/50 transition-colors"
-          >
-            {isAnalyzing ? 'Analyzing Competitors...' : 'Start Analysis'}
-          </button>
-        </div>
-
-        {/* Analysis Status */}
-        {isAnalyzing && (
-          <div className="bg-[#1D1D1F]/60 backdrop-blur-xl p-6 rounded-xl mb-8">
-            <div className="flex items-center space-x-3">
-              <div className="animate-spin h-5 w-5 border-2 border-purple-500 border-t-transparent rounded-full"></div>
-              <p className="text-white">Analyzing competitors...</p>
-            </div>
-          </div>
-        )}
-
-        {/* Error Display */}
-        {error && (
-          <div className="bg-[#1D1D1F]/60 backdrop-blur-xl p-6 rounded-xl mb-8">
-            <div className="bg-red-900/50 border border-red-500/50 rounded-md p-4 text-red-200">
-              {error}
-            </div>
-          </div>
-        )}
-
-        {/* Results Display */}
-        {analysisResult && (
-          <div className="bg-[#1D1D1F]/60 backdrop-blur-xl rounded-xl">
-            <div className="p-8">
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
-                  Analysis Results
-                </h2>
-                <button
-                  onClick={exportToPDF}
-                  className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg flex items-center gap-2 transition-colors"
-                >
-                  <svg 
-                    className="w-5 h-5" 
-                    fill="none" 
-                    stroke="currentColor" 
-                    viewBox="0 0 24 24"
-                  >
-                    <path 
-                      strokeLinecap="round" 
-                      strokeLinejoin="round" 
-                      strokeWidth={2} 
-                      d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.707.707V19a2 2 0 01-2 2z" 
+              <div className="col-span-2 space-y-2">
+                <label className="text-sm font-medium text-purple-400">Competitors</label>
+                <div className="space-y-3">
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={currentCompetitor}
+                      onChange={(e) => setCurrentCompetitor(e.target.value)}
+                      className="flex-1 p-2.5 bg-[#2D2D2F]/50 text-white rounded-lg border border-gray-700/50 focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/10"
+                      placeholder="Add competitor name"
                     />
-                  </svg>
-                  Export PDF
+                    <button
+                      onClick={handleCompetitorAdd}
+                      className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+                    >
+                      Add
+                    </button>
+                  </div>
+                  
+                  {userInputs.competitors.length > 0 && (
+                    <div className="grid grid-cols-2 gap-2">
+                      {userInputs.competitors.map((competitor, index) => (
+                        <div 
+                          key={index}
+                          className="flex items-center justify-between p-2 bg-[#2D2D2F]/70 rounded-lg group"
+                        >
+                          <span className="text-white">{competitor}</span>
+                          <button
+                            onClick={() => removeCompetitor(index)}
+                            className="text-red-400 opacity-0 group-hover:opacity-100 transition-opacity"
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-purple-400">Analysis Depth</label>
+                <select
+                  name="analysis_depth"
+                  value={userInputs.analysis_depth}
+                  onChange={handleInputChange}
+                  className="w-full p-2.5 bg-[#2D2D2F]/50 text-white rounded-lg border border-gray-700/50 focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/10"
+                >
+                  {analysisDepthOptions.map(option => (
+                    <option key={option.value} value={option.value}>{option.label}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-purple-400">Market Region</label>
+                <select
+                  name="market_region"
+                  value={userInputs.market_region}
+                  onChange={handleInputChange}
+                  className="w-full p-2.5 bg-[#2D2D2F]/50 text-white rounded-lg border border-gray-700/50 focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/10"
+                >
+                  {marketRegions.map(region => (
+                    <option key={region.value} value={region.value}>{region.label}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="col-span-2">
+                <button
+                  onClick={startAnalysis}
+                  disabled={isAnalyzing}
+                  className="w-full px-6 py-2.5 rounded-lg font-medium bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white shadow-lg transition-all duration-300 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isAnalyzing ? 'Analyzing Competitors...' : 'Start Analysis'}
                 </button>
               </div>
-              
-              <div className="prose prose-invert max-w-none 
-                [&>h1]:text-3xl [&>h1]:font-bold [&>h1]:mb-4 
-                [&>h2]:text-2xl [&>h2]:font-bold [&>h2]:mb-3
-                [&>h3]:text-xl [&>h3]:font-semibold [&>h3]:mb-2
-                [&>p]:mb-4 [&>p]:leading-relaxed
-                [&>ul]:mb-4 [&>ul]:space-y-2
-                [&>strong]:text-purple-300 [&>strong]:font-semibold
-                [&>em]:text-purple-200 [&>em]:italic
-                [&>blockquote]:border-l-4 [&>blockquote]:border-purple-400 [&>blockquote]:pl-4 [&>blockquote]:italic [&>blockquote]:text-white"
-                dangerouslySetInnerHTML={{ __html: parsedReport }}
-              />
             </div>
           </div>
-        )}
+
+          {/* Analysis Results Section */}
+          <div className="bg-[#1D1D1F]/80 backdrop-blur-xl rounded-xl shadow-xl border border-gray-800/50">
+            {isAnalyzing ? (
+              <div className="h-60 flex items-center justify-center">
+                <div className="flex items-center gap-3">
+                  <div className="animate-spin h-6 w-6 border-2 border-purple-500 border-t-transparent rounded-full"></div>
+                  <p className="text-white text-lg">
+                    {AI_GENERATION_STEPS[currentStep]?.message || "Processing..."}
+                  </p>
+                </div>
+              </div>
+            ) : analysisResult ? (
+              <div className="p-8">
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
+                    Analysis Results
+                  </h2>
+                  <button
+                    onClick={exportToPDF}
+                    className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg flex items-center gap-2 transition-colors"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.707.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    Export PDF
+                  </button>
+                </div>
+
+                <div id="report-content" className="bg-black text-white rounded-lg">
+                  <div className="p-6 space-y-6">
+                    <div className="border-b border-purple-800/50 pb-6">
+                      <h1 className="text-3xl font-bold text-purple-400 mb-4">
+                        Competitor Analysis Report
+                      </h1>
+                      <div className="grid grid-cols-2 gap-4 text-white">
+                        <div>
+                          <p><span className="font-semibold text-purple-400">Company:</span> {analysisResult.summary.company}</p>
+                          <p><span className="font-semibold text-purple-400">Industry:</span> {analysisResult.summary.industry}</p>
+                        </div>
+                        <div>
+                          <p><span className="font-semibold text-purple-400">Market Region:</span> {userInputs.market_region}</p>
+                          <p><span className="font-semibold text-purple-400">Generated:</span> {new Date().toLocaleString()}</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="pb-6">
+                      <h2 className="text-xl font-semibold text-purple-400 mb-3">Analyzed Competitors</h2>
+                      <div className="flex flex-wrap gap-2">
+                        {userInputs.competitors.map((competitor, index) => (
+                          <span 
+                            key={index}
+                            className="px-3 py-1 bg-purple-900/50 text-white rounded-full text-sm"
+                          >
+                            {competitor}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="prose max-w-none">
+                      <div 
+                        className="
+                          text-white
+                          leading-relaxed 
+                          [&>h1]:text-3xl [&>h1]:font-bold [&>h1]:text-purple-400 [&>h1]:mb-6
+                          [&>h2]:text-2xl [&>h2]:font-semibold [&>h2]:text-purple-400 [&>h2]:mt-8 [&>h2]:mb-4
+                          [&>h3]:text-xl [&>h3]:font-semibold [&>h3]:text-purple-400 [&>h3]:mt-6 [&>h3]:mb-3
+                          [&>p]:text-white [&>p]:mb-4 [&>p]:text-base [&>p]:leading-relaxed
+                          [&>ul]:mb-6 [&>ul]:list-disc [&>ul]:pl-6 
+                          [&>ul>li]:text-white [&>ul>li]:mb-2
+                          [&>ol]:mb-6 [&>ol]:list-decimal [&>ol]:pl-6
+                          [&>ol>li]:text-white [&>ol>li]:mb-2
+                          [&>strong]:text-purple-400 [&>strong]:font-semibold
+                          [&>em]:text-purple-300 [&>em]:italic
+                          [&>blockquote]:border-l-4 [&>blockquote]:border-purple-400 [&>blockquote]:pl-4 [&>blockquote]:italic [&>blockquote]:text-white
+                        "
+                        dangerouslySetInnerHTML={{ __html: parsedReport }} 
+                      />
+                    </div>
+
+                    <div className="border-t border-purple-800/50 pt-6 mt-8">
+                      <p className="text-sm text-white text-center">
+                        Generated by Competitor Analysis Tool • {new Date().toLocaleDateString()}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="h-60 flex items-center justify-center">
+                <p className="text-white text-lg">
+                  Analysis results will appear here
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
 
         {showReportModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -661,7 +762,7 @@ export default function CompetitorTrackingContent() {
                 </div>
                 <button
                   onClick={() => setShowReportModal(false)}
-                  className="text-gray-400 hover:text-white"
+                  className="text-white"
                 >
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -698,12 +799,12 @@ export default function CompetitorTrackingContent() {
                 >
                   <div>
                     <p className="text-white font-medium">{report.company}</p>
-                    <p className="text-sm text-gray-400">
+                    <p className="text-sm text-white">
                       Competitors: {report.competitors.join(', ')}
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm text-gray-400">
+                    <p className="text-sm text-white">
                       {new Date(report.timestamp).toLocaleString()}
                     </p>
                   </div>

@@ -17,6 +17,8 @@ export default function MarketAssessmentContent() {
   const [parsedReport, setParsedReport] = useState('');
   const [isPdfGenerating, setIsPdfGenerating] = useState(false);
   const [savedReports, setSavedReports] = useState([]);
+  const [generationSteps, setGenerationSteps] = useState([]);
+  const [currentStep, setCurrentStep] = useState(0);
 
   const [marketInputs, setMarketInputs] = useState({
     company_name: '',
@@ -62,6 +64,29 @@ export default function MarketAssessmentContent() {
     { value: 'europe', label: 'Europe' },
     { value: 'asia_pacific', label: 'Asia Pacific' },
     { value: 'latin_america', label: 'Latin America' }
+  ];
+
+  const AI_GENERATION_STEPS = [
+    {
+      message: "AI Agent gathering market intelligence...",
+      duration: 2000
+    },
+    {
+      message: "AI Agent analyzing market dynamics...",
+      duration: 2000
+    },
+    {
+      message: "AI Agent evaluating market potential...",
+      duration: 2000
+    },
+    {
+      message: "AI Agent identifying growth opportunities...",
+      duration: 2000
+    },
+    {
+      message: "AI Agent compiling market assessment report...",
+      duration: 2000
+    }
   ];
 
   const handleInputChange = (e) => {
@@ -123,8 +148,21 @@ export default function MarketAssessmentContent() {
     }
 
     try {
+      setAnalysisResult(null);
+      setParsedReport('');
+      localStorage.removeItem('currentMarketAssessment');
+      
       setIsAnalyzing(true);
       setError(null);
+      setGenerationSteps([]);
+      setCurrentStep(0);
+
+      // Show AI agent messages
+      for (let i = 0; i < AI_GENERATION_STEPS.length; i++) {
+        setCurrentStep(i);
+        setGenerationSteps(prev => [...prev, AI_GENERATION_STEPS[i]]);
+        await new Promise(resolve => setTimeout(resolve, AI_GENERATION_STEPS[i].duration));
+      }
 
       const response = await fetch('https://varun324242-sj.hf.space/api/generate-report', {
         method: 'POST',
@@ -167,6 +205,8 @@ export default function MarketAssessmentContent() {
       setError(err.message);
     } finally {
       setIsAnalyzing(false);
+      setGenerationSteps([]);
+      setCurrentStep(0);
     }
   };
 
@@ -244,20 +284,20 @@ export default function MarketAssessmentContent() {
   const formatMarkdownContent = (content) => {
     return content
       // Headers
-      .replace(/^# (.*$)/gm, '<h1 class="text-3xl font-bold mt-8 mb-4 text-gray-900">$1</h1>')
-      .replace(/^## (.*$)/gm, '<h2 class="text-2xl font-bold mt-6 mb-3 text-gray-800">$1</h2>')
-      .replace(/^### (.*$)/gm, '<h3 class="text-xl font-semibold mt-4 mb-2 text-gray-700">$1</h3>')
+      .replace(/^# (.*$)/gm, '<h1 class="text-3xl font-bold mt-8 mb-4 text-white">$1</h1>')
+      .replace(/^## (.*$)/gm, '<h2 class="text-2xl font-bold mt-6 mb-3 text-white">$1</h2>')
+      .replace(/^### (.*$)/gm, '<h3 class="text-xl font-semibold mt-4 mb-2 text-white">$1</h3>')
       // Bold text
-      .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-gray-900">$1</strong>')
+      .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-white">$1</strong>')
       // Lists
-      .replace(/^\- (.*$)/gm, '<li class="ml-4 mb-2 text-gray-700">• $1</li>')
+      .replace(/^\- (.*$)/gm, '<li class="ml-4 mb-2 text-white">• $1</li>')
       // Tables
-      .replace(/\|(.+)\|/g, '<div class="overflow-x-auto"><table class="min-w-full divide-y divide-gray-200">$1</table></div>')
-      .replace(/\|---(.+)---\|/g, '<thead class="bg-gray-50"><tr>$1</tr></thead>')
+      .replace(/\|(.+)\|/g, '<div class="overflow-x-auto"><table class="min-w-full divide-y divide-purple-800">$1</table></div>')
+      .replace(/\|---(.+)---\|/g, '<thead class="bg-purple-900/50"><tr>$1</tr></thead>')
       // Links
       .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-blue-600 hover:text-blue-800 underline">$1</a>')
       // Paragraphs
-      .replace(/^(?!<[hl]|<li|<table)(.*$)/gm, '<p class="mb-4 text-gray-600 leading-relaxed">$1</p>')
+      .replace(/^(?!<[hl]|<li|<table)(.*$)/gm, '<p class="mb-4 text-white leading-relaxed">$1</p>')
       // List wrapper
       .replace(/(<li.*<\/li>)/s, '<ul class="mb-6 space-y-2">$1</ul>');
   };
@@ -306,7 +346,7 @@ export default function MarketAssessmentContent() {
         
         pdf.setFont("helvetica", "normal");
         pdf.setFontSize(11);
-        pdf.setTextColor(60, 60, 60);
+        pdf.setTextColor(88, 28, 135);
         
         const metadata = [
           { label: 'Company:', value: marketInputs.company_name },
@@ -340,7 +380,7 @@ export default function MarketAssessmentContent() {
 
         pdf.setFont("helvetica", "normal");
         pdf.setFontSize(11);
-        pdf.setTextColor(60, 60, 60);
+        pdf.setTextColor(88, 28, 135);
         let y = startY + 8;
         
         // Focus Areas
@@ -440,7 +480,7 @@ export default function MarketAssessmentContent() {
               // List items
               pdf.setFont("helvetica", "normal");
               pdf.setFontSize(11);
-              pdf.setTextColor(60, 60, 60);
+              pdf.setTextColor(88, 28, 135);
               
               const text = processMarkdownText(trimmedLine.replace(/^[-*] /, ''));
               const wrappedText = pdf.splitTextToSize(text, maxWidth - 15);
@@ -479,7 +519,7 @@ export default function MarketAssessmentContent() {
               
               pdf.setFont("helvetica", "italic");
               pdf.setFontSize(11);
-              pdf.setTextColor(70, 70, 70);
+              pdf.setTextColor(88, 28, 135);
               
               wrappedText.forEach(textLine => {
                 if (y > pdf.internal.pageSize.getHeight() - 20) {
@@ -495,7 +535,7 @@ export default function MarketAssessmentContent() {
               // Numbered lists
               pdf.setFont("helvetica", "normal");
               pdf.setFontSize(11);
-              pdf.setTextColor(60, 60, 60);
+              pdf.setTextColor(88, 28, 135);
               
               const number = trimmedLine.match(/^[0-9]+/)[0];
               const text = processMarkdownText(trimmedLine.replace(/^[0-9]+\. /, ''));
@@ -551,7 +591,7 @@ export default function MarketAssessmentContent() {
               // Regular paragraphs
               pdf.setFont("helvetica", "normal");
               pdf.setFontSize(11);
-              pdf.setTextColor(60, 60, 60);
+              pdf.setTextColor(88, 28, 135);
               
               const text = processMarkdownText(trimmedLine);
               const wrappedText = pdf.splitTextToSize(text, maxWidth);
@@ -591,7 +631,7 @@ export default function MarketAssessmentContent() {
         // Add page numbers
         pdf.setFont("helvetica", "normal");
         pdf.setFontSize(9);
-        pdf.setTextColor(128, 128, 128);
+        pdf.setTextColor(88, 28, 135);
         pdf.text(
           `Page ${i} of ${pageCount}`,
           pdf.internal.pageSize.getWidth() / 2,
@@ -616,307 +656,283 @@ export default function MarketAssessmentContent() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        {/* Navigation */}
-        <div className="mb-8 flex justify-between items-center">
-          <div className="bg-white p-1 rounded-xl inline-flex shadow-sm">
-            <button
-              onClick={() => setViewMode('form')}
-              className={`px-4 py-2 rounded-lg transition-colors ${
-                viewMode === 'form' 
-                  ? 'bg-blue-600 text-white' 
-                  : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
-              }`}
-            >
-              New Assessment
-            </button>
-            <button
-              onClick={() => setViewMode('history')}
-              className={`px-4 py-2 rounded-lg transition-colors ${
-                viewMode === 'history'
-                  ? 'bg-blue-600 text-white'
-                  : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
-              }`}
-            >
-              Assessment History
-            </button>
-          </div>
-
-          {/* Simple text link to Impact Assessment */}
-          <Link 
-            href="/impact-assessment"
-            className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
-          >
-            Impact Assessment
-          </Link>
+    <div className="min-h-screen bg-black text-white">
+      <div className="max-w-6xl mx-auto px-6 py-8">
+        <div className="mb-8 text-center">
+          <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
+            Market Assessment
+          </h1>
         </div>
 
-        {/* Main Content */}
-        {viewMode === 'form' && (
-          <div className="bg-white rounded-lg shadow-lg p-8">
-            <h2 className="text-3xl font-bold mb-6 text-gray-800">Market Assessment</h2>
-            
-            {/* Form Content */}
-            <div className="space-y-6">
-              {/* Basic Information */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-medium mb-2 text-gray-700">Company Name</label>
-                  <input
-                    type="text"
-                    name="company_name"
-                    value={marketInputs.company_name}
-                    onChange={handleInputChange}
-                    className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
-                    placeholder="Enter company name"
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium mb-2 text-gray-700">Industry</label>
-                  <input
-                    type="text"
-                    name="industry"
-                    value={marketInputs.industry}
-                    onChange={handleInputChange}
-                    className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
-                    placeholder="Enter industry"
-                  />
+        <div className="mb-10 flex justify-center">
+          <div className="bg-[#1D1D1F]/60 backdrop-blur-xl p-1.5 rounded-xl inline-flex shadow-xl">
+            <button className="px-8 py-2.5 rounded-lg transition-all duration-300 bg-purple-600/90 text-white">
+              Market Assessment
+            </button>
+            <Link 
+              href="/impact-assessment"
+              className="px-8 py-2.5 rounded-lg text-white hover:text-white hover:bg-white/5"
+            >
+              Impact Assessment
+            </Link>
+          </div>
+        </div>
+
+        <div className="space-y-8">
+          <div className="bg-[#1D1D1F]/80 backdrop-blur-xl rounded-xl shadow-xl p-8 border border-purple-800/50">
+            <div className="grid grid-cols-2 gap-8">
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-purple-400">Company Name</label>
+                <input
+                  name="company_name"
+                  value={marketInputs.company_name}
+                  onChange={handleInputChange}
+                  className="w-full p-2.5 bg-[#2D2D2F]/50 text-white rounded-lg border border-purple-700/50 focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/10"
+                  placeholder="Enter company name"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-purple-400">Industry</label>
+                <input
+                  name="industry"
+                  value={marketInputs.industry}
+                  onChange={handleInputChange}
+                  className="w-full p-2.5 bg-[#2D2D2F]/50 text-white rounded-lg border border-purple-700/50 focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/10"
+                  placeholder="Enter industry"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-purple-400">Assessment Type</label>
+                <select
+                  name="market_type"
+                  value={marketInputs.market_type}
+                  onChange={handleInputChange}
+                  className="w-full p-2.5 bg-[#2D2D2F]/50 text-white rounded-lg border border-purple-700/50 focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/10"
+                >
+                  {marketTypes.map(type => (
+                    <option key={type.value} value={type.value}>{type.label}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-purple-400">Market Region</label>
+                <select
+                  name="market_region"
+                  value={marketInputs.market_region}
+                  onChange={handleInputChange}
+                  className="w-full p-2.5 bg-[#2D2D2F]/50 text-white rounded-lg border border-purple-700/50 focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/10"
+                >
+                  {regions.map(region => (
+                    <option key={region.value} value={region.value}>{region.label}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="col-span-2 space-y-2">
+                <label className="text-sm font-medium text-purple-400">Focus Areas</label>
+                <div className="grid grid-cols-3 gap-2 bg-[#2D2D2F]/50 p-3 rounded-lg border border-purple-700/50">
+                  {focusAreas.map(area => (
+                    <label 
+                      key={area} 
+                      className="flex items-center gap-2 p-2 rounded-lg hover:bg-purple-600/10 cursor-pointer group"
+                    >
+                      <input
+                        type="checkbox"
+                        name="focus_areas"
+                        value={area}
+                        checked={marketInputs.focus_areas.includes(area)}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          setMarketInputs(prev => ({
+                            ...prev,
+                            focus_areas: e.target.checked 
+                              ? [...prev.focus_areas, value]
+                              : prev.focus_areas.filter(item => item !== value)
+                          }));
+                        }}
+                        className="w-4 h-4 rounded border-purple-600 text-purple-600 focus:ring-purple-500/20"
+                      />
+                      <span className="text-sm text-white group-hover:text-white">
+                        {area}
+                      </span>
+                    </label>
+                  ))}
                 </div>
               </div>
 
-              {/* Assessment Configuration */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-medium mb-2 text-gray-700">Assessment Type</label>
-                  <select
-                    name="market_type"
-                    value={marketInputs.market_type}
-                    onChange={handleInputChange}
-                    className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
-                  >
-                    {marketTypes.map(type => (
-                      <option key={type.value} value={type.value}>{type.label}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-2 text-gray-700">Market Region</label>
-                  <select
-                    name="market_region"
-                    value={marketInputs.market_region}
-                    onChange={handleInputChange}
-                    className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
-                  >
-                    {regions.map(region => (
-                      <option key={region.value} value={region.value}>{region.label}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              {/* Focus Areas and Metrics */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-medium mb-2 text-gray-700">Focus Areas</label>
-                  <select
-                    name="focus_areas"
-                    multiple
-                    value={marketInputs.focus_areas}
-                    onChange={handleInputChange}
-                    className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 min-h-[120px]"
-                  >
-                    {focusAreas.map(area => (
-                      <option key={area} value={area}>{area}</option>
-                    ))}
-                  </select>
-                  <p className="text-xs text-gray-500 mt-1">Hold Ctrl/Cmd to select multiple</p>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-2 text-gray-700">Key Metrics</label>
-                  <select
-                    name="metrics"
-                    multiple
-                    value={marketInputs.metrics}
-                    onChange={handleInputChange}
-                    className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 min-h-[120px]"
-                  >
-                    {metrics.map(metric => (
-                      <option key={metric} value={metric}>{metric}</option>
-                    ))}
-                  </select>
-                  <p className="text-xs text-gray-500 mt-1">Hold Ctrl/Cmd to select multiple</p>
+              <div className="col-span-2 space-y-2">
+                <label className="text-sm font-medium text-purple-400">Key Metrics</label>
+                <div className="grid grid-cols-3 gap-2 bg-[#2D2D2F]/50 p-3 rounded-lg border border-purple-700/50">
+                  {metrics.map(metric => (
+                    <label 
+                      key={metric} 
+                      className="flex items-center gap-2 p-2 rounded-lg hover:bg-purple-600/10 cursor-pointer group"
+                    >
+                      <input
+                        type="checkbox"
+                        name="metrics"
+                        value={metric}
+                        checked={marketInputs.metrics.includes(metric)}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          setMarketInputs(prev => ({
+                            ...prev,
+                            metrics: e.target.checked 
+                              ? [...prev.metrics, value]
+                              : prev.metrics.filter(item => item !== value)
+                          }));
+                        }}
+                        className="w-4 h-4 rounded border-purple-600 text-purple-600 focus:ring-purple-500/20"
+                      />
+                      <span className="text-sm text-white group-hover:text-white">
+                        {metric}
+                      </span>
+                    </label>
+                  ))}
                 </div>
               </div>
 
-              <button
-                onClick={startAnalysis}
-                disabled={isAnalyzing}
-                className="w-full bg-blue-600 text-white px-6 py-3 rounded-md font-medium hover:bg-blue-700 disabled:bg-blue-300 transition-colors"
-              >
-                {isAnalyzing ? 'Generating Assessment...' : 'Generate Market Assessment'}
-              </button>
+              <div className="col-span-2">
+                <button
+                  onClick={startAnalysis}
+                  disabled={isAnalyzing}
+                  className="w-full px-6 py-2.5 rounded-lg font-medium bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white shadow-lg transition-all duration-300 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isAnalyzing ? 'Generating Assessment...' : 'Generate Market Assessment'}
+                </button>
+              </div>
             </div>
           </div>
-        )}
 
-        {viewMode === 'history' && (
-          <div className="bg-white rounded-lg shadow-lg p-8">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-3xl font-bold text-gray-800">Assessment History</h2>
-              <button
-                onClick={clearSavedReports}
-                className="px-4 py-2 text-sm rounded-lg bg-red-500/20 text-red-500 hover:bg-red-500/30 transition-colors"
-              >
-                Clear Saved Reports
-              </button>
-            </div>
-            {allReports.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {allReports.map((report, index) => (
-                  <div 
-                    key={index}
-                    className="bg-gray-50 rounded-lg p-6 border border-gray-200 hover:border-blue-500 transition-colors cursor-pointer"
-                    onClick={() => {
-                      setSelectedReport(report);
-                      setShowReportModal(true);
-                    }}
+          {/* Analysis Results Section */}
+          <div className="bg-[#1D1D1F]/80 backdrop-blur-xl rounded-xl shadow-xl border border-purple-800/50">
+            {isAnalyzing ? (
+              <div className="h-60 flex items-center justify-center">
+                <div className="flex items-center gap-3">
+                  <div className="animate-spin h-6 w-6 border-2 border-purple-500 border-t-transparent rounded-full"></div>
+                  <p className="text-white text-lg">
+                    {AI_GENERATION_STEPS[currentStep]?.message || "Processing..."}
+                  </p>
+                </div>
+              </div>
+            ) : analysisResult ? (
+              <div className="p-8">
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
+                    Market Assessment Results
+                  </h2>
+                  <button
+                    onClick={exportToPdf}
+                    disabled={isPdfGenerating}
+                    className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg flex items-center gap-2 transition-colors"
                   >
-                    <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                      {report.company_name}
-                    </h3>
-                    <p className="text-sm text-gray-600 mb-2">
-                      {report.market_type}
-                    </p>
-                    <p className="text-sm text-gray-600 mb-4">
-                      Generated: {new Date(report.timestamp).toLocaleString()}
-                    </p>
-                    <div className="flex justify-between items-center">
-                      <span className="text-blue-600 text-sm">View Report</span>
-                      <span className="text-sm text-gray-500">
-                        {report.id ? 'Saved Locally' : 'From API'}
-                      </span>
+                    {isPdfGenerating ? (
+                      <>
+                        <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                        </svg>
+                        <span>Generating PDF...</span>
+                      </>
+                    ) : (
+                      <>
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.707.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        <span>Export PDF</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+
+                <div id="report-content" className="bg-black text-white rounded-lg">
+                  <div className="p-6 space-y-6">
+                    <div className="border-b border-purple-800/50 pb-6">
+                      <h1 className="text-3xl font-bold text-purple-400 mb-4">
+                        Market Assessment Report
+                      </h1>
+                      <div className="grid grid-cols-2 gap-4 text-white">
+                        <div>
+                          <p><span className="font-semibold text-purple-400">Company:</span> {analysisResult.summary.company}</p>
+                          <p><span className="font-semibold text-purple-400">Industry:</span> {analysisResult.summary.industry}</p>
+                          <p><span className="font-semibold text-purple-400">Assessment Type:</span> {marketInputs.market_type.replace('_', ' ').toUpperCase()}</p>
+                        </div>
+                        <div>
+                          <p><span className="font-semibold text-purple-400">Market Region:</span> {marketInputs.market_region.replace('_', ' ').toUpperCase()}</p>
+                          <p><span className="font-semibold text-purple-400">Generated:</span> {new Date().toLocaleString()}</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="pb-6">
+                      <h2 className="text-xl font-semibold text-purple-400 mb-3">Focus Areas</h2>
+                      <div className="flex flex-wrap gap-2">
+                        {marketInputs.focus_areas.map((area, index) => (
+                          <span 
+                            key={index}
+                            className="px-3 py-1 bg-purple-900/50 text-white rounded-full text-sm"
+                          >
+                            {area}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="pb-6">
+                      <h2 className="text-xl font-semibold text-purple-400 mb-3">Key Metrics</h2>
+                      <div className="flex flex-wrap gap-2">
+                        {marketInputs.metrics.map((metric, index) => (
+                          <span 
+                            key={index}
+                            className="px-3 py-1 bg-purple-900/50 text-white rounded-full text-sm"
+                          >
+                            {metric}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="prose max-w-none">
+                      <div 
+                        className="
+                          text-white
+                          leading-relaxed 
+                          [&>h1]:text-3xl [&>h1]:font-bold [&>h1]:text-purple-400 [&>h1]:mb-6
+                          [&>h2]:text-2xl [&>h2]:font-semibold [&>h2]:text-purple-400 [&>h2]:mt-8 [&>h2]:mb-4
+                          [&>h3]:text-xl [&>h3]:font-semibold [&>h3]:text-purple-400 [&>h3]:mt-6 [&>h3]:mb-3
+                          [&>p]:text-white [&>p]:mb-4 [&>p]:text-base [&>p]:leading-relaxed
+                          [&>ul]:mb-6 [&>ul]:list-disc [&>ul]:pl-6 
+                          [&>ul>li]:text-white [&>ul>li]:mb-2
+                          [&>ol]:mb-6 [&>ol]:list-decimal [&>ol]:pl-6
+                          [&>ol>li]:text-white [&>ol>li]:mb-2
+                          [&>strong]:text-purple-400 [&>strong]:font-semibold
+                          [&>em]:text-purple-300 [&>em]:italic
+                          [&>blockquote]:border-l-4 [&>blockquote]:border-purple-400 [&>blockquote]:pl-4 [&>blockquote]:italic [&>blockquote]:text-white
+                        "
+                        dangerouslySetInnerHTML={{ __html: parsedReport }} 
+                      />
+                    </div>
+
+                    <div className="border-t border-purple-800/50 pt-6 mt-8">
+                      <p className="text-sm text-purple-400 text-center">
+                        Generated by Market Assessment Tool • {new Date().toLocaleDateString()}
+                      </p>
                     </div>
                   </div>
-                ))}
+                </div>
               </div>
             ) : (
-              <div className="text-center text-gray-500 py-12">
-                No assessment reports found
+              <div className="h-60 flex items-center justify-center">
+                <p className="text-white text-lg">
+                  Analysis results will appear here
+                </p>
               </div>
             )}
           </div>
-        )}
-
-        {/* Results View */}
-        {viewMode === 'results' && analysisResult && (
-          <div className="bg-white rounded-lg shadow-lg p-8">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-3xl font-bold text-gray-800">Assessment Results</h2>
-              <button
-                onClick={exportToPdf}
-                disabled={isPdfGenerating}
-                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg flex items-center gap-2 transition-colors disabled:opacity-50"
-              >
-                {isPdfGenerating ? (
-                  <>
-                    <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                    </svg>
-                    <span>Generating PDF...</span>
-                  </>
-                ) : (
-                  <>
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.707.707V19a2 2 0 01-2 2z" />
-                    </svg>
-                    <span>Export PDF</span>
-                  </>
-                )}
-              </button>
-            </div>
-            
-            {/* Summary Section */}
-            <div className="mb-8">
-              <h3 className="text-xl font-semibold mb-4 text-gray-700">Assessment Summary</h3>
-              <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <p className="mb-2">
-                      <span className="font-medium text-gray-700">Company:</span>{' '}
-                      {analysisResult.summary?.company || marketInputs.company_name}
-                    </p>
-                    <p className="mb-2">
-                      <span className="font-medium text-gray-700">Industry:</span>{' '}
-                      {analysisResult.summary?.industry || marketInputs.industry}
-                    </p>
-                    <p>
-                      <span className="font-medium text-gray-700">Generated:</span>{' '}
-                      {new Date().toLocaleString()}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="mb-2">
-                      <span className="font-medium text-gray-700">Assessment Type:</span>{' '}
-                      {marketInputs.market_type}
-                    </p>
-                    <p>
-                      <span className="font-medium text-gray-700">Region:</span>{' '}
-                      {marketInputs.market_region}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Detailed Analysis */}
-            <div>
-              <h3 className="text-xl font-semibold mb-4 text-gray-700">Market Assessment Report</h3>
-              <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
-                <div
-                  className="prose prose-lg max-w-none"
-                  dangerouslySetInnerHTML={{ __html: parsedReport }}
-                />
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Report Modal */}
-        {showReportModal && selectedReport && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-lg w-full max-w-4xl max-h-[90vh] overflow-hidden">
-              <div className="p-6 border-b border-gray-200 flex justify-between items-center">
-                <div>
-                  <h3 className="text-xl font-semibold text-gray-800">
-                    {selectedReport.company_name} - Market Assessment
-                  </h3>
-                  <p className="text-sm text-gray-600">Generated: {selectedReport.timestamp}</p>
-                </div>
-                <button
-                  onClick={() => setShowReportModal(false)}
-                  className="text-gray-500 hover:text-gray-700"
-                >
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-              </div>
-              <div className="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
-                <div 
-                  className="prose prose-lg max-w-none"
-                  dangerouslySetInnerHTML={{ 
-                    __html: formatMarkdownContent(selectedReport.content) 
-                  }}
-                />
-              </div>
-            </div>
-          </div>
-        )}
+        </div>
       </div>
     </div>
   );

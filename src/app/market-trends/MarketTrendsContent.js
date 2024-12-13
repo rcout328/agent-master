@@ -26,6 +26,9 @@ export default function MarketTrendsContent() {
 
   const [savedReports, setSavedReports] = useState([]);
 
+  const [generationSteps, setGenerationSteps] = useState([]);
+  const [currentStep, setCurrentStep] = useState(0);
+
   const focusAreaOptions = [
     "Market Size and Growth",
     "Competitor Analysis", 
@@ -34,6 +37,29 @@ export default function MarketTrendsContent() {
     "Financial Analysis",
     "Geographic Expansion",
     "Product Development"
+  ];
+
+  const AI_GENERATION_STEPS = [
+    {
+      message: "AI Agent collecting market data and trends...",
+      duration: 2000
+    },
+    {
+      message: "AI Agent analyzing market patterns...",
+      duration: 2000
+    },
+    {
+      message: "AI Agent identifying key opportunities...",
+      duration: 2000
+    },
+    {
+      message: "AI Agent generating insights...",
+      duration: 2000
+    },
+    {
+      message: "AI Agent compiling final report...",
+      duration: 2000
+    }
   ];
 
   // Simple function to convert markdown-like text to HTML
@@ -101,14 +127,21 @@ export default function MarketTrendsContent() {
     }
 
     try {
-      // Clear previous results
       setAnalysisResult(null);
       setParsedReport('');
+      localStorage.removeItem('currentMarketAnalysis');
+      
       setIsAnalyzing(true);
       setError(null);
-      
-      // Clear current analysis from localStorage when starting new analysis
-      localStorage.removeItem('currentMarketAnalysis');
+      setGenerationSteps([]);
+      setCurrentStep(0);
+
+      // Show AI agent messages
+      for (let i = 0; i < AI_GENERATION_STEPS.length; i++) {
+        setCurrentStep(i);
+        setGenerationSteps(prev => [...prev, AI_GENERATION_STEPS[i]]);
+        await new Promise(resolve => setTimeout(resolve, AI_GENERATION_STEPS[i].duration));
+      }
 
       const response = await fetch('https://varun324242-sj.hf.space/api/market-analysis', {
         method: 'POST',
@@ -124,7 +157,7 @@ export default function MarketTrendsContent() {
         throw new Error(data.message);
       }
 
-      // Save new report to local storage
+      // Save new report
       const newReport = {
         id: Date.now(),
         timestamp: new Date().toISOString(),
@@ -137,7 +170,6 @@ export default function MarketTrendsContent() {
       localStorage.setItem('marketTrendReports', JSON.stringify(updatedReports));
       setSavedReports(updatedReports);
 
-      // Save current analysis
       localStorage.setItem('currentMarketAnalysis', JSON.stringify({
         result: data,
         inputs: userInputs,
@@ -149,6 +181,8 @@ export default function MarketTrendsContent() {
       setError(err.message);
     } finally {
       setIsAnalyzing(false);
+      setGenerationSteps([]);
+      setCurrentStep(0);
     }
   };
 
@@ -510,7 +544,9 @@ export default function MarketTrendsContent() {
               <div className="h-60 flex items-center justify-center">
                 <div className="flex items-center gap-3">
                   <div className="animate-spin h-6 w-6 border-2 border-purple-500 border-t-transparent rounded-full"></div>
-                  <p className="text-white text-lg">Analyzing market trends...</p>
+                  <p className="text-white text-lg">
+                    {AI_GENERATION_STEPS[currentStep]?.message || "Processing..."}
+                  </p>
                 </div>
               </div>
             ) : analysisResult ? (

@@ -20,6 +20,8 @@ export default function ICPCreationContent() {
   const [isPdfGenerating, setIsPdfGenerating] = useState(false);
   const [savedReports, setSavedReports] = useState([]);
   const [currentReport, setCurrentReport] = useState(null);
+  const [generationSteps, setGenerationSteps] = useState([]);
+  const [currentStep, setCurrentStep] = useState(0);
 
   const [userInputs, setUserInputs] = useState({
     company_name: '',
@@ -62,6 +64,29 @@ export default function ICPCreationContent() {
     { value: 'over_50m', label: 'Over $50M' }
   ];
 
+  const AI_GENERATION_STEPS = [
+    {
+      message: "AI Agent analyzing target market data...",
+      duration: 2000
+    },
+    {
+      message: "AI Agent identifying ideal customer characteristics...",
+      duration: 2000
+    },
+    {
+      message: "AI Agent evaluating market segments...",
+      duration: 2000
+    },
+    {
+      message: "AI Agent profiling customer behaviors...",
+      duration: 2000
+    },
+    {
+      message: "AI Agent creating ideal customer profile...",
+      duration: 2000
+    }
+  ];
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setUserInputs(prev => ({
@@ -77,8 +102,21 @@ export default function ICPCreationContent() {
     }
 
     try {
+      setAnalysisResult(null);
+      setParsedReport('');
+      localStorage.removeItem('currentICPReport');
+      
       setIsAnalyzing(true);
       setError(null);
+      setGenerationSteps([]);
+      setCurrentStep(0);
+
+      // Show AI agent messages
+      for (let i = 0; i < AI_GENERATION_STEPS.length; i++) {
+        setCurrentStep(i);
+        setGenerationSteps(prev => [...prev, AI_GENERATION_STEPS[i]]);
+        await new Promise(resolve => setTimeout(resolve, AI_GENERATION_STEPS[i].duration));
+      }
 
       const response = await fetch('https://varun324242-sj.hf.space/api/generate-report', {
         method: 'POST',
@@ -112,6 +150,8 @@ export default function ICPCreationContent() {
       console.error('Analysis error:', err);
     } finally {
       setIsAnalyzing(false);
+      setGenerationSteps([]);
+      setCurrentStep(0);
     }
   };
 
@@ -507,8 +547,14 @@ export default function ICPCreationContent() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0D0D0F]">
-      <div className="max-w-7xl mx-auto px-4 py-8">
+    <div className="min-h-screen bg-black text-white">
+      <div className="max-w-6xl mx-auto px-6 py-8">
+        <div className="mb-8 text-center">
+          <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
+            ICP Creation
+          </h1>
+        </div>
+
         <div className="mb-10 flex justify-center">
           <div className="bg-[#1D1D1F]/60 backdrop-blur-xl p-1.5 rounded-xl inline-flex shadow-xl">
             <button className="px-8 py-2.5 rounded-lg transition-all duration-300 bg-purple-600/90 text-white">
@@ -522,78 +568,6 @@ export default function ICPCreationContent() {
             </Link>
           </div>
         </div>
-
-        {currentReport && (
-          <div className="mb-8">
-            <div className="bg-[#1D1D1F]/80 backdrop-blur-xl rounded-xl shadow-xl p-6 border border-gray-800/50">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-xl font-semibold text-purple-400">Current Report</h3>
-                <p className="text-sm text-gray-400">
-                  Generated: {new Date(currentReport.timestamp).toLocaleString()}
-                </p>
-              </div>
-              <div className="bg-[#2D2D2F]/50 p-4 rounded-lg">
-                <div className="grid grid-cols-2 gap-4 mb-4">
-                  <div>
-                    <p className="text-sm text-gray-400">Company</p>
-                    <p className="text-white font-medium">{currentReport.result.summary.company}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-400">Industry</p>
-                    <p className="text-white font-medium">{currentReport.result.summary.industry}</p>
-                  </div>
-                </div>
-                <button
-                  onClick={() => {
-                    setAnalysisResult(currentReport.result);
-                    setUserInputs(currentReport.inputs);
-                    setParsedReport(marked(currentReport.result.analysis_report));
-                  }}
-                  className="w-full px-4 py-2 bg-purple-600/20 text-purple-400 rounded-lg hover:bg-purple-600/30 transition-colors"
-                >
-                  Load Report
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {allReports.length > 0 && (
-          <div className="mb-8">
-            <div className="bg-[#1D1D1F]/80 backdrop-blur-xl rounded-xl shadow-xl p-6 border border-gray-800/50">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-xl font-semibold text-purple-400">Saved Reports</h3>
-                <button
-                  onClick={clearSavedReports}
-                  className="px-4 py-2 text-sm rounded-lg bg-red-500/20 text-red-400 hover:bg-red-500/30 transition-colors"
-                >
-                  Clear Saved Reports
-                </button>
-              </div>
-              <div className="space-y-2">
-                {allReports.map(report => (
-                  <div 
-                    key={report.id}
-                    className="flex justify-between items-center p-3 rounded-lg bg-[#2D2D2F]/50 hover:bg-[#2D2D2F]/70 transition-colors cursor-pointer"
-                    onClick={() => viewReport(report)}
-                  >
-                    <div>
-                      <p className="text-white font-medium">{report.company_name}</p>
-                      <p className="text-sm text-gray-400">
-                        {report.report_type} - {new Date(report.timestamp).toLocaleDateString()}
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-sm text-purple-400">
-                        {report.id ? 'Saved Locally' : 'From API'}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
 
         <div className="space-y-8">
           <div className="bg-[#1D1D1F]/80 backdrop-blur-xl rounded-xl shadow-xl p-8 border border-gray-800/50">
@@ -682,20 +656,24 @@ export default function ICPCreationContent() {
                   disabled={isAnalyzing}
                   className="w-full px-6 py-2.5 rounded-lg font-medium bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white shadow-lg transition-all duration-300 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {isAnalyzing ? 'Generating ICP Analysis...' : 'Generate ICP Analysis'}
+                  {isAnalyzing ? 'Creating ICP...' : 'Generate ICP Analysis'}
                 </button>
               </div>
             </div>
           </div>
 
-          {error && (
-            <div className="bg-red-500/10 border border-red-500/50 rounded-lg p-4">
-              <p className="text-red-400">{error}</p>
-            </div>
-          )}
-
-          {analysisResult && (
-            <div className="bg-[#1D1D1F]/80 backdrop-blur-xl rounded-xl shadow-xl border border-gray-800/50">
+          {/* Analysis Results Section */}
+          <div className="bg-[#1D1D1F]/80 backdrop-blur-xl rounded-xl shadow-xl border border-gray-800/50">
+            {isAnalyzing ? (
+              <div className="h-60 flex items-center justify-center">
+                <div className="flex items-center gap-3">
+                  <div className="animate-spin h-6 w-6 border-2 border-purple-500 border-t-transparent rounded-full"></div>
+                  <p className="text-white text-lg">
+                    {AI_GENERATION_STEPS[currentStep]?.message || "Processing..."}
+                  </p>
+                </div>
+              </div>
+            ) : analysisResult ? (
               <div className="p-8">
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
@@ -704,11 +682,11 @@ export default function ICPCreationContent() {
                   <button
                     onClick={exportToPdf}
                     disabled={isPdfGenerating}
-                    className="px-4 py-2 rounded-lg bg-purple-600/20 text-purple-400 hover:bg-purple-600/30 transition-colors flex items-center space-x-2"
+                    className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg flex items-center gap-2 transition-colors"
                   >
                     {isPdfGenerating ? (
                       <>
-                        <svg className="animate-spin h-4 w-4 mr-2" viewBox="0 0 24 24">
+                        <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
                           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
                           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                         </svg>
@@ -716,126 +694,74 @@ export default function ICPCreationContent() {
                       </>
                     ) : (
                       <>
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.707.707V19a2 2 0 01-2 2z" />
                         </svg>
                         <span>Export PDF</span>
                       </>
                     )}
                   </button>
                 </div>
-                
-                {/* Summary Section */}
-                <div className="bg-[#2D2D2F]/70 p-6 rounded-lg border border-gray-700/50 mb-6">
-                  <div className="grid grid-cols-2 gap-6">
-                    <div className="space-y-3">
-                      <p className="text-white">
-                        <span className="font-medium text-purple-400">Company:</span>
-                        <span className="ml-2">{analysisResult.summary?.company}</span>
-                      </p>
-                      <p className="text-white">
-                        <span className="font-medium text-purple-400">Industry:</span>
-                        <span className="ml-2">{analysisResult.summary?.industry}</span>
-                      </p>
-                      <p className="text-white">
-                        <span className="font-medium text-purple-400">Business Model:</span>
-                        <span className="ml-2">{userInputs.business_model.toUpperCase()}</span>
-                      </p>
-                    </div>
-                    <div className="space-y-3">
-                      <p className="text-white">
-                        <span className="font-medium text-purple-400">Target Market:</span>
-                        <span className="ml-2">{userInputs.target_market.replace('_', ' ').toUpperCase()}</span>
-                      </p>
-                      <p className="text-white">
-                        <span className="font-medium text-purple-400">Company Size:</span>
-                        <span className="ml-2">{userInputs.company_size.replace('_', ' ').toUpperCase()}</span>
-                      </p>
-                      <p className="text-white">
-                        <span className="font-medium text-purple-400">Revenue Range:</span>
-                        <span className="ml-2">
-                          {userInputs.annual_revenue.replace('_', ' ').toUpperCase()}
-                        </span>
-                      </p>
-                    </div>
-                  </div>
-                </div>
 
-                {/* Detailed Report Section */}
-                <div className="bg-[#2D2D2F]/70 p-6 rounded-lg border border-gray-700/50">
-                  <div className="prose prose-invert max-w-none">
-                    <div 
-                      className="
-                        text-white
-                        leading-relaxed 
-                        [&>h1]:text-3xl [&>h1]:font-bold [&>h1]:text-purple-400 [&>h1]:mb-6
-                        [&>h2]:text-2xl [&>h2]:font-semibold [&>h2]:text-purple-400 [&>h2]:mt-8 [&>h2]:mb-4
-                        [&>h3]:text-xl [&>h3]:font-semibold [&>h3]:text-purple-400 [&>h3]:mt-6 [&>h3]:mb-3
-                        [&>p]:text-white [&>p]:mb-4 [&>p]:text-base [&>p]:leading-relaxed
-                        [&>ul]:mb-6 [&>ul]:list-disc [&>ul]:pl-6 
-                        [&>ul>li]:text-white [&>ul>li]:mb-2
-                        [&>ol]:mb-6 [&>ol]:list-decimal [&>ol]:pl-6
-                        [&>ol>li]:text-white [&>ol>li]:mb-2
-                        [&>strong]:text-purple-300 [&>strong]:font-semibold
-                        [&>em]:text-purple-200 [&>em]:italic
-                        [&>blockquote]:border-l-4 [&>blockquote]:border-purple-400 [&>blockquote]:pl-4 [&>blockquote]:italic [&>blockquote]:text-white
-                      "
-                      dangerouslySetInnerHTML={{ __html: parsedReport }} 
-                    />
+                <div id="report-content" className="bg-black text-white rounded-lg">
+                  <div className="p-6 space-y-6">
+                    <div className="border-b border-purple-800/50 pb-6">
+                      <h1 className="text-3xl font-bold text-purple-400 mb-4">
+                        Ideal Customer Profile Analysis
+                      </h1>
+                      <div className="grid grid-cols-2 gap-4 text-white">
+                        <div>
+                          <p><span className="font-semibold text-purple-400">Company:</span> {analysisResult.summary.company}</p>
+                          <p><span className="font-semibold text-purple-400">Industry:</span> {analysisResult.summary.industry}</p>
+                          <p><span className="font-semibold text-purple-400">Business Model:</span> {userInputs.business_model.toUpperCase()}</p>
+                        </div>
+                        <div>
+                          <p><span className="font-semibold text-purple-400">Target Market:</span> {userInputs.target_market.replace('_', ' ').toUpperCase()}</p>
+                          <p><span className="font-semibold text-purple-400">Company Size:</span> {userInputs.company_size.replace('_', ' ').toUpperCase()}</p>
+                          <p><span className="font-semibold text-purple-400">Generated:</span> {new Date().toLocaleString()}</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="prose max-w-none">
+                      <div 
+                        className="
+                          text-white
+                          leading-relaxed 
+                          [&>h1]:text-3xl [&>h1]:font-bold [&>h1]:text-purple-400 [&>h1]:mb-6
+                          [&>h2]:text-2xl [&>h2]:font-semibold [&>h2]:text-purple-400 [&>h2]:mt-8 [&>h2]:mb-4
+                          [&>h3]:text-xl [&>h3]:font-semibold [&>h3]:text-purple-400 [&>h3]:mt-6 [&>h3]:mb-3
+                          [&>p]:text-white [&>p]:mb-4 [&>p]:text-base [&>p]:leading-relaxed
+                          [&>ul]:mb-6 [&>ul]:list-disc [&>ul]:pl-6 
+                          [&>ul>li]:text-white [&>ul>li]:mb-2
+                          [&>ol]:mb-6 [&>ol]:list-decimal [&>ol]:pl-6
+                          [&>ol>li]:text-white [&>ol>li]:mb-2
+                          [&>strong]:text-purple-400 [&>strong]:font-semibold
+                          [&>em]:text-purple-300 [&>em]:italic
+                          [&>blockquote]:border-l-4 [&>blockquote]:border-purple-400 [&>blockquote]:pl-4 [&>blockquote]:italic [&>blockquote]:text-white
+                        "
+                        dangerouslySetInnerHTML={{ __html: parsedReport }} 
+                      />
+                    </div>
+
+                    <div className="border-t border-purple-800/50 pt-6 mt-8">
+                      <p className="text-sm text-white text-center">
+                        Generated by ICP Creation Tool • {new Date().toLocaleDateString()}
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {showReportModal && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-[#1D1D1F] rounded-xl w-full max-w-4xl max-h-[90vh] relative">
-            <div className="p-6 border-b border-gray-800 flex justify-between items-center sticky top-0 bg-[#1D1D1F] z-10">
-              <div>
-                <h3 className="text-xl font-semibold text-white">
-                  {selectedReport.company_name} - {selectedReport.report_type}
-                </h3>
-                <p className="text-sm text-gray-400">
-                  Generated: {new Date(selectedReport.timestamp).toLocaleString()}
+            ) : (
+              <div className="h-60 flex items-center justify-center">
+                <p className="text-white text-lg">
+                  Analysis results will appear here
                 </p>
               </div>
-              <button
-                onClick={() => setShowReportModal(false)}
-                className="text-gray-400 hover:text-white transition-colors"
-              >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-            <div className="p-6 overflow-y-auto max-h-[calc(90vh-100px)]">
-              <div 
-                className="prose prose-invert max-w-none
-                  [&>h1]:text-3xl [&>h1]:font-bold [&>h1]:text-purple-400 [&>h1]:mb-6
-                  [&>h2]:text-2xl [&>h2]:font-semibold [&>h2]:text-purple-400 [&>h2]:mt-8 [&>h2]:mb-4
-                  [&>h3]:text-xl [&>h3]:font-semibold [&>h3]:text-purple-400 [&>h3]:mt-6 [&>h3]:mb-3
-                  [&>p]:text-white [&>p]:mb-4 [&>p]:text-base [&>p]:leading-relaxed
-                  [&>ul]:mb-6 [&>ul]:list-disc [&>ul]:pl-6 
-                  [&>ul>li]:text-white [&>ul>li]:mb-2
-                  [&>ol]:mb-6 [&>ol]:list-decimal [&>ol]:pl-6
-                  [&>ol>li]:text-white [&>ol>li]:mb-2
-                  [&>strong]:text-purple-300 [&>strong]:font-semibold
-                  [&>em]:text-purple-200 [&>em]:italic
-                  [&>blockquote]:border-l-4 [&>blockquote]:border-purple-400 [&>blockquote]:pl-4 [&>blockquote]:italic [&>blockquote]:text-white
-                  [&>code]:bg-gray-800 [&>code]:text-purple-300 [&>code]:px-2 [&>code]:py-1 [&>code]:rounded
-                  [&>pre]:bg-gray-800 [&>pre]:p-4 [&>pre]:rounded-lg [&>pre]:overflow-x-auto
-                  [&>table]:w-full [&>table]:border-collapse
-                  [&>table>thead>tr>th]:text-purple-400 [&>table>thead>tr>th]:border-b [&>table>thead>tr>th]:border-gray-700 [&>table>thead>tr>th]:p-2
-                  [&>table>tbody>tr>td]:border-b [&>table>tbody>tr>td]:border-gray-700 [&>table>tbody>tr>td]:p-2"
-                dangerouslySetInnerHTML={{ __html: reportContent }}
-              />
-            </div>
+            )}
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 }

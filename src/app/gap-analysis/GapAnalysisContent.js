@@ -20,6 +20,8 @@ export default function GapAnalysisContent() {
     market_region: 'global'
   });
   const [isPdfGenerating, setIsPdfGenerating] = useState(false);
+  const [generationSteps, setGenerationSteps] = useState([]);
+  const [currentStep, setCurrentStep] = useState(0);
 
   // Predefined options
   const focusAreas = [
@@ -41,6 +43,29 @@ export default function GapAnalysisContent() {
     { value: 'north_america', label: 'North America' },
     { value: 'europe', label: 'Europe' },
     { value: 'asia_pacific', label: 'Asia Pacific' }
+  ];
+
+  const AI_GENERATION_STEPS = [
+    {
+      message: "AI Agent analyzing current market position...",
+      duration: 2000
+    },
+    {
+      message: "AI Agent identifying market gaps...",
+      duration: 2000
+    },
+    {
+      message: "AI Agent evaluating opportunities...",
+      duration: 2000
+    },
+    {
+      message: "AI Agent analyzing competitive landscape...",
+      duration: 2000
+    },
+    {
+      message: "AI Agent compiling gap analysis report...",
+      duration: 2000
+    }
   ];
 
   useEffect(() => {
@@ -81,10 +106,21 @@ export default function GapAnalysisContent() {
     }
 
     try {
+      setAnalysisResult(null);
+      setParsedReport('');
+      localStorage.removeItem('currentGapAnalysis');
+      
       setIsAnalyzing(true);
       setError(null);
-      
-      localStorage.removeItem('currentGapAnalysis');
+      setGenerationSteps([]);
+      setCurrentStep(0);
+
+      // Show AI agent messages
+      for (let i = 0; i < AI_GENERATION_STEPS.length; i++) {
+        setCurrentStep(i);
+        setGenerationSteps(prev => [...prev, AI_GENERATION_STEPS[i]]);
+        await new Promise(resolve => setTimeout(resolve, AI_GENERATION_STEPS[i].duration));
+      }
 
       const response = await fetch('https://varun324242-sj.hf.space/api/generate-report', {
         method: 'POST',
@@ -131,6 +167,8 @@ export default function GapAnalysisContent() {
       setError(err.message);
     } finally {
       setIsAnalyzing(false);
+      setGenerationSteps([]);
+      setCurrentStep(0);
     }
   };
 
@@ -515,7 +553,7 @@ export default function GapAnalysisContent() {
         )}
 
         {savedReports.length > 0 && (
-          <div className="mb-8 bg-[#1D1D1F]/60 backdrop-blur-xl rounded-xl p-4 border border-gray-800/50">
+          <div className="mb-8 bg-[#1D1D1F]/60 backdrop-blur-xl rounded-xl p-4 border border-purple-800/50">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold text-purple-400">Recent Reports</h3>
             </div>
@@ -542,7 +580,7 @@ export default function GapAnalysisContent() {
         )}
 
         <div className="space-y-8">
-          <div className="bg-[#1D1D1F]/80 backdrop-blur-xl rounded-xl shadow-xl p-8 border border-gray-800/50">
+          <div className="bg-[#1D1D1F]/80 backdrop-blur-xl rounded-xl shadow-xl p-8 border border-purple-800/50">
             <div className="grid grid-cols-2 gap-8">
               <div className="space-y-2">
                 <label className="text-sm font-medium text-purple-400">Company Name</label>
@@ -550,7 +588,7 @@ export default function GapAnalysisContent() {
                   name="company_name"
                   value={userInputs.company_name}
                   onChange={handleInputChange}
-                  className="w-full p-2.5 bg-[#2D2D2F]/50 text-white rounded-lg border border-gray-700/50 focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/10"
+                  className="w-full p-2.5 bg-[#2D2D2F]/50 text-white rounded-lg border border-purple-700/50 focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/10"
                   placeholder="Enter company name"
                 />
               </div>
@@ -561,22 +599,53 @@ export default function GapAnalysisContent() {
                   name="industry"
                   value={userInputs.industry}
                   onChange={handleInputChange}
-                  className="w-full p-2.5 bg-[#2D2D2F]/50 text-white rounded-lg border border-gray-700/50 focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/10"
+                  className="w-full p-2.5 bg-[#2D2D2F]/50 text-white rounded-lg border border-purple-700/50 focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/10"
                   placeholder="Enter industry"
                 />
               </div>
 
-              <div className="space-y-2">
+              <div className="col-span-2 space-y-2">
                 <label className="text-sm font-medium text-purple-400">Focus Areas</label>
-                <select
-                  name="focus_areas"
-                  multiple
-                  value={userInputs.focus_areas}
-                  onChange={handleInputChange}
-                  className="w-full p-2.5 bg-[#2D2D2F]/50 text-white rounded-lg border border-gray-700/50 focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/10"
-                >
+                <div className="grid grid-cols-3 gap-2 bg-[#2D2D2F]/50 p-3 rounded-lg border border-purple-700/50">
                   {focusAreas.map(area => (
-                    <option key={area} value={area}>{area}</option>
+                    <label 
+                      key={area} 
+                      className="flex items-center gap-2 p-2 rounded-lg hover:bg-purple-600/10 cursor-pointer group"
+                    >
+                      <input
+                        type="checkbox"
+                        name="focus_areas"
+                        value={area}
+                        checked={userInputs.focus_areas.includes(area)}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          setUserInputs(prev => ({
+                            ...prev,
+                            focus_areas: e.target.checked 
+                              ? [...prev.focus_areas, value]
+                              : prev.focus_areas.filter(item => item !== value)
+                          }));
+                        }}
+                        className="w-4 h-4 rounded border-gray-600 text-purple-600 focus:ring-purple-500/20"
+                      />
+                      <span className="text-sm text-white group-hover:text-white">
+                        {area}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-purple-400">Analysis Depth</label>
+                <select
+                  name="analysis_depth"
+                  value={userInputs.analysis_depth}
+                  onChange={handleInputChange}
+                  className="w-full p-2.5 bg-[#2D2D2F]/50 text-white rounded-lg border border-purple-700/50 focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/10"
+                >
+                  {analysisDepthOptions.map(option => (
+                    <option key={option.value} value={option.value}>{option.label}</option>
                   ))}
                 </select>
               </div>
@@ -587,24 +656,10 @@ export default function GapAnalysisContent() {
                   name="market_region"
                   value={userInputs.market_region}
                   onChange={handleInputChange}
-                  className="w-full p-2.5 bg-[#2D2D2F]/50 text-white rounded-lg border border-gray-700/50 focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/10"
+                  className="w-full p-2.5 bg-[#2D2D2F]/50 text-white rounded-lg border border-purple-700/50 focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/10"
                 >
                   {marketRegions.map(region => (
                     <option key={region.value} value={region.value}>{region.label}</option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-purple-400">Analysis Depth</label>
-                <select
-                  name="analysis_depth"
-                  value={userInputs.analysis_depth}
-                  onChange={handleInputChange}
-                  className="w-full p-2.5 bg-[#2D2D2F]/50 text-white rounded-lg border border-gray-700/50 focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/10"
-                >
-                  {analysisDepthOptions.map(option => (
-                    <option key={option.value} value={option.value}>{option.label}</option>
                   ))}
                 </select>
               </div>
@@ -615,80 +670,134 @@ export default function GapAnalysisContent() {
                   name="timeframe"
                   value={userInputs.timeframe}
                   onChange={handleInputChange}
-                  className="w-full p-2.5 bg-[#2D2D2F]/50 text-white rounded-lg border border-gray-700/50 focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/10"
+                  className="w-full p-2.5 bg-[#2D2D2F]/50 text-white rounded-lg border border-purple-700/50 focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/10"
                   placeholder="Enter timeframe (e.g., 2024)"
                 />
               </div>
-            </div>
 
-            <div className="mt-8">
-              <button
-                onClick={startAnalysis}
-                disabled={isAnalyzing}
-                className="w-full bg-purple-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-purple-700 disabled:bg-purple-500/50 transition-colors"
-              >
-                {isAnalyzing ? 'Generating Analysis...' : 'Generate Gap Analysis'}
-              </button>
+              <div className="col-span-2">
+                <button
+                  onClick={startAnalysis}
+                  disabled={isAnalyzing}
+                  className="w-full px-6 py-2.5 rounded-lg font-medium bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white shadow-lg transition-all duration-300 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isAnalyzing ? 'Analyzing Gaps...' : 'Generate Gap Analysis'}
+                </button>
+              </div>
             </div>
           </div>
 
-          {error && (
-            <div className="bg-red-500/10 text-red-400 p-4 rounded-lg">
-              {error}
-            </div>
-          )}
+          {/* Analysis Results Section */}
+          <div className="bg-[#1D1D1F]/80 backdrop-blur-xl rounded-xl shadow-xl border border-purple-800/50">
+            {isAnalyzing ? (
+              <div className="h-60 flex items-center justify-center">
+                <div className="flex items-center gap-3">
+                  <div className="animate-spin h-6 w-6 border-2 border-purple-500 border-t-transparent rounded-full"></div>
+                  <p className="text-white text-lg">
+                    {AI_GENERATION_STEPS[currentStep]?.message || "Processing..."}
+                  </p>
+                </div>
+              </div>
+            ) : analysisResult ? (
+              <div className="p-8">
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
+                    Gap Analysis Results
+                  </h2>
+                  <button
+                    onClick={exportToPdf}
+                    disabled={isPdfGenerating}
+                    className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg flex items-center gap-2 transition-colors"
+                  >
+                    {isPdfGenerating ? (
+                      <>
+                        <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                        </svg>
+                        <span>Generating PDF...</span>
+                      </>
+                    ) : (
+                      <>
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.707.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        <span>Export PDF</span>
+                      </>
+                    )}
+                  </button>
+                </div>
 
-          {analysisResult && (
-            <div className="bg-[#1D1D1F]/80 backdrop-blur-xl rounded-xl shadow-xl p-8 border border-gray-800/50">
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
-                  Analysis Results
-                </h2>
-                <button
-                  onClick={exportToPdf}
-                  disabled={isPdfGenerating}
-                  className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg flex items-center gap-2 transition-colors disabled:opacity-50"
-                >
-                  {isPdfGenerating ? (
-                    <>
-                      <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                      </svg>
-                      <span>Generating PDF...</span>
-                    </>
-                  ) : (
-                    <>
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.707.707V19a2 2 0 01-2 2z" />
-                      </svg>
-                      <span>Export PDF</span>
-                    </>
-                  )}
-                </button>
+                <div id="report-content" className="bg-black text-white rounded-lg">
+                  <div className="p-6 space-y-6">
+                    <div className="border-b border-purple-800 pb-6">
+                      <h1 className="text-3xl font-bold text-purple-400 mb-4">
+                        Gap Analysis Report
+                      </h1>
+                      <div className="grid grid-cols-2 gap-4 text-white">
+                        <div>
+                          <p><span className="font-semibold">Company:</span> {analysisResult.summary.company}</p>
+                          <p><span className="font-semibold">Industry:</span> {analysisResult.summary.industry}</p>
+                          <p><span className="font-semibold">Analysis Depth:</span> {userInputs.analysis_depth.replace('_', ' ').toUpperCase()}</p>
+                        </div>
+                        <div>
+                          <p><span className="font-semibold">Market Region:</span> {userInputs.market_region.replace('_', ' ').toUpperCase()}</p>
+                          <p><span className="font-semibold">Timeframe:</span> {userInputs.timeframe}</p>
+                          <p><span className="font-semibold">Generated:</span> {new Date().toLocaleString()}</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="pb-6">
+                      <h2 className="text-xl font-semibold text-purple-400 mb-3">Focus Areas</h2>
+                      <div className="flex flex-wrap gap-2">
+                        {userInputs.focus_areas.map((area, index) => (
+                          <span 
+                            key={index}
+                            className="px-3 py-1 bg-purple-900/50 text-purple-300 rounded-full text-sm"
+                          >
+                            {area}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="prose max-w-none">
+                      <div 
+                        className="
+                          text-white
+                          leading-relaxed 
+                          [&>h1]:text-3xl [&>h1]:font-bold [&>h1]:text-purple-400 [&>h1]:mb-6
+                          [&>h2]:text-2xl [&>h2]:font-semibold [&>h2]:text-purple-400 [&>h2]:mt-8 [&>h2]:mb-4
+                          [&>h3]:text-xl [&>h3]:font-semibold [&>h3]:text-purple-400 [&>h3]:mt-6 [&>h3]:mb-3
+                          [&>p]:text-white [&>p]:mb-4 [&>p]:text-base [&>p]:leading-relaxed
+                          [&>ul]:mb-6 [&>ul]:list-disc [&>ul]:pl-6 
+                          [&>ul>li]:text-white [&>ul>li]:mb-2
+                          [&>ol]:mb-6 [&>ol]:list-decimal [&>ol]:pl-6
+                          [&>ol>li]:text-white [&>ol>li]:mb-2
+                          [&>strong]:text-purple-400 [&>strong]:font-semibold
+                          [&>em]:text-purple-300 [&>em]:italic
+                          [&>blockquote]:border-l-4 [&>blockquote]:border-purple-400 [&>blockquote]:pl-4 [&>blockquote]:italic [&>blockquote]:text-white"
+                        dangerouslySetInnerHTML={{ __html: parsedReport }} 
+                      />
+                    </div>
+
+                    <div className="border-t border-purple-800 pt-6 mt-8">
+                      <p className="text-sm text-purple-400 text-center">
+                        Generated by Gap Analysis Tool • {new Date().toLocaleDateString()}
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div className="prose prose-invert max-w-none">
-                <div
-                  className="
-                    text-white
-                    leading-relaxed 
-                    [&>h1]:text-3xl [&>h1]:font-bold [&>h1]:text-purple-400 [&>h1]:mb-6
-                    [&>h2]:text-2xl [&>h2]:font-semibold [&>h2]:text-purple-400 [&>h2]:mt-8 [&>h2]:mb-4
-                    [&>h3]:text-xl [&>h3]:font-semibold [&>h3]:text-purple-400 [&>h3]:mt-6 [&>h3]:mb-3
-                    [&>p]:text-white [&>p]:mb-4 [&>p]:text-base [&>p]:leading-relaxed
-                    [&>ul]:mb-6 [&>ul]:list-disc [&>ul]:pl-6 
-                    [&>ul>li]:text-white [&>ul>li]:mb-2
-                    [&>ol]:mb-6 [&>ol]:list-decimal [&>ol]:pl-6
-                    [&>ol>li]:text-white [&>ol>li]:mb-2
-                    [&>strong]:text-purple-300 [&>strong]:font-semibold
-                    [&>em]:text-purple-200 [&>em]:italic
-                    [&>blockquote]:border-l-4 [&>blockquote]:border-purple-400 [&>blockquote]:pl-4 [&>blockquote]:italic [&>blockquote]:text-white
-                  "
-                  dangerouslySetInnerHTML={{ __html: parsedReport }}
-                />
+            ) : (
+              <div className="h-60 flex items-center justify-center">
+                <p className="text-white text-lg">
+                  Analysis results will appear here
+                </p>
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
     </div>
