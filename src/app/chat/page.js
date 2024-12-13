@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import AgentChatInterface from '@/components/AgentChatInterface';
 
-export default function ChatPage() {
+// Create a wrapper component that uses useSearchParams
+function ChatPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [showTransition, setShowTransition] = useState(true);
@@ -55,7 +56,6 @@ export default function ChatPage() {
   if (!showTransition) {
     return (
       <>
-        {/* Notification */}
         {showNotification && (
           <div className="fixed top-4 right-4 z-50 animate-slide-left">
             <div className="bg-[#1D1D1F]/95 backdrop-blur-xl rounded-xl p-6 border border-purple-800/50 shadow-2xl max-w-md">
@@ -130,5 +130,18 @@ export default function ChatPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+// Wrap the content in Suspense in the main component
+export default function ChatPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="w-10 h-10 border-4 border-purple-500 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    }>
+      <ChatPageContent />
+    </Suspense>
   );
 }
