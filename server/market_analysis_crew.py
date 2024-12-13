@@ -2,7 +2,7 @@ from crewai import Agent, Task, Crew, Process
 from langchain_openai import ChatOpenAI
 from langchain.tools import Tool
 from langchain_community.tools import WriteFileTool
-from langchain_community.utilities.serpapi import SerpAPIWrapper
+from crewai_tools import SerperDevTool, ScrapeWebsiteTool
 import os
 import time
 from pathlib import Path
@@ -12,39 +12,21 @@ openai_model = ChatOpenAI(
     model_name="gpt-4o-mini",
     temperature=0.7
 )
-search = SerpAPIWrapper()
 
 class ReportGenerator:
     def __init__(self):
-        self.search_tool = Tool(
-            name="Search the internet",
-            description="Search the web for comprehensive analysis",
-            func=self.enhanced_search
+        self.search_tool = SerperDevTool(
+            search_url="https://google.serper.dev/search",
+            n_results=10,
         )
+        
+        self.scrape_tool = ScrapeWebsiteTool()
         
         self.write_file_tool = Tool(
             name="Write File",
             description="Write content to a file. Input should be a dictionary with 'file_path' and 'text' keys.",
             func=self.write_file_tool_wrapper
         )
-
-    def enhanced_search(self, query):
-        try:
-            formatted_query = f"{query} analysis OR {query} insights 2024"
-            search_results = search.run(query=formatted_query, kwargs={
-                "num": 10,
-                "time": "y",
-            })
-            return {
-                "query": formatted_query,
-                "results": search_results,
-                "timestamp": time.strftime('%Y-%m-%d %H:%M:%S')
-            }
-        except Exception as e:
-            return {
-                "error": f"Search failed: {str(e)}",
-                "timestamp": time.strftime('%Y-%m-%d %H:%M:%S')
-            }
 
     def write_file_tool_wrapper(self, file_input):
         try:
@@ -63,41 +45,106 @@ class ReportGenerator:
             goal=f'Analyze {inputs["company_name"]} market position and trends',
             backstory="""Expert in market research and analysis. Skilled at identifying trends 
             and opportunities in various markets.""",
-            tools=[self.search_tool],
-            verbose=True
+            tools=[self.search_tool, self.scrape_tool],
+            verbose=True,
+            system_prompt=f"""You are an expert market research analyst analyzing {inputs['company_name']} in the {inputs['industry']} industry.
+            
+Use the search tool to find at least 5 relevant websites and use the scrape tool to gather comprehensive market data and insights from each of those sites. Compile all the scraped data and pass it to the report writer."""
         )
 
         writer = Agent(
             role='Business Report Writer',
             goal='Create comprehensive market analysis reports',
-            backstory="""Professional business writer specializing in creating clear, 
-            actionable market analysis reports.""",
+            backstory="""Professional business writer with expertise in creating clear, actionable market analysis 
+            reports. Skilled at synthesizing complex data into compelling narratives that drive decision-making.""",
             tools=[self.write_file_tool],
-            verbose=True
+            verbose=True,
+            allow_delegation=False,
+            system_prompt=f"""You are a professional business report writer creating a market analysis report for {inputs['company_name']}.
+
+Create a detailed market analysis report following this structure:
+
+1. Executive Summary
+   - Key findings and recommendations
+   - Market overview and size
+   - Critical trends and opportunities
+
+2. Market Overview
+   - Current market size and growth trends
+   - Market segmentation analysis
+   - Industry structure and dynamics
+
+3. Competitive Analysis
+   - Key competitors and market shares
+   - Competitive advantages and disadvantages
+   - Strategic positioning analysis
+
+4. Market Drivers and Inhibitors
+   - Growth drivers and market opportunities
+   - Challenges and potential threats
+   - Regulatory and economic factors
+
+5. Strategic Recommendations
+   - Market entry or expansion strategies
+   - Competitive positioning recommendations
+   - Risk mitigation strategies
+
+Format the report in clear, professional markdown with appropriate headers, bullet points, and emphasis."""
         )
 
         tasks = [
             Task(
                 description=f"""Analyze market trends and position for {inputs["company_name"]}
-                Focus on: {', '.join(inputs['focus_areas'])}
+                Focus Areas: {', '.join(inputs.get('focus_areas', ['Market Size', 'Competition', 'Growth Trends']))}
                 Industry: {inputs['industry']}
-                Time Period: {inputs['time_period']}""",
+                Time Period: {inputs['time_period']}
+                
+                Required Analysis Components:
+                1. Market size and growth analysis with specific metrics
+                2. Detailed competitive landscape assessment
+                3. Industry trend analysis with supporting data
+                4. Market driver and inhibitor identification
+                5. Opportunity and threat analysis
+                
+                Ensure all findings are:
+                - Data-driven with credible sources
+                - Current and relevant
+                - Actionable for business decisions
+                
+                You must scrape at least 5 different websites and compile their data before passing to the report writer.""",
                 expected_output="""A comprehensive market analysis containing:
-                - Market size and growth trends
-                - Industry analysis
-                - Key market drivers
-                - Competitive landscape
-                - Market opportunities and challenges""",
+                1. Detailed market size and growth metrics
+                2. Competitive landscape analysis
+                3. Industry trend assessment
+                4. Market driver analysis
+                5. Strategic recommendations
+                
+                Format: Structured markdown with clear sections and supporting data from at least 5 scraped websites""",
                 agent=analyst
             ),
             Task(
-                description="Create a detailed market analysis report with findings",
+                description="""Create a detailed market analysis report that synthesizes all findings into a clear, 
+                actionable document. Include:
+                1. Executive summary with key insights
+                2. Detailed market analysis with supporting data
+                3. Competitive landscape assessment
+                4. Strategic recommendations
+                5. Risk analysis and mitigation strategies
+                
+                Format Requirements:
+                - Professional markdown formatting
+                - Clear section headers and subheaders
+                - Bullet points for key findings
+                - Tables or lists for data presentation
+                - Emphasis on actionable insights""",
                 expected_output="""A well-structured markdown report containing:
                 - Executive summary
                 - Market overview
                 - Detailed analysis
                 - Key findings
-                - Strategic recommendations""",
+                - Strategic recommendations
+                
+                Format: Professional markdown with clear hierarchy and organization""",
                 agent=writer
             )
         ]
@@ -105,15 +152,25 @@ class ReportGenerator:
         return Crew(
             agents=[analyst, writer],
             tasks=tasks,
-            verbose=True
+            verbose=True,
+            process=Process.sequential
         )
 
     def create_competitor_tracking_crew(self, inputs):
+        # Ensure required fields are present with defaults
+        inputs.update({
+            'timeframe': inputs.get('time_period', '2024'),  # Use time_period if available, else default to '2024'
+            'analysis_depth': inputs.get('analysis_depth', 'detailed'),
+            'market_region': inputs.get('market_region', 'global'),
+            'analysis_scope': inputs.get('analysis_scope', 4),  # Default to "All of the above"
+            'metrics': inputs.get('metrics', ['Market Share', 'Product Features', 'Pricing Strategy']),
+            'competitors': inputs.get('competitors', [])
+        })
         analyst = Agent(
             role='Competitive Intelligence Analyst',
             goal=f'Track and analyze competitors of {inputs["company_name"]}',
             backstory="Expert in competitive analysis and market intelligence.",
-            tools=[self.search_tool],
+            tools=[self.search_tool, self.scrape_tool],
             verbose=True
         )
 
@@ -184,7 +241,7 @@ class ReportGenerator:
             goal=f'Create detailed Ideal Customer Profile for {inputs["company_name"]}',
             backstory="""Expert in customer profiling, market segmentation, and buyer persona development. 
             Skilled at identifying and analyzing ideal customer characteristics and behaviors.""",
-            tools=[self.search_tool],
+            tools=[self.search_tool, self.scrape_tool],
             verbose=True
         )
 
@@ -257,7 +314,7 @@ class ReportGenerator:
             goal=f'Analyze gaps and opportunities for {inputs["company_name"]}',
             backstory="""Expert in identifying and analyzing organizational gaps, market gaps, 
             and strategic opportunities. Skilled at providing actionable recommendations.""",
-            tools=[self.search_tool],
+            tools=[self.search_tool, self.scrape_tool],
             verbose=True
         )
 
@@ -329,7 +386,7 @@ class ReportGenerator:
             goal=f'Analyze market position and opportunities for {inputs["company_name"]}',
             backstory="""Expert in market assessment and analysis. Skilled at evaluating 
             market conditions, competitive landscapes, and growth opportunities.""",
-            tools=[self.search_tool],
+            tools=[self.search_tool, self.scrape_tool],
             verbose=True
         )
 
@@ -402,7 +459,7 @@ class ReportGenerator:
             goal=f'Analyze business impact for {inputs["company_name"]}',
             backstory="""Expert in impact analysis and assessment. Skilled at evaluating 
             social, economic, and environmental impacts of business operations.""",
-            tools=[self.search_tool],
+            tools=[self.search_tool, self.scrape_tool],
             verbose=True
         )
 

@@ -3,10 +3,8 @@ flask-cors
 python-dotenv
 crewai
 langchain
-google-generativeai
-serpapi
-requests
-beautifulsoup4
-markdown
-python-dotenv
-google-search-results
+langchain-openai
+openai
+crewai-tools>=0.0.4
+pydantic>=2.0.0,<3.0.0
+crewai[tools]

@@ -1,0 +1,20 @@
+{
+    "company_info": {
+        "name": "100xEngineers",
+        "industry": "Education Technology",
+        "website": "https://www.100xengineers.com/",
+        "social_media": [
+            "linkedin.com/company/100xengineers",
+            "@100xengineers",
+            "youtube.com/@100xengineers"
+        ]
+    },
+    "analysis_config": {
+        "report_type": "market_analysis",
+        "time_period": "2024",
+        "focus_areas": [
+            1,
+            2
+        ]
+    }
+}

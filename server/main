@@ -1,0 +1,148 @@
+import os
+import warnings
+import logging
+from market_analysis_crew import ReportGenerator
+from config.config_manager import ConfigManager
+
+# Disable warnings and telemetry
+warnings.filterwarnings('ignore')
+os.environ["ANONYMIZED_TELEMETRY"] = "False"
+os.environ["OPENTELEMETRY_ENABLED"] = "False"
+os.environ["DISABLE_TELEMETRY"] = "True"
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler('logs/market_analysis.log'),
+        logging.StreamHandler()
+    ]
+)
+logger = logging.getLogger(__name__)
+
+def get_report_generator():
+    """Initialize and return a ReportGenerator instance"""
+    return ReportGenerator()
+
+def display_agent_info():
+    """Display information about available AI agents"""
+    print("\n=== Available AI Agents ===\n")
+    
+    agents = {
+        "Knowledge Base Agents": [
+            "Company Knowledge Base Agent - Gathers comprehensive company information",
+            "Competitor Knowledge Base Agent - Analyzes competitor data and market positioning"
+        ],
+        "Analysis Agents": [
+            "Market Analysis Agent - Analyzes market trends and opportunities",
+            "Competitor Tracking Agent - Tracks and analyzes competitor activities",
+            "ICP Analysis Agent - Creates detailed ideal customer profiles",
+            "Gap Analysis Agent - Identifies market and capability gaps",
+            "Market Assessment Agent - Evaluates market potential and positioning",
+            "Impact Assessment Agent - Assesses business impact and opportunities"
+        ],
+        "Report Generation Agent": [
+            "Report Writer Agent - Creates professional, actionable reports"
+        ]
+    }
+
+    for category, agent_list in agents.items():
+        print(f"\n{category}:")
+        for agent in agent_list:
+            print(f"• {agent}")
+    print("\n" + "="*50 + "\n")
+
+def get_user_inputs(config_manager):
+    """Get user inputs with defaults from config"""
+    defaults = config_manager.get_input_values()
+    
+    print("\n=== Report Generation Configuration ===\n")
+    
+    # Show report types menu
+    print("Available Report Types:")
+    report_types = {
+        1: "market_analysis",
+        2: "competitor_tracking",
+        3: "icp_report",
+        4: "gap_analysis",
+        5: "market_assessment",
+        6: "impact_assessment"
+    }
+    report_type_names = {
+        1: "Market Analysis",
+        2: "Competitor Tracking",
+        3: "ICP Report",
+        4: "Gap Analysis",
+        5: "Market Assessment",
+        6: "Impact Assessment"
+    }
+    for num, name in report_type_names.items():
+        print(f"{num}. {name}")
+    
+    # Get report type with default
+    default_report_num = 1  # Market Analysis
+    report_num = input(f"\nSelect report type (1-6) [{default_report_num}]: ") or default_report_num
+    report_type = report_types[int(report_num)]
+    
+    # Get other inputs with defaults
+    inputs = {
+        "company_name": input(f"Enter company name [{defaults['company_name']}]: ") or defaults['company_name'],
+        "industry": input(f"Enter industry sector [{defaults['industry']}]: ") or defaults['industry'],
+        "time_period": input(f"Enter time period [{defaults['time_period']}]: ") or defaults['time_period'],
+        "website": input(f"Enter company website URL [{defaults['website']}]: ") or defaults['website'],
+        "social_media": input(f"Enter social media handles [{defaults['social_media']}]: ") or defaults['social_media'],
+        "focus_areas": input(f"Enter focus area numbers [{','.join(map(str, defaults['focus_areas']))}]: ") or ','.join(map(str, defaults['focus_areas'])),
+        "report_type": report_type
+    }
+    
+    # Update config with new values
+    config_manager.update_config(inputs)
+    
+    return inputs
+
+def display_progress(message):
+    """Display progress message with formatting"""
+    print(f"\n>>> {message}")
+
+def main():
+    config_manager = ConfigManager()
+    
+    try:
+        # Get inputs with defaults
+        user_inputs = get_user_inputs(config_manager)
+        
+        # Show configuration summary
+        print("\n==================================================")
+        print("ANALYSIS CONFIGURATION")
+        print("==================================================")
+        for key, value in user_inputs.items():
+            print(f"{key.replace('_', ' ').title()}: {value}")
+        
+        # Confirm and proceed
+        if input("\nProceed with analysis? (y/n): ").lower() != 'y':
+            print("Analysis cancelled by user.")
+            return
+            
+        # Initialize report generator
+        display_progress("Starting analysis...")
+        generator = get_report_generator()
+        
+        # Generate report
+        display_progress(f"Starting report generation for {user_inputs['report_type']}...")
+        result = generator.generate_report(user_inputs['report_type'], user_inputs)
+        
+        # Display completion message
+        print("\n==================================================")
+        print("ANALYSIS COMPLETE")
+        print("==================================================")
+        print(f"Report has been generated and saved.")
+        print("Thank you for using the Market Analysis Tool!")
+        
+    except Exception as e:
+        logger.error(f"An error occurred: {str(e)}")
+        print(f"An error occurred: {str(e)}")
+        print("\nPlease check the logs for more details.")
+
+if __name__ == "__main__":
+    main()

@@ -125,6 +125,9 @@ def get_user_input():
                 print("Please enter a valid number")
 
     elif report_type == "competitor_tracking":
+        # Ensure time_period is set
+        inputs["time_period"] = inputs.get("time_period", "2024")
+        
         # Competitor inputs
         print("\nEnter competitors (one per line, press Enter twice to finish):")
         competitors = []
@@ -145,7 +148,10 @@ def get_user_input():
             "Product Features",
             "Pricing Strategy",
             "Marketing Channels",
-            "Customer Satisfaction"
+            "Customer Satisfaction",
+            "Innovation Capability",
+            "Brand Strength",
+            "Financial Performance"
         ]
         for i, metric in enumerate(metrics, 1):
             print(f"{i}. {metric}")
@@ -162,11 +168,25 @@ def get_user_input():
             except ValueError:
                 print("Please enter valid numbers")
 
-        # Add additional competitor-specific inputs
-        inputs["analysis_depth"] = input("\nSelect analysis depth (basic/detailed/comprehensive) [detailed]: ").strip().lower() or "detailed"
-        inputs["market_region"] = input("Enter target market region [global]: ").strip() or "global"
+        # Analysis depth
+        print("\nSelect analysis depth:")
+        print("1. Basic (High-level overview)")
+        print("2. Detailed (In-depth analysis)")
+        print("3. Comprehensive (Complete competitive intelligence)")
         
-        print("\nAdditional analysis parameters:")
+        while True:
+            try:
+                depth_choice = int(input("Select depth (1-3) [2]: ") or "2")
+                if 1 <= depth_choice <= 3:
+                    depth_map = {1: "basic", 2: "detailed", 3: "comprehensive"}
+                    inputs["analysis_depth"] = depth_map[depth_choice]
+                    break
+                print("Please select a valid number between 1 and 3")
+            except ValueError:
+                print("Please enter a valid number")
+
+        # Analysis scope
+        print("\nSelect analysis scope:")
         print("1. Historical Data")
         print("2. Current Market Position")
         print("3. Future Projections")
@@ -174,13 +194,13 @@ def get_user_input():
         
         while True:
             try:
-                analysis_scope = int(input("Select analysis scope (1-4) [4]: ") or "4")
-                if 1 <= analysis_scope <= 4:
-                    inputs["analysis_scope"] = analysis_scope
+                scope = int(input("Select scope (1-4) [4]: ") or "4")
+                if 1 <= scope <= 4:
+                    inputs["analysis_scope"] = scope
                     break
-                print("Please select a valid number between 1 and 4.")
+                print("Please select a valid number between 1 and 4")
             except ValueError:
-                print("Please enter a valid number.")
+                print("Please enter a valid number")
 
     elif report_type == "gap_analysis":
         # Ensure all required fields are present
@@ -195,10 +215,13 @@ def get_user_input():
             print("\nSelect focus areas (enter numbers separated by commas):")
             focus_areas = [
                 "Market Size and Growth",
-                "Industry Trends",
-                "Market Segments",
-                "Geographic Distribution",
-                "Competitive Landscape"
+                "Competitive Landscape",
+                "Customer Segments",
+                "Distribution Channels",
+                "Pricing Strategies",
+                "Technology Trends",
+                "Regulatory Environment",
+                "Economic Factors"
             ]
             for i, area in enumerate(focus_areas, 1):
                 print(f"{i}. {area}")
@@ -217,9 +240,9 @@ def get_user_input():
 
             # Add analysis depth selection
             print("\nSelect analysis depth:")
-            print("1. Basic")
-            print("2. Detailed")
-            print("3. Comprehensive")
+            print("1. Basic (High-level overview)")
+            print("2. Detailed (In-depth analysis)")
+            print("3. Comprehensive (Complete market intelligence)")
             
             while True:
                 try:
@@ -238,16 +261,18 @@ def get_user_input():
                 "Global",
                 "North America",
                 "Europe",
-                "Asia Pacific"
+                "Asia Pacific",
+                "Latin America",
+                "Middle East & Africa"
             ]
             for i, region in enumerate(regions, 1):
                 print(f"{i}. {region}")
             
             while True:
                 try:
-                    region_choice = int(input("\nSelect region (1-4) [1]: ") or "1")
+                    region_choice = int(input(f"\nSelect region (1-{len(regions)}) [1]: ") or "1")
                     if 1 <= region_choice <= len(regions):
-                        inputs["market_region"] = regions[region_choice-1].lower().replace(" ", "_")
+                        inputs["market_region"] = regions[region_choice-1]
                         break
                     print(f"Please select a valid number between 1 and {len(regions)}")
                 except ValueError:

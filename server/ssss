@@ -1,0 +1,263 @@
+from crewai import Agent, Task, Crew, Process
+from langchain_openai import ChatOpenAI
+from langchain.tools import Tool
+from crewai_tools import (
+    SerperDevTool,          # For web searching
+    WebsiteSearchTool,      # For website RAG search
+    ScrapeWebsiteTool,      # For website scraping
+    DirectoryReadTool,      # For reading directories
+    FileReadTool,           # For reading files
+    FileWriterTool         # For writing files (corrected name)
+)
+import os
+import time
+from pathlib import Path
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
+
+# Initialize tools and models
+openai_model = ChatOpenAI(
+    model_name="gpt-4",
+    temperature=0.7
+)
+
+class ReportGenerator:
+    def __init__(self):
+        # Initialize CrewAI tools
+        self.search_tool = SerperDevTool()
+        self.website_search = WebsiteSearchTool()
+        self.scrape_tool = ScrapeWebsiteTool()
+        self.file_read = FileReadTool()
+        self.file_write = FileWriterTool()  # Corrected tool name
+        self.dir_read = DirectoryReadTool()
+
+    def create_company_knowledge_base_agent(self, inputs):
+        """Create an agent to build company knowledge base"""
+        agent = Agent(
+            role='Company Knowledge Base Agent',
+            goal=f'Create comprehensive knowledge base for {inputs["company_name"]}',
+            backstory="""Expert in data gathering and synthesis. Skilled at extracting meaningful 
+            information from various online sources including LinkedIn, company websites, and social media.""",
+            tools=[
+                Tool(
+                    name="Search Web",
+                    func=self.search_tool.run,
+                    description="Search the web for comprehensive information"
+                ),
+                Tool(
+                    name="Search Website",
+                    func=self.website_search.run,
+                    description="Search and analyze specific website content"
+                ),
+                Tool(
+                    name="Scrape Website",
+                    func=self.scrape_tool.run,
+                    description="Extract detailed information from websites"
+                ),
+                Tool(
+                    name="Save Information",
+                    func=lambda x: self.file_write._run(
+                        filename=f"{inputs['company_name']}_kb.md",
+                        content=x,
+                        directory="knowledge_bases"
+                    ),
+                    description="Save gathered information to files"
+                )
+            ],
+            verbose=True
+        )
+
+        task = Task(
+            description=f"""Create a comprehensive knowledge base for {inputs["company_name"]} by analyzing:
+            1. Company website and online presence
+            2. Social media profiles and activity
+            3. Industry reports and news
+            4. Market positioning and competitive stance
+            
+            Focus on extracting:
+            - Company overview and history
+            - Products and services
+            - Market positioning
+            - Target audience
+            - Key achievements
+            - Customer feedback
+            - Marketing strategies""",
+            expected_output="""A detailed markdown document containing:
+            1. Company Overview section
+            2. Products and Services section
+            3. Market Position analysis
+            4. Target Audience details
+            5. Key Achievements and Milestones
+            6. Customer Feedback summary
+            7. Marketing Strategy analysis""",
+            agent=agent
+        )
+
+        return Crew(
+            agents=[agent],
+            tasks=[task],
+            verbose=True
+        )
+
+    def create_competitor_knowledge_base_agent(self, inputs):
+        """Create an agent to build competitor knowledge bases"""
+        agent = Agent(
+            role='Competitor Knowledge Base Agent',
+            goal=f'Create knowledge bases for competitors of {inputs["company_name"]}',
+            backstory="""Expert in competitive intelligence and market research. Skilled at 
+            analyzing competitor strategies, market positioning, and business models.""",
+            tools=[self.search_tool, self.browse_tool, self.scrape_tool],
+            verbose=True
+        )
+
+        task = Task(
+            description=f"""Analyze competitors of {inputs["company_name"]} in {inputs["industry"]}:
+            1. Identify key competitors
+            2. Analyze their market presence
+            3. Evaluate products/services
+            4. Assess market positioning
+            5. Review customer feedback
+            6. Examine marketing strategies""",
+            expected_output="""A structured markdown document for each competitor containing:
+            1. Competitor Overview
+            2. Market Presence Analysis
+            3. Product/Service Evaluation
+            4. Market Position Assessment
+            5. Customer Feedback Analysis
+            6. Marketing Strategy Review""",
+            agent=agent
+        )
+
+        return Crew(
+            agents=[agent],
+            tasks=[task],
+            verbose=True
+        )
+
+    def create_market_analysis_crew(self, inputs):
+        """Create crew for market analysis reports"""
+        analyst = Agent(
+            role='Market Research Analyst',
+            goal=f'Analyze {inputs["company_name"]} market position and trends',
+            backstory="""Expert in market research and analysis. Skilled at identifying trends 
+            and opportunities in various markets.""",
+            tools=[self.search_tool, self.browse_tool],
+            verbose=True
+        )
+
+        writer = Agent(
+            role='Business Report Writer',
+            goal='Create comprehensive market analysis reports',
+            backstory="""Professional business writer specializing in creating clear, 
+            actionable market analysis reports.""",
+            tools=[self.scrape_tool],
+            verbose=True
+        )
+
+        tasks = [
+            Task(
+                description=f"""Analyze market trends and position for {inputs["company_name"]}
+                Focus on: {', '.join(inputs['focus_areas'])}
+                Industry: {inputs['industry']}
+                Time Period: {inputs['time_period']}
+                
+                Use company and competitor knowledge bases to provide insights on:
+                1. Market size and growth trends
+                2. Industry analysis
+                3. Key market drivers
+                4. Competitive landscape
+                5. Market opportunities""",
+                expected_output="""A comprehensive market analysis containing:
+                1. Market Size and Growth Analysis
+                2. Industry Trends and Patterns
+                3. Key Market Drivers Analysis
+                4. Competitive Landscape Overview
+                5. Market Opportunities Assessment""",
+                agent=analyst
+            ),
+            Task(
+                description="""Create a detailed market analysis report with findings.
+                Include:
+                1. Executive summary
+                2. Market overview
+                3. Competitive analysis
+                4. Growth opportunities
+                5. Strategic recommendations""",
+                expected_output="""A well-structured market analysis report with:
+                1. Executive Summary
+                2. Detailed Market Overview
+                3. In-depth Competitive Analysis
+                4. Growth Opportunity Assessment
+                5. Strategic Recommendations
+                6. Supporting Data and Charts""",
+                agent=writer
+            )
+        ]
+
+        return Crew(
+            agents=[analyst, writer],
+            tasks=tasks,
+            verbose=True
+        )
+
+    def generate_report(self, report_type, inputs):
+        """Generate reports with knowledge base integration"""
+        print(f"Starting report generation for {report_type}...")
+        
+        # First, create knowledge bases
+        print("Creating company knowledge base...")
+        company_kb_crew = self.create_company_knowledge_base_agent(inputs)
+        company_kb = company_kb_crew.kickoff()
+        
+        print("Creating competitor knowledge base...")
+        competitor_kb_crew = self.create_competitor_knowledge_base_agent(inputs)
+        competitor_kb = competitor_kb_crew.kickoff()
+        
+        # Add knowledge bases to inputs
+        inputs['company_knowledge_base'] = company_kb
+        inputs['competitor_knowledge_bases'] = competitor_kb
+        
+        # Generate the requested report
+        crew_creators = {
+            'market_analysis': self.create_market_analysis_crew,
+            'competitor_tracking': self.create_competitor_tracking_crew,
+            'gap_analysis': self.create_gap_analysis_crew,
+            'market_assessment': self.create_market_assessment_crew,
+            'impact_assessment': self.create_impact_assessment_crew,
+            'icp_report': self.create_icp_report_crew
+        }
+        
+        if report_type not in crew_creators:
+            raise ValueError(f"Invalid report type: {report_type}")
+            
+        crew = crew_creators[report_type](inputs)
+        return crew.kickoff()
+
+def create_reports(result, inputs, report_type):
+    """Create report files with results"""
+    timestamp = time.strftime('%Y%m%d_%H%M%S')
+    base_name = f"{inputs['company_name']}_{report_type}_{timestamp}"
+    
+    validation_file = f"{base_name}_validation.txt"
+    report_file = f"{base_name}_report.md"
+
+    # Create validation report
+    with open(validation_file, 'w') as f:
+        f.write(f"Validation Report for {inputs['company_name']}\n")
+        f.write(f"Report Type: {report_type}\n")
+        f.write(f"Generated on: {time.strftime('%Y-%m-%d %H:%M:%S')}\n\n")
+        f.write(str(result))
+
+    # Create main report
+    with open(report_file, 'w') as f:
+        f.write(f"# {report_type.replace('_', ' ').title()} Report\n\n")
+        f.write(f"## Overview\n")
+        f.write(f"Company: {inputs['company_name']}\n")
+        f.write(str(result))
+
+    return validation_file, report_file
+
+def get_report_generator():
+    return ReportGenerator()
