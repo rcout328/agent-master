@@ -9,3 +9,4 @@ requests
 beautifulsoup4
 markdown
 python-dotenv
+google-search-results
