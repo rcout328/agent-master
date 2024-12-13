@@ -22,6 +22,8 @@ export default function ICPCreationContent() {
   const [currentReport, setCurrentReport] = useState(null);
   const [generationSteps, setGenerationSteps] = useState([]);
   const [currentStep, setCurrentStep] = useState(0);
+  const [showAgentDialog, setShowAgentDialog] = useState(false);
+  const [selectedAgent, setSelectedAgent] = useState('ICP Analysis Agent');
 
   const [userInputs, setUserInputs] = useState({
     company_name: '',
@@ -85,6 +87,14 @@ export default function ICPCreationContent() {
       message: "AI Agent creating ideal customer profile...",
       duration: 2000
     }
+  ];
+
+  const aiAgents = [
+    'ICP Analysis Agent',
+    'Customer Profiling Agent',
+    'Market Segmentation Agent',
+    'Target Audience Agent',
+    'Persona Development Agent'
   ];
 
   const handleInputChange = (e) => {
@@ -555,7 +565,7 @@ export default function ICPCreationContent() {
           </h1>
         </div>
 
-        <div className="mb-10 flex justify-center">
+        <div className="mb-10 flex justify-between items-center">
           <div className="bg-[#1D1D1F]/60 backdrop-blur-xl p-1.5 rounded-xl inline-flex shadow-xl">
             <button className="px-8 py-2.5 rounded-lg transition-all duration-300 bg-purple-600/90 text-white">
               ICP Creation
@@ -567,6 +577,53 @@ export default function ICPCreationContent() {
               Gap Analysis
             </Link>
           </div>
+
+          <button
+            onClick={() => {
+              setShowAgentDialog(true);
+              setTimeout(() => {
+                const prompt = `Create an Ideal Customer Profile (ICP) analysis for:
+Company: ${userInputs.company_name}
+Industry: ${userInputs.industry}
+Target Market: ${userInputs.target_market}
+Business Model: ${userInputs.business_model}
+Company Size: ${userInputs.company_size}
+Annual Revenue: ${userInputs.annual_revenue}
+Pain Points: ${userInputs.pain_points.join(', ')}
+Key Requirements: ${userInputs.key_requirements.join(', ')}
+Decision Makers: ${userInputs.decision_makers.join(', ')}
+
+Please provide a detailed ICP analysis covering:
+1. Customer Profile Overview
+2. Key Characteristics & Behaviors
+3. Pain Points & Needs Analysis
+4. Decision Making Process
+5. Value Proposition Alignment`;
+
+                window.location.href = `/chat?prompt=${encodeURIComponent(prompt)}`;
+              }, 5000);
+            }}
+            className="px-6 py-3 rounded-xl font-medium bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:from-indigo-600 hover:via-purple-600 hover:to-pink-600 text-white shadow-lg transition-all duration-300 transform hover:scale-[1.02] flex items-center gap-2 border border-white/10"
+          >
+            <svg 
+              className="w-5 h-5" 
+              fill="none" 
+              viewBox="0 0 24 24" 
+              stroke="currentColor"
+            >
+              <path 
+                strokeLinecap="round" 
+                strokeLinejoin="round" 
+                strokeWidth={2} 
+                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" 
+              />
+            </svg>
+            <span>Talk to {selectedAgent}</span>
+            <div className="flex items-center gap-1">
+              <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
+              <span className="text-xs text-green-400">Online</span>
+            </div>
+          </button>
         </div>
 
         <div className="space-y-8">
@@ -762,6 +819,49 @@ export default function ICPCreationContent() {
           </div>
         </div>
       </div>
+
+      {showAgentDialog && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-end justify-center sm:items-center z-50">
+          <div className="bg-[#1D1D1F]/95 backdrop-blur-xl rounded-xl p-6 border border-purple-800/50 shadow-2xl w-full max-w-lg m-4 animate-slide-up">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-12 h-12 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center">
+                <svg className="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="text-xl font-semibold text-white">Connecting to AI Agent</h3>
+                <p className="text-sm text-purple-400">Selecting the best agent for your ICP analysis...</p>
+              </div>
+            </div>
+
+            <div className="space-y-2 mb-4">
+              {aiAgents.map((agent) => (
+                <div
+                  key={agent}
+                  className={`p-4 rounded-lg cursor-pointer transition-all duration-300 ${
+                    selectedAgent === agent 
+                      ? 'bg-purple-600/20 border border-purple-500/50' 
+                      : 'hover:bg-purple-600/10'
+                  }`}
+                  onClick={() => setSelectedAgent(agent)}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className={`w-3 h-3 rounded-full ${
+                      selectedAgent === agent ? 'bg-green-400' : 'bg-gray-600'
+                    }`} />
+                    <span className="text-white font-medium">{agent}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="h-1.5 bg-[#2D2D2F] rounded-full overflow-hidden">
+              <div className="h-full bg-gradient-to-r from-purple-500 to-pink-500 w-0 animate-progress"></div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -32,6 +32,17 @@ export default function CompetitorTrackingContent() {
   const [generationSteps, setGenerationSteps] = useState([]);
   const [currentStep, setCurrentStep] = useState(0);
 
+  const [showAgentDialog, setShowAgentDialog] = useState(false);
+  const [selectedAgent, setSelectedAgent] = useState('Competitor Analysis Agent');
+
+  const aiAgents = [
+    'Competitor Analysis Agent',
+    'Market Intelligence Agent',
+    'Strategic Competition Agent',
+    'Competitive Research Agent',
+    'Industry Analysis Agent'
+  ];
+
   const AI_GENERATION_STEPS = [
     {
       message: "AI Agent gathering competitor data...",
@@ -499,7 +510,7 @@ export default function CompetitorTrackingContent() {
         </div>
 
         {/* Navigation */}
-        <div className="mb-10 flex justify-center">
+        <div className="mb-10 flex justify-between items-center">
           <div className="bg-[#1D1D1F]/60 backdrop-blur-xl p-1.5 rounded-xl inline-flex shadow-xl">
             <Link 
               href="/market-trends"
@@ -511,6 +522,50 @@ export default function CompetitorTrackingContent() {
               Competitor Tracking
             </button>
           </div>
+
+          <button
+            onClick={() => {
+              setShowAgentDialog(true);
+              setTimeout(() => {
+                const prompt = `Analyze competitors for:
+Company: ${userInputs.company_name}
+Industry: ${userInputs.industry}
+Competitors: ${userInputs.competitors.join(', ')}
+Metrics: ${userInputs.metrics.join(', ')}
+Market Region: ${userInputs.market_region}
+Timeframe: ${userInputs.timeframe}
+
+Please provide a detailed competitor analysis covering:
+1. Competitive Landscape Overview
+2. Competitor Strengths & Weaknesses
+3. Market Position Analysis
+4. Strategic Recommendations
+5. Competitive Advantages`;
+
+                window.location.href = `/chat?prompt=${encodeURIComponent(prompt)}`;
+              }, 5000);
+            }}
+            className="px-6 py-3 rounded-xl font-medium bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:from-indigo-600 hover:via-purple-600 hover:to-pink-600 text-white shadow-lg transition-all duration-300 transform hover:scale-[1.02] flex items-center gap-2 border border-white/10"
+          >
+            <svg 
+              className="w-5 h-5" 
+              fill="none" 
+              viewBox="0 0 24 24" 
+              stroke="currentColor"
+            >
+              <path 
+                strokeLinecap="round" 
+                strokeLinejoin="round" 
+                strokeWidth={2} 
+                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" 
+              />
+            </svg>
+            <span>Talk to {selectedAgent}</span>
+            <div className="flex items-center gap-1">
+              <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
+              <span className="text-xs text-green-400">Online</span>
+            </div>
+          </button>
         </div>
 
         {/* Form Section */}
@@ -779,6 +834,49 @@ export default function CompetitorTrackingContent() {
           </div>
         )}
 
+        {showAgentDialog && (
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-end justify-center sm:items-center z-50">
+            <div className="bg-[#1D1D1F]/95 backdrop-blur-xl rounded-xl p-6 border border-purple-800/50 shadow-2xl w-full max-w-lg m-4 animate-slide-up">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center">
+                  <svg className="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23-.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold text-white">Connecting to AI Agent</h3>
+                  <p className="text-sm text-purple-400">Selecting the best agent for your competitor analysis...</p>
+                </div>
+              </div>
+
+              <div className="space-y-2 mb-4">
+                {aiAgents.map((agent) => (
+                  <div
+                    key={agent}
+                    className={`p-4 rounded-lg cursor-pointer transition-all duration-300 ${
+                      selectedAgent === agent 
+                        ? 'bg-purple-600/20 border border-purple-500/50' 
+                        : 'hover:bg-purple-600/10'
+                    }`}
+                    onClick={() => setSelectedAgent(agent)}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className={`w-3 h-3 rounded-full ${
+                        selectedAgent === agent ? 'bg-green-400' : 'bg-gray-600'
+                      }`} />
+                      <span className="text-white font-medium">{agent}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="h-1.5 bg-[#2D2D2F] rounded-full overflow-hidden">
+                <div className="h-full bg-gradient-to-r from-purple-500 to-pink-500 w-0 animate-progress"></div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {savedReports.length > 0 && (
           <div className="mb-8 bg-[#1D1D1F]/60 backdrop-blur-xl rounded-xl p-4 border border-gray-800/50">
             <div className="flex justify-between items-center mb-4">
@@ -799,7 +897,7 @@ export default function CompetitorTrackingContent() {
                 >
                   <div>
                     <p className="text-white font-medium">{report.company}</p>
-                    <p className="text-sm text-white">
+                    <p className="text-sm tex-white">
                       Competitors: {report.competitors.join(', ')}
                     </p>
                   </div>

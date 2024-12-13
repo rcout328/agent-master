@@ -17,6 +17,8 @@ export default function ImpactAssessmentContent() {
   const [isPdfGenerating, setIsPdfGenerating] = useState(false);
   const [generationSteps, setGenerationSteps] = useState([]);
   const [currentStep, setCurrentStep] = useState(0);
+  const [showAgentDialog, setShowAgentDialog] = useState(false);
+  const [selectedAgent, setSelectedAgent] = useState('Impact Analysis Agent');
 
   const [impactInputs, setImpactInputs] = useState({
     company_name: '',
@@ -88,6 +90,14 @@ export default function ImpactAssessmentContent() {
       message: "AI Agent compiling impact assessment report...",
       duration: 2000
     }
+  ];
+
+  const aiAgents = [
+    'Impact Analysis Agent',
+    'Social Impact Agent',
+    'Sustainability Agent',
+    'Impact Measurement Agent',
+    'ESG Analysis Agent'
   ];
 
   useEffect(() => {
@@ -534,7 +544,7 @@ export default function ImpactAssessmentContent() {
           </h1>
         </div>
 
-        <div className="mb-10 flex justify-center">
+        <div className="mb-10 flex justify-between items-center">
           <div className="bg-[#1D1D1F]/60 backdrop-blur-xl p-1.5 rounded-xl inline-flex shadow-xl">
             <Link 
               href="/market-assessment"
@@ -546,6 +556,51 @@ export default function ImpactAssessmentContent() {
               Impact Assessment
             </button>
           </div>
+
+          <button
+            onClick={() => {
+              setShowAgentDialog(true);
+              setTimeout(() => {
+                const prompt = `Analyze impact assessment for:
+Company: ${impactInputs.company_name}
+Industry: ${impactInputs.industry}
+Impact Areas: ${impactInputs.impact_areas.join(', ')}
+Stakeholders: ${impactInputs.stakeholders.join(', ')}
+Market Region: ${impactInputs.market_region}
+Impact Type: ${impactInputs.impact_type}
+Timeframe: ${impactInputs.timeframe}
+
+Please provide a detailed impact analysis covering:
+1. Impact Overview & Scope
+2. Stakeholder Analysis
+3. Impact Measurement & KPIs
+4. Social & Environmental Impact
+5. Strategic Recommendations`;
+
+                window.location.href = `/chat?prompt=${encodeURIComponent(prompt)}`;
+              }, 5000);
+            }}
+            className="px-6 py-3 rounded-xl font-medium bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:from-indigo-600 hover:via-purple-600 hover:to-pink-600 text-white shadow-lg transition-all duration-300 transform hover:scale-[1.02] flex items-center gap-2 border border-white/10"
+          >
+            <svg 
+              className="w-5 h-5" 
+              fill="none" 
+              viewBox="0 0 24 24" 
+              stroke="currentColor"
+            >
+              <path 
+                strokeLinecap="round" 
+                strokeLinejoin="round" 
+                strokeWidth={2} 
+                d="M13 10V3L4 14h7v7l9-11h-7z" 
+              />
+            </svg>
+            <span>Talk to {selectedAgent}</span>
+            <div className="flex items-center gap-1">
+              <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
+              <span className="text-xs text-green-400">Online</span>
+            </div>
+          </button>
         </div>
 
         <div className="space-y-8">
@@ -801,6 +856,49 @@ export default function ImpactAssessmentContent() {
           </div>
         </div>
       </div>
+
+      {showAgentDialog && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-end justify-center sm:items-center z-50">
+          <div className="bg-[#1D1D1F]/95 backdrop-blur-xl rounded-xl p-6 border border-purple-800/50 shadow-2xl w-full max-w-lg m-4 animate-slide-up">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-12 h-12 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center">
+                <svg className="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="text-xl font-semibold text-white">Connecting to AI Agent</h3>
+                <p className="text-sm text-purple-400">Selecting the best agent for your impact analysis...</p>
+              </div>
+            </div>
+
+            <div className="space-y-2 mb-4">
+              {aiAgents.map((agent) => (
+                <div
+                  key={agent}
+                  className={`p-4 rounded-lg cursor-pointer transition-all duration-300 ${
+                    selectedAgent === agent 
+                      ? 'bg-purple-600/20 border border-purple-500/50' 
+                      : 'hover:bg-purple-600/10'
+                  }`}
+                  onClick={() => setSelectedAgent(agent)}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className={`w-3 h-3 rounded-full ${
+                      selectedAgent === agent ? 'bg-green-400' : 'bg-gray-600'
+                    }`} />
+                    <span className="text-white font-medium">{agent}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="h-1.5 bg-[#2D2D2F] rounded-full overflow-hidden">
+              <div className="h-full bg-gradient-to-r from-purple-500 to-pink-500 w-0 animate-progress"></div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

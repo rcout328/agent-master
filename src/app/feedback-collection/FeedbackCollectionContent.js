@@ -10,8 +10,20 @@ const supabase = createClient(
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ6YXVraWdsb3dhYm93cWV2cGVtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTgxODk3NDcsImV4cCI6MjAzMzc2NTc0N30.wSQnUlCio1DpXHj0xa5_6W6KjyUzXv4kKWyhpziUx_s'
 );
 
+// Define AI agents array outside component
+const aiAgentsList = [
+  'Feedback Analysis Agent',
+  'Sentiment Analysis Agent',
+  'Customer Insights Agent',
+  'Feedback Processing Agent',
+  'User Response Agent'
+];
+
 export default function FeedbackCollectionContent() {
-  const [viewMode, setViewMode] = useState('form'); // 'form' or 'responses'
+  // Move useState declarations inside component
+  const [selectedAgent, setSelectedAgent] = useState('Sentiment Analysis Agent');
+  const [showAgentDialog, setShowAgentDialog] = useState(false);
+  const [viewMode, setViewMode] = useState('form');
   const [feedbackResponses, setFeedbackResponses] = useState([]);
   const [formData, setFormData] = useState({
     user_email: '',
@@ -24,6 +36,9 @@ export default function FeedbackCollectionContent() {
   const [showSuccess, setShowSuccess] = useState(false);
   const [responseText, setResponseText] = useState({});
   const [isResponding, setIsResponding] = useState({});
+
+  // Add AI agents array reference
+  const aiAgents = aiAgentsList;
 
   useEffect(() => {
     fetchFeedbackResponses();
@@ -136,7 +151,7 @@ export default function FeedbackCollectionContent() {
           </h1>
         </div>
 
-        <div className="mb-10 flex justify-center">
+        <div className="mb-10 flex justify-between items-center">
           <div className="bg-[#1D1D1F]/60 backdrop-blur-xl p-1.5 rounded-xl inline-flex shadow-xl">
             <Link 
               href="/feature-priority"
@@ -148,6 +163,49 @@ export default function FeedbackCollectionContent() {
               Feedback Collection
             </button>
           </div>
+
+          <button
+            onClick={() => {
+              setShowAgentDialog(true);
+              setTimeout(() => {
+                const prompt = `Analyze customer feedback sentiment for:
+Company: ${formData.company_name}
+Category: ${formData.category}
+Rating: ${formData.rating}
+Comments: ${formData.comments}
+Feedback Date: ${new Date().toISOString()}
+
+Please provide a detailed sentiment analysis covering:
+1. Overall Sentiment Score
+2. Key Emotional Patterns
+3. Customer Satisfaction Level
+4. Critical Pain Points
+5. Improvement Recommendations`;
+
+                window.location.href = `/chat?prompt=${encodeURIComponent(prompt)}`;
+              }, 5000);
+            }}
+            className="px-6 py-3 rounded-xl font-medium bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:from-indigo-600 hover:via-purple-600 hover:to-pink-600 text-white shadow-lg transition-all duration-300 transform hover:scale-[1.02] flex items-center gap-2 border border-white/10"
+          >
+            <svg 
+              className="w-5 h-5" 
+              fill="none" 
+              viewBox="0 0 24 24" 
+              stroke="currentColor"
+            >
+              <path 
+                strokeLinecap="round" 
+                strokeLinejoin="round" 
+                strokeWidth={2} 
+                d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" 
+              />
+            </svg>
+            <span>Talk to {selectedAgent}</span>
+            <div className="flex items-center gap-1">
+              <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
+              <span className="text-xs text-green-400">Online</span>
+            </div>
+          </button>
         </div>
 
         <div className="space-y-8">

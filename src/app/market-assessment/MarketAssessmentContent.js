@@ -19,6 +19,8 @@ export default function MarketAssessmentContent() {
   const [savedReports, setSavedReports] = useState([]);
   const [generationSteps, setGenerationSteps] = useState([]);
   const [currentStep, setCurrentStep] = useState(0);
+  const [showAgentDialog, setShowAgentDialog] = useState(false);
+  const [selectedAgent, setSelectedAgent] = useState('Market Assessment Agent');
 
   const [marketInputs, setMarketInputs] = useState({
     company_name: '',
@@ -87,6 +89,14 @@ export default function MarketAssessmentContent() {
       message: "AI Agent compiling market assessment report...",
       duration: 2000
     }
+  ];
+
+  const aiAgents = [
+    'Market Assessment Agent',
+    'Industry Analysis Agent',
+    'Market Strategy Agent',
+    'Market Research Agent',
+    'Market Intelligence Agent'
   ];
 
   const handleInputChange = (e) => {
@@ -664,7 +674,7 @@ export default function MarketAssessmentContent() {
           </h1>
         </div>
 
-        <div className="mb-10 flex justify-center">
+        <div className="mb-10 flex justify-between items-center">
           <div className="bg-[#1D1D1F]/60 backdrop-blur-xl p-1.5 rounded-xl inline-flex shadow-xl">
             <button className="px-8 py-2.5 rounded-lg transition-all duration-300 bg-purple-600/90 text-white">
               Market Assessment
@@ -676,7 +686,95 @@ export default function MarketAssessmentContent() {
               Impact Assessment
             </Link>
           </div>
+
+          <button
+            onClick={() => {
+              setShowAgentDialog(true);
+              setTimeout(() => {
+                const prompt = `Perform a market assessment for:
+Company: ${marketInputs.company_name}
+Industry: ${marketInputs.industry}
+Market Type: ${marketInputs.market_type}
+Focus Areas: ${marketInputs.focus_areas.join(', ')}
+Market Region: ${marketInputs.market_region}
+Analysis Depth: ${marketInputs.analysis_depth}
+Metrics: ${marketInputs.metrics.join(', ')}
+
+Please provide a detailed market assessment covering:
+1. Market Overview & Size
+2. Industry Analysis
+3. Growth Opportunities
+4. Competitive Landscape
+5. Strategic Recommendations`;
+
+                window.location.href = `/chat?prompt=${encodeURIComponent(prompt)}`;
+              }, 5000);
+            }}
+            className="px-6 py-3 rounded-xl font-medium bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:from-indigo-600 hover:via-purple-600 hover:to-pink-600 text-white shadow-lg transition-all duration-300 transform hover:scale-[1.02] flex items-center gap-2 border border-white/10"
+          >
+            <svg 
+              className="w-5 h-5" 
+              fill="none" 
+              viewBox="0 0 24 24" 
+              stroke="currentColor"
+            >
+              <path 
+                strokeLinecap="round" 
+                strokeLinejoin="round" 
+                strokeWidth={2} 
+                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" 
+              />
+            </svg>
+            <span>Talk to {selectedAgent}</span>
+            <div className="flex items-center gap-1">
+              <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
+              <span className="text-xs text-green-400">Online</span>
+            </div>
+          </button>
         </div>
+
+        {showAgentDialog && (
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-end justify-center sm:items-center z-50">
+            <div className="bg-[#1D1D1F]/95 backdrop-blur-xl rounded-xl p-6 border border-purple-800/50 shadow-2xl w-full max-w-lg m-4 animate-slide-up">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center">
+                  <svg className="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold text-white">Connecting to AI Agent</h3>
+                  <p className="text-sm text-purple-400">Selecting the best agent for your market assessment...</p>
+                </div>
+              </div>
+
+              <div className="space-y-2 mb-4">
+                {aiAgents.map((agent) => (
+                  <div
+                    key={agent}
+                    className={`p-4 rounded-lg cursor-pointer transition-all duration-300 ${
+                      selectedAgent === agent 
+                        ? 'bg-purple-600/20 border border-purple-500/50' 
+                        : 'hover:bg-purple-600/10'
+                    }`}
+                    onClick={() => setSelectedAgent(agent)}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className={`w-3 h-3 rounded-full ${
+                        selectedAgent === agent ? 'bg-green-400' : 'bg-gray-600'
+                      }`} />
+                      <span className="text-white font-medium">{agent}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="h-1.5 bg-[#2D2D2F] rounded-full overflow-hidden">
+                <div className="h-full bg-gradient-to-r from-purple-500 to-pink-500 w-0 animate-progress"></div>
+              </div>
+            </div>
+          </div>
+        )}
 
         <div className="space-y-8">
           <div className="bg-[#1D1D1F]/80 backdrop-blur-xl rounded-xl shadow-xl p-8 border border-purple-800/50">
