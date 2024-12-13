@@ -3,8 +3,8 @@
 import { useState, useEffect } from 'react';
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import Link from 'next/link';
-import MarketTrand from './MarketTrand';
-import Mark from './Mark';
+import MarketTrand from './market-trends/MarketTrand';
+import Mark from './market-trends/Mark';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 
