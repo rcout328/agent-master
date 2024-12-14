@@ -43,6 +43,8 @@ const InputField = memo(({ label, name, value, onChange, type = "text", placehol
         </div>
     );
 });
+// Add display name
+InputField.displayName = 'InputField';
 
 export default function ProModeContent() {
     const [step, setStep] = useState(1);
@@ -454,6 +456,8 @@ export default function ProModeContent() {
             </div>
         );
     });
+    // Add display name
+    Questions.displayName = 'Questions';
 
     // Step 6: Report
     const Report = () => {
