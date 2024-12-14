@@ -1,328 +1,411 @@
-import os
-import warnings
-import logging
-from market_analysis_crew import get_market_analysis_crew, get_report_generator, create_reports
+from market_analysis_crew import ReportGenerator, create_reports
+import time
+import json
+from langchain.chat_models import ChatOpenAI
 
-# Disable all warnings and telemetry
-warnings.filterwarnings('ignore')
-os.environ["ANONYMIZED_TELEMETRY"] = "False"
-os.environ["OPENTELEMETRY_ENABLED"] = "False"
-os.environ["DISABLE_TELEMETRY"] = "True"
-
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
-logger = logging.getLogger(__name__)
-
-def get_user_input():
-    print("\n=== Report Generation Configuration ===\n")
+def get_questions_by_report_type(report_type, detail_level, company_name, industry, website_data=None):
+    """Generate dynamic AI questions based on report type and detail level"""
     
-    # Show available report types
-    print("Available Report Types:")
-    print("1. Market Analysis")
-    print("2. Competitor Tracking")
-    print("3. ICP Report")
-    print("4. Gap Analysis")
-    print("5. Market Assessment")
-    print("6. Impact Assessment")
+    # Initialize ChatGPT
+    question_generator = ChatOpenAI(
+        model_name="gpt-4-turbo-preview",
+        temperature=0.9  # Increased for more variety
+    )
     
-    # Get report type
-    while True:
-        try:
-            report_choice = int(input("\nSelect report type (1-6): "))
-            if 1 <= report_choice <= 6:
-                report_types = {
-                    1: "market_analysis",
-                    2: "competitor_tracking",
-                    3: "icp_report",
-                    4: "gap_analysis",
-                    5: "market_assessment",
-                    6: "impact_assessment"
-                }
-                report_type = report_types[report_choice]
-                break
-            print("Please select a number between 1 and 6.")
-        except ValueError:
-            print("Please enter a valid number.")
-
-    # Common inputs for all report types
-    inputs = {}
-    inputs["company_name"] = input("\nEnter company name: ").strip()
-    inputs["industry"] = input("Enter industry sector (optional): ").strip()
-    inputs["time_period"] = input("Enter time period (e.g., 2024, press Enter for current): ").strip() or "2024"
-
-    # Report-specific inputs
-    if report_type == "icp_report":
-        # Business Model
-        print("\nSelect business model:")
-        print("1. B2B")
-        print("2. B2C")
-        print("3. B2B2C")
-        while True:
-            try:
-                model_choice = int(input("Select model (1-3) [1]: ") or "1")
-                if 1 <= model_choice <= 3:
-                    model_map = {1: "b2b", 2: "b2c", 3: "b2b2c"}
-                    inputs["business_model"] = model_map[model_choice]
-                    break
-                print("Please select a valid number between 1 and 3")
-            except ValueError:
-                print("Please enter a valid number")
-
-        # Company Size
-        print("\nSelect target company size:")
-        print("1. Small (1-50 employees)")
-        print("2. Medium (51-500 employees)")
-        print("3. Large (501+ employees)")
-        print("4. All sizes")
-        while True:
-            try:
-                size_choice = int(input("Select size (1-4) [4]: ") or "4")
-                if 1 <= size_choice <= 4:
-                    size_map = {1: "small", 2: "medium", 3: "large", 4: "all"}
-                    inputs["company_size"] = size_map[size_choice]
-                    break
-                print("Please select a valid number between 1 and 4")
-            except ValueError:
-                print("Please enter a valid number")
-
-        # Target Market
-        print("\nSelect target market:")
-        markets = ["Global", "North America", "Europe", "Asia Pacific", "Latin America"]
-        for i, market in enumerate(markets, 1):
-            print(f"{i}. {market}")
-        while True:
-            try:
-                market_choice = int(input(f"Select market (1-{len(markets)}) [1]: ") or "1")
-                if 1 <= market_choice <= len(markets):
-                    inputs["target_market"] = markets[market_choice-1].lower().replace(" ", "_")
-                    break
-                print(f"Please select a valid number between 1 and {len(markets)}")
-            except ValueError:
-                print("Please enter a valid number")
-
-        # Annual Revenue Range
-        print("\nSelect annual revenue range:")
-        revenue_ranges = [
-            "Under $1M",
-            "$1M - $10M",
-            "$10M - $50M",
-            "Over $50M"
-        ]
-        for i, range_ in enumerate(revenue_ranges, 1):
-            print(f"{i}. {range_}")
-        while True:
-            try:
-                revenue_choice = int(input(f"Select range (1-{len(revenue_ranges)}) [2]: ") or "2")
-                if 1 <= revenue_choice <= len(revenue_ranges):
-                    revenue_map = {1: "under_1m", 2: "1m_10m", 3: "10m_50m", 4: "over_50m"}
-                    inputs["annual_revenue"] = revenue_map[revenue_choice]
-                    break
-                print(f"Please select a valid number between 1 and {len(revenue_ranges)}")
-            except ValueError:
-                print("Please enter a valid number")
-
-    elif report_type == "competitor_tracking":
-        # Ensure time_period is set
-        inputs["time_period"] = inputs.get("time_period", "2024")
-        
-        # Competitor inputs
-        print("\nEnter competitors (one per line, press Enter twice to finish):")
-        competitors = []
-        while True:
-            competitor = input().strip()
-            if not competitor:
-                if competitors:
-                    break
-                print("Please enter at least one competitor.")
-                continue
-            competitors.append(competitor)
-        inputs["competitors"] = competitors
-
-        # Metrics selection
-        print("\nSelect metrics to track (enter numbers separated by commas):")
-        metrics = [
-            "Market Share",
-            "Product Features",
-            "Pricing Strategy",
-            "Marketing Channels",
-            "Customer Satisfaction",
-            "Innovation Capability",
-            "Brand Strength",
-            "Financial Performance"
-        ]
-        for i, metric in enumerate(metrics, 1):
-            print(f"{i}. {metric}")
-        
-        while True:
-            try:
-                selected = input("\nEnter metric numbers (e.g. 1,2,3): ").strip()
-                if selected:
-                    selected_indices = [int(x.strip()) for x in selected.split(",")]
-                    if all(1 <= i <= len(metrics) for i in selected_indices):
-                        inputs["metrics"] = [metrics[i-1] for i in selected_indices]
-                        break
-                print("Please enter valid numbers separated by commas")
-            except ValueError:
-                print("Please enter valid numbers")
-
-        # Analysis depth
-        print("\nSelect analysis depth:")
-        print("1. Basic (High-level overview)")
-        print("2. Detailed (In-depth analysis)")
-        print("3. Comprehensive (Complete competitive intelligence)")
-        
-        while True:
-            try:
-                depth_choice = int(input("Select depth (1-3) [2]: ") or "2")
-                if 1 <= depth_choice <= 3:
-                    depth_map = {1: "basic", 2: "detailed", 3: "comprehensive"}
-                    inputs["analysis_depth"] = depth_map[depth_choice]
-                    break
-                print("Please select a valid number between 1 and 3")
-            except ValueError:
-                print("Please enter a valid number")
-
-        # Analysis scope
-        print("\nSelect analysis scope:")
-        print("1. Historical Data")
-        print("2. Current Market Position")
-        print("3. Future Projections")
-        print("4. All of the above")
-        
-        while True:
-            try:
-                scope = int(input("Select scope (1-4) [4]: ") or "4")
-                if 1 <= scope <= 4:
-                    inputs["analysis_scope"] = scope
-                    break
-                print("Please select a valid number between 1 and 4")
-            except ValueError:
-                print("Please enter a valid number")
-
-    elif report_type == "gap_analysis":
-        # Ensure all required fields are present
-        inputs.update({
-            "focus_areas": inputs.get("focus_areas", []),
-            "timeframe": inputs.get("time_period", "2024"),
-            "analysis_depth": inputs.get("analysis_depth", "detailed"),
-            "market_region": inputs.get("market_region", "global")
-        })
-
-        if not inputs.get("focus_areas"):
-            print("\nSelect focus areas (enter numbers separated by commas):")
-            focus_areas = [
-                "Market Size and Growth",
-                "Competitive Landscape",
-                "Customer Segments",
-                "Distribution Channels",
-                "Pricing Strategies",
-                "Technology Trends",
-                "Regulatory Environment",
-                "Economic Factors"
-            ]
-            for i, area in enumerate(focus_areas, 1):
-                print(f"{i}. {area}")
-            
-            while True:
-                try:
-                    selected = input("\nEnter focus area numbers (e.g. 1,2,3): ").strip()
-                    if selected:
-                        selected_indices = [int(x.strip()) for x in selected.split(",")]
-                        if all(1 <= i <= len(focus_areas) for i in selected_indices):
-                            inputs["focus_areas"] = [focus_areas[i-1] for i in selected_indices]
-                            break
-                    print("Please enter valid numbers separated by commas")
-                except ValueError:
-                    print("Please enter valid numbers")
-
-            # Add analysis depth selection
-            print("\nSelect analysis depth:")
-            print("1. Basic (High-level overview)")
-            print("2. Detailed (In-depth analysis)")
-            print("3. Comprehensive (Complete market intelligence)")
-            
-            while True:
-                try:
-                    depth_choice = int(input("Select depth (1-3) [2]: ") or "2")
-                    if 1 <= depth_choice <= 3:
-                        depth_map = {1: "basic", 2: "detailed", 3: "comprehensive"}
-                        inputs["analysis_depth"] = depth_map[depth_choice]
-                        break
-                    print("Please select a valid number between 1 and 3")
-                except ValueError:
-                    print("Please enter a valid number")
-
-            # Add market region selection
-            print("\nSelect target market region:")
-            regions = [
-                "Global",
-                "North America",
-                "Europe",
-                "Asia Pacific",
-                "Latin America",
-                "Middle East & Africa"
-            ]
-            for i, region in enumerate(regions, 1):
-                print(f"{i}. {region}")
-            
-            while True:
-                try:
-                    region_choice = int(input(f"\nSelect region (1-{len(regions)}) [1]: ") or "1")
-                    if 1 <= region_choice <= len(regions):
-                        inputs["market_region"] = regions[region_choice-1]
-                        break
-                    print(f"Please select a valid number between 1 and {len(regions)}")
-                except ValueError:
-                    print("Please enter a valid number")
-
-            # Add timeframe input
-            inputs["timeframe"] = inputs["time_period"]  # Use the common time_period as timeframe
-
-    return inputs, report_type.lower().replace(' ', '_')
-
-def main():
     try:
-        # Get user inputs
-        user_inputs, report_type = get_user_input()
+        # Dynamic prompts based on report type
+        report_focus = {
+            'market_analysis': {
+                'quick': "core revenue metrics, immediate market position, key competitors",
+                'detailed': "comprehensive market analysis, competitive positioning, growth trajectory, market share analysis, strategic opportunities"
+            },
+            'competitor_analysis': {
+                'quick': "direct competitors, key differentiators, competitive advantages",
+                'detailed': "detailed competitor landscape, market positioning, competitive strategies, technological advantages, market share distribution"
+            },
+            'icp_report': {
+                'quick': "target customer profile, customer needs, acquisition channels",
+                'detailed': "customer segmentation, behavior patterns, lifetime value, satisfaction metrics, engagement analysis"
+            },
+            'gap_analysis': {
+                'quick': "immediate opportunities, current limitations, quick wins",
+                'detailed': "market gaps, capability assessment, resource requirements, growth opportunities, strategic positioning"
+            },
+            'market_assessment': {
+                'quick': "market size, growth rate, immediate trends",
+                'detailed': "market segmentation, growth projections, regulatory landscape, technological trends, market barriers"
+            },
+            'impact_assessment': {
+                'quick': "key performance indicators, current impact, immediate challenges",
+                'detailed': "comprehensive impact metrics, stakeholder analysis, long-term projections, measurement frameworks, optimization strategies"
+            }
+        }
+
+        # Create dynamic prompt
+        if detail_level == 'quick':
+            prompt = f"""As an expert market analyst, generate 3 highly focused, specific questions about {company_name} in the {industry} industry.
+            
+            Focus areas: {report_focus[report_type]['quick']}
+            
+            Requirements:
+            - Questions must be brief (under 15 words)
+            - Focus on quantifiable metrics where possible
+            - Be specific to their industry and business model
+            - Questions should help gather critical insights quickly
+            
+            Website Content for Context:
+            {website_data[:2000] if website_data else 'No website data available'}
+            
+            Return ONLY a JSON object with this exact format:
+            {{
+                "questions": [
+                    {{"id": 1, "question": "Brief, specific question about core metrics?"}},
+                    {{"id": 2, "question": "Brief question about market position?"}},
+                    {{"id": 3, "question": "Brief question about immediate opportunities?"}},
+                ]
+            }}
+            """
+        else:
+            prompt = f"""As an expert market analyst, generate 5 comprehensive analytical questions about {company_name} in the {industry} industry.
+            
+            Focus areas: {report_focus[report_type]['detailed']}
+            
+            Requirements:
+            - Questions should be detailed and thought-provoking
+            - Cover multiple aspects of each focus area
+            - Include both quantitative and qualitative aspects
+            - Probe for strategic insights and long-term implications
+            
+            Website Content for Context:
+            {website_data[:3000] if website_data else 'No website data available'}
+            
+            Return ONLY a JSON object with this exact format:
+            {{
+                "questions": [
+                    {{"id": 1, "question": "Comprehensive question about market position?"}},
+                    {{"id": 2, "question": "Detailed question about competitive advantage?"}},
+                    {{"id": 3, "question": "Strategic question about growth opportunities?"}},
+                    {{"id": 4, "question": "In-depth question about market dynamics?"}},
+                    {{"id": 5, "question": "Analytical question about future potential?"}}
+                ]
+            }}
+            """
+
+        # Get AI response with higher temperature for more variety
+        response = question_generator.invoke(prompt).content
         
-        print("\nInitializing analysis...")
-        print(f"Company: {user_inputs['company_name']}")
-        print(f"Report Type: {report_type}")
-        print(f"Industry: {user_inputs['industry'] or 'Not specified'}")
+        # Clean and parse response
+        response = response.strip()
+        if response.startswith('```json'):
+            response = response[7:]
+        if response.endswith('```'):
+            response = response[:-3]
         
-        # Confirmation
-        confirm = input("\nProceed with analysis? (y/n): ").lower().strip()
-        if confirm != 'y':
-            print("Analysis cancelled.")
-            return
+        questions_data = json.loads(response.strip())
         
-        print("\nStarting analysis...")
-        print("=" * 50)
+        print("\nGenerated Questions:")
+        for q in questions_data['questions']:
+            print(f"• {q['question']}")
+            
+        return questions_data['questions']
         
-        # Use the new generator
-        generator = get_report_generator()
-        result = generator.generate_report(report_type, user_inputs)
-        
-        # Create reports
-        validation_file, report_file = create_reports(result, user_inputs, report_type)
-        
-        print("\n" + "="*50)
-        print("ANALYSIS COMPLETE")
-        print("="*50)
-        print(f"\nReports generated:")
-        print(f"1. Validation Report: {validation_file}")
-        print(f"2. Analysis Report: {report_file}")
-        
-    except KeyboardInterrupt:
-        print("\nAnalysis cancelled by user.")
     except Exception as e:
-        print(f"\nError during analysis: {str(e)}")
-        logger.exception("Analysis failed")
-    finally:
-        print("\nThank you for using the Market Analysis Tool!")
+        print(f"Error generating AI questions: {str(e)}")
+        # Only use fallback questions if AI generation completely fails
+        return get_default_questions(report_type, detail_level, company_name, industry)
+
+def get_default_questions(report_type, detail_level, company_name, industry):
+    """Fallback questions if AI generation fails"""
+    questions_by_type = {
+        'market_analysis': {
+            'quick': [
+                {"id": 1, "question": f"What is {company_name}'s primary revenue model?"},
+                {"id": 2, "question": f"Top 3 competitors in {industry}?"},
+                {"id": 3, "question": "Current market share percentage?"}
+            ],
+            'detailed': [
+                {"id": 1, "question": f"What unique value proposition does {company_name} offer in the {industry} market?"},
+                {"id": 2, "question": "What are your key market differentiators from competitors?"},
+                {"id": 3, "question": "What are your current market growth metrics?"},
+                {"id": 4, "question": "Which market segments show highest potential?"},
+                {"id": 5, "question": "What are your key customer acquisition channels?"}
+            ]
+        },
+        'competitor_analysis': {
+            'quick': [
+                {"id": 1, "question": "Name your top 3 direct competitors?"},
+                {"id": 2, "question": "Key competitive advantage?"},
+                {"id": 3, "question": "Main market differentiator?"}
+            ],
+            'detailed': [
+                {"id": 1, "question": "List your top 5 competitors and their market shares?"},
+                {"id": 2, "question": "What are competitors' pricing strategies?"},
+                {"id": 3, "question": "Key technological advantages of competitors?"},
+                {"id": 4, "question": "Competitors' target market segments?"},
+                {"id": 5, "question": "Competitor growth rates and strategies?"}
+            ]
+        },
+        'icp_report': {
+            'quick': [
+                {"id": 1, "question": "Primary customer segment?"},
+                {"id": 2, "question": "Average customer value?"},
+                {"id": 3, "question": "Key customer pain points?"}
+            ],
+            'detailed': [
+                {"id": 1, "question": "Detailed customer demographic breakdown?"},
+                {"id": 2, "question": "Customer acquisition and retention metrics?"},
+                {"id": 3, "question": "Customer lifetime value by segment?"},
+                {"id": 4, "question": "Most successful customer use cases?"},
+                {"id": 5, "question": "Customer feedback and satisfaction metrics?"}
+            ]
+        },
+        'gap_analysis': {
+            'quick': [
+                {"id": 1, "question": "Biggest market opportunity?"},
+                {"id": 2, "question": "Main product/service gap?"},
+                {"id": 3, "question": "Current market limitations?"}
+            ],
+            'detailed': [
+                {"id": 1, "question": "What market needs are currently unmet?"},
+                {"id": 2, "question": "Technical capabilities gaps?"},
+                {"id": 3, "question": "Resource and skill gaps?"},
+                {"id": 4, "question": "Market expansion opportunities?"},
+                {"id": 5, "question": "Product development roadmap gaps?"}
+            ]
+        },
+        'market_assessment': {
+            'quick': [
+                {"id": 1, "question": f"Total addressable market size in {industry}?"},
+                {"id": 2, "question": "Current market growth rate?"},
+                {"id": 3, "question": "Key market trends?"}
+            ],
+            'detailed': [
+                {"id": 1, "question": "Detailed market size by segment?"},
+                {"id": 2, "question": "Market growth projections next 3 years?"},
+                {"id": 3, "question": "Regulatory impacts on market?"},
+                {"id": 4, "question": "Technology trends affecting market?"},
+                {"id": 5, "question": "Market entry barriers?"}
+            ]
+        },
+        'impact_assessment': {
+            'quick': [
+                {"id": 1, "question": "Primary business impact metric?"},
+                {"id": 2, "question": "Current market impact?"},
+                {"id": 3, "question": "Key impact challenges?"}
+            ],
+            'detailed': [
+                {"id": 1, "question": "Quantitative impact metrics?"},
+                {"id": 2, "question": "Stakeholder impact analysis?"},
+                {"id": 3, "question": "Long-term impact projections?"},
+                {"id": 4, "question": "Impact measurement methods?"},
+                {"id": 5, "question": "Impact optimization strategies?"}
+            ]
+        }
+    }
+    return questions_by_type[report_type][detail_level]
+
+def run_analysis():
+    """Run the market analysis tool with proper flow"""
+    print("\n=== Market Analysis Tool ===")
+    
+    # Initialize report generator
+    generator = ReportGenerator()
+    
+    # STEP 1: Detail Level Selection
+    print("\nStep 1: Select Analysis Detail Level")
+    print("1. Quick Analysis (15-20 minutes)")
+    print("   • 2-3 focused questions")
+    print("   • Core metrics analysis")
+    print("   • Key recommendations")
+    print("\n2. Detailed Analysis (45-60 minutes)")
+    print("   • 4-5 comprehensive questions")
+    print("   • In-depth market research")
+    print("   • Detailed strategic insights")
+    
+    while True:
+        detail_choice = input("\nEnter choice (1 or 2): ").strip()
+        if detail_choice in ['1', '2']:
+            detail_level = 'quick' if detail_choice == '1' else 'detailed'
+            break
+        print("Please enter 1 or 2")
+    
+    # STEP 2: Report Type Selection
+    print("\nStep 2: Select Report Type")
+    report_types = {
+        "1": ("market_analysis", "Market Analysis - Overall market position and trends"),
+        "2": ("competitor_analysis", "Competitor Analysis - Detailed competitive landscape"),
+        "3": ("icp_report", "ICP Report - Ideal Customer Profile analysis"),
+        "4": ("gap_analysis", "Gap Analysis - Market opportunities and gaps"),
+        "5": ("market_assessment", "Market Assessment - Industry potential"),
+        "6": ("impact_assessment", "Impact Assessment - Business impact analysis")
+    }
+    
+    print("\nAvailable Report Types:")
+    for num, (_, desc) in report_types.items():
+        print(f"{num}. {desc}")
+    
+    while True:
+        choice = input("\nEnter choice (1-6): ").strip()
+        if choice in report_types:
+            report_type = report_types[choice][0]
+            break
+        print("Please enter a valid choice (1-6)")
+    
+    # STEP 3: Company Information
+    print("\nStep 3: Company Information")
+    while True:
+        company_name = input("Company Name: ").strip()
+        if company_name:
+            break
+        print("Company name is required!")
+    
+    while True:
+        industry = input("Industry: ").strip()
+        if industry:
+            break
+        print("Industry is required!")
+    
+    website_url = input("Website URL: ").strip()
+    
+    # STEP 4: Website Analysis
+    print("\nStep 4: Website Analysis")
+    website_data = None
+    if website_url:
+        print("\n🔍 Analyzing website content...")
+        try:
+            website_data = generator.scrape_company_website(website_url)
+            if website_data:
+                print("✓ Website scraping complete")
+                print("\nAnalyzing content with AI...")
+                
+                analysis = generator.analyze_website_content(website_data, company_name)
+                
+                print("\n=== Website Analysis Results ===")
+                print(f"Detected Industry: {analysis['industry']}")
+                print(f"Business Model: {analysis['business_model']}")
+                print(f"Target Market: {analysis['target_market']}")
+                print(f"Main Products/Services: {', '.join(analysis['products'])}")
+                print(f"Market Focus: {analysis['market_focus']}")
+                
+                if analysis['industry'].lower() != industry.lower():
+                    print(f"\nNote: Detected industry ({analysis['industry']}) differs from provided industry ({industry})")
+                    use_detected = input("Use detected industry instead? (y/n): ").lower().strip()
+                    if use_detected == 'y':
+                        industry = analysis['industry']
+                        print(f"Updated industry to: {industry}")
+                
+                proceed = input("\nProceed with these insights? (y/n): ").lower().strip()
+                if proceed != 'y':
+                    return run_analysis()
+            else:
+                print("! Could not scrape website content")
+                proceed = input("\nContinue without website analysis? (y/n): ").lower().strip()
+                if proceed != 'y':
+                    return run_analysis()
+                
+        except Exception as e:
+            print(f"! Website analysis error: {str(e)}")
+            proceed = input("\nContinue without website analysis? (y/n): ").lower().strip()
+            if proceed != 'y':
+                return run_analysis()
+    
+    # Create analysis context
+    context = {
+        'company_info': {
+            'company_name': company_name,
+            'industry': industry,
+            'website': website_url
+        },
+        'website_data': website_data,
+        'report_type': report_type,
+        'detail_level': detail_level
+    }
+    
+    # STEP 5: Generate and Ask Questions
+    print("\nStep 5: Generating Questions")
+    try:
+        # Get AI-generated questions based on website data
+        questions = get_questions_by_report_type(
+            report_type=report_type,
+            detail_level=detail_level,
+            company_name=company_name,
+            industry=industry,
+            website_data=website_data
+        )
+        
+        # Collect answers
+        answers = {}
+        print(f"\nPlease answer these {detail_level} analysis questions:")
+        for q in questions:
+            answer = input(f"\n{q['question']}: ").strip()
+            answers[q['id']] = answer
+        
+        # Update context with answers
+        context['answers'] = answers
+        
+        # Show collected data summary
+        print("\n=== Analysis Data Summary ===")
+        print(f"Company: {company_name}")
+        print(f"Industry: {industry}")
+        print(f"Report Type: {report_type}")
+        print(f"Detail Level: {detail_level}")
+        print("\nWebsite Analysis:", "✓ Complete" if website_data else "Not Available")
+        print("\nYour Answers:")
+        for qid, ans in answers.items():
+            print(f"Q{qid}: {ans}")
+        
+        proceed = input("\nGenerate report with this information? (y/n): ").lower().strip()
+        if proceed != 'y':
+            return run_analysis()
+        
+    except Exception as e:
+        print(f"Error in question generation: {str(e)}")
+        return
+    
+    # STEP 6: Generate Report
+    print("\nStep 6: Generating Report")
+    try:
+        print("\n=== Starting Analysis ===")
+        print("• Analyzing market data")
+        print("• Processing user inputs")
+        print("• Generating insights")
+        
+        result = generator.generate_report(report_type, context)
+        
+        # Create reports with context
+        try:
+            validation_file, report_file = create_reports(result, context, report_type)
+            
+            print("\n✓ Report generated successfully!")
+            print(f"Report saved to: {report_file}")
+            
+            # Show preview
+            print("\n=== Report Preview ===")
+            with open(report_file, 'r') as f:
+                content = f.read()
+                print(content[:500] + "...\n")
+                
+            if input("Show full report? (y/n): ").lower().startswith('y'):
+                print("\n" + "="*50)
+                print(content)
+                print("="*50 + "\n")
+                
+        except Exception as e:
+            print(f"Error creating report files: {str(e)}")
+            return
+            
+    except Exception as e:
+        print(f"\nError in report generation: {str(e)}")
+        return
+    
+    print("\n✓ Analysis Complete!")
 
 if __name__ == "__main__":
-    main() 
+    try:
+        run_analysis()
+    except KeyboardInterrupt:
+        print("\nOperation cancelled by user")
+    except Exception as e:
+        print(f"\nUnexpected error: {str(e)}")
+    finally:
+        print("\nThank you for using the Market Analysis Tool!")

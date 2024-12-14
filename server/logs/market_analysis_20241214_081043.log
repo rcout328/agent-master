@@ -1,0 +1,28 @@
+2024-12-14 08:11:12,076 - main_controller - INFO
+Function: start_analysis
+Message: Starting quick market_analysis for 100xEngineers
+
+2024-12-14 08:11:12,078 - main_controller - INFO
+Function: start_analysis
+Message: Scraping website: https://www.100xengineers.com/
+
+2024-12-14 08:11:12,863 - main_controller - INFO
+Function: start_analysis
+Message: Website scraping completed
+
+2024-12-14 08:11:17,492 - main_controller - INFO
+Function: start_analysis
+Message: Successfully inferred company data
+
+2024-12-14 08:11:20,521 - main_controller - INFO
+Function: start_analysis
+Message: Generated 3 questions
+
+2024-12-14 08:11:41,179 - main_controller - INFO
+Function: generate_final_report
+Message: Generating final report for 100xEngineers
+
+2024-12-14 08:11:57,689 - main_controller - ERROR
+Function: generate_final_report
+Message: Error in crew analysis: 'time_period'
+

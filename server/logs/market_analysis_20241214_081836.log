@@ -1,0 +1,32 @@
+2024-12-14 08:18:57,496 - main_controller - INFO
+Function: start_analysis
+Message: Starting quick market_analysis for 100xEngineers
+
+2024-12-14 08:18:57,497 - main_controller - INFO
+Function: start_analysis
+Message: Assigned agents: Market Research Analyst, Industry Trends Specialist, Data Visualization Expert
+
+2024-12-14 08:18:57,497 - main_controller - INFO
+Function: start_analysis
+Message: Scraping website: https://www.100xengineers.com/
+
+2024-12-14 08:18:58,004 - main_controller - INFO
+Function: start_analysis
+Message: Website scraping completed
+
+2024-12-14 08:19:02,805 - main_controller - INFO
+Function: start_analysis
+Message: Successfully inferred company data
+
+2024-12-14 08:19:05,257 - main_controller - INFO
+Function: start_analysis
+Message: Generated 3 questions
+
+2024-12-14 08:19:22,372 - main_controller - INFO
+Function: generate_final_report
+Message: Generating final report for 100xEngineers
+
+2024-12-14 08:19:36,342 - main_controller - ERROR
+Function: generate_final_report
+Message: Error in crew analysis: 'time_period'
+

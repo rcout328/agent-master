@@ -1,0 +1,60 @@
+2024-12-14 08:03:19,817 - report_generator - INFO
+Function: __init__
+Message: ReportGenerator initialized successfully
+
+2024-12-14 08:03:19,900 - market_analysis_api - INFO
+Function: submit_answers
+Message: === Received Answer Submission ===
+
+2024-12-14 08:03:19,900 - market_analysis_api - INFO
+Function: submit_answers
+Message: Company Name: openai
+
+2024-12-14 08:03:19,900 - market_analysis_api - INFO
+Function: submit_answers
+Message: Report Type: market_analysis
+
+2024-12-14 08:03:19,900 - market_analysis_api - INFO
+Function: submit_answers
+Message: Detail Level: quick
+
+2024-12-14 08:03:19,900 - market_analysis_api - DEBUG
+Function: submit_answers
+Message: Answers received: {'1': 'no  idea', '2': 'claude', '3': 'paid subscription '}
+
+2024-12-14 08:03:19,900 - main_controller - INFO
+Function: generate_final_report
+Message: Generating final report for openai
+
+2024-12-14 08:03:19,901 - report_generator - INFO
+Function: analyze_company
+Message: Scraping website: https://openai.com/
+
+2024-12-14 08:03:20,380 - report_generator - INFO
+Function: analyze_company
+Message: Searching for company info: openai company ai business
+
+2024-12-14 08:03:20,380 - report_generator - ERROR
+Function: analyze_company
+Message: Error analyzing company: SerperDevTool._run() takes 1 positional argument but 2 were given
+
+2024-12-14 08:03:20,380 - main_controller - ERROR
+Function: generate_final_report
+Message: Error in company analysis: SerperDevTool._run() takes 1 positional argument but 2 were given
+
+2024-12-14 08:03:20,380 - report_generator - INFO
+Function: generate_report
+Message: Generating market_analysis report for openai
+
+2024-12-14 08:03:20,380 - report_generator - INFO
+Function: generate_market_analysis_report
+Message: Generating market analysis report for openai
+
+2024-12-14 08:03:20,380 - main_controller - INFO
+Function: generate_final_report
+Message: Report generation successful
+
+2024-12-14 08:03:20,380 - market_analysis_api - INFO
+Function: submit_answers
+Message: Successfully generated final report
+

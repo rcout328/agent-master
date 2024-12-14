@@ -16,7 +16,8 @@ export default function Sidebar() {
         { name: 'Market Analysis', icon: '📊', path: '/market-trends' },
         { name: 'Customer Discovery', icon: '👥', path: '/icp-creation' },
         { name: 'Product Evolution', icon: '⭐', path: '/feature-priority' },
-        { name: 'Market Expansion', icon: '📈', path: '/market-assessment' }
+        { name: 'Market Expansion', icon: '📈', path: '/market-assessment' },
+        { name: 'Pro Report Mode', icon: '🚀', path: '/pro-mode' }
       ]
     },
     {

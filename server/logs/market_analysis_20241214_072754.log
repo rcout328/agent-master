@@ -1,0 +1,12 @@
+2024-12-14 07:27:54,780 - report_generator - INFO
+Function: __init__
+Message: ReportGenerator initialized successfully
+
+2024-12-14 07:27:54,780 - report_generator - INFO
+Function: analyze_company
+Message: Scraping website: https://openai.com/
+
+2024-12-14 07:27:54,780 - report_generator - ERROR
+Function: analyze_company
+Message: Error analyzing company: ScrapeWebsiteTool._run() takes 1 positional argument but 2 were given
+

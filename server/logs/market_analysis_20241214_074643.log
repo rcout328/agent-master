@@ -1,0 +1,72 @@
+2024-12-14 07:46:43,783 - report_generator - INFO
+Function: __init__
+Message: ReportGenerator initialized successfully
+
+2024-12-14 07:46:43,845 - market_analysis_api - INFO
+Function: generate_report
+Message: === Received Analysis Request ===
+
+2024-12-14 07:46:43,845 - market_analysis_api - INFO
+Function: generate_report
+Message: Company Name: openai
+
+2024-12-14 07:46:43,846 - market_analysis_api - INFO
+Function: generate_report
+Message: Industry: ai
+
+2024-12-14 07:46:43,846 - market_analysis_api - INFO
+Function: generate_report
+Message: Website URL: https://openai.com/
+
+2024-12-14 07:46:43,846 - market_analysis_api - DEBUG
+Function: generate_report
+Message: Full inputs: {'company_name': 'openai', 'industry': 'ai', 'website_url': 'https://openai.com/', 'time_period': '2024', 'detail_level': 'quick', 'report_type': 'market_analysis'}
+
+2024-12-14 07:46:43,846 - market_analysis_api - INFO
+Function: generate_report
+Message: Starting analysis for openai
+
+2024-12-14 07:46:43,846 - main_controller - INFO
+Function: start_analysis
+Message: Starting analysis for openai
+
+2024-12-14 07:46:43,846 - main_controller - INFO
+Function: start_analysis
+Message: Scraping website: https://openai.com/
+
+2024-12-14 07:46:43,846 - main_controller - DEBUG
+Function: start_analysis
+Message: Created scraper with URL: https://openai.com/
+
+2024-12-14 07:46:43,846 - main_controller - DEBUG
+Function: start_analysis
+Message: Attempting to run scraper
+
+2024-12-14 07:46:44,305 - main_controller - INFO
+Function: start_analysis
+Message: Website scraping completed successfully
+
+2024-12-14 07:46:44,305 - main_controller - INFO
+Function: start_analysis
+Message: Generating questions based on website content
+
+2024-12-14 07:46:53,442 - report_generator - ERROR
+Function: generate_questions
+Message: Error generating questions: Expecting value: line 1 column 1 (char 0)
+
+2024-12-14 07:46:53,443 - main_controller - ERROR
+Function: start_analysis
+Message: Error in analysis: Expecting value: line 1 column 1 (char 0)
+
+2024-12-14 07:46:53,443 - main_controller - ERROR
+Function: start_analysis
+Message: Full error details: JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+
+2024-12-14 07:46:53,443 - market_analysis_api - ERROR
+Function: generate_report
+Message: Analysis failed: JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+
+2024-12-14 07:46:53,443 - market_analysis_api - ERROR
+Function: generate_report
+Message: Error in request handling: JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+

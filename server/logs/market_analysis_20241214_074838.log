@@ -1,0 +1,144 @@
+2024-12-14 07:48:38,225 - report_generator - INFO
+Function: __init__
+Message: ReportGenerator initialized successfully
+
+2024-12-14 07:48:38,582 - market_analysis_api - INFO
+Function: generate_report
+Message: === Received Analysis Request ===
+
+2024-12-14 07:48:38,582 - market_analysis_api - INFO
+Function: generate_report
+Message: Company Name: openai
+
+2024-12-14 07:48:38,583 - market_analysis_api - INFO
+Function: generate_report
+Message: Industry: ai
+
+2024-12-14 07:48:38,583 - market_analysis_api - INFO
+Function: generate_report
+Message: Website URL: https://openai.com/
+
+2024-12-14 07:48:38,583 - main_controller - INFO
+Function: start_analysis
+Message: Starting analysis for openai
+
+2024-12-14 07:48:38,583 - main_controller - INFO
+Function: start_analysis
+Message: Scraping website: https://openai.com/
+
+2024-12-14 07:48:38,583 - main_controller - DEBUG
+Function: start_analysis
+Message: Created scraper with URL: https://openai.com/
+
+2024-12-14 07:48:38,834 - main_controller - INFO
+Function: start_analysis
+Message: Website scraping completed successfully
+
+2024-12-14 07:48:38,834 - main_controller - INFO
+Function: start_analysis
+Message: Generating questions based on website content
+
+2024-12-14 07:48:38,834 - report_generator - DEBUG
+Function: generate_questions
+Message: Sending prompt to question generator
+
+2024-12-14 07:48:42,257 - report_generator - DEBUG
+Function: generate_questions
+Message: Raw response: ```json
+[
+    {"id": 1, "question": "How does OpenAI plan to address privacy concerns related to AI technology?"},
+    {"id": 2, "question": "What strategies is OpenAI implementing to stay ahead in the competitive AI industry?"},
+    {"id": 3, "question": "Can you provide examples of how OpenAI's technology has been applied in real-world scenarios?"}
+]
+```
+
+2024-12-14 07:48:42,258 - report_generator - DEBUG
+Function: generate_questions
+Message: Cleaned response: [
+    {"id": 1, "question": "How does OpenAI plan to address privacy concerns related to AI technology?"},
+    {"id": 2, "question": "What strategies is OpenAI implementing to stay ahead in the competitive AI industry?"},
+    {"id": 3, "question": "Can you provide examples of how OpenAI's technology has been applied in real-world scenarios?"}
+]
+
+2024-12-14 07:48:42,258 - report_generator - INFO
+Function: generate_questions
+Message: Generated 3 questions successfully
+
+2024-12-14 07:48:42,258 - main_controller - INFO
+Function: start_analysis
+Message: Questions generated successfully
+
+2024-12-14 07:48:42,258 - market_analysis_api - INFO
+Function: generate_report
+Message: Analysis completed successfully
+
+2024-12-14 07:49:12,875 - market_analysis_api - INFO
+Function: generate_report
+Message: === Received Analysis Request ===
+
+2024-12-14 07:49:12,877 - market_analysis_api - INFO
+Function: generate_report
+Message: Company Name: openai
+
+2024-12-14 07:49:12,877 - market_analysis_api - INFO
+Function: generate_report
+Message: Industry: ai
+
+2024-12-14 07:49:12,877 - market_analysis_api - INFO
+Function: generate_report
+Message: Website URL: https://openai.com/
+
+2024-12-14 07:49:12,877 - main_controller - INFO
+Function: start_analysis
+Message: Starting analysis for openai
+
+2024-12-14 07:49:12,877 - main_controller - INFO
+Function: start_analysis
+Message: Scraping website: https://openai.com/
+
+2024-12-14 07:49:12,878 - main_controller - DEBUG
+Function: start_analysis
+Message: Created scraper with URL: https://openai.com/
+
+2024-12-14 07:49:13,108 - main_controller - INFO
+Function: start_analysis
+Message: Website scraping completed successfully
+
+2024-12-14 07:49:13,108 - main_controller - INFO
+Function: start_analysis
+Message: Generating questions based on website content
+
+2024-12-14 07:49:13,108 - report_generator - DEBUG
+Function: generate_questions
+Message: Sending prompt to question generator
+
+2024-12-14 07:49:16,547 - report_generator - DEBUG
+Function: generate_questions
+Message: Raw response: ```json
+[
+    {"id": 1, "question": "How does OpenAI plan to address the evolving regulatory landscape for AI technologies?"},
+    {"id": 2, "question": "What strategies does OpenAI have in place to ensure ethical use of its AI technologies?"},
+    {"id": 3, "question": "Can you provide insights into OpenAI's roadmap for new product development in the AI industry?"}
+]
+```
+
+2024-12-14 07:49:16,548 - report_generator - DEBUG
+Function: generate_questions
+Message: Cleaned response: [
+    {"id": 1, "question": "How does OpenAI plan to address the evolving regulatory landscape for AI technologies?"},
+    {"id": 2, "question": "What strategies does OpenAI have in place to ensure ethical use of its AI technologies?"},
+    {"id": 3, "question": "Can you provide insights into OpenAI's roadmap for new product development in the AI industry?"}
+]
+
+2024-12-14 07:49:16,548 - report_generator - INFO
+Function: generate_questions
+Message: Generated 3 questions successfully
+
+2024-12-14 07:49:16,548 - main_controller - INFO
+Function: start_analysis
+Message: Questions generated successfully
+
+2024-12-14 07:49:16,548 - market_analysis_api - INFO
+Function: generate_report
+Message: Analysis completed successfully
+

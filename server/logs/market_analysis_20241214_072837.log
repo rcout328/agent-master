@@ -1,0 +1,12 @@
+2024-12-14 07:28:37,247 - report_generator - INFO
+Function: __init__
+Message: ReportGenerator initialized successfully
+
+2024-12-14 07:28:37,248 - report_generator - INFO
+Function: analyze_company
+Message: Scraping website: Analysis error: ScrapeWebsiteTool._run() takes 1 positional argument but 2 were given
+
+2024-12-14 07:28:37,248 - report_generator - ERROR
+Function: analyze_company
+Message: Error analyzing company: No connection adapters were found for 'Analysis error: ScrapeWebsiteTool._run() takes 1 positional argument but 2 were given'
+

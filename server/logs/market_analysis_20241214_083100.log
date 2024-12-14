@@ -1,0 +1,48 @@
+2024-12-14 08:31:50,266 - main_controller - INFO
+Function: start_analysis
+Message: Starting analysis for 100xengineers
+
+2024-12-14 08:31:50,267 - main_controller - INFO
+Function: start_analysis
+Message: Scraping website: https://www.100xengineers.com/
+
+2024-12-14 08:31:50,267 - main_controller - DEBUG
+Function: start_analysis
+Message: Scraper instance: name='Read website content' description="Tool Name: Read website content\nTool Arguments: {'website_url': {'description': 'Mandatory website url to read the file', 'type': 'str'}}\nTool Description: A tool that can be used to read a website content." args_schema=<class 'crewai_tools.tools.scrape_website_tool.scrape_website_tool.ScrapeWebsiteToolSchema'> description_updated=False cache_function=<function BaseTool.<lambda> at 0x11307db20> result_as_answer=False website_url=None cookies=None headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9', 'Accept-Language': 'en-US,en;q=0.9', 'Referer': 'https://www.google.com/', 'Connection': 'keep-alive', 'Upgrade-Insecure-Requests': '1'}
+
+2024-12-14 08:31:50,268 - main_controller - DEBUG
+Function: start_analysis
+Message: URL argument type: <class 'str'>
+
+2024-12-14 08:31:50,268 - main_controller - DEBUG
+Function: start_analysis
+Message: URL value: https://www.100xengineers.com/
+
+2024-12-14 08:31:50,268 - main_controller - DEBUG
+Function: start_analysis
+Message: Attempting to run scraper with URL dict
+
+2024-12-14 08:31:50,268 - main_controller - DEBUG
+Function: start_analysis
+Message: URL dict: {'url': 'https://www.100xengineers.com/'}
+
+2024-12-14 08:31:50,268 - main_controller - ERROR
+Function: start_analysis
+Message: TypeError in scraper.run(): ScrapeWebsiteTool._run() takes 1 positional argument but 2 were given
+
+2024-12-14 08:31:50,268 - main_controller - ERROR
+Function: start_analysis
+Message: Arguments received: {'url': 'https://www.100xengineers.com/'}
+
+2024-12-14 08:31:50,268 - main_controller - ERROR
+Function: start_analysis
+Message: Error in analysis: ScrapeWebsiteTool._run() takes 1 positional argument but 2 were given
+
+2024-12-14 08:31:50,268 - main_controller - ERROR
+Function: start_analysis
+Message: Full error details: TypeError: ScrapeWebsiteTool._run() takes 1 positional argument but 2 were given
+
+2024-12-14 08:31:50,268 - main_controller - ERROR
+Function: <module>
+Message: Application error: ScrapeWebsiteTool._run() takes 1 positional argument but 2 were given
+

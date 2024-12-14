@@ -1,0 +1,24 @@
+2024-12-14 07:40:25,435 - report_generator - INFO
+Function: __init__
+Message: ReportGenerator initialized successfully
+
+2024-12-14 07:40:25,505 - market_analysis_api - INFO
+Function: generate_report
+Message: Starting analysis for openai
+
+2024-12-14 07:40:25,505 - main_controller - INFO
+Function: start_analysis
+Message: Starting analysis for openai
+
+2024-12-14 07:40:25,505 - main_controller - INFO
+Function: start_analysis
+Message: Scraping website: https://openai.com/
+
+2024-12-14 07:40:25,505 - main_controller - ERROR
+Function: start_analysis
+Message: Error in analysis: ScrapeWebsiteTool._run() takes 1 positional argument but 2 were given
+
+2024-12-14 07:40:25,505 - market_analysis_api - ERROR
+Function: generate_report
+Message: Error in request handling: ScrapeWebsiteTool._run() takes 1 positional argument but 2 were given
+

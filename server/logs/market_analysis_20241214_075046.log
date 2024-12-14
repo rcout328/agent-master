@@ -1,0 +1,74 @@
+2024-12-14 07:50:46,705 - report_generator - INFO
+Function: __init__
+Message: ReportGenerator initialized successfully
+
+2024-12-14 07:50:55,341 - market_analysis_api - INFO
+Function: generate_report
+Message: === Received Analysis Request ===
+
+2024-12-14 07:50:55,341 - market_analysis_api - INFO
+Function: generate_report
+Message: Company Name: openai
+
+2024-12-14 07:50:55,342 - market_analysis_api - INFO
+Function: generate_report
+Message: Industry: ai
+
+2024-12-14 07:50:55,342 - market_analysis_api - INFO
+Function: generate_report
+Message: Website URL: https://openai.com/
+
+2024-12-14 07:50:55,342 - main_controller - INFO
+Function: start_analysis
+Message: Starting analysis for openai
+
+2024-12-14 07:50:55,342 - main_controller - INFO
+Function: start_analysis
+Message: Scraping website: https://openai.com/
+
+2024-12-14 07:50:55,345 - main_controller - DEBUG
+Function: start_analysis
+Message: Created scraper with URL: https://openai.com/
+
+2024-12-14 07:50:55,749 - main_controller - INFO
+Function: start_analysis
+Message: Website scraping completed successfully
+
+2024-12-14 07:50:55,749 - main_controller - INFO
+Function: start_analysis
+Message: Generating questions based on website content
+
+2024-12-14 07:50:55,749 - report_generator - DEBUG
+Function: generate_questions
+Message: Sending prompt to question generator
+
+2024-12-14 07:50:59,839 - report_generator - DEBUG
+Function: generate_questions
+Message: Raw response: ```json
+[
+    {"id": 1, "question": "How does OpenAI incorporate JavaScript and cookies on its website to enhance user experience?"},
+    {"id": 2, "question": "What specific functionalities or features does OpenAI's website offer that require the use of JavaScript and cookies?"},
+    {"id": 3, "question": "How does OpenAI ensure user privacy and data protection while requiring JavaScript and cookies to access its website content?"}
+]
+```
+
+2024-12-14 07:50:59,840 - report_generator - DEBUG
+Function: generate_questions
+Message: Cleaned response: [
+    {"id": 1, "question": "How does OpenAI incorporate JavaScript and cookies on its website to enhance user experience?"},
+    {"id": 2, "question": "What specific functionalities or features does OpenAI's website offer that require the use of JavaScript and cookies?"},
+    {"id": 3, "question": "How does OpenAI ensure user privacy and data protection while requiring JavaScript and cookies to access its website content?"}
+]
+
+2024-12-14 07:50:59,840 - report_generator - INFO
+Function: generate_questions
+Message: Generated 3 questions successfully
+
+2024-12-14 07:50:59,840 - main_controller - INFO
+Function: start_analysis
+Message: Questions generated successfully
+
+2024-12-14 07:50:59,841 - market_analysis_api - INFO
+Function: generate_report
+Message: Analysis completed successfully
+

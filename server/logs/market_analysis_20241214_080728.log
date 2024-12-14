@@ -1,0 +1,20 @@
+2024-12-14 08:07:58,557 - main_controller - INFO
+Function: start_analysis
+Message: Starting quick market_analysis for amazon
+
+2024-12-14 08:07:58,559 - main_controller - INFO
+Function: start_analysis
+Message: Scraping website: https://www.amazon.com/
+
+2024-12-14 08:08:00,420 - main_controller - INFO
+Function: start_analysis
+Message: Website scraping completed
+
+2024-12-14 08:08:05,039 - main_controller - INFO
+Function: start_analysis
+Message: Successfully inferred company data
+
+2024-12-14 08:08:07,294 - main_controller - INFO
+Function: start_analysis
+Message: Generated 2 questions
+

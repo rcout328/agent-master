@@ -1,0 +1,68 @@
+2024-12-14 08:00:44,726 - report_generator - INFO
+Function: __init__
+Message: ReportGenerator initialized successfully
+
+2024-12-14 08:01:10,228 - market_analysis_api - INFO
+Function: submit_answers
+Message: === Received Answer Submission ===
+
+2024-12-14 08:01:10,229 - market_analysis_api - INFO
+Function: submit_answers
+Message: Company Name: openai
+
+2024-12-14 08:01:10,229 - market_analysis_api - INFO
+Function: submit_answers
+Message: Report Type: market_analysis
+
+2024-12-14 08:01:10,229 - market_analysis_api - INFO
+Function: submit_answers
+Message: Detail Level: quick
+
+2024-12-14 08:01:10,229 - market_analysis_api - DEBUG
+Function: submit_answers
+Message: Answers received: {'1': 'no  idea', '2': 'claude', '3': 'paid subscription '}
+
+2024-12-14 08:01:10,229 - main_controller - INFO
+Function: generate_final_report
+Message: Generating final report for openai
+
+2024-12-14 08:01:10,229 - report_generator - INFO
+Function: analyze_company
+Message: Scraping website: https://openai.com/
+
+2024-12-14 08:01:10,743 - report_generator - INFO
+Function: analyze_company
+Message: Searching for company info: openai company ai business
+
+2024-12-14 08:01:10,743 - report_generator - ERROR
+Function: analyze_company
+Message: Error analyzing company: SerperDevTool._run() takes 1 positional argument but 2 were given
+
+2024-12-14 08:01:10,743 - main_controller - ERROR
+Function: generate_final_report
+Message: Error in company analysis: SerperDevTool._run() takes 1 positional argument but 2 were given
+
+2024-12-14 08:01:10,743 - report_generator - INFO
+Function: generate_report
+Message: Generating market_analysis report for openai
+
+2024-12-14 08:01:10,743 - report_generator - ERROR
+Function: generate_report
+Message: Error generating report: 'ReportGenerator' object has no attribute 'generate_market_analysis_report'
+
+2024-12-14 08:01:10,743 - main_controller - ERROR
+Function: generate_final_report
+Message: Error in report generation: 'ReportGenerator' object has no attribute 'generate_market_analysis_report'
+
+2024-12-14 08:01:10,743 - main_controller - ERROR
+Function: generate_final_report
+Message: Error generating report: 'ReportGenerator' object has no attribute 'generate_market_analysis_report'
+
+2024-12-14 08:01:10,743 - market_analysis_api - ERROR
+Function: submit_answers
+Message: Report generation failed: AttributeError: 'ReportGenerator' object has no attribute 'generate_market_analysis_report'
+
+2024-12-14 08:01:10,743 - market_analysis_api - ERROR
+Function: submit_answers
+Message: Error processing answers: AttributeError: 'ReportGenerator' object has no attribute 'generate_market_analysis_report'
+

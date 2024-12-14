@@ -1,0 +1,104 @@
+2024-12-14 07:55:54,499 - report_generator - INFO
+Function: __init__
+Message: ReportGenerator initialized successfully
+
+2024-12-14 07:57:30,912 - market_analysis_api - INFO
+Function: generate_report
+Message: === Received Analysis Request ===
+
+2024-12-14 07:57:30,913 - market_analysis_api - INFO
+Function: generate_report
+Message: Company Name: openai
+
+2024-12-14 07:57:30,913 - market_analysis_api - INFO
+Function: generate_report
+Message: Industry: ai
+
+2024-12-14 07:57:30,913 - market_analysis_api - INFO
+Function: generate_report
+Message: Website URL: https://openai.com/
+
+2024-12-14 07:57:30,913 - market_analysis_api - INFO
+Function: generate_report
+Message: Report Type: market_analysis
+
+2024-12-14 07:57:30,913 - market_analysis_api - INFO
+Function: generate_report
+Message: Detail Level: quick
+
+2024-12-14 07:57:30,915 - main_controller - INFO
+Function: start_analysis
+Message: Starting quick market_analysis for openai
+
+2024-12-14 07:57:30,915 - main_controller - INFO
+Function: start_analysis
+Message: Scraping website: https://openai.com/
+
+2024-12-14 07:57:31,993 - main_controller - INFO
+Function: start_analysis
+Message: Website scraping completed
+
+2024-12-14 07:57:31,993 - main_controller - INFO
+Function: start_analysis
+Message: Generating quick questions for market_analysis
+
+2024-12-14 07:57:31,994 - report_generator - DEBUG
+Function: generate_questions
+Message: Sending prompt to question generator
+
+2024-12-14 07:57:36,048 - report_generator - INFO
+Function: generate_questions
+Message: Generated 3 questions successfully
+
+2024-12-14 07:57:36,049 - market_analysis_api - INFO
+Function: generate_report
+Message: Analysis completed successfully
+
+2024-12-14 07:58:39,101 - market_analysis_api - INFO
+Function: submit_answers
+Message: === Received Answer Submission ===
+
+2024-12-14 07:58:39,101 - market_analysis_api - INFO
+Function: submit_answers
+Message: Company Name: openai
+
+2024-12-14 07:58:39,102 - market_analysis_api - INFO
+Function: submit_answers
+Message: Report Type: market_analysis
+
+2024-12-14 07:58:39,102 - market_analysis_api - INFO
+Function: submit_answers
+Message: Detail Level: quick
+
+2024-12-14 07:58:39,102 - market_analysis_api - DEBUG
+Function: submit_answers
+Message: Answers received: {'1': 'no  idea', '2': 'claude', '3': 'paid subscription '}
+
+2024-12-14 07:58:39,102 - main_controller - INFO
+Function: generate_final_report
+Message: Generating final report for openai
+
+2024-12-14 07:58:39,102 - report_generator - INFO
+Function: analyze_company
+Message: Scraping website: https://openai.com/
+
+2024-12-14 07:58:41,125 - report_generator - INFO
+Function: analyze_company
+Message: Searching for company info: openai company ai business
+
+2024-12-14 07:58:41,125 - report_generator - ERROR
+Function: analyze_company
+Message: Error analyzing company: SerperDevTool._run() takes 1 positional argument but 2 were given
+
+2024-12-14 07:58:41,125 - main_controller - ERROR
+Function: generate_final_report
+Message: Error generating report: SerperDevTool._run() takes 1 positional argument but 2 were given
+
+2024-12-14 07:58:41,125 - market_analysis_api - ERROR
+Function: submit_answers
+Message: Report generation failed: TypeError: SerperDevTool._run() takes 1 positional argument but 2 were given
+
+2024-12-14 07:58:41,125 - market_analysis_api - ERROR
+Function: submit_answers
+Message: Error processing answers: TypeError: SerperDevTool._run() takes 1 positional argument but 2 were given
+
